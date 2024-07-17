@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <LovyanGFX.hpp>
 #include <stdint.h>
 
 #define TFT_CS 5
@@ -6,24 +7,6 @@
 #define TFT_DC 8
 #define TFT_SDA 6
 #define TFT_SCL 4
-
-// #define ADAFRUIT_SPI_SOFTWARE
-
-#define LOVYAN_SPI
-
-#ifdef ADAFRUIT_SPI_SOFTWARE
-
-#include <SPI.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_ST7789.h>
-
-Adafruit_ST7789 *screen = nullptr;
-
-#endif
-
-#ifdef LOVYAN_SPI
-
-#include <LovyanGFX.hpp>
 
 class LGFX : public lgfx::LGFX_Device
 {
@@ -71,29 +54,49 @@ public:
         setPanel(&_panel_instance);
     }
 };
-LGFX *screen;
-
-#endif
+LGFX *screen = nullptr;
+lgfx::LGFX_Sprite *graphSprite = nullptr;
 
 uint8_t values[200];
 
+uint32_t getGradientColor(int value, LGFX* screen)
+{
+    // Asegurarse de que el valor esté dentro del rango 0-100
+    value = constrain(value, 0, 100);
+
+    // Azul muy oscuro a verde (0 a 33)
+    if (value <= 33)
+    {
+        int blue = 255;
+        int green = map(value, 0, 33, 0, 255);
+        return screen->color565(0, green, blue);
+    }
+    // Verde a amarillo (34 a 66)
+    else if (value <= 66)
+    {
+        int green = 255;
+        int red = map(value, 34, 66, 0, 255);
+        return screen->color565(red, green, 0);
+    }
+    // Amarillo a rojo (67 a 100)
+    else
+    {
+        int red = 255;
+        int green = map(value, 67, 100, 255, 0);
+        return screen->color565(red, green, 0);
+    }
+}
+
 void setup()
 {
-#ifdef ADAFRUIT_SPI_SOFTWARE
-    screen = new Adafruit_ST7789(TFT_CS, TFT_DC, TFT_SDA, TFT_SCL, TFT_RST);
-    screen->init(240, 320);
-    screen->setRotation(1);
-    screen->fillScreen(ST77XX_BLACK);
-    screen->drawFastVLine(10, 100, 100, ST77XX_WHITE);
-    screen->drawFastHLine(10, 200, 200, ST77XX_WHITE);
-#endif
-#ifdef LOVYAN_SPI
     screen = new LGFX();
     screen->init();
     screen->fillScreen(TFT_BLACK);
+    graphSprite = new lgfx::LGFX_Sprite(screen);
+    graphSprite->createSprite(200, 100);
+    graphSprite->fillSprite(TFT_BLACK);
     screen->drawFastVLine(10, 100, 100, TFT_WHITE);
     screen->drawFastHLine(10, 200, 200, TFT_WHITE);
-#endif
     for (int i = 0; i < 200; i++)
     {
         values[i] = 0;
@@ -105,21 +108,9 @@ void setup()
 
 void loop()
 {
-    // clear old & reload new
     for (int i = 0; i < 200; i++)
     {
-        if (values[i] > 0)
-        {
-#ifdef ADAFRUIT_SPI_SOFTWARE
-            // screen->drawPixel(i + 12, 199 - values[i], ST77XX_BLACK);
-            screen->drawFastVLine(i + 12, 198 - values[i], values[i], ST77XX_BLACK);
-#endif
-#ifdef LOVYAN_SPI
-            // screen->drawPixel(i + 12, 199 - values[i], TFT_BLACK);
-            screen->drawFastVLine(i + 12, 198 - values[i], values[i], TFT_BLACK);
-#endif
-        }
-        if (i < 199)
+        if (i < 199) // move data array to left
         {
             values[i] = values[i + 1];
         }
@@ -136,58 +127,24 @@ void loop()
             {
                 values[199]--;
             }
-            else
-            {
-            }
         }
     }
+    // move graph sprite to left
+    graphSprite->scroll(-1, 0);
     int32_t color = 0;
     for (int i = 0; i < 200; i++)
     {
         if (values[i] > 0)
         {
-#ifdef ADAFRUIT_SPI_SOFTWARE
-            // screen->drawPixel(i + 12, 199 - values[i], ST77XX_RED);
-            screen->drawFastVLine(i + 12, 198 - values[i], values[i], ST77XX_RED);
-#endif
-#ifdef LOVYAN_SPI
-            // screen->drawPixel(i + 12, 199 - values[i], TFT_RED);
-            if (values[i] < 20)
-            {
-                color = TFT_BLUE;
-            }
-            else if (values[i] < 40)
-            {
-                color = TFT_GREEN;
-            }
-            else if (values[i] < 50)
-            {
-                color = TFT_YELLOW;
-            }
-            else if (values[i] < 70)
-            {
-                color = TFT_ORANGE;
-            }
-            else
-            {
-                color = TFT_RED;
-            }
-            screen->drawFastVLine(i + 12, 198 - values[i], values[i], color);
-#endif
+            color = getGradientColor(values[i], screen);
+            graphSprite->drawFastVLine(i, 98 - values[i], values[i], color);
         }
     }
-#ifdef ADAFRUIT_SPI_SOFTWARE
-    screen->setCursor(200, 10);
-    screen->setTextSize(5);
-    screen->setTextColor(ST77XX_BLUE, ST77XX_BLACK);
-    screen->setTextWrap(true);
-    screen->printf("%02dc", values[199]);
-#endif
-#ifdef LOVYAN_SPI
+
     screen->setCursor(200, 10);
     screen->setTextSize(5);
     screen->setTextColor(color, TFT_BLACK);
     screen->setTextWrap(true);
     screen->printf("%02dc", values[199]);
-#endif
+    graphSprite->pushSprite(12, 100);
 }
