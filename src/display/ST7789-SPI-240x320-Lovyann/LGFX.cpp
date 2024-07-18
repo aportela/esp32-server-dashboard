@@ -3,10 +3,14 @@
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 240
 
-#define X_AXIS_LENGTH 200
-#define Y_AXIS_LENGTH 50
+#define X_AXIS_LENGTH 204
+#define Y_AXIS_LENGTH 54
 
 #define AXIS_COLOR TFT_WHITE
+
+#define GRAPH_SPRITE_WIDTH 200
+#define GRAPH_SPRITE_HEIGHT 50
+#define GRAPH_SPRITE_BACKGROUND TFT_BLACK
 
 LGFX::LGFX(uint8_t SDA, uint8_t SCL, uint8_t CS, uint8_t DC, uint8_t RST)
 {
@@ -48,8 +52,8 @@ LGFX::LGFX(uint8_t SDA, uint8_t SCL, uint8_t CS, uint8_t DC, uint8_t RST)
     setPanel(&_panel_instance);
 
     this->temperatureSprite = new lgfx::LGFX_Sprite(this);
-    this->temperatureSprite->createSprite(200, 100);
-    this->temperatureSprite->fillSprite(TFT_BLACK);
+    this->temperatureSprite->createSprite(GRAPH_SPRITE_WIDTH, GRAPH_SPRITE_HEIGHT);
+    this->temperatureSprite->fillSprite(GRAPH_SPRITE_BACKGROUND);
 }
 
 LGFX::~LGFX()
@@ -58,7 +62,7 @@ LGFX::~LGFX()
     this->temperatureSprite = nullptr;
 }
 
-uint32_t LGFX::getGradientColor(int8_t value)
+uint32_t LGFX::getTemperatureGradientColor(int8_t value)
 {
     value = constrain(value, 0, 100);
 
@@ -99,19 +103,33 @@ void LGFX::initNetworkMeter(uint8_t xOffset, uint8_t yOffset)
 
 void LGFX::initTemperatureMeter(uint8_t xOffset, uint8_t yOffset)
 {
+    // TODO: check axis & sprite bounds
     this->drawFastVLine(xOffset, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
     this->drawFastHLine(xOffset, yOffset + Y_AXIS_LENGTH, X_AXIS_LENGTH, AXIS_COLOR);
+
+    this->drawFastVLine(xOffset + X_AXIS_LENGTH, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
+    this->drawFastHLine(xOffset, yOffset, X_AXIS_LENGTH, AXIS_COLOR);
+
+    this->setCursor(xOffset + SCREEN_WIDTH - 110, yOffset);
+    this->setTextSize(2);
+    this->setTextColor(TFT_WHITE, TFT_BLACK);
+    this->setTextWrap(true);
+    this->print("CPU TEMP");
+    this->setTextSize(2);
+    this->setCursor(xOffset + SCREEN_WIDTH - 32, yOffset + 28);
+    this->print("c");
 }
 
 void LGFX::refreshTemperatureMeter(uint8_t xOffset, uint8_t yOffset, uint8_t temperature)
 {
     this->temperatureSprite->scroll(-1, 0);
-    int32_t color = this->getGradientColor(temperature);
-    this->temperatureSprite->drawFastVLine(X_AXIS_LENGTH - 1, Y_AXIS_LENGTH - 2 - (temperature / 2), (temperature / 2), color);
-    this->setCursor(xOffset + SCREEN_WIDTH - 80, yOffset);
+    int32_t color = this->getTemperatureGradientColor(temperature);
+    // TODO: check axis & sprite bounds
+    this->temperatureSprite->drawFastVLine(GRAPH_SPRITE_WIDTH - 1, GRAPH_SPRITE_HEIGHT - (temperature / 2) + 1, (temperature / 2), color);
+    this->setCursor(xOffset + SCREEN_WIDTH - 90, yOffset + 32);
     this->setTextSize(3);
     this->setTextColor(color, TFT_BLACK);
     this->setTextWrap(true);
-    this->printf("%02dc", temperature);
-    this->temperatureSprite->pushSprite(xOffset + 3, yOffset);
+    this->printf("%03d", temperature);
+    this->temperatureSprite->pushSprite(xOffset + 2, yOffset + 2);
 }
