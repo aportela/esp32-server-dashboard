@@ -8,7 +8,7 @@ class ISource
 {
 public:
     virtual ~ISource() {}
-    virtual SourceData getCurrent(SourceDataType entity) = 0;
+    // virtual SourceData getCurrent(SourceDataType entity) = 0;
 };
 
 #endif

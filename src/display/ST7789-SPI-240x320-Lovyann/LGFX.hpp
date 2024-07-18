@@ -1,6 +1,7 @@
 #include <LovyanGFX.hpp>
 #include <stdint.h>
 #include "../FPSDebug.hpp"
+// #include "../../sources/ISource.hpp"
 
 class LGFX : public lgfx::LGFX_Device
 {
@@ -12,10 +13,11 @@ private:
     lgfx::LGFX_Sprite *temperatureSprite = nullptr;
     lgfx::LGFX_Sprite *debugSprite = nullptr;
 
-    uint32_t getTemperatureGradientColor(int8_t value);
+    uint32_t getTemperatureGradientFrom0To100(int8_t value);
     FPSDebug *fpsDebug;
 
     uint64_t startMillis;
+    uint8_t oldCPULoad;
 
 public:
     LGFX(uint8_t SDA, uint8_t SCL, uint8_t CS, uint8_t DC, uint8_t RST);

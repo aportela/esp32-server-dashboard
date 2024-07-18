@@ -3,11 +3,14 @@
 
 DummySource::DummySource(void)
 {
-    this->currentCPU = new SourceDataCPU();
+    randomSeed(analogRead(0) ^ (micros() * esp_random()));
+
+    this->currentCPULoad = new SourceDataCPULoad(MIN_CPU_LOAD, MAX_CPU_LOAD);
+    this->currentCPULoad->setCurrent(random(MIN_CPU_LOAD, MAX_CPU_LOAD));
+
     this->currentMemory = new SourceDataMemory();
     this->currentTemperature = new SourceDataTemperature();
-    randomSeed(analogRead(0) ^ (micros() * esp_random()));
-    this->currentCPU->globalCPULoad = random(10, 90);
+
     this->currentMemory->totalMemory = 32; // 32000000000; // 32 Gbytes (to bytes)
     this->currentMemory->usedMemory = random(this->currentMemory->totalMemory / 3, this->currentMemory->totalMemory);
     this->currentTemperature->globalTemperature = random(20, 80);
@@ -15,40 +18,30 @@ DummySource::DummySource(void)
 
 DummySource::~DummySource()
 {
-    delete this->currentCPU;
-    this->currentCPU = nullptr;
+    delete this->currentCPULoad;
+    this->currentCPULoad = nullptr;
     delete this->currentMemory;
     this->currentMemory = nullptr;
     delete this->currentTemperature;
     this->currentTemperature = nullptr;
 }
 
-SourceDataCPU DummySource::getCurrentCPU(void)
-{
-}
-
-SourceDataMemory DummySource::getCurrentMemory(void)
-{
-}
-
-SourceDataNetwork DummySource::getCurrentNetwork(void)
-{
-}
-
 uint8_t DummySource::getCurrentCPULoad(void)
 {
+    uint8_t current = this->currentCPULoad->getCurrent();
     if (random(0, 20) % 2 == 0)
     {
-        if (this->currentCPU->globalCPULoad < 99)
+        if (current < MAX_CPU_LOAD)
         {
-            this->currentCPU->globalCPULoad++;
+            current++;
         }
     }
-    else if (this->currentCPU->globalCPULoad > 1)
+    else if (current > MIN_CPU_LOAD)
     {
-        this->currentCPU->globalCPULoad--;
+        current--;
     }
-    return (this->currentCPU->globalCPULoad);
+    this->currentCPULoad->setCurrent(current);
+    return (current);
 }
 
 uint8_t DummySource::getCurrentTemperature(void)
@@ -86,26 +79,4 @@ uint64_t DummySource::getUsedMemory(void)
         this->currentMemory->usedMemory--;
     }
     return (this->currentMemory->usedMemory);
-}
-
-SourceData DummySource::getCurrent(SourceDataType entity)
-{
-
-    switch (entity)
-    {
-    case SDT_CPU:
-        return (this->getCurrentCPU());
-        break;
-    case SDT_MEMORY:
-        return (this->getCurrentMemory());
-        break;
-    case SDT_NETWORK:
-        return (this->getCurrentNetwork());
-        break;
-        /*
-    case SDT_TEMPERATURE:
-        return (this->getCurrentTemperature());
-        break;
-        */
-    }
 }

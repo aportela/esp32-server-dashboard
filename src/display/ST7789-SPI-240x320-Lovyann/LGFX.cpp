@@ -1,18 +1,19 @@
 #include "LGFX.hpp"
+#include "../../sources/dummy/DummySource.hpp"
 
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 240
 
-#define X_AXIS_LENGTH 204
-#define Y_AXIS_LENGTH 54
+#define GRAPH_SPRITE_WIDTH 200
+#define GRAPH_SPRITE_HEIGHT 36
+#define GRAPH_SPRITE_BACKGROUND TFT_BLACK
+
+#define X_AXIS_LENGTH GRAPH_SPRITE_WIDTH + 4
+#define Y_AXIS_LENGTH GRAPH_SPRITE_HEIGHT + 4
 
 #define AXIS_COLOR TFT_WHITE
 
-#define GRAPH_SPRITE_WIDTH 200
-#define GRAPH_SPRITE_HEIGHT 50
-#define GRAPH_SPRITE_BACKGROUND TFT_BLACK
-
-#define DEBUG_SPRITE_WIDTH 300
+#define DEBUG_SPRITE_WIDTH SCREEN_WIDTH - 20
 #define DEBUG_SPRITE_HEIGHT 10
 #define DEBUG_SPRITE_BACKGROUND TFT_BLACK
 
@@ -87,7 +88,7 @@ LGFX::~LGFX()
     this->fpsDebug = nullptr;
 }
 
-uint32_t LGFX::getTemperatureGradientColor(int8_t value)
+uint32_t LGFX::getTemperatureGradientFrom0To100(int8_t value)
 {
     value = constrain(value, 0, 100);
 
@@ -129,22 +130,30 @@ void LGFX::initCPULoadMeter(uint8_t xOffset, uint8_t yOffset)
     this->setTextWrap(true);
     this->print("CPU LOAD");
     this->setTextSize(2);
-    this->setCursor(xOffset + SCREEN_WIDTH - 32, yOffset + 28);
+    this->setCursor(xOffset + SCREEN_WIDTH - 34, yOffset + 20);
     this->print("%");
 }
 
 void LGFX::refreshCPULoadMeter(uint8_t xOffset, uint8_t yOffset, uint8_t load)
 {
-    this->cpuLoadSprite->scroll(-1, 0);
-    int32_t color = this->getTemperatureGradientColor(load);
     // TODO: check axis & sprite bounds
-    this->cpuLoadSprite->drawFastVLine(GRAPH_SPRITE_WIDTH - 1, GRAPH_SPRITE_HEIGHT - (load / 2) + 1, (load / 2), color);
-    this->setCursor(xOffset + SCREEN_WIDTH - 92, yOffset + 30);
-    this->setTextSize(3);
-    this->setTextColor(color, TFT_BLACK);
-    this->setTextWrap(true);
-    this->printf("%03d", load);
-    this->cpuLoadSprite->pushSprite(xOffset + 2, yOffset + 2);
+    uint8_t mapped100 = map(load, MIN_CPU_LOAD, MAX_CPU_LOAD, 0, 100);
+    int32_t gradientColor = this->getTemperatureGradientFrom0To100(load);
+    uint8_t mappedGraphValue = map(load, MIN_CPU_LOAD, MAX_CPU_LOAD, 0, GRAPH_SPRITE_HEIGHT);
+    // create graph animation moving sprite to left 1 pixel
+    this->cpuLoadSprite->scroll(-1, 0);
+    // draw new value (on right)
+    this->cpuLoadSprite->drawFastVLine(GRAPH_SPRITE_WIDTH - 1, GRAPH_SPRITE_HEIGHT - mappedGraphValue + 1, mappedGraphValue, gradientColor);
+    if (load != this->oldCPULoad)
+    {
+        this->setCursor(xOffset + SCREEN_WIDTH - 92, yOffset + 20);
+        this->setTextSize(3);
+        this->setTextColor(gradientColor, TFT_BLACK);
+        this->setTextWrap(true);
+        this->printf("%03d", load);
+        this->cpuLoadSprite->pushSprite(xOffset + 2, yOffset + 2);
+        this->oldCPULoad = load;
+    }
 }
 
 void LGFX::initMemoryMeter(uint8_t xOffset, uint8_t yOffset)
@@ -172,7 +181,7 @@ void LGFX::refreshMemoryMeter(uint8_t xOffset, uint8_t yOffset, uint64_t totalMe
 {
     uint8_t interpolatedMemory = map(usedMemory, 0, totalMemory, 0, 100);
     this->memorySprite->scroll(-1, 0);
-    int32_t color = this->getTemperatureGradientColor(interpolatedMemory);
+    int32_t color = this->getTemperatureGradientFrom0To100(interpolatedMemory);
     // TODO: check axis & sprite bounds
     this->memorySprite->drawFastVLine(GRAPH_SPRITE_WIDTH - 1, GRAPH_SPRITE_HEIGHT - (interpolatedMemory / 2) + 1, (interpolatedMemory / 2), color);
     this->setCursor(xOffset + SCREEN_WIDTH - 92, yOffset + 21);
@@ -209,7 +218,7 @@ void LGFX::initTemperatureMeter(uint8_t xOffset, uint8_t yOffset)
 void LGFX::refreshTemperatureMeter(uint8_t xOffset, uint8_t yOffset, uint8_t temperature)
 {
     this->temperatureSprite->scroll(-1, 0);
-    int32_t color = this->getTemperatureGradientColor(temperature);
+    int32_t color = this->getTemperatureGradientFrom0To100(temperature);
     // TODO: check axis & sprite bounds
     this->temperatureSprite->drawFastVLine(GRAPH_SPRITE_WIDTH - 1, GRAPH_SPRITE_HEIGHT - (temperature / 2) + 1, (temperature / 2), color);
     this->setCursor(xOffset + SCREEN_WIDTH - 92, yOffset + 30);
