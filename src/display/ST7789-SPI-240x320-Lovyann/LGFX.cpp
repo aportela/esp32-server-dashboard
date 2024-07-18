@@ -118,7 +118,7 @@ void LGFX::initMemoryMeter(uint8_t xOffset, uint8_t yOffset)
 
 void LGFX::refreshMemoryMeter(uint8_t xOffset, uint8_t yOffset, uint64_t totalMemory, uint64_t usedMemory)
 {
-    uint8_t interpolatedMemory = map(usedMemory / 100000000, 0, totalMemory / 100000000, 0, 100);
+    uint8_t interpolatedMemory = map(usedMemory, 0, totalMemory, 0, 100);
     this->memorySprite->scroll(-1, 0);
     int32_t color = this->getTemperatureGradientColor(interpolatedMemory);
     // TODO: check axis & sprite bounds
@@ -127,8 +127,7 @@ void LGFX::refreshMemoryMeter(uint8_t xOffset, uint8_t yOffset, uint64_t totalMe
     this->setTextSize(2);
     this->setTextColor(color, TFT_BLACK);
     this->setTextWrap(true);
-    // this->printf("%03d", usedMemory / 1000000000);
-    this->printf("%03d", interpolatedMemory);
+    this->printf("%03d", usedMemory);
     this->memorySprite->pushSprite(xOffset + 2, yOffset + 2);
 }
 
