@@ -12,6 +12,10 @@
 #define GRAPH_SPRITE_HEIGHT 50
 #define GRAPH_SPRITE_BACKGROUND TFT_BLACK
 
+#define DEBUG_SPRITE_WIDTH 300
+#define DEBUG_SPRITE_HEIGHT 10
+#define DEBUG_SPRITE_BACKGROUND TFT_BLACK
+
 LGFX::LGFX(uint8_t SDA, uint8_t SCL, uint8_t CS, uint8_t DC, uint8_t RST)
 {
     auto cfg = _bus_instance.config();
@@ -62,6 +66,12 @@ LGFX::LGFX(uint8_t SDA, uint8_t SCL, uint8_t CS, uint8_t DC, uint8_t RST)
     this->temperatureSprite = new lgfx::LGFX_Sprite(this);
     this->temperatureSprite->createSprite(GRAPH_SPRITE_WIDTH, GRAPH_SPRITE_HEIGHT);
     this->temperatureSprite->fillSprite(GRAPH_SPRITE_BACKGROUND);
+
+    this->debugSprite = new lgfx::LGFX_Sprite(this);
+    this->debugSprite->createSprite(DEBUG_SPRITE_WIDTH, DEBUG_SPRITE_HEIGHT);
+
+    this->fpsDebug = new FPSDebug();
+
     this->startMillis = millis();
 }
 
@@ -73,6 +83,8 @@ LGFX::~LGFX()
     this->memorySprite = nullptr;
     delete this->temperatureSprite;
     this->temperatureSprite = nullptr;
+    delete this->fpsDebug;
+    this->fpsDebug = nullptr;
 }
 
 uint32_t LGFX::getTemperatureGradientColor(int8_t value)
@@ -208,11 +220,61 @@ void LGFX::refreshTemperatureMeter(uint8_t xOffset, uint8_t yOffset, uint8_t tem
     this->temperatureSprite->pushSprite(xOffset + 2, yOffset + 2);
 }
 
+void convertMillisToString(unsigned long long millis_diff, char *buffer, size_t buffer_size)
+{
+    const unsigned long long millis_in_second = 1000;
+    const unsigned long long millis_in_minute = millis_in_second * 60;
+    const unsigned long long millis_in_hour = millis_in_minute * 60;
+    const unsigned long long millis_in_day = millis_in_hour * 24;
+    const unsigned long long millis_in_month = millis_in_day * 30;
+    const unsigned long long millis_in_year = millis_in_day * 365;
+
+    double time = 0.0;
+    char unit[10] = "";
+
+    if (millis_diff >= millis_in_year)
+    {
+        time = (double)millis_diff / millis_in_year;
+        strcpy(unit, " year/s");
+    }
+    else if (millis_diff >= millis_in_month)
+    {
+        time = (double)millis_diff / millis_in_month;
+        strcpy(unit, " month/s");
+    }
+    else if (millis_diff >= millis_in_day)
+    {
+        time = (double)millis_diff / millis_in_day;
+        strcpy(unit, " day/s");
+    }
+    else if (millis_diff >= millis_in_hour)
+    {
+        time = (double)millis_diff / millis_in_hour;
+        strcpy(unit, " hour/s");
+    }
+    else if (millis_diff >= millis_in_minute)
+    {
+        time = (double)millis_diff / millis_in_minute;
+        strcpy(unit, " minute/s");
+    }
+    else
+    {
+        time = (double)millis_diff / millis_in_second;
+        strcpy(unit, " second/s");
+    }
+    snprintf(buffer, buffer_size, "%.1f%s", time, unit);
+}
+
 void LGFX::refreshDebug(uint8_t xOffset, uint8_t yOffset)
 {
-    this->setCursor(xOffset, yOffset);
-    this->setTextSize(1);
-    this->setTextColor(TFT_WHITE, TFT_BLACK);
-    this->setTextWrap(true);
-    this->printf("Running seconds: %08d", (millis() - this->startMillis) / 1000);
+    this->fpsDebug->loop();
+
+    this->debugSprite->fillSprite(DEBUG_SPRITE_BACKGROUND);
+    this->debugSprite->setTextSize(1);
+    this->debugSprite->setTextColor(TFT_WHITE, TFT_BLACK);
+    this->debugSprite->setCursor(0, 0);
+    char timeString[50];
+    convertMillisToString(millis() - this->startMillis, timeString, sizeof(timeString));
+    this->debugSprite->printf("Dashboard uptime: %s - FPS:%03u", timeString, this->fpsDebug->getFPS());
+    this->debugSprite->pushSprite(xOffset, yOffset);
 }
