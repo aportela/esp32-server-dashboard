@@ -14,7 +14,9 @@
 LGFX *screen = nullptr;
 lgfx::LGFX_Sprite *graphSprite = nullptr;
 
-uint8_t values[200];
+DummySource *dummySRC = nullptr;
+
+uint8_t globalTemperature;
 
 void setup()
 {
@@ -25,56 +27,22 @@ void setup()
     graphSprite = new lgfx::LGFX_Sprite(screen);
     graphSprite->createSprite(200, 100);
     graphSprite->fillSprite(TFT_BLACK);
-    screen->drawFastVLine(10, 100, 100, TFT_WHITE);
-    screen->drawFastHLine(10, 200, 200, TFT_WHITE);
-    for (int i = 0; i < 200; i++)
-    {
-        values[i] = 0;
-    }
-    // init random seed
-    randomSeed(analogRead(0) ^ (micros() * esp_random()));
-    values[199] = random(20, 99);
+    screen->initTemperatureMeter(10, 100);
+    dummySRC = new DummySource();
 }
 
 void loop()
 {
-    for (int i = 0; i < 200; i++)
-    {
-        if (i < 199) // move data array to left
-        {
-            values[i] = values[i + 1];
-        }
-        else
-        {
-            if (random(0, 20) % 2 == 0)
-            {
-                if (values[199] < 99)
-                {
-                    values[199]++;
-                }
-            }
-            else if (values[199] > 1)
-            {
-                values[199]--;
-            }
-        }
-    }
+    globalTemperature = dummySRC->getCurrentTemperature();
     // move graph sprite to left
     graphSprite->scroll(-1, 0);
-    int32_t color = 0;
-    for (int i = 0; i < 200; i++)
-    {
-        if (values[i] > 0)
-        {
-            color = screen->getGradientColor(values[i]);
-            graphSprite->drawFastVLine(i, 98 - values[i], values[i], color);
-        }
-    }
+    int32_t color = screen->getGradientColor(globalTemperature);
+    graphSprite->drawFastVLine(199, 98 - globalTemperature, globalTemperature, color);
 
     screen->setCursor(260, 2);
     screen->setTextSize(3);
     screen->setTextColor(color, TFT_BLACK);
     screen->setTextWrap(true);
-    screen->printf("%02dc", values[199]);
+    screen->printf("%02dc", globalTemperature);
     graphSprite->pushSprite(12, 100);
 }

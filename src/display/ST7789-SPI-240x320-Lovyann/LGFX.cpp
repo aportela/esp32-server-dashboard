@@ -1,5 +1,7 @@
 #include "LGFX.hpp"
 
+#define AXIS_COLOR TFT_WHITE
+
 LGFX::LGFX(uint8_t SDA, uint8_t SCL, uint8_t CS, uint8_t DC, uint8_t RST)
 {
     auto cfg = _bus_instance.config();
@@ -69,4 +71,22 @@ uint32_t LGFX::getGradientColor(int8_t value)
         int green = map(value, 67, 100, 255, 0);
         return this->color565(red, green, 0);
     }
+}
+
+void LGFX::initCPUMeter(uint8_t xOffset, uint8_t yOffset)
+{
+}
+
+void LGFX::initMemoryMeter(uint8_t xOffset, uint8_t yOffset)
+{
+}
+
+void LGFX::initNetworkMeter(uint8_t xOffset, uint8_t yOffset)
+{
+}
+
+void LGFX::initTemperatureMeter(uint8_t xOffset, uint8_t yOffset)
+{
+    this->drawFastVLine(xOffset, yOffset, 100, AXIS_COLOR);
+    this->drawFastHLine(xOffset, yOffset + 100, 200, AXIS_COLOR);
 }
