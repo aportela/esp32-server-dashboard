@@ -3,20 +3,24 @@
 
 DummySource::DummySource(void)
 {
-    this->currentTemperature = new SourceDataTemperature();
+    this->currentCPU = new SourceDataCPU();
     this->currentMemory = new SourceDataMemory();
+    this->currentTemperature = new SourceDataTemperature();
     randomSeed(analogRead(0) ^ (micros() * esp_random()));
-    this->currentTemperature->globalTemperature = random(20, 80);
+    this->currentCPU->globalCPULoad = random(10, 90);
     this->currentMemory->totalMemory = 32; // 32000000000; // 32 Gbytes (to bytes)
     this->currentMemory->usedMemory = random(this->currentMemory->totalMemory / 3, this->currentMemory->totalMemory);
+    this->currentTemperature->globalTemperature = random(20, 80);
 }
 
 DummySource::~DummySource()
 {
-    delete this->currentTemperature;
-    this->currentTemperature = nullptr;
+    delete this->currentCPU;
+    this->currentCPU = nullptr;
     delete this->currentMemory;
     this->currentMemory = nullptr;
+    delete this->currentTemperature;
+    this->currentTemperature = nullptr;
 }
 
 SourceDataCPU DummySource::getCurrentCPU(void)
@@ -29,6 +33,22 @@ SourceDataMemory DummySource::getCurrentMemory(void)
 
 SourceDataNetwork DummySource::getCurrentNetwork(void)
 {
+}
+
+uint8_t DummySource::getCurrentCPULoad(void)
+{
+    if (random(0, 20) % 2 == 0)
+    {
+        if (this->currentCPU->globalCPULoad < 99)
+        {
+            this->currentCPU->globalCPULoad++;
+        }
+    }
+    else if (this->currentCPU->globalCPULoad > 1)
+    {
+        this->currentCPU->globalCPULoad--;
+    }
+    return (this->currentCPU->globalCPULoad);
 }
 
 uint8_t DummySource::getCurrentTemperature(void)

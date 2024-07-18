@@ -6,15 +6,17 @@ class LGFX : public lgfx::LGFX_Device
 private:
     lgfx::Panel_ST7789 _panel_instance;
     lgfx::Bus_SPI _bus_instance;
-    lgfx::LGFX_Sprite *temperatureSprite = nullptr;
+    lgfx::LGFX_Sprite *cpuLoadSprite = nullptr;
     lgfx::LGFX_Sprite *memorySprite = nullptr;
+    lgfx::LGFX_Sprite *temperatureSprite = nullptr;
 
     uint32_t getTemperatureGradientColor(int8_t value);
 
 public:
     LGFX(uint8_t SDA, uint8_t SCL, uint8_t CS, uint8_t DC, uint8_t RST);
     ~LGFX();
-    void initCPUMeter(uint8_t xOffset, uint8_t yOffset);
+    void initCPULoadMeter(uint8_t xOffset, uint8_t yOffset);
+    void refreshCPULoadMeter(uint8_t xOffset, uint8_t yOffset, uint8_t load);
     void initMemoryMeter(uint8_t xOffset, uint8_t yOffset);
     void refreshMemoryMeter(uint8_t xOffset, uint8_t yOffset, uint64_t totalMemory, uint64_t usedMemory);
     void initNetworkMeter(uint8_t xOffset, uint8_t yOffset);

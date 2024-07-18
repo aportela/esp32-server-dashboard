@@ -51,21 +51,27 @@ LGFX::LGFX(uint8_t SDA, uint8_t SCL, uint8_t CS, uint8_t DC, uint8_t RST)
 
     setPanel(&_panel_instance);
 
-    this->temperatureSprite = new lgfx::LGFX_Sprite(this);
-    this->temperatureSprite->createSprite(GRAPH_SPRITE_WIDTH, GRAPH_SPRITE_HEIGHT);
-    this->temperatureSprite->fillSprite(GRAPH_SPRITE_BACKGROUND);
+    this->cpuLoadSprite = new lgfx::LGFX_Sprite(this);
+    this->cpuLoadSprite->createSprite(GRAPH_SPRITE_WIDTH, GRAPH_SPRITE_HEIGHT);
+    this->cpuLoadSprite->fillSprite(GRAPH_SPRITE_BACKGROUND);
 
     this->memorySprite = new lgfx::LGFX_Sprite(this);
     this->memorySprite->createSprite(GRAPH_SPRITE_WIDTH, GRAPH_SPRITE_HEIGHT);
     this->memorySprite->fillSprite(GRAPH_SPRITE_BACKGROUND);
+
+    this->temperatureSprite = new lgfx::LGFX_Sprite(this);
+    this->temperatureSprite->createSprite(GRAPH_SPRITE_WIDTH, GRAPH_SPRITE_HEIGHT);
+    this->temperatureSprite->fillSprite(GRAPH_SPRITE_BACKGROUND);
 }
 
 LGFX::~LGFX()
 {
-    delete this->temperatureSprite;
-    this->temperatureSprite = nullptr;
+    delete this->cpuLoadSprite;
+    this->cpuLoadSprite = nullptr;
     delete this->memorySprite;
     this->memorySprite = nullptr;
+    delete this->temperatureSprite;
+    this->temperatureSprite = nullptr;
 }
 
 uint32_t LGFX::getTemperatureGradientColor(int8_t value)
@@ -93,6 +99,39 @@ uint32_t LGFX::getTemperatureGradientColor(int8_t value)
         int green = map(value, 67, 100, 255, 0);
         return this->color565(red, green, 0);
     }
+}
+
+void LGFX::initCPULoadMeter(uint8_t xOffset, uint8_t yOffset)
+{
+    // TODO: check axis & sprite bounds
+    this->drawFastVLine(xOffset, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
+    this->drawFastHLine(xOffset, yOffset + Y_AXIS_LENGTH, X_AXIS_LENGTH, AXIS_COLOR);
+
+    this->drawFastVLine(xOffset + X_AXIS_LENGTH, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
+    this->drawFastHLine(xOffset, yOffset, X_AXIS_LENGTH, AXIS_COLOR);
+
+    this->setCursor(xOffset + SCREEN_WIDTH - 110, yOffset);
+    this->setTextSize(2);
+    this->setTextColor(TFT_WHITE, TFT_BLACK);
+    this->setTextWrap(true);
+    this->print("CPU LOAD");
+    this->setTextSize(2);
+    this->setCursor(xOffset + SCREEN_WIDTH - 32, yOffset + 28);
+    this->print("%");
+}
+
+void LGFX::refreshCPULoadMeter(uint8_t xOffset, uint8_t yOffset, uint8_t load)
+{
+    this->cpuLoadSprite->scroll(-1, 0);
+    int32_t color = this->getTemperatureGradientColor(load);
+    // TODO: check axis & sprite bounds
+    this->cpuLoadSprite->drawFastVLine(GRAPH_SPRITE_WIDTH - 1, GRAPH_SPRITE_HEIGHT - (load / 2) + 1, (load / 2), color);
+    this->setCursor(xOffset + SCREEN_WIDTH - 92, yOffset + 30);
+    this->setTextSize(3);
+    this->setTextColor(color, TFT_BLACK);
+    this->setTextWrap(true);
+    this->printf("%03d", load);
+    this->cpuLoadSprite->pushSprite(xOffset + 2, yOffset + 2);
 }
 
 void LGFX::initMemoryMeter(uint8_t xOffset, uint8_t yOffset)

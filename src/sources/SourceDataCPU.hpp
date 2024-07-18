@@ -5,6 +5,8 @@
 
 class SourceDataCPU : public SourceData
 {
+public:
+    uint8_t globalCPULoad;
 };
 
 #endif

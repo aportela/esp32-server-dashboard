@@ -17,14 +17,16 @@ void setup()
     screen->init();
     screen->fillScreen(TFT_BLACK);
     screen->drawRect(0, 0, 320, 240, TFT_WHITE);
-    screen->initTemperatureMeter(10, 10);
-    screen->initMemoryMeter(10, 90);
+    screen->initCPULoadMeter(10, 10);
+    screen->initMemoryMeter(10, 70);
+    screen->initTemperatureMeter(10, 130);
     dummySRC = new DummySource();
 }
 
 void loop()
 {
-    screen->refreshTemperatureMeter(10, 10, dummySRC->getCurrentTemperature());
-    screen->refreshMemoryMeter(10, 90, dummySRC->getTotalMemory(), dummySRC->getUsedMemory());
+    screen->refreshCPULoadMeter(10, 10, dummySRC->getCurrentCPULoad());
+    screen->refreshMemoryMeter(10, 70, dummySRC->getTotalMemory(), dummySRC->getUsedMemory());
+    screen->refreshTemperatureMeter(10, 130, dummySRC->getCurrentTemperature());
     delay(50);
 }
