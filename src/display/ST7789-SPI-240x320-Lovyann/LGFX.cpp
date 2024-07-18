@@ -169,7 +169,7 @@ void LGFX::initMemoryMeter(uint8_t xOffset, uint8_t yOffset)
 void LGFX::refreshMemoryMeter(uint8_t xOffset, uint8_t yOffset, uint64_t usedMemory)
 {
     // TODO: check axis & sprite MAX_MEMORY
-    uint8_t mapped100 = map(usedMemory, MIN_MEMORY, MAX_CPU_LOAD, 0, 100);
+    uint8_t mapped100 = map(usedMemory, MIN_MEMORY, MAX_MEMORY, 0, 100);
     int32_t gradientColor = this->getTemperatureGradientFrom0To100(mapped100);
     uint8_t mappedGraphValue = map(usedMemory, MIN_MEMORY, MAX_MEMORY, 0, GRAPH_SPRITE_HEIGHT);
     // create graph animation moving sprite to left 1 pixel
@@ -205,9 +205,9 @@ void LGFX::initCPUTemperatureMeter(uint8_t xOffset, uint8_t yOffset)
 void LGFX::refreshCPUTemperatureMeter(uint8_t xOffset, uint8_t yOffset, uint8_t temperature)
 {
     // TODO: check axis & sprite bounds
-    uint8_t mapped100 = map(temperature, MIN_CPU_LOAD, MAX_CPU_LOAD, 0, 100);
+    uint8_t mapped100 = map(temperature, MIN_CPU_TEMPERATURE, MAX_CPU_TEMPERATURE, 0, 100);
     int32_t gradientColor = this->getTemperatureGradientFrom0To100(mapped100);
-    uint8_t mappedGraphValue = map(temperature, MIN_CPU_LOAD, MAX_CPU_LOAD, 0, GRAPH_SPRITE_HEIGHT);
+    uint8_t mappedGraphValue = map(temperature, MIN_CPU_TEMPERATURE, MAX_CPU_TEMPERATURE, 0, GRAPH_SPRITE_HEIGHT);
     // create graph animation moving sprite to left 1 pixel
     this->cpuTemperatureSprite->scroll(-1, 0);
     // draw new value (on right)
