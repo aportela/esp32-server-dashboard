@@ -5,7 +5,7 @@
 #define SCREEN_HEIGHT 240
 
 #define GRAPH_SPRITE_WIDTH 200
-#define GRAPH_SPRITE_HEIGHT 36
+#define GRAPH_SPRITE_HEIGHT 30
 #define GRAPH_SPRITE_BACKGROUND TFT_BLACK
 
 #define X_AXIS_LENGTH GRAPH_SPRITE_WIDTH + 4
@@ -121,10 +121,10 @@ void LGFX::initCPULoadMeter(uint8_t xOffset, uint8_t yOffset)
     this->drawFastVLine(xOffset, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
     this->drawFastHLine(xOffset, yOffset + Y_AXIS_LENGTH, X_AXIS_LENGTH, AXIS_COLOR);
 
-    this->drawFastVLine(xOffset + X_AXIS_LENGTH, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
+    this->drawFastVLine(xOffset + X_AXIS_LENGTH - 1, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
     this->drawFastHLine(xOffset, yOffset, X_AXIS_LENGTH, AXIS_COLOR);
 
-    this->setCursor(xOffset + SCREEN_WIDTH - 110, yOffset);
+    this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset);
     this->setTextSize(2);
     this->setTextColor(TFT_WHITE, TFT_BLACK);
     this->print("CPU LOAD");
@@ -143,7 +143,7 @@ void LGFX::refreshCPULoadMeter(uint8_t xOffset, uint8_t yOffset, uint8_t load)
     if (load != this->oldCPULoad)
     {
         this->setCursor(xOffset + SCREEN_WIDTH - 92, yOffset + 20);
-        this->setTextSize(3);
+        this->setTextSize(2);
         this->setTextColor(gradientColor, TFT_BLACK);
         this->printf("%03d%%", load);
         this->cpuLoadSprite->pushSprite(xOffset + 2, yOffset + 2);
@@ -157,10 +157,10 @@ void LGFX::initMemoryMeter(uint8_t xOffset, uint8_t yOffset)
     this->drawFastVLine(xOffset, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
     this->drawFastHLine(xOffset, yOffset + Y_AXIS_LENGTH, X_AXIS_LENGTH, AXIS_COLOR);
 
-    this->drawFastVLine(xOffset + X_AXIS_LENGTH, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
+    this->drawFastVLine(xOffset + X_AXIS_LENGTH - 1, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
     this->drawFastHLine(xOffset, yOffset, X_AXIS_LENGTH, AXIS_COLOR);
 
-    this->setCursor(xOffset + SCREEN_WIDTH - 110, yOffset);
+    this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset);
     this->setTextSize(2);
     this->setTextColor(TFT_WHITE, TFT_BLACK);
     this->print("USED MEM");
@@ -179,7 +179,7 @@ void LGFX::refreshMemoryMeter(uint8_t xOffset, uint8_t yOffset, uint64_t usedMem
     if (usedMemory != this->oldUsedMemory)
     {
         this->setCursor(xOffset + SCREEN_WIDTH - 92, yOffset + 20);
-        this->setTextSize(3);
+        this->setTextSize(2);
         this->setTextColor(gradientColor, TFT_BLACK);
         this->printf("%03dGb", usedMemory);
         this->memorySprite->pushSprite(xOffset + 2, yOffset + 2);
@@ -193,10 +193,10 @@ void LGFX::initCPUTemperatureMeter(uint8_t xOffset, uint8_t yOffset)
     this->drawFastVLine(xOffset, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
     this->drawFastHLine(xOffset, yOffset + Y_AXIS_LENGTH, X_AXIS_LENGTH, AXIS_COLOR);
 
-    this->drawFastVLine(xOffset + X_AXIS_LENGTH, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
+    this->drawFastVLine(xOffset + X_AXIS_LENGTH - 1, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
     this->drawFastHLine(xOffset, yOffset, X_AXIS_LENGTH, AXIS_COLOR);
 
-    this->setCursor(xOffset + SCREEN_WIDTH - 110, yOffset);
+    this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset);
     this->setTextSize(2);
     this->setTextColor(TFT_WHITE, TFT_BLACK);
     this->print("CPU TEMP");
@@ -215,7 +215,7 @@ void LGFX::refreshCPUTemperatureMeter(uint8_t xOffset, uint8_t yOffset, uint8_t 
     if (temperature != this->oldCPUTemperature)
     {
         this->setCursor(xOffset + SCREEN_WIDTH - 92, yOffset + 20);
-        this->setTextSize(3);
+        this->setTextSize(2);
         this->setTextColor(gradientColor, TFT_BLACK);
         this->printf("%03dC", temperature);
         this->cpuTemperatureSprite->pushSprite(xOffset + 2, yOffset + 2);
