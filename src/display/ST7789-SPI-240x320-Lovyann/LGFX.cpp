@@ -40,10 +40,16 @@ LGFX::LGFX(uint8_t SDA, uint8_t SCL, uint8_t CS, uint8_t DC, uint8_t RST)
     _panel_instance.config(cfg_panel);
 
     setPanel(&_panel_instance);
+
+    this->temperatureSprite = new lgfx::LGFX_Sprite(this);
+    this->temperatureSprite->createSprite(200, 100);
+    this->temperatureSprite->fillSprite(TFT_BLACK);
 }
 
 LGFX::~LGFX()
 {
+    delete this->temperatureSprite;
+    this->temperatureSprite = nullptr;
 }
 
 uint32_t LGFX::getGradientColor(int8_t value)
@@ -89,4 +95,17 @@ void LGFX::initTemperatureMeter(uint8_t xOffset, uint8_t yOffset)
 {
     this->drawFastVLine(xOffset, yOffset, 100, AXIS_COLOR);
     this->drawFastHLine(xOffset, yOffset + 100, 200, AXIS_COLOR);
+}
+
+void LGFX::refreshTemperatureMeter(uint8_t temperature)
+{
+    this->temperatureSprite->scroll(-1, 0);
+    int32_t color = this->getGradientColor(temperature);
+    this->temperatureSprite->drawFastVLine(199, 98 - temperature, temperature, color);
+    this->setCursor(260, 2);
+    this->setTextSize(3);
+    this->setTextColor(color, TFT_BLACK);
+    this->setTextWrap(true);
+    this->printf("%02dc", temperature);
+    this->temperatureSprite->pushSprite(12, 100);
 }
