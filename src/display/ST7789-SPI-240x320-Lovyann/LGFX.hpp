@@ -8,10 +8,11 @@ private:
     lgfx::Bus_SPI _bus_instance;
     lgfx::LGFX_Sprite *temperatureSprite = nullptr;
 
+    uint32_t getTemperatureGradientColor(int8_t value);
+
 public:
     LGFX(uint8_t SDA, uint8_t SCL, uint8_t CS, uint8_t DC, uint8_t RST);
     ~LGFX();
-    uint32_t getGradientColor(int8_t value);
     void initCPUMeter(uint8_t xOffset, uint8_t yOffset);
     void initMemoryMeter(uint8_t xOffset, uint8_t yOffset);
     void initNetworkMeter(uint8_t xOffset, uint8_t yOffset);
