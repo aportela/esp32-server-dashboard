@@ -8,12 +8,11 @@ DummySource::DummySource(void)
     this->currentCPULoad = new SourceDataCPULoad(MIN_CPU_LOAD, MAX_CPU_LOAD);
     this->currentCPULoad->setCurrent(random(MIN_CPU_LOAD, MAX_CPU_LOAD));
 
-    this->currentMemory = new SourceDataMemory();
-    this->currentTemperature = new SourceDataTemperature();
+    this->currentMemory = new SourceDataMemory(MIN_MEMORY, MAX_MEMORY);
+    this->currentMemory->setCurrent(random(MIN_MEMORY, MAX_MEMORY));
 
-    this->currentMemory->totalMemory = 32; // 32000000000; // 32 Gbytes (to bytes)
-    this->currentMemory->usedMemory = random(this->currentMemory->totalMemory / 3, this->currentMemory->totalMemory);
-    this->currentTemperature->globalTemperature = random(20, 80);
+    this->currentCPUTemperature = new SourceDataCPUTemperature(MIN_CPU_TEMPERATURE, MAX_CPU_TEMPERATURE);
+    this->currentCPUTemperature->setCurrent(random(MIN_CPU_TEMPERATURE, MAX_CPU_TEMPERATURE));
 }
 
 DummySource::~DummySource()
@@ -22,8 +21,8 @@ DummySource::~DummySource()
     this->currentCPULoad = nullptr;
     delete this->currentMemory;
     this->currentMemory = nullptr;
-    delete this->currentTemperature;
-    this->currentTemperature = nullptr;
+    delete this->currentCPUTemperature;
+    this->currentCPUTemperature = nullptr;
 }
 
 uint8_t DummySource::getCurrentCPULoad(void)
@@ -44,39 +43,43 @@ uint8_t DummySource::getCurrentCPULoad(void)
     return (current);
 }
 
-uint8_t DummySource::getCurrentTemperature(void)
-{
-    if (random(0, 20) % 2 == 0)
-    {
-        if (this->currentTemperature->globalTemperature < 99)
-        {
-            this->currentTemperature->globalTemperature++;
-        }
-    }
-    else if (this->currentTemperature->globalTemperature > 1)
-    {
-        this->currentTemperature->globalTemperature--;
-    }
-    return (this->currentTemperature->globalTemperature);
-}
-
 uint64_t DummySource::getTotalMemory(void)
 {
-    return (this->currentMemory->totalMemory);
+    return (this->currentMemory->getMax());
 }
 
 uint64_t DummySource::getUsedMemory(void)
 {
+    uint8_t current = this->currentMemory->getCurrent();
     if (random(0, 20) % 2 == 0)
     {
-        if (this->currentMemory->usedMemory < this->currentMemory->totalMemory)
+        if (current < MAX_MEMORY)
         {
-            this->currentMemory->usedMemory++;
+            current++;
         }
     }
-    else if (this->currentMemory->usedMemory > 1)
+    else if (current > MIN_MEMORY)
     {
-        this->currentMemory->usedMemory--;
+        current--;
     }
-    return (this->currentMemory->usedMemory);
+    this->currentMemory->setCurrent(current);
+    return (current);
+}
+
+uint8_t DummySource::getCurrentCPUTemperature(void)
+{
+    uint8_t current = this->currentCPUTemperature->getCurrent();
+    if (random(0, 20) % 2 == 0)
+    {
+        if (current < MAX_CPU_TEMPERATURE)
+        {
+            current++;
+        }
+    }
+    else if (current > MIN_CPU_TEMPERATURE)
+    {
+        current--;
+    }
+    this->currentCPUTemperature->setCurrent(current);
+    return (current);
 }

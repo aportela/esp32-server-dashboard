@@ -5,9 +5,10 @@
 
 class SourceDataMemory : public SourceData
 {
+
 public:
-    uint64_t totalMemory;
-    uint64_t usedMemory;
+    SourceDataMemory(uint8_t min, uint8_t max);
+    ~SourceDataMemory();
 };
 
 #endif
