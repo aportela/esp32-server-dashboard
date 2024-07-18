@@ -13,6 +13,7 @@ class DummySource : public ISource
 {
 private:
     SourceDataTemperature *currentTemperature;
+    SourceDataMemory *currentMemory;
     SourceDataCPU getCurrentCPU(void);
     SourceDataMemory getCurrentMemory(void);
     SourceDataNetwork getCurrentNetwork(void);
@@ -22,6 +23,8 @@ public:
     ~DummySource();
     SourceData getCurrent(SourceDataType entity) override;
     uint8_t getCurrentTemperature(void);
+    uint64_t getTotalMemory(void);
+    uint64_t getUsedMemory(void);
 };
 
 #endif

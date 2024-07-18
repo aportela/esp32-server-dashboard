@@ -5,6 +5,9 @@
 
 class SourceDataMemory : public SourceData
 {
+public:
+    uint64_t totalMemory;
+    uint64_t usedMemory;
 };
 
 #endif

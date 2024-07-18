@@ -5,6 +5,8 @@
 
 class SourceDataTemperature : public SourceData
 {
+public:
+    uint8_t globalTemperature;
 };
 
 #endif

@@ -7,6 +7,7 @@ private:
     lgfx::Panel_ST7789 _panel_instance;
     lgfx::Bus_SPI _bus_instance;
     lgfx::LGFX_Sprite *temperatureSprite = nullptr;
+    lgfx::LGFX_Sprite *memorySprite = nullptr;
 
     uint32_t getTemperatureGradientColor(int8_t value);
 
@@ -15,8 +16,8 @@ public:
     ~LGFX();
     void initCPUMeter(uint8_t xOffset, uint8_t yOffset);
     void initMemoryMeter(uint8_t xOffset, uint8_t yOffset);
+    void refreshMemoryMeter(uint8_t xOffset, uint8_t yOffset, uint64_t totalMemory, uint64_t usedMemory);
     void initNetworkMeter(uint8_t xOffset, uint8_t yOffset);
     void initTemperatureMeter(uint8_t xOffset, uint8_t yOffset);
-
     void refreshTemperatureMeter(uint8_t xOffset, uint8_t yOffset, uint8_t temperature);
 };
