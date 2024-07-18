@@ -17,5 +17,5 @@ public:
     void initNetworkMeter(uint8_t xOffset, uint8_t yOffset);
     void initTemperatureMeter(uint8_t xOffset, uint8_t yOffset);
 
-    void refreshTemperatureMeter(uint8_t temperature);
+    void refreshTemperatureMeter(uint8_t xOffset, uint8_t yOffset, uint8_t temperature);
 };

@@ -17,11 +17,11 @@ void setup()
     screen->init();
     screen->fillScreen(TFT_BLACK);
     screen->drawRect(0, 0, 320, 240, TFT_WHITE);
-    screen->initTemperatureMeter(10, 100);
+    screen->initTemperatureMeter(10, 10);
     dummySRC = new DummySource();
 }
 
 void loop()
 {
-    screen->refreshTemperatureMeter(dummySRC->getCurrentTemperature());
+    screen->refreshTemperatureMeter(10, 10, dummySRC->getCurrentTemperature());
 }

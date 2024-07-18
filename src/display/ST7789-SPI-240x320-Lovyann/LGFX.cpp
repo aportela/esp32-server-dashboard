@@ -97,15 +97,15 @@ void LGFX::initTemperatureMeter(uint8_t xOffset, uint8_t yOffset)
     this->drawFastHLine(xOffset, yOffset + 100, 200, AXIS_COLOR);
 }
 
-void LGFX::refreshTemperatureMeter(uint8_t temperature)
+void LGFX::refreshTemperatureMeter(uint8_t xOffset, uint8_t yOffset, uint8_t temperature)
 {
     this->temperatureSprite->scroll(-1, 0);
     int32_t color = this->getGradientColor(temperature);
     this->temperatureSprite->drawFastVLine(199, 98 - temperature, temperature, color);
-    this->setCursor(260, 2);
+    this->setCursor(xOffset + 240, yOffset);
     this->setTextSize(3);
     this->setTextColor(color, TFT_BLACK);
     this->setTextWrap(true);
     this->printf("%02dc", temperature);
-    this->temperatureSprite->pushSprite(12, 100);
+    this->temperatureSprite->pushSprite(xOffset + 3, yOffset);
 }
