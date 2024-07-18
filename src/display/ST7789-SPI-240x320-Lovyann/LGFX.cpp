@@ -1,5 +1,11 @@
 #include "LGFX.hpp"
 
+#define SCREEN_WIDTH 320
+#define SCREEN_HEIGHT 240
+
+#define X_AXIS_LENGTH 200
+#define Y_AXIS_LENGTH 100
+
 #define AXIS_COLOR TFT_WHITE
 
 LGFX::LGFX(uint8_t SDA, uint8_t SCL, uint8_t CS, uint8_t DC, uint8_t RST)
@@ -93,16 +99,16 @@ void LGFX::initNetworkMeter(uint8_t xOffset, uint8_t yOffset)
 
 void LGFX::initTemperatureMeter(uint8_t xOffset, uint8_t yOffset)
 {
-    this->drawFastVLine(xOffset, yOffset, 100, AXIS_COLOR);
-    this->drawFastHLine(xOffset, yOffset + 100, 200, AXIS_COLOR);
+    this->drawFastVLine(xOffset, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
+    this->drawFastHLine(xOffset, yOffset + Y_AXIS_LENGTH, X_AXIS_LENGTH, AXIS_COLOR);
 }
 
 void LGFX::refreshTemperatureMeter(uint8_t xOffset, uint8_t yOffset, uint8_t temperature)
 {
     this->temperatureSprite->scroll(-1, 0);
     int32_t color = this->getGradientColor(temperature);
-    this->temperatureSprite->drawFastVLine(199, 98 - temperature, temperature, color);
-    this->setCursor(xOffset + 240, yOffset);
+    this->temperatureSprite->drawFastVLine(X_AXIS_LENGTH - 1, Y_AXIS_LENGTH - 2 - temperature, temperature, color);
+    this->setCursor(xOffset + SCREEN_WIDTH - 80, yOffset);
     this->setTextSize(3);
     this->setTextColor(color, TFT_BLACK);
     this->setTextWrap(true);
