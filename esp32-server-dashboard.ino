@@ -24,4 +24,5 @@ void setup()
 void loop()
 {
     screen->refreshTemperatureMeter(10, 10, dummySRC->getCurrentTemperature());
+    delay(50);
 }
