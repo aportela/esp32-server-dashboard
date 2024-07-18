@@ -4,7 +4,7 @@
 #define SCREEN_HEIGHT 240
 
 #define X_AXIS_LENGTH 200
-#define Y_AXIS_LENGTH 100
+#define Y_AXIS_LENGTH 50
 
 #define AXIS_COLOR TFT_WHITE
 
@@ -107,7 +107,7 @@ void LGFX::refreshTemperatureMeter(uint8_t xOffset, uint8_t yOffset, uint8_t tem
 {
     this->temperatureSprite->scroll(-1, 0);
     int32_t color = this->getGradientColor(temperature);
-    this->temperatureSprite->drawFastVLine(X_AXIS_LENGTH - 1, Y_AXIS_LENGTH - 2 - temperature, temperature, color);
+    this->temperatureSprite->drawFastVLine(X_AXIS_LENGTH - 1, Y_AXIS_LENGTH - 2 - (temperature / 2), (temperature / 2), color);
     this->setCursor(xOffset + SCREEN_WIDTH - 80, yOffset);
     this->setTextSize(3);
     this->setTextColor(color, TFT_BLACK);
