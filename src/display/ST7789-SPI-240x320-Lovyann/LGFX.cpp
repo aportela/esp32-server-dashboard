@@ -62,6 +62,7 @@ LGFX::LGFX(uint8_t SDA, uint8_t SCL, uint8_t CS, uint8_t DC, uint8_t RST)
     this->temperatureSprite = new lgfx::LGFX_Sprite(this);
     this->temperatureSprite->createSprite(GRAPH_SPRITE_WIDTH, GRAPH_SPRITE_HEIGHT);
     this->temperatureSprite->fillSprite(GRAPH_SPRITE_BACKGROUND);
+    this->startMillis = millis();
 }
 
 LGFX::~LGFX()
@@ -205,4 +206,13 @@ void LGFX::refreshTemperatureMeter(uint8_t xOffset, uint8_t yOffset, uint8_t tem
     this->setTextWrap(true);
     this->printf("%03d", temperature);
     this->temperatureSprite->pushSprite(xOffset + 2, yOffset + 2);
+}
+
+void LGFX::refreshDebug(uint8_t xOffset, uint8_t yOffset)
+{
+    this->setCursor(xOffset, yOffset);
+    this->setTextSize(1);
+    this->setTextColor(TFT_WHITE, TFT_BLACK);
+    this->setTextWrap(true);
+    this->printf("Running seconds: %08d", (millis() - this->startMillis) / 1000);
 }

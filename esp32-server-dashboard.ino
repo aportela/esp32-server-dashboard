@@ -28,5 +28,6 @@ void loop()
     screen->refreshCPULoadMeter(10, 10, dummySRC->getCurrentCPULoad());
     screen->refreshMemoryMeter(10, 70, dummySRC->getTotalMemory(), dummySRC->getUsedMemory());
     screen->refreshTemperatureMeter(10, 130, dummySRC->getCurrentTemperature());
+    screen->refreshDebug(5, 230);
     delay(50);
 }
