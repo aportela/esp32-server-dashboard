@@ -17,33 +17,21 @@
 #define MAX_NETWORK_UPLOAD_BANDWITH 512000000 // Mbytes
 
 #include <stdint.h>
-#include "../ISource.hpp"
-#include "../SourceData.hpp"
-#include "../SourceDataCPULoad.hpp"
-#include "../SourceDataMemory.hpp"
-#include "../SourceDataNetworkUsedBandwith.hpp"
-#include "../SourceDataCPUTemperature.hpp"
+#include "../Source.hpp"
 
-class DummySource : public ISource
+class DummySource : public Source
 {
-private:
-    SourceDataCPULoad *currentCPULoad;
-    SourceDataMemory *currentMemory;
-    SourceDataCPUTemperature *currentCPUTemperature;
-    SourceDataNetworkUsedBandwith *currentNetworkDownloadBandwith;
-    SourceDataNetworkUsedBandwith *currentNetworkUploadBandwith;
-
 public:
     DummySource();
     ~DummySource();
-    uint8_t getCurrentCPULoad(void);
-    uint64_t getTotalMemory(void);
-    uint64_t getUsedMemory(void);
-    uint8_t getCurrentCPUTemperature(void);
-    uint64_t getTotalNetworkDownloadBandwith(void);
-    uint64_t getUsedNetworkDownloadBandwith(void);
-    uint64_t getTotalNetworkUploadBandwith(void);
-    uint64_t getUsedNetworkUploadBandwith(void);
+    uint64_t getCurrentCPULoad(void) override;
+    uint64_t getTotalMemory(void) override;
+    uint64_t getUsedMemory(void) override;
+    uint64_t getCurrentCPUTemperature(void) override;
+    uint64_t getTotalNetworkDownloadBandwith(void) override;
+    uint64_t getUsedNetworkDownloadBandwith(void) override;
+    uint64_t getTotalNetworkUploadBandwith(void) override;
+    uint64_t getUsedNetworkUploadBandwith(void) override;
 };
 
 #endif

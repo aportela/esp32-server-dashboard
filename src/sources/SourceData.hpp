@@ -3,14 +3,6 @@
 
 #include <stdint.h>
 
-enum SourceDataType
-{
-    SDT_CPU,
-    SDT_MEMORY,
-    SDT_NETWORK,
-    SDT_TEMPERATURE
-};
-
 class SourceData
 {
 private:

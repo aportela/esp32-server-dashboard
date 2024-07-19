@@ -1,7 +1,7 @@
 #include <LovyanGFX.hpp>
 #include <stdint.h>
 #include "../FPSDebug.hpp"
-// #include "../../sources/ISource.hpp"
+#include "../../sources/ISource.hpp"
 
 class LGFX : public lgfx::LGFX_Device
 {
@@ -23,6 +23,7 @@ private:
     uint64_t oldUsedMemory;
     uint64_t oldNetworkDownloadBandwith;
     uint64_t oldNetworkUploadBandwith;
+    ISource *source;
 
     uint32_t getTemperatureGradientFrom0To100(int8_t value);
     void refreshGraphSprite(lgfx::LGFX_Sprite *sprite, uint8_t valueMappedTo100, int32_t color, uint16_t xOffset, uint16_t yOffset);
@@ -30,6 +31,7 @@ private:
 public:
     LGFX(uint8_t PIN_SDA, uint8_t PIN_SCL, uint8_t PIN_CS, uint8_t PIN_DC, uint8_t PIN_RST, uint16_t width, uint16_t height, uint8_t rotation);
     ~LGFX();
+    void setSource(ISource *src);
     void initCPULoadMeter(uint16_t xOffset, uint16_t yOffset);
     void refreshCPULoadMeter(uint16_t xOffset, uint16_t yOffset, uint8_t load);
     void initMemoryMeter(uint16_t xOffset, uint16_t yOffset);

@@ -1,13 +1,22 @@
-#ifndef ESP32_SERVER_DASHBOARD_SOURCE_INTERFACE
-#define ESP32_SERVER_DASHBOARD_SOURCE_INTERFACE
+#ifndef ESP32_SERVER_DASHBOARD_SOURCE
+#define ESP32_SERVER_DASHBOARD_SOURCE
 
 #include <stdint.h>
+#include "ISource.hpp"
 #include "SourceData.hpp"
 
-class ISource
+class Source : public ISource
 {
+protected:
+    SourceData *currentCPULoad;
+    SourceData *currentMemory;
+    SourceData *currentCPUTemperature;
+    SourceData *currentNetworkDownloadBandwith;
+    SourceData *currentNetworkUploadBandwith;
+
 public:
-    virtual ~ISource() {}
+    Source();
+    ~Source();
     virtual uint64_t getCurrentCPULoad(void) = 0;
     virtual uint64_t getTotalMemory(void) = 0;
     virtual uint64_t getUsedMemory(void) = 0;

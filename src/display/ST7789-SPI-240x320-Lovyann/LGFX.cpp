@@ -104,6 +104,11 @@ LGFX::~LGFX()
     this->fpsDebug = nullptr;
 }
 
+void LGFX::setSource(ISource *src)
+{
+    this->source = src;
+}
+
 uint32_t LGFX::getTemperatureGradientFrom0To100(int8_t value)
 {
     value = constrain(value, 0, 100);

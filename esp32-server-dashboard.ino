@@ -21,13 +21,15 @@ LGFX *screen = nullptr;
 #error NO_DISPLAY_DRIVER
 #endif
 
+#include "src/sources/Source.hpp"
 #include "src/sources/dummy/DummySource.hpp"
 
-DummySource *dummySRC = nullptr;
+Source *dummySRC = nullptr;
 
 void setup()
 {
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
+    dummySRC = new DummySource();
     screen = new LGFX(PIN_SDA, PIN_SCL, PIN_CS, PIN_DC, PIN_RST, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_ROTATION);
     screen->init();
     screen->fillScreen(TFT_BLACK);
@@ -37,7 +39,7 @@ void setup()
     screen->initCPUTemperatureMeter(0, 84);
     screen->initNetworkDownloadBandwithMeter(0, 126);
     screen->initNetworkUploadBandwithMeter(0, 168);
-    dummySRC = new DummySource();
+    screen->setSource(dummySRC);
 #endif
 }
 
