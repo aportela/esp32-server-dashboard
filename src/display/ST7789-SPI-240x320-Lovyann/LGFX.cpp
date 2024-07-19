@@ -191,15 +191,9 @@ void LGFX::initMemoryMeter(uint16_t xOffset, uint16_t yOffset)
 
 void LGFX::refreshMemoryMeter(uint16_t xOffset, uint16_t yOffset, uint64_t usedMemory)
 {
-    // TODO: check axis & sprite MAX
     uint8_t mapped100 = map(usedMemory, MIN_MEMORY, MAX_MEMORY, 0, 100);
     int32_t gradientColor = this->getTemperatureGradientFrom0To100(mapped100);
-    uint8_t mappedGraphValue = map(usedMemory, MIN_MEMORY, MAX_MEMORY, 0, GRAPH_SPRITE_HEIGHT);
-    // create graph animation moving sprite to left 1 pixel
-    this->memorySprite->scroll(-1, 0);
-    // draw new value (on right)
-    this->memorySprite->drawFastVLine(GRAPH_SPRITE_WIDTH - 1, GRAPH_SPRITE_HEIGHT - mappedGraphValue + 1, mappedGraphValue, gradientColor);
-    this->memorySprite->pushSprite(xOffset + 2, yOffset + 2);
+    this->refreshGraphSprite(this->memorySprite, mapped100, gradientColor, xOffset, yOffset);
     if (usedMemory != this->oldUsedMemory)
     {
         this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset + 20);
@@ -228,15 +222,9 @@ void LGFX::initCPUTemperatureMeter(uint16_t xOffset, uint16_t yOffset)
 
 void LGFX::refreshCPUTemperatureMeter(uint16_t xOffset, uint16_t yOffset, uint8_t temperature)
 {
-    // TODO: check axis & sprite bounds
     uint8_t mapped100 = map(temperature, MIN_CPU_TEMPERATURE, MAX_CPU_TEMPERATURE, 0, 100);
     int32_t gradientColor = this->getTemperatureGradientFrom0To100(mapped100);
-    uint8_t mappedGraphValue = map(temperature, MIN_CPU_TEMPERATURE, MAX_CPU_TEMPERATURE, 0, GRAPH_SPRITE_HEIGHT);
-    // create graph animation moving sprite to left 1 pixel
-    this->cpuTemperatureSprite->scroll(-1, 0);
-    // draw new value (on right)
-    this->cpuTemperatureSprite->drawFastVLine(GRAPH_SPRITE_WIDTH - 1, GRAPH_SPRITE_HEIGHT - mappedGraphValue + 1, mappedGraphValue, gradientColor);
-    this->cpuTemperatureSprite->pushSprite(xOffset + 2, yOffset + 2);
+    this->refreshGraphSprite(this->cpuTemperatureSprite, mapped100, gradientColor, xOffset, yOffset);
     if (temperature != this->oldCPUTemperature)
     {
         this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset + 20);
