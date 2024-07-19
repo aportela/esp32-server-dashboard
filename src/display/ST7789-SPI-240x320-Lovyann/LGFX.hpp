@@ -26,6 +26,7 @@ private:
     ISource *source;
 
     uint32_t getTemperatureGradientFrom0To100(int8_t value);
+    void initGraph(uint16_t xOffset, uint16_t yOffset, char *label);
     void refreshGraphSprite(lgfx::LGFX_Sprite *sprite, uint8_t valueMappedTo100, int32_t color, uint16_t xOffset, uint16_t yOffset);
 
 public:

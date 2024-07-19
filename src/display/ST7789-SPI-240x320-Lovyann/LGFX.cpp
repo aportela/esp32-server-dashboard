@@ -136,6 +136,21 @@ uint32_t LGFX::getTemperatureGradientFrom0To100(int8_t value)
     }
 }
 
+void LGFX::initGraph(uint16_t xOffset, uint16_t yOffset, char *label)
+{
+    // TODO: check axis & sprite bounds
+    this->drawFastVLine(xOffset, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
+    this->drawFastHLine(xOffset, yOffset + Y_AXIS_LENGTH, X_AXIS_LENGTH, AXIS_COLOR);
+
+    this->drawFastVLine(xOffset + X_AXIS_LENGTH - 1, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
+    this->drawFastHLine(xOffset, yOffset, X_AXIS_LENGTH, AXIS_COLOR);
+
+    this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset);
+    this->setTextSize(GRAPH_LABEL_FONT_SIZE);
+    this->setTextColor(TFT_WHITE, TFT_BLACK);
+    this->print(label);
+}
+
 void LGFX::refreshGraphSprite(lgfx::LGFX_Sprite *sprite, uint8_t valueMappedTo100, int32_t color, uint16_t xOffset, uint16_t yOffset)
 {
     uint8_t mappedGraphValue = map(valueMappedTo100, 0, 100, 0, GRAPH_SPRITE_HEIGHT);
@@ -149,17 +164,8 @@ void LGFX::refreshGraphSprite(lgfx::LGFX_Sprite *sprite, uint8_t valueMappedTo10
 
 void LGFX::initCPULoadMeter(uint16_t xOffset, uint16_t yOffset)
 {
-    // TODO: check axis & sprite bounds
-    this->drawFastVLine(xOffset, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
-    this->drawFastHLine(xOffset, yOffset + Y_AXIS_LENGTH, X_AXIS_LENGTH, AXIS_COLOR);
-
-    this->drawFastVLine(xOffset + X_AXIS_LENGTH - 1, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
-    this->drawFastHLine(xOffset, yOffset, X_AXIS_LENGTH, AXIS_COLOR);
-
-    this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset);
-    this->setTextSize(GRAPH_LABEL_FONT_SIZE);
-    this->setTextColor(TFT_WHITE, TFT_BLACK);
-    this->print("CPU LOAD");
+    char *label = "CPU LOAD";
+    this->initGraph(xOffset, yOffset, label);
 }
 
 void LGFX::refreshCPULoadMeter(uint16_t xOffset, uint16_t yOffset, uint8_t load)
@@ -179,17 +185,8 @@ void LGFX::refreshCPULoadMeter(uint16_t xOffset, uint16_t yOffset, uint8_t load)
 
 void LGFX::initMemoryMeter(uint16_t xOffset, uint16_t yOffset)
 {
-    // TODO: check axis & sprite bounds
-    this->drawFastVLine(xOffset, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
-    this->drawFastHLine(xOffset, yOffset + Y_AXIS_LENGTH, X_AXIS_LENGTH, AXIS_COLOR);
-
-    this->drawFastVLine(xOffset + X_AXIS_LENGTH - 1, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
-    this->drawFastHLine(xOffset, yOffset, X_AXIS_LENGTH, AXIS_COLOR);
-
-    this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset);
-    this->setTextSize(GRAPH_LABEL_FONT_SIZE);
-    this->setTextColor(TFT_WHITE, TFT_BLACK);
-    this->print("USED Memory");
+    char *label = "USED Memory";
+    this->initGraph(xOffset, yOffset, label);
     this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset + 20);
     this->print("000GB / 032GB");
 }
@@ -212,17 +209,8 @@ void LGFX::refreshMemoryMeter(uint16_t xOffset, uint16_t yOffset, uint64_t usedM
 
 void LGFX::initCPUTemperatureMeter(uint16_t xOffset, uint16_t yOffset)
 {
-    // TODO: check axis & sprite bounds
-    this->drawFastVLine(xOffset, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
-    this->drawFastHLine(xOffset, yOffset + Y_AXIS_LENGTH, X_AXIS_LENGTH, AXIS_COLOR);
-
-    this->drawFastVLine(xOffset + X_AXIS_LENGTH - 1, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
-    this->drawFastHLine(xOffset, yOffset, X_AXIS_LENGTH, AXIS_COLOR);
-
-    this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset);
-    this->setTextSize(GRAPH_LABEL_FONT_SIZE);
-    this->setTextColor(TFT_WHITE, TFT_BLACK);
-    this->print("CPU Temperature");
+    char *label = "CPU Temperature";
+    this->initGraph(xOffset, yOffset, label);
 }
 
 void LGFX::refreshCPUTemperatureMeter(uint16_t xOffset, uint16_t yOffset, uint8_t temperature)
@@ -242,17 +230,8 @@ void LGFX::refreshCPUTemperatureMeter(uint16_t xOffset, uint16_t yOffset, uint8_
 
 void LGFX::initNetworkDownloadBandwithMeter(uint16_t xOffset, uint16_t yOffset)
 {
-    // TODO: check axis & sprite bounds
-    this->drawFastVLine(xOffset, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
-    this->drawFastHLine(xOffset, yOffset + Y_AXIS_LENGTH, X_AXIS_LENGTH, AXIS_COLOR);
-
-    this->drawFastVLine(xOffset + X_AXIS_LENGTH - 1, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
-    this->drawFastHLine(xOffset, yOffset, X_AXIS_LENGTH, AXIS_COLOR);
-
-    this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset);
-    this->setTextSize(GRAPH_LABEL_FONT_SIZE);
-    this->setTextColor(TFT_WHITE, TFT_BLACK);
-    this->print("WAN Download");
+    char *label = "WAN Download";
+    this->initGraph(xOffset, yOffset, label);
     // TODO: fixed max
     this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset + 20);
     this->print("000MB / 512MB");
@@ -293,17 +272,8 @@ void LGFX::refreshNetworkDownloadBandwithMeter(uint16_t xOffset, uint16_t yOffse
 
 void LGFX::initNetworkUploadBandwithMeter(uint16_t xOffset, uint16_t yOffset)
 {
-    // TODO: check axis & sprite bounds
-    this->drawFastVLine(xOffset, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
-    this->drawFastHLine(xOffset, yOffset + Y_AXIS_LENGTH, X_AXIS_LENGTH, AXIS_COLOR);
-
-    this->drawFastVLine(xOffset + X_AXIS_LENGTH - 1, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
-    this->drawFastHLine(xOffset, yOffset, X_AXIS_LENGTH, AXIS_COLOR);
-
-    this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset);
-    this->setTextSize(GRAPH_LABEL_FONT_SIZE);
-    this->setTextColor(TFT_WHITE, TFT_BLACK);
-    this->print("WAN Upload");
+    char *label = "WAN Upload";
+    this->initGraph(xOffset, yOffset, label);
     // TODO: fixed max
     this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset + 20);
     this->print("000MB / 512MB");
