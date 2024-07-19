@@ -18,10 +18,10 @@ DummySource::DummySource(void)
     this->currentMemory->setCurrent(random(MIN_MEMORY, MAX_MEMORY));
 
     this->currentNetworkDownloadBandwith = new SourceDataNetworkUsedBandwith(MIN_NETWORK_DOWNLOAD_BANDWITH, MAX_NETWORK_DOWNLOAD_BANDWITH);
-    this->currentNetworkDownloadBandwith->setCurrent(random(MIN_NETWORK_DOWNLOAD_BANDWITH, MAX_NETWORK_DOWNLOAD_BANDWITH));
+    this->currentNetworkDownloadBandwith->setCurrent(MAX_NETWORK_DOWNLOAD_BANDWITH / (random(1, 5) * 2));
 
     this->currentNetworkUploadBandwith = new SourceDataNetworkUsedBandwith(MIN_NETWORK_UPLOAD_BANDWITH, MAX_NETWORK_UPLOAD_BANDWITH);
-    this->currentNetworkUploadBandwith->setCurrent(random(MIN_NETWORK_UPLOAD_BANDWITH, MAX_NETWORK_UPLOAD_BANDWITH));
+    this->currentNetworkUploadBandwith->setCurrent(MAX_NETWORK_DOWNLOAD_BANDWITH / (random(1, 5) * 2));
 }
 
 DummySource::~DummySource()
@@ -104,17 +104,17 @@ uint64_t DummySource::getTotalNetworkDownloadBandwith(void)
 
 uint64_t DummySource::getUsedNetworkDownloadBandwith(void)
 {
-    uint8_t current = this->currentNetworkDownloadBandwith->getCurrent();
+    uint64_t current = this->currentNetworkDownloadBandwith->getCurrent();
     if (random(0, 20) % 2 == 0)
     {
-        if (current < MAX_NETWORK_DOWNLOAD_BANDWITH)
+        if (current + 5000000 < MAX_NETWORK_DOWNLOAD_BANDWITH)
         {
-            current += 1000000;
+            current += 5000000;
         }
     }
-    else if (current > MIN_NETWORK_DOWNLOAD_BANDWITH)
+    else if (current - 5000000 > MIN_NETWORK_DOWNLOAD_BANDWITH)
     {
-        current -= 1000000;
+        current -= 5000000;
     }
     this->currentNetworkDownloadBandwith->setCurrent(current);
     return (current);
@@ -127,17 +127,17 @@ uint64_t DummySource::getTotalNetworkUploadBandwith(void)
 
 uint64_t DummySource::getUsedNetworkUploadBandwith(void)
 {
-    uint8_t current = this->currentNetworkUploadBandwith->getCurrent();
+    uint64_t current = this->currentNetworkUploadBandwith->getCurrent();
     if (random(0, 20) % 2 == 0)
     {
-        if (current < MAX_NETWORK_UPLOAD_BANDWITH)
+        if (current + 5000000 < MAX_NETWORK_UPLOAD_BANDWITH)
         {
-            current += 1000000;
+            current += 5000000;
         }
     }
-    else if (current > MIN_NETWORK_UPLOAD_BANDWITH)
+    else if (current - 5000000 > MIN_NETWORK_UPLOAD_BANDWITH)
     {
-        current -= 1000000;
+        current -= 5000000;
     }
     this->currentNetworkUploadBandwith->setCurrent(current);
     return (current);

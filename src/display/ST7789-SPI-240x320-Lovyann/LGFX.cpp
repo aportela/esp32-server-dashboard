@@ -264,7 +264,7 @@ void LGFX::refreshNetworkDownloadBandwithMeter(uint8_t xOffset, uint8_t yOffset,
 {
     uint64_t bandwithHumanIntValue = bandwith;
     uint16_t bandwithHumanIntDecimalValue = bandwith > 999 ? bandwith % 1000 : 0;
-    char *units[] = {"B  ", "KB", "MB", "GB", "TB", "PB"};
+    char *units[] = {"B  ", "KB ", "MB ", "GB ", "TB ", "PB "};
     uint8_t currentUnitIndex = 0;
     while (bandwithHumanIntValue > 999)
     {
@@ -273,9 +273,9 @@ void LGFX::refreshNetworkDownloadBandwithMeter(uint8_t xOffset, uint8_t yOffset,
     }
     // TODO: check axis & sprite MAX
     // TODO: fixed max
-    uint8_t mapped100 = map(bandwithHumanIntValue, 0, 512, 0, 100);
+    uint8_t mapped100 = currentUnitIndex > 0 ? map(bandwithHumanIntValue, 0, 512, 0, 100) : 0;
     int32_t gradientColor = this->getTemperatureGradientFrom0To100(mapped100);
-    uint8_t mappedGraphValue = map(bandwithHumanIntValue, 0, 512, 0, GRAPH_SPRITE_HEIGHT);
+    uint8_t mappedGraphValue = currentUnitIndex > 0 ? map(bandwithHumanIntValue, 0, 512, 0, GRAPH_SPRITE_HEIGHT) : 0;
     // create graph animation moving sprite to left 1 pixel
     this->networkDownloadSprite->scroll(-1, 0);
     // draw new value (on right)
@@ -307,15 +307,25 @@ void LGFX::initNetworkUploadBandwithMeter(uint8_t xOffset, uint8_t yOffset)
     this->print("WAN Upload");
     // TODO: fixed max
     this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset + 20);
-    this->print("000MB of 512MB");
+    this->print("000MB / 512MB");
 }
 
 void LGFX::refreshNetworkUploadBandwithMeter(uint8_t xOffset, uint8_t yOffset, uint64_t bandwith)
 {
+    uint64_t bandwithHumanIntValue = bandwith;
+    uint16_t bandwithHumanIntDecimalValue = bandwith > 999 ? bandwith % 1000 : 0;
+    char *units[] = {"B  ", "KB ", "MB ", "GB ", "TB ", "PB "};
+    uint8_t currentUnitIndex = 0;
+    while (bandwithHumanIntValue > 999)
+    {
+        bandwithHumanIntValue = bandwithHumanIntValue / 1000;
+        currentUnitIndex++;
+    }
     // TODO: check axis & sprite MAX
-    uint8_t mapped100 = map(bandwith, MIN_NETWORK_UPLOAD_BANDWITH, MAX_NETWORK_UPLOAD_BANDWITH, 0, 100);
+    // TODO: fixed max
+    uint8_t mapped100 = currentUnitIndex > 0 ? map(bandwithHumanIntValue, 0, 512, 0, 100) : 0;
     int32_t gradientColor = this->getTemperatureGradientFrom0To100(mapped100);
-    uint8_t mappedGraphValue = map(bandwith, MIN_NETWORK_UPLOAD_BANDWITH, MAX_NETWORK_UPLOAD_BANDWITH, 0, GRAPH_SPRITE_HEIGHT);
+    uint8_t mappedGraphValue = currentUnitIndex > 0 ? map(bandwithHumanIntValue, 0, 512, 0, GRAPH_SPRITE_HEIGHT) : 0;
     // create graph animation moving sprite to left 1 pixel
     this->networkUploadSprite->scroll(-1, 0);
     // draw new value (on right)
@@ -326,7 +336,8 @@ void LGFX::refreshNetworkUploadBandwithMeter(uint8_t xOffset, uint8_t yOffset, u
         this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset + 20);
         this->setTextSize(GRAPH_LABEL_FONT_SIZE);
         this->setTextColor(gradientColor, TFT_BLACK);
-        this->printf("%03dMB", bandwith);
+        this->printf("%03d", bandwithHumanIntValue);
+        this->print(units[currentUnitIndex]);
         this->oldNetworkUploadBandwith = bandwith;
     }
 }
