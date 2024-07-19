@@ -13,6 +13,8 @@
 
 #define AXIS_COLOR TFT_WHITE
 
+#define GRAPH_LABEL_FONT_SIZE 1
+
 #define DEBUG_SPRITE_WIDTH SCREEN_WIDTH - 20
 #define DEBUG_SPRITE_HEIGHT 10
 #define DEBUG_SPRITE_BACKGROUND TFT_BLACK
@@ -78,9 +80,11 @@ LGFX::LGFX(uint8_t SDA, uint8_t SCL, uint8_t CS, uint8_t DC, uint8_t RST)
 
     this->debugSprite = new lgfx::LGFX_Sprite(this);
     this->debugSprite->createSprite(DEBUG_SPRITE_WIDTH, DEBUG_SPRITE_HEIGHT);
+    this->debugSprite->setFont(&fonts::Font2);
 
     this->fpsDebug = new FPSDebug();
 
+    this->setFont(&fonts::Font2);
     this->startMillis = millis();
 }
 
@@ -137,7 +141,7 @@ void LGFX::initCPULoadMeter(uint8_t xOffset, uint8_t yOffset)
     this->drawFastHLine(xOffset, yOffset, X_AXIS_LENGTH, AXIS_COLOR);
 
     this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset);
-    this->setTextSize(2);
+    this->setTextSize(GRAPH_LABEL_FONT_SIZE);
     this->setTextColor(TFT_WHITE, TFT_BLACK);
     this->print("CPU LOAD");
 }
@@ -155,7 +159,7 @@ void LGFX::refreshCPULoadMeter(uint8_t xOffset, uint8_t yOffset, uint8_t load)
     if (load != this->oldCPULoad)
     {
         this->setCursor(xOffset + SCREEN_WIDTH - 92, yOffset + 20);
-        this->setTextSize(2);
+        this->setTextSize(GRAPH_LABEL_FONT_SIZE);
         this->setTextColor(gradientColor, TFT_BLACK);
         this->printf("%03d%%", load);
         this->cpuLoadSprite->pushSprite(xOffset + 2, yOffset + 2);
@@ -173,9 +177,9 @@ void LGFX::initMemoryMeter(uint8_t xOffset, uint8_t yOffset)
     this->drawFastHLine(xOffset, yOffset, X_AXIS_LENGTH, AXIS_COLOR);
 
     this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset);
-    this->setTextSize(2);
+    this->setTextSize(GRAPH_LABEL_FONT_SIZE);
     this->setTextColor(TFT_WHITE, TFT_BLACK);
-    this->print("USED MEM");
+    this->print("USED Memory");
 }
 
 void LGFX::refreshMemoryMeter(uint8_t xOffset, uint8_t yOffset, uint64_t usedMemory)
@@ -191,7 +195,7 @@ void LGFX::refreshMemoryMeter(uint8_t xOffset, uint8_t yOffset, uint64_t usedMem
     if (usedMemory != this->oldUsedMemory)
     {
         this->setCursor(xOffset + SCREEN_WIDTH - 92, yOffset + 20);
-        this->setTextSize(2);
+        this->setTextSize(GRAPH_LABEL_FONT_SIZE);
         this->setTextColor(gradientColor, TFT_BLACK);
         this->printf("%03dGb", usedMemory);
         this->memorySprite->pushSprite(xOffset + 2, yOffset + 2);
@@ -209,9 +213,9 @@ void LGFX::initCPUTemperatureMeter(uint8_t xOffset, uint8_t yOffset)
     this->drawFastHLine(xOffset, yOffset, X_AXIS_LENGTH, AXIS_COLOR);
 
     this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset);
-    this->setTextSize(2);
+    this->setTextSize(GRAPH_LABEL_FONT_SIZE);
     this->setTextColor(TFT_WHITE, TFT_BLACK);
-    this->print("CPU TEMP");
+    this->print("CPU Temperature");
 }
 
 void LGFX::refreshCPUTemperatureMeter(uint8_t xOffset, uint8_t yOffset, uint8_t temperature)
@@ -227,7 +231,7 @@ void LGFX::refreshCPUTemperatureMeter(uint8_t xOffset, uint8_t yOffset, uint8_t 
     if (temperature != this->oldCPUTemperature)
     {
         this->setCursor(xOffset + SCREEN_WIDTH - 92, yOffset + 20);
-        this->setTextSize(2);
+        this->setTextSize(GRAPH_LABEL_FONT_SIZE);
         this->setTextColor(gradientColor, TFT_BLACK);
         this->printf("%03dC", temperature);
         this->cpuTemperatureSprite->pushSprite(xOffset + 2, yOffset + 2);
@@ -245,13 +249,22 @@ void LGFX::initNetworkDownloadBandwithMeter(uint8_t xOffset, uint8_t yOffset)
     this->drawFastHLine(xOffset, yOffset, X_AXIS_LENGTH, AXIS_COLOR);
 
     this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset);
-    this->setTextSize(2);
+    this->setTextSize(GRAPH_LABEL_FONT_SIZE);
     this->setTextColor(TFT_WHITE, TFT_BLACK);
-    this->print("IF:WAN DL");
+    this->print("WAN Download");
 }
 
 void LGFX::refreshNetworkDownloadBandwithMeter(uint8_t xOffset, uint8_t yOffset, uint64_t bandwith)
 {
+    uint64_t bandwithHumanIntValue = bandwith;
+    uint16_t bandwithHumanIntDecimalValue = bandwith > 999 ? bandwith % 1000 : 0;
+    char *units[] = {"B", "Kb", "Mb", "Gb", "Tb", "Pb", "OV1", "OV2"};
+    uint8_t currentUnitIndex = 0;
+    while (bandwithHumanIntValue > 999)
+    {
+        bandwithHumanIntValue = bandwithHumanIntValue / 1000;
+        currentUnitIndex++;
+    }
     // TODO: check axis & sprite MAX_MEMORY
     uint8_t mapped100 = map(bandwith, MIN_NETWORK_DOWNLOAD_BANDWITH, MAX_NETWORK_DOWNLOAD_BANDWITH, 0, 100);
     int32_t gradientColor = this->getTemperatureGradientFrom0To100(mapped100);
@@ -263,9 +276,9 @@ void LGFX::refreshNetworkDownloadBandwithMeter(uint8_t xOffset, uint8_t yOffset,
     if (bandwith != this->oldNetworkDownloadBandwith)
     {
         this->setCursor(xOffset + SCREEN_WIDTH - 92, yOffset + 20);
-        this->setTextSize(2);
+        this->setTextSize(GRAPH_LABEL_FONT_SIZE);
         this->setTextColor(gradientColor, TFT_BLACK);
-        this->printf("%03dMb", bandwith);
+        this->printf("%03d", bandwith, units[currentUnitIndex]);
         this->networkDownloadSprite->pushSprite(xOffset + 2, yOffset + 2);
         this->oldNetworkDownloadBandwith = bandwith;
     }
@@ -281,9 +294,9 @@ void LGFX::initNetworkUploadBandwithMeter(uint8_t xOffset, uint8_t yOffset)
     this->drawFastHLine(xOffset, yOffset, X_AXIS_LENGTH, AXIS_COLOR);
 
     this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset);
-    this->setTextSize(2);
+    this->setTextSize(GRAPH_LABEL_FONT_SIZE);
     this->setTextColor(TFT_WHITE, TFT_BLACK);
-    this->print("IF:WAN UP");
+    this->print("WAN Upload");
 }
 
 void LGFX::refreshNetworkUploadBandwithMeter(uint8_t xOffset, uint8_t yOffset, uint64_t bandwith)
@@ -299,7 +312,7 @@ void LGFX::refreshNetworkUploadBandwithMeter(uint8_t xOffset, uint8_t yOffset, u
     if (bandwith != this->oldNetworkUploadBandwith)
     {
         this->setCursor(xOffset + SCREEN_WIDTH - 92, yOffset + 20);
-        this->setTextSize(2);
+        this->setTextSize(GRAPH_LABEL_FONT_SIZE);
         this->setTextColor(gradientColor, TFT_BLACK);
         this->printf("%03dMb", bandwith);
         this->networkUploadSprite->pushSprite(xOffset + 2, yOffset + 2);
@@ -362,6 +375,6 @@ void LGFX::refreshDebug(uint8_t xOffset, uint8_t yOffset)
     this->debugSprite->setCursor(0, 0);
     char timeString[50];
     convertMillisToString(millis() - this->startMillis, timeString, sizeof(timeString));
-    this->debugSprite->printf("Dashboard uptime: %s - FPS:%03u", timeString, this->fpsDebug->getFPS());
+    this->debugSprite->printf("Dashboard uptime: %s - FPS: %03u", timeString, this->fpsDebug->getFPS());
     this->debugSprite->pushSprite(xOffset, yOffset);
 }
