@@ -1,6 +1,10 @@
+#ifndef ESP32_SERVER_DASHBOARD_LGFX_H
+#define ESP32_SERVER_DASHBOARD_LGFX_H
+
 #include <LovyanGFX.hpp>
 #include <stdint.h>
 #include "../FPSDebug.hpp"
+#include "LGFXMeter.hpp"
 #include "../../sources/ISource.hpp"
 
 class LGFX : public lgfx::LGFX_Device
@@ -8,6 +12,7 @@ class LGFX : public lgfx::LGFX_Device
 private:
     lgfx::Panel_ST7789 _panel_instance;
     lgfx::Bus_SPI _bus_instance;
+    LGFXMeter *mCPULoad = nullptr;
     lgfx::LGFX_Sprite *cpuLoadSprite = nullptr;
     lgfx::LGFX_Sprite *memorySprite = nullptr;
     lgfx::LGFX_Sprite *cpuTemperatureSprite = nullptr;
@@ -40,3 +45,5 @@ public:
     void refreshNetworkUploadBandwithMeter(uint16_t xOffset, uint16_t yOffset);
     void refreshDebug(uint16_t xOffset, uint16_t yOffset);
 };
+
+#endif
