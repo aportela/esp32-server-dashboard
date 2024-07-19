@@ -1,6 +1,6 @@
-#define DISPLAY_DRIVER_LOVYANN // at this time, only LovyAnn driver support
+#define DISPLAY_DRIVER_LOVYANN_ST7789 // at this time, only LovyAnn ST7789 driver support
 
-#ifdef DISPLAY_DRIVER_LOVYANN
+#ifdef DISPLAY_DRIVER_LOVYANN_ST7789
 
 #include "src/display/ST7789-SPI-240x320-Lovyann/LGFX.hpp"
 
@@ -27,7 +27,7 @@ DummySource *dummySRC = nullptr;
 
 void setup()
 {
-#ifdef DISPLAY_DRIVER_LOVYANN
+#ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     screen = new LGFX(PIN_SDA, PIN_SCL, PIN_CS, PIN_DC, PIN_RST, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_ROTATION);
     screen->init();
     screen->fillScreen(TFT_BLACK);
@@ -43,7 +43,7 @@ void setup()
 
 void loop()
 {
-#ifdef DISPLAY_DRIVER_LOVYANN
+#ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     screen->refreshCPULoadMeter(0, 0, dummySRC->getCurrentCPULoad());
     screen->refreshMemoryMeter(0, 42, dummySRC->getUsedMemory());
     screen->refreshCPUTemperatureMeter(0, 84, dummySRC->getCurrentCPUTemperature());
