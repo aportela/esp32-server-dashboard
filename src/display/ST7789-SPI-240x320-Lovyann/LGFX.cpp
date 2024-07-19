@@ -19,7 +19,7 @@
 #define DEBUG_SPRITE_HEIGHT 13
 #define DEBUG_SPRITE_BACKGROUND TFT_BLACK
 
-LGFX::LGFX(uint8_t SDA, uint8_t SCL, uint8_t CS, uint8_t DC, uint8_t RST)
+LGFX::LGFX(uint8_t PIN_SDA, uint8_t PIN_SCL, uint8_t PIN_CS, uint8_t PIN_DC, uint8_t PIN_RST, uint16_t width, uint16_t height, uint8_t rotation)
 {
     auto cfg = _bus_instance.config();
     cfg.spi_host = SPI2_HOST;
@@ -29,24 +29,24 @@ LGFX::LGFX(uint8_t SDA, uint8_t SCL, uint8_t CS, uint8_t DC, uint8_t RST)
     cfg.spi_3wire = false;
     cfg.use_lock = true;
     cfg.dma_channel = 1;
-    cfg.pin_sclk = SCL;
-    cfg.pin_mosi = SDA;
+    cfg.pin_sclk = PIN_SCL;
+    cfg.pin_mosi = PIN_SDA;
     cfg.pin_miso = -1;
-    cfg.pin_dc = DC;
+    cfg.pin_dc = PIN_DC;
     _bus_instance.config(cfg);
     _panel_instance.setBus(&_bus_instance);
 
     auto cfg_panel = _panel_instance.config();
-    cfg_panel.pin_cs = CS;
-    cfg_panel.pin_rst = RST;
+    cfg_panel.pin_cs = PIN_CS;
+    cfg_panel.pin_rst = PIN_RST;
     cfg_panel.pin_busy = -1;
-    cfg_panel.memory_width = 240;
-    cfg_panel.memory_height = 320;
-    cfg_panel.panel_width = 240;
-    cfg_panel.panel_height = 320;
+    cfg_panel.memory_width = width;
+    cfg_panel.memory_height = height;
+    cfg_panel.panel_width = width;
+    cfg_panel.panel_height = height;
     cfg_panel.offset_x = 0;
     cfg_panel.offset_y = 0;
-    cfg_panel.offset_rotation = 3;
+    cfg_panel.offset_rotation = rotation;
     cfg_panel.dummy_read_pixel = 8;
     cfg_panel.dummy_read_bits = 1;
     cfg_panel.readable = true;

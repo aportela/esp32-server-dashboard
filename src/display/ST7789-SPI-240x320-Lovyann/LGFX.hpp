@@ -28,7 +28,7 @@ private:
     void refreshGraphSprite(lgfx::LGFX_Sprite *sprite, uint8_t valueMappedTo100, int32_t color, uint16_t xOffset, uint16_t yOffset);
 
 public:
-    LGFX(uint8_t SDA, uint8_t SCL, uint8_t CS, uint8_t DC, uint8_t RST);
+    LGFX(uint8_t PIN_SDA, uint8_t PIN_SCL, uint8_t PIN_CS, uint8_t PIN_DC, uint8_t PIN_RST, uint16_t width, uint16_t height, uint8_t rotation);
     ~LGFX();
     void initCPULoadMeter(uint16_t xOffset, uint16_t yOffset);
     void refreshCPULoadMeter(uint16_t xOffset, uint16_t yOffset, uint8_t load);
