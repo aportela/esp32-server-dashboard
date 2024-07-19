@@ -15,7 +15,6 @@ private:
     lgfx::LGFX_Sprite *networkUploadSprite = nullptr;
     lgfx::LGFX_Sprite *debugSprite = nullptr;
 
-    uint32_t getTemperatureGradientFrom0To100(int8_t value);
     FPSDebug *fpsDebug;
 
     uint64_t startMillis;
@@ -25,18 +24,21 @@ private:
     uint64_t oldNetworkDownloadBandwith;
     uint64_t oldNetworkUploadBandwith;
 
+    uint32_t getTemperatureGradientFrom0To100(int8_t value);
+    void refreshGraphSprite(lgfx::LGFX_Sprite *sprite, uint8_t valueMappedTo100, int32_t color, uint16_t xOffset, uint16_t yOffset);
+
 public:
     LGFX(uint8_t SDA, uint8_t SCL, uint8_t CS, uint8_t DC, uint8_t RST);
     ~LGFX();
-    void initCPULoadMeter(uint8_t xOffset, uint8_t yOffset);
-    void refreshCPULoadMeter(uint8_t xOffset, uint8_t yOffset, uint8_t load);
-    void initMemoryMeter(uint8_t xOffset, uint8_t yOffset);
-    void refreshMemoryMeter(uint8_t xOffset, uint8_t yOffset, uint64_t usedMemory);
-    void initCPUTemperatureMeter(uint8_t xOffset, uint8_t yOffset);
-    void refreshCPUTemperatureMeter(uint8_t xOffset, uint8_t yOffset, uint8_t temperature);
-    void initNetworkDownloadBandwithMeter(uint8_t xOffset, uint8_t yOffset);
-    void refreshNetworkDownloadBandwithMeter(uint8_t xOffset, uint8_t yOffset, uint64_t bandwith);
-    void initNetworkUploadBandwithMeter(uint8_t xOffset, uint8_t yOffset);
-    void refreshNetworkUploadBandwithMeter(uint8_t xOffset, uint8_t yOffset, uint64_t bandwith);
-    void refreshDebug(uint8_t xOffset, uint8_t yOffset);
+    void initCPULoadMeter(uint16_t xOffset, uint16_t yOffset);
+    void refreshCPULoadMeter(uint16_t xOffset, uint16_t yOffset, uint8_t load);
+    void initMemoryMeter(uint16_t xOffset, uint16_t yOffset);
+    void refreshMemoryMeter(uint16_t xOffset, uint16_t yOffset, uint64_t usedMemory);
+    void initCPUTemperatureMeter(uint16_t xOffset, uint16_t yOffset);
+    void refreshCPUTemperatureMeter(uint16_t xOffset, uint16_t yOffset, uint8_t temperature);
+    void initNetworkDownloadBandwithMeter(uint16_t xOffset, uint16_t yOffset);
+    void refreshNetworkDownloadBandwithMeter(uint16_t xOffset, uint16_t yOffset, uint64_t bandwith);
+    void initNetworkUploadBandwithMeter(uint16_t xOffset, uint16_t yOffset);
+    void refreshNetworkUploadBandwithMeter(uint16_t xOffset, uint16_t yOffset, uint64_t bandwith);
+    void refreshDebug(uint16_t xOffset, uint16_t yOffset);
 };

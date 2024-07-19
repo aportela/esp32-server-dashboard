@@ -131,7 +131,18 @@ uint32_t LGFX::getTemperatureGradientFrom0To100(int8_t value)
     }
 }
 
-void LGFX::initCPULoadMeter(uint8_t xOffset, uint8_t yOffset)
+void LGFX::refreshGraphSprite(lgfx::LGFX_Sprite *sprite, uint8_t valueMappedTo100, int32_t color, uint16_t xOffset, uint16_t yOffset)
+{
+    uint8_t mappedGraphValue = map(valueMappedTo100, 0, 100, 0, GRAPH_SPRITE_HEIGHT);
+    // create graph animation moving sprite to left 1 pixel
+    sprite->scroll(-1, 0);
+    // draw new value (on right)
+    sprite->drawFastVLine(GRAPH_SPRITE_WIDTH - 1, GRAPH_SPRITE_HEIGHT - mappedGraphValue + 1, mappedGraphValue, color);
+    // dump sprite to screen
+    sprite->pushSprite(xOffset + 2, yOffset + 2);
+}
+
+void LGFX::initCPULoadMeter(uint16_t xOffset, uint16_t yOffset)
 {
     // TODO: check axis & sprite bounds
     this->drawFastVLine(xOffset, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
@@ -146,28 +157,22 @@ void LGFX::initCPULoadMeter(uint8_t xOffset, uint8_t yOffset)
     this->print("CPU LOAD");
 }
 
-void LGFX::refreshCPULoadMeter(uint8_t xOffset, uint8_t yOffset, uint8_t load)
+void LGFX::refreshCPULoadMeter(uint16_t xOffset, uint16_t yOffset, uint8_t load)
 {
-    // TODO: check axis & sprite bounds
     uint8_t mapped100 = map(load, MIN_CPU_LOAD, MAX_CPU_LOAD, 0, 100);
     int32_t gradientColor = this->getTemperatureGradientFrom0To100(mapped100);
-    uint8_t mappedGraphValue = map(load, MIN_CPU_LOAD, MAX_CPU_LOAD, 0, GRAPH_SPRITE_HEIGHT);
-    // create graph animation moving sprite to left 1 pixel
-    this->cpuLoadSprite->scroll(-1, 0);
-    // draw new value (on right)
-    this->cpuLoadSprite->drawFastVLine(GRAPH_SPRITE_WIDTH - 1, GRAPH_SPRITE_HEIGHT - mappedGraphValue + 1, mappedGraphValue, gradientColor);
+    this->refreshGraphSprite(this->cpuLoadSprite, mapped100, gradientColor, xOffset, yOffset);
     if (load != this->oldCPULoad)
     {
         this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset + 20);
         this->setTextSize(GRAPH_LABEL_FONT_SIZE);
         this->setTextColor(gradientColor, TFT_BLACK);
         this->printf("%03d%%", load);
-        this->cpuLoadSprite->pushSprite(xOffset + 2, yOffset + 2);
         this->oldCPULoad = load;
     }
 }
 
-void LGFX::initMemoryMeter(uint8_t xOffset, uint8_t yOffset)
+void LGFX::initMemoryMeter(uint16_t xOffset, uint16_t yOffset)
 {
     // TODO: check axis & sprite bounds
     this->drawFastVLine(xOffset, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
@@ -184,7 +189,7 @@ void LGFX::initMemoryMeter(uint8_t xOffset, uint8_t yOffset)
     this->print("000GB / 032GB");
 }
 
-void LGFX::refreshMemoryMeter(uint8_t xOffset, uint8_t yOffset, uint64_t usedMemory)
+void LGFX::refreshMemoryMeter(uint16_t xOffset, uint16_t yOffset, uint64_t usedMemory)
 {
     // TODO: check axis & sprite MAX
     uint8_t mapped100 = map(usedMemory, MIN_MEMORY, MAX_MEMORY, 0, 100);
@@ -206,7 +211,7 @@ void LGFX::refreshMemoryMeter(uint8_t xOffset, uint8_t yOffset, uint64_t usedMem
     }
 }
 
-void LGFX::initCPUTemperatureMeter(uint8_t xOffset, uint8_t yOffset)
+void LGFX::initCPUTemperatureMeter(uint16_t xOffset, uint16_t yOffset)
 {
     // TODO: check axis & sprite bounds
     this->drawFastVLine(xOffset, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
@@ -221,7 +226,7 @@ void LGFX::initCPUTemperatureMeter(uint8_t xOffset, uint8_t yOffset)
     this->print("CPU Temperature");
 }
 
-void LGFX::refreshCPUTemperatureMeter(uint8_t xOffset, uint8_t yOffset, uint8_t temperature)
+void LGFX::refreshCPUTemperatureMeter(uint16_t xOffset, uint16_t yOffset, uint8_t temperature)
 {
     // TODO: check axis & sprite bounds
     uint8_t mapped100 = map(temperature, MIN_CPU_TEMPERATURE, MAX_CPU_TEMPERATURE, 0, 100);
@@ -242,7 +247,7 @@ void LGFX::refreshCPUTemperatureMeter(uint8_t xOffset, uint8_t yOffset, uint8_t 
     }
 }
 
-void LGFX::initNetworkDownloadBandwithMeter(uint8_t xOffset, uint8_t yOffset)
+void LGFX::initNetworkDownloadBandwithMeter(uint16_t xOffset, uint16_t yOffset)
 {
     // TODO: check axis & sprite bounds
     this->drawFastVLine(xOffset, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
@@ -260,7 +265,7 @@ void LGFX::initNetworkDownloadBandwithMeter(uint8_t xOffset, uint8_t yOffset)
     this->print("000MB / 512MB");
 }
 
-void LGFX::refreshNetworkDownloadBandwithMeter(uint8_t xOffset, uint8_t yOffset, uint64_t bandwith)
+void LGFX::refreshNetworkDownloadBandwithMeter(uint16_t xOffset, uint16_t yOffset, uint64_t bandwith)
 {
     uint64_t bandwithHumanIntValue = bandwith;
     uint16_t bandwithHumanIntDecimalValue = bandwith > 999 ? bandwith % 1000 : 0;
@@ -293,7 +298,7 @@ void LGFX::refreshNetworkDownloadBandwithMeter(uint8_t xOffset, uint8_t yOffset,
     }
 }
 
-void LGFX::initNetworkUploadBandwithMeter(uint8_t xOffset, uint8_t yOffset)
+void LGFX::initNetworkUploadBandwithMeter(uint16_t xOffset, uint16_t yOffset)
 {
     // TODO: check axis & sprite bounds
     this->drawFastVLine(xOffset, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
@@ -311,7 +316,7 @@ void LGFX::initNetworkUploadBandwithMeter(uint8_t xOffset, uint8_t yOffset)
     this->print("000MB / 512MB");
 }
 
-void LGFX::refreshNetworkUploadBandwithMeter(uint8_t xOffset, uint8_t yOffset, uint64_t bandwith)
+void LGFX::refreshNetworkUploadBandwithMeter(uint16_t xOffset, uint16_t yOffset, uint64_t bandwith)
 {
     uint64_t bandwithHumanIntValue = bandwith;
     uint16_t bandwithHumanIntDecimalValue = bandwith > 999 ? bandwith % 1000 : 0;
@@ -388,7 +393,7 @@ void convertMillisToString(unsigned long long millis_diff, char *buffer, size_t 
     snprintf(buffer, buffer_size, "%.1f%s", time, unit);
 }
 
-void LGFX::refreshDebug(uint8_t xOffset, uint8_t yOffset)
+void LGFX::refreshDebug(uint16_t xOffset, uint16_t yOffset)
 {
     this->fpsDebug->loop();
 
