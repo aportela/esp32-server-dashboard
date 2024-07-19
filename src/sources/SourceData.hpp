@@ -14,17 +14,17 @@ enum SourceDataType
 class SourceData
 {
 private:
-    uint8_t min;
-    uint8_t max;
-    uint8_t current;
+    uint64_t min;
+    uint64_t max;
+    uint64_t current;
 
 public:
-    SourceData(uint8_t min, uint8_t max);
+    SourceData(uint64_t min, uint64_t max);
     ~SourceData();
-    uint8_t getMin(void);
-    uint8_t getMax(void);
-    void setCurrent(uint8_t value);
-    uint8_t getCurrent(void);
+    uint64_t getMin(void);
+    uint64_t getMax(void);
+    void setCurrent(uint64_t value);
+    uint64_t getCurrent(void);
 };
 
 #endif

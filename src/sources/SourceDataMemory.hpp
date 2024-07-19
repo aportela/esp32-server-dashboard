@@ -7,7 +7,7 @@ class SourceDataMemory : public SourceData
 {
 
 public:
-    SourceDataMemory(uint8_t min, uint8_t max);
+    SourceDataMemory(uint64_t min, uint64_t max);
     ~SourceDataMemory();
 };
 

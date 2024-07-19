@@ -1,6 +1,6 @@
 #include "SourceData.hpp"
 
-SourceData::SourceData(uint8_t min, uint8_t max) : min(min), max(max)
+SourceData::SourceData(uint64_t min, uint64_t max) : min(min), max(max)
 {
     this->current = 0;
 }
@@ -9,17 +9,17 @@ SourceData::~SourceData()
 {
 }
 
-uint8_t SourceData::getMin(void)
+uint64_t SourceData::getMin(void)
 {
     return (this->min);
 }
 
-uint8_t SourceData::getMax(void)
+uint64_t SourceData::getMax(void)
 {
     return (this->max);
 }
 
-void SourceData::setCurrent(uint8_t value)
+void SourceData::setCurrent(uint64_t value)
 {
     if (value >= this->min && value <= this->max)
     {
@@ -35,7 +35,7 @@ void SourceData::setCurrent(uint8_t value)
     }
 }
 
-uint8_t SourceData::getCurrent(void)
+uint64_t SourceData::getCurrent(void)
 {
     return (this->current);
 }

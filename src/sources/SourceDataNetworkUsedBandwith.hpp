@@ -7,7 +7,7 @@ class SourceDataNetworkUsedBandwith : public SourceData
 {
 
 public:
-    SourceDataNetworkUsedBandwith(uint8_t min, uint8_t max);
+    SourceDataNetworkUsedBandwith(uint64_t min, uint64_t max);
     ~SourceDataNetworkUsedBandwith();
 };
 
