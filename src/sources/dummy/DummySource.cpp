@@ -28,6 +28,8 @@ DummySource::~DummySource()
 {
 }
 
+bool inc = false;
+
 uint64_t DummySource::getCurrentCPULoad(void)
 {
     uint8_t current = this->currentCPULoad->getCurrent();
@@ -41,6 +43,28 @@ uint64_t DummySource::getCurrentCPULoad(void)
     else if (current > MIN_CPU_LOAD)
     {
         current--;
+    }
+    if (inc)
+    {
+        if (current < MAX_CPU_LOAD)
+        {
+            current++;
+        }
+        else
+        {
+            inc = !inc;
+        }
+    }
+    else
+    {
+        if (current > MIN_CPU_LOAD)
+        {
+            current--;
+        }
+        else
+        {
+            inc = !inc;
+        }
     }
     this->currentCPULoad->setCurrent(current);
     return (current);
