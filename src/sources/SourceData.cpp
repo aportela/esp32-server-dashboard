@@ -1,7 +1,19 @@
 #include "SourceData.hpp"
 
-SourceData::SourceData(uint64_t min, uint64_t max) : min(min), max(max)
+SourceData::SourceData(uint64_t min, uint64_t max)
 {
+    // security check to avoid a possible exchange of values ​​that could create a failure
+    if (min <= max)
+    {
+        this->min = min;
+        this->max = max;
+    }
+    else
+    {
+        // failover
+        this->min = max;
+        this->max = min;
+    }
     this->previous = 1;
     this->current = 0;
 }
