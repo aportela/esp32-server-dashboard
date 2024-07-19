@@ -29,7 +29,7 @@ public:
     ~LGFX();
     void setSource(ISource *src);
     void initCPULoadMeter(uint16_t xOffset, uint16_t yOffset);
-    void refreshCPULoadMeter(uint16_t xOffset, uint16_t yOffset, uint8_t load);
+    void refreshCPULoadMeter(uint16_t xOffset, uint16_t yOffset);
     void initMemoryMeter(uint16_t xOffset, uint16_t yOffset);
     void refreshMemoryMeter(uint16_t xOffset, uint16_t yOffset, uint64_t usedMemory);
     void initCPUTemperatureMeter(uint16_t xOffset, uint16_t yOffset);

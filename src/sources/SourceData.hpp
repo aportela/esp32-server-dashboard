@@ -19,6 +19,7 @@ public:
     void setCurrent(uint64_t value);
     uint64_t getPrevious(void);
     uint64_t getCurrent(void);
+    bool changed(void);
 };
 
 #endif

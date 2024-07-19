@@ -4,10 +4,22 @@
 #include <stdint.h>
 #include "SourceData.hpp"
 
+enum EntitySource
+{
+    CPU_LOAD,
+    MEMORY,
+    CPU_TEMPERATURE,
+    NETWORK_BANDWITH_DOWNLOAD,
+    NETWORK_BANDWITH_UPLOAD
+};
+
 class ISource
 {
 public:
     virtual ~ISource() {}
+    virtual bool changed(EntitySource entity) = 0;
+    virtual uint64_t getPrevious(EntitySource entity) = 0;
+    virtual uint64_t getCurrent(EntitySource entity) = 0;
     virtual uint64_t getPreviousCPULoad(void) = 0;
     virtual uint64_t getCurrentCPULoad(void) = 0;
     virtual uint64_t getTotalMemory(void) = 0;

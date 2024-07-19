@@ -2,7 +2,7 @@
 
 SourceData::SourceData(uint64_t min, uint64_t max) : min(min), max(max)
 {
-    this->previous = 0;
+    this->previous = 1;
     this->current = 0;
 }
 
@@ -48,4 +48,9 @@ uint64_t SourceData::getPrevious(void)
 uint64_t SourceData::getCurrent(void)
 {
     return (this->current);
+}
+
+bool SourceData::changed(void)
+{
+    return (this->previous != this->current);
 }

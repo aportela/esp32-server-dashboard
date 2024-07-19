@@ -111,7 +111,8 @@ void LGFX::setSource(ISource *src)
 
 uint32_t LGFX::getTemperatureGradientFrom0To100(int8_t value)
 {
-    value = constrain(value, 0, 100);
+    // NOT REQUIRED
+    // value = constrain(value, 0, 100);
 
     // blue -> green
     if (value <= 33)
@@ -168,12 +169,13 @@ void LGFX::initCPULoadMeter(uint16_t xOffset, uint16_t yOffset)
     this->initGraph(xOffset, yOffset, label);
 }
 
-void LGFX::refreshCPULoadMeter(uint16_t xOffset, uint16_t yOffset, uint8_t load)
+void LGFX::refreshCPULoadMeter(uint16_t xOffset, uint16_t yOffset)
 {
+    uint8_t load = this->source->getCurrent(CPU_LOAD);
     uint8_t mapped100 = map(load, MIN_CPU_LOAD, MAX_CPU_LOAD, 0, 100);
     int32_t gradientColor = this->getTemperatureGradientFrom0To100(mapped100);
     this->refreshGraphSprite(this->cpuLoadSprite, mapped100, gradientColor, xOffset, yOffset);
-    if (load != this->source->getPreviousCPULoad())
+    if (this->source->changed(CPU_LOAD))
     {
         this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset + 20);
         this->setTextSize(GRAPH_LABEL_FONT_SIZE);

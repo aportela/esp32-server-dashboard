@@ -46,7 +46,8 @@ void setup()
 void loop()
 {
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
-    screen->refreshCPULoadMeter(0, 0, dummySRC->getCurrentCPULoad());
+    dummySRC->refresh();
+    screen->refreshCPULoadMeter(0, 0);
     screen->refreshMemoryMeter(0, 42, dummySRC->getUsedMemory());
     screen->refreshCPUTemperatureMeter(0, 84, dummySRC->getCurrentCPUTemperature());
     screen->refreshNetworkDownloadBandwithMeter(0, 126, dummySRC->getUsedNetworkDownloadBandwith());

@@ -17,6 +17,9 @@ protected:
 public:
     Source();
     ~Source();
+    bool changed(EntitySource entity) override;
+    uint64_t getPrevious(EntitySource entity);
+    uint64_t getCurrent(EntitySource entity);
     uint64_t getPreviousCPULoad(void) override;
     virtual uint64_t getCurrentCPULoad(void) = 0;
     virtual uint64_t getTotalMemory(void) = 0;
@@ -30,6 +33,7 @@ public:
     virtual uint64_t getTotalNetworkUploadBandwith(void) = 0;
     uint64_t getPreviousUsedNetworkUploadBandwith(void) override;
     virtual uint64_t getUsedNetworkUploadBandwith(void) = 0;
+    void refresh(void);
 };
 
 #endif
