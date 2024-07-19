@@ -13,6 +13,15 @@ DummySource::DummySource(void)
 
     this->currentCPUTemperature = new SourceDataCPUTemperature(MIN_CPU_TEMPERATURE, MAX_CPU_TEMPERATURE);
     this->currentCPUTemperature->setCurrent(random(MIN_CPU_TEMPERATURE, MAX_CPU_TEMPERATURE));
+
+    this->currentMemory = new SourceDataMemory(MIN_MEMORY, MAX_MEMORY);
+    this->currentMemory->setCurrent(random(MIN_MEMORY, MAX_MEMORY));
+
+    this->currentNetworkDownloadBandwith = new SourceDataNetworkUsedBandwith(MIN_NETWORK_DOWNLOAD_BANDWITH, MAX_NETWORK_DOWNLOAD_BANDWITH);
+    this->currentNetworkDownloadBandwith->setCurrent(random(MIN_NETWORK_DOWNLOAD_BANDWITH, MAX_NETWORK_DOWNLOAD_BANDWITH));
+
+    this->currentNetworkUploadBandwith = new SourceDataNetworkUsedBandwith(MIN_NETWORK_UPLOAD_BANDWITH, MAX_NETWORK_UPLOAD_BANDWITH);
+    this->currentNetworkUploadBandwith->setCurrent(random(MIN_NETWORK_UPLOAD_BANDWITH, MAX_NETWORK_UPLOAD_BANDWITH));
 }
 
 DummySource::~DummySource()
@@ -23,6 +32,10 @@ DummySource::~DummySource()
     this->currentMemory = nullptr;
     delete this->currentCPUTemperature;
     this->currentCPUTemperature = nullptr;
+    delete this->currentNetworkDownloadBandwith;
+    this->currentNetworkDownloadBandwith = nullptr;
+    delete this->currentNetworkUploadBandwith;
+    this->currentNetworkUploadBandwith = nullptr;
 }
 
 uint8_t DummySource::getCurrentCPULoad(void)
@@ -81,5 +94,51 @@ uint8_t DummySource::getCurrentCPUTemperature(void)
         current--;
     }
     this->currentCPUTemperature->setCurrent(current);
+    return (current);
+}
+
+uint64_t DummySource::getTotalNetworkDownloadBandwith(void)
+{
+    return (this->currentNetworkDownloadBandwith->getMax());
+}
+
+uint64_t DummySource::getUsedNetworkDownloadBandwith(void)
+{
+    uint8_t current = this->currentNetworkDownloadBandwith->getCurrent();
+    if (random(0, 20) % 2 == 0)
+    {
+        if (current < MAX_NETWORK_DOWNLOAD_BANDWITH)
+        {
+            current++;
+        }
+    }
+    else if (current > MIN_NETWORK_DOWNLOAD_BANDWITH)
+    {
+        current--;
+    }
+    this->currentNetworkDownloadBandwith->setCurrent(current);
+    return (current);
+}
+
+uint64_t DummySource::getTotalNetworkUploadBandwith(void)
+{
+    return (this->currentNetworkUploadBandwith->getMax());
+}
+
+uint64_t DummySource::getUsedNetworkUploadBandwith(void)
+{
+    uint8_t current = this->currentNetworkUploadBandwith->getCurrent();
+    if (random(0, 20) % 2 == 0)
+    {
+        if (current < MAX_NETWORK_UPLOAD_BANDWITH)
+        {
+            current++;
+        }
+    }
+    else if (current > MIN_NETWORK_UPLOAD_BANDWITH)
+    {
+        current--;
+    }
+    this->currentNetworkUploadBandwith->setCurrent(current);
     return (current);
 }

@@ -11,6 +11,8 @@ private:
     lgfx::LGFX_Sprite *cpuLoadSprite = nullptr;
     lgfx::LGFX_Sprite *memorySprite = nullptr;
     lgfx::LGFX_Sprite *cpuTemperatureSprite = nullptr;
+    lgfx::LGFX_Sprite *networkDownloadSprite = nullptr;
+    lgfx::LGFX_Sprite *networkUploadSprite = nullptr;
     lgfx::LGFX_Sprite *debugSprite = nullptr;
 
     uint32_t getTemperatureGradientFrom0To100(int8_t value);
@@ -20,6 +22,8 @@ private:
     uint8_t oldCPULoad;
     uint8_t oldCPUTemperature;
     uint64_t oldUsedMemory;
+    uint64_t oldNetworkDownloadBandwith;
+    uint64_t oldNetworkUploadBandwith;
 
 public:
     LGFX(uint8_t SDA, uint8_t SCL, uint8_t CS, uint8_t DC, uint8_t RST);
@@ -30,6 +34,9 @@ public:
     void refreshMemoryMeter(uint8_t xOffset, uint8_t yOffset, uint64_t usedMemory);
     void initCPUTemperatureMeter(uint8_t xOffset, uint8_t yOffset);
     void refreshCPUTemperatureMeter(uint8_t xOffset, uint8_t yOffset, uint8_t temperature);
-    void initNetworkMeter(uint8_t xOffset, uint8_t yOffset);
+    void initNetworkDownloadBandwithMeter(uint8_t xOffset, uint8_t yOffset);
+    void refreshNetworkDownloadBandwithMeter(uint8_t xOffset, uint8_t yOffset, uint64_t bandwith);
+    void initNetworkUploadBandwithMeter(uint8_t xOffset, uint8_t yOffset);
+    void refreshNetworkUploadBandwithMeter(uint8_t xOffset, uint8_t yOffset, uint64_t bandwith);
     void refreshDebug(uint8_t xOffset, uint8_t yOffset);
 };

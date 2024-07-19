@@ -20,6 +20,8 @@ void setup()
     screen->initCPULoadMeter(0, 0);
     screen->initMemoryMeter(0, 42);
     screen->initCPUTemperatureMeter(0, 84);
+    screen->initNetworkDownloadBandwithMeter(0, 126);
+    screen->initNetworkUploadBandwithMeter(0, 168);
     dummySRC = new DummySource();
 }
 
@@ -28,6 +30,8 @@ void loop()
     screen->refreshCPULoadMeter(0, 0, dummySRC->getCurrentCPULoad());
     screen->refreshMemoryMeter(0, 42, dummySRC->getUsedMemory());
     screen->refreshCPUTemperatureMeter(0, 84, dummySRC->getCurrentCPUTemperature());
+    screen->refreshNetworkDownloadBandwithMeter(0, 126, dummySRC->getUsedNetworkDownloadBandwith());
+    screen->refreshNetworkUploadBandwithMeter(0, 168, dummySRC->getUsedNetworkUploadBandwith());
     screen->refreshDebug(0, 224);
     // delay(50);
 }

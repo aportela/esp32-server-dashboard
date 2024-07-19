@@ -68,6 +68,14 @@ LGFX::LGFX(uint8_t SDA, uint8_t SCL, uint8_t CS, uint8_t DC, uint8_t RST)
     this->cpuTemperatureSprite->createSprite(GRAPH_SPRITE_WIDTH, GRAPH_SPRITE_HEIGHT);
     this->cpuTemperatureSprite->fillSprite(GRAPH_SPRITE_BACKGROUND);
 
+    this->networkDownloadSprite = new lgfx::LGFX_Sprite(this);
+    this->networkDownloadSprite->createSprite(GRAPH_SPRITE_WIDTH, GRAPH_SPRITE_HEIGHT);
+    this->networkDownloadSprite->fillSprite(GRAPH_SPRITE_BACKGROUND);
+
+    this->networkUploadSprite = new lgfx::LGFX_Sprite(this);
+    this->networkUploadSprite->createSprite(GRAPH_SPRITE_WIDTH, GRAPH_SPRITE_HEIGHT);
+    this->networkUploadSprite->fillSprite(GRAPH_SPRITE_BACKGROUND);
+
     this->debugSprite = new lgfx::LGFX_Sprite(this);
     this->debugSprite->createSprite(DEBUG_SPRITE_WIDTH, DEBUG_SPRITE_HEIGHT);
 
@@ -84,6 +92,10 @@ LGFX::~LGFX()
     this->memorySprite = nullptr;
     delete this->cpuTemperatureSprite;
     this->cpuTemperatureSprite = nullptr;
+    delete this->networkDownloadSprite;
+    this->networkDownloadSprite = nullptr;
+    delete this->networkUploadSprite;
+    this->networkUploadSprite = nullptr;
     delete this->fpsDebug;
     this->fpsDebug = nullptr;
 }
@@ -223,8 +235,76 @@ void LGFX::refreshCPUTemperatureMeter(uint8_t xOffset, uint8_t yOffset, uint8_t 
     }
 }
 
-void LGFX::initNetworkMeter(uint8_t xOffset, uint8_t yOffset)
+void LGFX::initNetworkDownloadBandwithMeter(uint8_t xOffset, uint8_t yOffset)
 {
+    // TODO: check axis & sprite bounds
+    this->drawFastVLine(xOffset, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
+    this->drawFastHLine(xOffset, yOffset + Y_AXIS_LENGTH, X_AXIS_LENGTH, AXIS_COLOR);
+
+    this->drawFastVLine(xOffset + X_AXIS_LENGTH - 1, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
+    this->drawFastHLine(xOffset, yOffset, X_AXIS_LENGTH, AXIS_COLOR);
+
+    this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset);
+    this->setTextSize(2);
+    this->setTextColor(TFT_WHITE, TFT_BLACK);
+    this->print("IF:WAN DL");
+}
+
+void LGFX::refreshNetworkDownloadBandwithMeter(uint8_t xOffset, uint8_t yOffset, uint64_t bandwith)
+{
+    // TODO: check axis & sprite MAX_MEMORY
+    uint8_t mapped100 = map(bandwith, MIN_NETWORK_DOWNLOAD_BANDWITH, MAX_NETWORK_DOWNLOAD_BANDWITH, 0, 100);
+    int32_t gradientColor = this->getTemperatureGradientFrom0To100(mapped100);
+    uint8_t mappedGraphValue = map(bandwith, MIN_NETWORK_DOWNLOAD_BANDWITH, MAX_NETWORK_DOWNLOAD_BANDWITH, 0, GRAPH_SPRITE_HEIGHT);
+    // create graph animation moving sprite to left 1 pixel
+    this->networkDownloadSprite->scroll(-1, 0);
+    // draw new value (on right)
+    this->networkDownloadSprite->drawFastVLine(GRAPH_SPRITE_WIDTH - 1, GRAPH_SPRITE_HEIGHT - mappedGraphValue + 1, mappedGraphValue, gradientColor);
+    if (bandwith != this->oldNetworkDownloadBandwith)
+    {
+        this->setCursor(xOffset + SCREEN_WIDTH - 92, yOffset + 20);
+        this->setTextSize(2);
+        this->setTextColor(gradientColor, TFT_BLACK);
+        this->printf("%03dMb", bandwith);
+        this->networkDownloadSprite->pushSprite(xOffset + 2, yOffset + 2);
+        this->oldNetworkDownloadBandwith = bandwith;
+    }
+}
+
+void LGFX::initNetworkUploadBandwithMeter(uint8_t xOffset, uint8_t yOffset)
+{
+    // TODO: check axis & sprite bounds
+    this->drawFastVLine(xOffset, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
+    this->drawFastHLine(xOffset, yOffset + Y_AXIS_LENGTH, X_AXIS_LENGTH, AXIS_COLOR);
+
+    this->drawFastVLine(xOffset + X_AXIS_LENGTH - 1, yOffset, Y_AXIS_LENGTH, AXIS_COLOR);
+    this->drawFastHLine(xOffset, yOffset, X_AXIS_LENGTH, AXIS_COLOR);
+
+    this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset);
+    this->setTextSize(2);
+    this->setTextColor(TFT_WHITE, TFT_BLACK);
+    this->print("IF:WAN UP");
+}
+
+void LGFX::refreshNetworkUploadBandwithMeter(uint8_t xOffset, uint8_t yOffset, uint64_t bandwith)
+{
+    // TODO: check axis & sprite MAX_MEMORY
+    uint8_t mapped100 = map(bandwith, MIN_NETWORK_UPLOAD_BANDWITH, MAX_NETWORK_UPLOAD_BANDWITH, 0, 100);
+    int32_t gradientColor = this->getTemperatureGradientFrom0To100(mapped100);
+    uint8_t mappedGraphValue = map(bandwith, MIN_NETWORK_UPLOAD_BANDWITH, MAX_NETWORK_UPLOAD_BANDWITH, 0, GRAPH_SPRITE_HEIGHT);
+    // create graph animation moving sprite to left 1 pixel
+    this->networkUploadSprite->scroll(-1, 0);
+    // draw new value (on right)
+    this->networkUploadSprite->drawFastVLine(GRAPH_SPRITE_WIDTH - 1, GRAPH_SPRITE_HEIGHT - mappedGraphValue + 1, mappedGraphValue, gradientColor);
+    if (bandwith != this->oldNetworkUploadBandwith)
+    {
+        this->setCursor(xOffset + SCREEN_WIDTH - 92, yOffset + 20);
+        this->setTextSize(2);
+        this->setTextColor(gradientColor, TFT_BLACK);
+        this->printf("%03dMb", bandwith);
+        this->networkUploadSprite->pushSprite(xOffset + 2, yOffset + 2);
+        this->oldNetworkUploadBandwith = bandwith;
+    }
 }
 
 void convertMillisToString(unsigned long long millis_diff, char *buffer, size_t buffer_size)
