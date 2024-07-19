@@ -351,39 +351,39 @@ void convertMillisToString(unsigned long long millis_diff, char *buffer, size_t 
     const unsigned long long millis_in_year = millis_in_day * 365;
 
     double time = 0.0;
-    char unit[10] = "";
+    char unit[8] = "";
 
     if (millis_diff >= millis_in_year)
     {
         time = (double)millis_diff / millis_in_year;
-        strcpy(unit, " year/s");
+        strcpy(unit, time > 1 ? "years" : "year");
     }
     else if (millis_diff >= millis_in_month)
     {
         time = (double)millis_diff / millis_in_month;
-        strcpy(unit, " month/s");
+        strcpy(unit, time > 1 ? "months" : " month");
     }
     else if (millis_diff >= millis_in_day)
     {
         time = (double)millis_diff / millis_in_day;
-        strcpy(unit, " day/s");
+        strcpy(unit, time > 1 ? "days" : "day");
     }
     else if (millis_diff >= millis_in_hour)
     {
         time = (double)millis_diff / millis_in_hour;
-        strcpy(unit, " hour/s");
+        strcpy(unit, time > 1 ? "hours" : "hour");
     }
     else if (millis_diff >= millis_in_minute)
     {
         time = (double)millis_diff / millis_in_minute;
-        strcpy(unit, " minute/s");
+        strcpy(unit, time > 1 ? "minutes" : "minute");
     }
     else
     {
         time = (double)millis_diff / millis_in_second;
-        strcpy(unit, " second/s");
+        strcpy(unit, time > 1 ? "seconds" : "second");
     }
-    snprintf(buffer, buffer_size, "%.1f%s", time, unit);
+    snprintf(buffer, buffer_size, "%.1f %s", time, unit);
 }
 
 void LGFX::refreshDebug(uint16_t xOffset, uint16_t yOffset)
