@@ -109,12 +109,12 @@ uint64_t DummySource::getUsedNetworkDownloadBandwith(void)
     {
         if (current < MAX_NETWORK_DOWNLOAD_BANDWITH)
         {
-            current++;
+            current += 1000000;
         }
     }
     else if (current > MIN_NETWORK_DOWNLOAD_BANDWITH)
     {
-        current--;
+        current -= 1000000;
     }
     this->currentNetworkDownloadBandwith->setCurrent(current);
     return (current);
@@ -132,12 +132,12 @@ uint64_t DummySource::getUsedNetworkUploadBandwith(void)
     {
         if (current < MAX_NETWORK_UPLOAD_BANDWITH)
         {
-            current++;
+            current += 1000000;
         }
     }
     else if (current > MIN_NETWORK_UPLOAD_BANDWITH)
     {
-        current--;
+        current -= 1000000;
     }
     this->currentNetworkUploadBandwith->setCurrent(current);
     return (current);
