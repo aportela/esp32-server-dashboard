@@ -192,8 +192,9 @@ void LGFX::initMemoryMeter(uint16_t xOffset, uint16_t yOffset)
     this->print("000GB / 032GB");
 }
 
-void LGFX::refreshMemoryMeter(uint16_t xOffset, uint16_t yOffset, uint64_t usedMemory)
+void LGFX::refreshMemoryMeter(uint16_t xOffset, uint16_t yOffset)
 {
+    uint64_t usedMemory = this->source->getCurrent(MEMORY);
     uint8_t mapped100 = map(usedMemory, MIN_MEMORY, MAX_MEMORY, 0, 100);
     int32_t gradientColor = this->getTemperatureGradientFrom0To100(mapped100);
     this->refreshGraphSprite(this->memorySprite, mapped100, gradientColor, xOffset, yOffset);
@@ -213,8 +214,9 @@ void LGFX::initCPUTemperatureMeter(uint16_t xOffset, uint16_t yOffset)
     this->initGraph(xOffset, yOffset, label);
 }
 
-void LGFX::refreshCPUTemperatureMeter(uint16_t xOffset, uint16_t yOffset, uint8_t temperature)
+void LGFX::refreshCPUTemperatureMeter(uint16_t xOffset, uint16_t yOffset)
 {
+    uint8_t temperature = this->source->getCurrent(CPU_TEMPERATURE);
     uint8_t mapped100 = map(temperature, MIN_CPU_TEMPERATURE, MAX_CPU_TEMPERATURE, 0, 100);
     int32_t gradientColor = this->getTemperatureGradientFrom0To100(mapped100);
     this->refreshGraphSprite(this->cpuTemperatureSprite, mapped100, gradientColor, xOffset, yOffset);
@@ -236,8 +238,9 @@ void LGFX::initNetworkDownloadBandwithMeter(uint16_t xOffset, uint16_t yOffset)
     this->print("000MB / 512MB");
 }
 
-void LGFX::refreshNetworkDownloadBandwithMeter(uint16_t xOffset, uint16_t yOffset, uint64_t bandwith)
+void LGFX::refreshNetworkDownloadBandwithMeter(uint16_t xOffset, uint16_t yOffset)
 {
+    uint64_t bandwith = this->source->getCurrent(NETWORK_BANDWITH_DOWNLOAD);
     uint64_t bandwithHumanIntValue = bandwith;
     uint16_t bandwithHumanIntDecimalValue = bandwith > 999 ? bandwith % 1000 : 0;
     char *units[] = {"B  ", "KB ", "MB ", "GB ", "TB ", "PB "};
@@ -277,8 +280,9 @@ void LGFX::initNetworkUploadBandwithMeter(uint16_t xOffset, uint16_t yOffset)
     this->print("000MB / 512MB");
 }
 
-void LGFX::refreshNetworkUploadBandwithMeter(uint16_t xOffset, uint16_t yOffset, uint64_t bandwith)
+void LGFX::refreshNetworkUploadBandwithMeter(uint16_t xOffset, uint16_t yOffset)
 {
+    uint64_t bandwith = this->source->getCurrent(NETWORK_BANDWITH_UPLOAD);
     uint64_t bandwithHumanIntValue = bandwith;
     uint16_t bandwithHumanIntDecimalValue = bandwith > 999 ? bandwith % 1000 : 0;
     char *units[] = {"B  ", "KB ", "MB ", "GB ", "TB ", "PB "};

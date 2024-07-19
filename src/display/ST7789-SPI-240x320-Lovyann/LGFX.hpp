@@ -31,12 +31,12 @@ public:
     void initCPULoadMeter(uint16_t xOffset, uint16_t yOffset);
     void refreshCPULoadMeter(uint16_t xOffset, uint16_t yOffset);
     void initMemoryMeter(uint16_t xOffset, uint16_t yOffset);
-    void refreshMemoryMeter(uint16_t xOffset, uint16_t yOffset, uint64_t usedMemory);
+    void refreshMemoryMeter(uint16_t xOffset, uint16_t yOffset);
     void initCPUTemperatureMeter(uint16_t xOffset, uint16_t yOffset);
-    void refreshCPUTemperatureMeter(uint16_t xOffset, uint16_t yOffset, uint8_t temperature);
+    void refreshCPUTemperatureMeter(uint16_t xOffset, uint16_t yOffset);
     void initNetworkDownloadBandwithMeter(uint16_t xOffset, uint16_t yOffset);
-    void refreshNetworkDownloadBandwithMeter(uint16_t xOffset, uint16_t yOffset, uint64_t bandwith);
+    void refreshNetworkDownloadBandwithMeter(uint16_t xOffset, uint16_t yOffset);
     void initNetworkUploadBandwithMeter(uint16_t xOffset, uint16_t yOffset);
-    void refreshNetworkUploadBandwithMeter(uint16_t xOffset, uint16_t yOffset, uint64_t bandwith);
+    void refreshNetworkUploadBandwithMeter(uint16_t xOffset, uint16_t yOffset);
     void refreshDebug(uint16_t xOffset, uint16_t yOffset);
 };
