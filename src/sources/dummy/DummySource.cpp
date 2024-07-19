@@ -18,7 +18,8 @@ DummySource::DummySource(void)
     this->currentMemory->setCurrent(random(MIN_MEMORY, MAX_MEMORY));
 
     this->currentNetworkDownloadBandwith = new SourceDataNetworkUsedBandwith(MIN_NETWORK_DOWNLOAD_BANDWITH, MAX_NETWORK_DOWNLOAD_BANDWITH);
-    this->currentNetworkDownloadBandwith->setCurrent(MAX_NETWORK_DOWNLOAD_BANDWITH / (random(1, 5) * 2));
+    this->currentNetworkDownloadBandwith->setCurrent(0);
+    // this->currentNetworkDownloadBandwith->setCurrent(MAX_NETWORK_DOWNLOAD_BANDWITH / (random(1, 5) * 2));
 
     this->currentNetworkUploadBandwith = new SourceDataNetworkUsedBandwith(MIN_NETWORK_UPLOAD_BANDWITH, MAX_NETWORK_UPLOAD_BANDWITH);
     this->currentNetworkUploadBandwith->setCurrent(MAX_NETWORK_DOWNLOAD_BANDWITH / (random(1, 5) * 2));
@@ -105,6 +106,11 @@ uint64_t DummySource::getTotalNetworkDownloadBandwith(void)
 uint64_t DummySource::getUsedNetworkDownloadBandwith(void)
 {
     uint64_t current = this->currentNetworkDownloadBandwith->getCurrent();
+    if (current + 500000 < MAX_NETWORK_DOWNLOAD_BANDWITH)
+    {
+        current += 1000000;
+    }
+    /*
     if (random(0, 20) % 2 == 0)
     {
         if (current + 5000000 < MAX_NETWORK_DOWNLOAD_BANDWITH)
@@ -116,6 +122,7 @@ uint64_t DummySource::getUsedNetworkDownloadBandwith(void)
     {
         current -= 5000000;
     }
+    */
     this->currentNetworkDownloadBandwith->setCurrent(current);
     return (current);
 }
