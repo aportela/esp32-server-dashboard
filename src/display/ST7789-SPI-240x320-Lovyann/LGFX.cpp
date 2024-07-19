@@ -158,7 +158,7 @@ void LGFX::refreshCPULoadMeter(uint8_t xOffset, uint8_t yOffset, uint8_t load)
     this->cpuLoadSprite->drawFastVLine(GRAPH_SPRITE_WIDTH - 1, GRAPH_SPRITE_HEIGHT - mappedGraphValue + 1, mappedGraphValue, gradientColor);
     if (load != this->oldCPULoad)
     {
-        this->setCursor(xOffset + SCREEN_WIDTH - 92, yOffset + 20);
+        this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset + 20);
         this->setTextSize(GRAPH_LABEL_FONT_SIZE);
         this->setTextColor(gradientColor, TFT_BLACK);
         this->printf("%03d%%", load);
@@ -180,11 +180,13 @@ void LGFX::initMemoryMeter(uint8_t xOffset, uint8_t yOffset)
     this->setTextSize(GRAPH_LABEL_FONT_SIZE);
     this->setTextColor(TFT_WHITE, TFT_BLACK);
     this->print("USED Memory");
+    this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset + 20);
+    this->print("000GB / 032GB");
 }
 
 void LGFX::refreshMemoryMeter(uint8_t xOffset, uint8_t yOffset, uint64_t usedMemory)
 {
-    // TODO: check axis & sprite MAX_MEMORY
+    // TODO: check axis & sprite MAX
     uint8_t mapped100 = map(usedMemory, MIN_MEMORY, MAX_MEMORY, 0, 100);
     int32_t gradientColor = this->getTemperatureGradientFrom0To100(mapped100);
     uint8_t mappedGraphValue = map(usedMemory, MIN_MEMORY, MAX_MEMORY, 0, GRAPH_SPRITE_HEIGHT);
@@ -192,13 +194,14 @@ void LGFX::refreshMemoryMeter(uint8_t xOffset, uint8_t yOffset, uint64_t usedMem
     this->memorySprite->scroll(-1, 0);
     // draw new value (on right)
     this->memorySprite->drawFastVLine(GRAPH_SPRITE_WIDTH - 1, GRAPH_SPRITE_HEIGHT - mappedGraphValue + 1, mappedGraphValue, gradientColor);
+    this->memorySprite->pushSprite(xOffset + 2, yOffset + 2);
     if (usedMemory != this->oldUsedMemory)
     {
-        this->setCursor(xOffset + SCREEN_WIDTH - 92, yOffset + 20);
+        this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset + 20);
         this->setTextSize(GRAPH_LABEL_FONT_SIZE);
         this->setTextColor(gradientColor, TFT_BLACK);
-        this->printf("%03dGb", usedMemory);
-        this->memorySprite->pushSprite(xOffset + 2, yOffset + 2);
+        this->printf("%03d", usedMemory);
+        this->print("GB");
         this->oldUsedMemory = usedMemory;
     }
 }
@@ -228,13 +231,13 @@ void LGFX::refreshCPUTemperatureMeter(uint8_t xOffset, uint8_t yOffset, uint8_t 
     this->cpuTemperatureSprite->scroll(-1, 0);
     // draw new value (on right)
     this->cpuTemperatureSprite->drawFastVLine(GRAPH_SPRITE_WIDTH - 1, GRAPH_SPRITE_HEIGHT - mappedGraphValue + 1, mappedGraphValue, gradientColor);
+    this->cpuTemperatureSprite->pushSprite(xOffset + 2, yOffset + 2);
     if (temperature != this->oldCPUTemperature)
     {
-        this->setCursor(xOffset + SCREEN_WIDTH - 92, yOffset + 20);
+        this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset + 20);
         this->setTextSize(GRAPH_LABEL_FONT_SIZE);
         this->setTextColor(gradientColor, TFT_BLACK);
         this->printf("%03dC", temperature);
-        this->cpuTemperatureSprite->pushSprite(xOffset + 2, yOffset + 2);
         this->oldCPUTemperature = temperature;
     }
 }
@@ -252,34 +255,39 @@ void LGFX::initNetworkDownloadBandwithMeter(uint8_t xOffset, uint8_t yOffset)
     this->setTextSize(GRAPH_LABEL_FONT_SIZE);
     this->setTextColor(TFT_WHITE, TFT_BLACK);
     this->print("WAN Download");
+    // TODO: fixed max
+    this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset + 20);
+    this->print("000MB / 512MB");
 }
 
 void LGFX::refreshNetworkDownloadBandwithMeter(uint8_t xOffset, uint8_t yOffset, uint64_t bandwith)
 {
     uint64_t bandwithHumanIntValue = bandwith;
     uint16_t bandwithHumanIntDecimalValue = bandwith > 999 ? bandwith % 1000 : 0;
-    char *units[] = {"B", "Kb", "Mb", "Gb", "Tb", "Pb", "OV1", "OV2"};
+    char *units[] = {"B  ", "KB", "MB", "GB", "TB", "PB"};
     uint8_t currentUnitIndex = 0;
     while (bandwithHumanIntValue > 999)
     {
         bandwithHumanIntValue = bandwithHumanIntValue / 1000;
         currentUnitIndex++;
     }
-    // TODO: check axis & sprite MAX_MEMORY
-    uint8_t mapped100 = map(bandwith, MIN_NETWORK_DOWNLOAD_BANDWITH, MAX_NETWORK_DOWNLOAD_BANDWITH, 0, 100);
+    // TODO: check axis & sprite MAX
+    // TODO: fixed max
+    uint8_t mapped100 = map(bandwithHumanIntValue, 0, 512, 0, 100);
     int32_t gradientColor = this->getTemperatureGradientFrom0To100(mapped100);
-    uint8_t mappedGraphValue = map(bandwith, MIN_NETWORK_DOWNLOAD_BANDWITH, MAX_NETWORK_DOWNLOAD_BANDWITH, 0, GRAPH_SPRITE_HEIGHT);
+    uint8_t mappedGraphValue = map(bandwithHumanIntValue, 0, 512, 0, GRAPH_SPRITE_HEIGHT);
     // create graph animation moving sprite to left 1 pixel
     this->networkDownloadSprite->scroll(-1, 0);
     // draw new value (on right)
     this->networkDownloadSprite->drawFastVLine(GRAPH_SPRITE_WIDTH - 1, GRAPH_SPRITE_HEIGHT - mappedGraphValue + 1, mappedGraphValue, gradientColor);
+    this->networkDownloadSprite->pushSprite(xOffset + 2, yOffset + 2);
     if (bandwith != this->oldNetworkDownloadBandwith)
     {
-        this->setCursor(xOffset + SCREEN_WIDTH - 92, yOffset + 20);
+        this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset + 20);
         this->setTextSize(GRAPH_LABEL_FONT_SIZE);
         this->setTextColor(gradientColor, TFT_BLACK);
-        this->printf("%03d", bandwith, units[currentUnitIndex]);
-        this->networkDownloadSprite->pushSprite(xOffset + 2, yOffset + 2);
+        this->printf("%03d", bandwithHumanIntValue);
+        this->print(units[currentUnitIndex]);
         this->oldNetworkDownloadBandwith = bandwith;
     }
 }
@@ -297,11 +305,14 @@ void LGFX::initNetworkUploadBandwithMeter(uint8_t xOffset, uint8_t yOffset)
     this->setTextSize(GRAPH_LABEL_FONT_SIZE);
     this->setTextColor(TFT_WHITE, TFT_BLACK);
     this->print("WAN Upload");
+    // TODO: fixed max
+    this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset + 20);
+    this->print("000MB of 512MB");
 }
 
 void LGFX::refreshNetworkUploadBandwithMeter(uint8_t xOffset, uint8_t yOffset, uint64_t bandwith)
 {
-    // TODO: check axis & sprite MAX_MEMORY
+    // TODO: check axis & sprite MAX
     uint8_t mapped100 = map(bandwith, MIN_NETWORK_UPLOAD_BANDWITH, MAX_NETWORK_UPLOAD_BANDWITH, 0, 100);
     int32_t gradientColor = this->getTemperatureGradientFrom0To100(mapped100);
     uint8_t mappedGraphValue = map(bandwith, MIN_NETWORK_UPLOAD_BANDWITH, MAX_NETWORK_UPLOAD_BANDWITH, 0, GRAPH_SPRITE_HEIGHT);
@@ -309,13 +320,13 @@ void LGFX::refreshNetworkUploadBandwithMeter(uint8_t xOffset, uint8_t yOffset, u
     this->networkUploadSprite->scroll(-1, 0);
     // draw new value (on right)
     this->networkUploadSprite->drawFastVLine(GRAPH_SPRITE_WIDTH - 1, GRAPH_SPRITE_HEIGHT - mappedGraphValue + 1, mappedGraphValue, gradientColor);
+    this->networkUploadSprite->pushSprite(xOffset + 2, yOffset + 2);
     if (bandwith != this->oldNetworkUploadBandwith)
     {
-        this->setCursor(xOffset + SCREEN_WIDTH - 92, yOffset + 20);
+        this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset + 20);
         this->setTextSize(GRAPH_LABEL_FONT_SIZE);
         this->setTextColor(gradientColor, TFT_BLACK);
-        this->printf("%03dMb", bandwith);
-        this->networkUploadSprite->pushSprite(xOffset + 2, yOffset + 2);
+        this->printf("%03dMB", bandwith);
         this->oldNetworkUploadBandwith = bandwith;
     }
 }
