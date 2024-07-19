@@ -16,7 +16,7 @@
 #define GRAPH_LABEL_FONT_SIZE 1
 
 #define DEBUG_SPRITE_WIDTH SCREEN_WIDTH - 20
-#define DEBUG_SPRITE_HEIGHT 10
+#define DEBUG_SPRITE_HEIGHT 13
 #define DEBUG_SPRITE_BACKGROUND TFT_BLACK
 
 LGFX::LGFX(uint8_t SDA, uint8_t SCL, uint8_t CS, uint8_t DC, uint8_t RST)
@@ -273,6 +273,7 @@ void LGFX::refreshNetworkDownloadBandwithMeter(uint8_t xOffset, uint8_t yOffset,
     }
     // TODO: check axis & sprite MAX
     // TODO: fixed max
+    // TODO: map BUG at 512 Bytes/KBytes/Mbytes/Gbytes
     uint8_t mapped100 = currentUnitIndex > 0 ? map(bandwithHumanIntValue, 0, 512, 0, 100) : 0;
     int32_t gradientColor = this->getTemperatureGradientFrom0To100(mapped100);
     uint8_t mappedGraphValue = currentUnitIndex > 0 ? map(bandwithHumanIntValue, 0, 512, 0, GRAPH_SPRITE_HEIGHT) : 0;

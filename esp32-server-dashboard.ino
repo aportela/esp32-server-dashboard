@@ -32,6 +32,6 @@ void loop()
     screen->refreshCPUTemperatureMeter(0, 84, dummySRC->getCurrentCPUTemperature());
     screen->refreshNetworkDownloadBandwithMeter(0, 126, dummySRC->getUsedNetworkDownloadBandwith());
     screen->refreshNetworkUploadBandwithMeter(0, 168, dummySRC->getUsedNetworkUploadBandwith());
-    screen->refreshDebug(0, 220);
+    screen->refreshDebug(0, 210);
     // delay(50);
 }
