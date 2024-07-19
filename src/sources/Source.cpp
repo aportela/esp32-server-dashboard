@@ -34,3 +34,28 @@ Source::~Source()
         this->currentNetworkUploadBandwith = nullptr;
     }
 }
+
+uint64_t Source::getPreviousCPULoad(void)
+{
+    return (this->currentCPULoad->getPrevious());
+}
+
+uint64_t Source::getPreviousUsedMemory(void)
+{
+    return (this->currentMemory->getPrevious());
+}
+
+uint64_t Source::getPreviousCPUTemperature(void)
+{
+    return (this->currentCPUTemperature->getPrevious());
+}
+
+uint64_t Source::getPreviousUsedNetworkDownloadBandwith(void)
+{
+    return (this->currentNetworkDownloadBandwith->getPrevious());
+}
+
+uint64_t Source::getPreviousUsedNetworkUploadBandwith(void)
+{
+    return (this->currentNetworkUploadBandwith->getPrevious());
+}

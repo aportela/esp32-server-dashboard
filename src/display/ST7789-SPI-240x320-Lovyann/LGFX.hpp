@@ -18,11 +18,6 @@ private:
     FPSDebug *fpsDebug;
 
     uint64_t startMillis;
-    uint8_t oldCPULoad;
-    uint8_t oldCPUTemperature;
-    uint64_t oldUsedMemory;
-    uint64_t oldNetworkDownloadBandwith;
-    uint64_t oldNetworkUploadBandwith;
     ISource *source;
 
     uint32_t getTemperatureGradientFrom0To100(int8_t value);

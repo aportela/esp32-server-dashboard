@@ -173,13 +173,12 @@ void LGFX::refreshCPULoadMeter(uint16_t xOffset, uint16_t yOffset, uint8_t load)
     uint8_t mapped100 = map(load, MIN_CPU_LOAD, MAX_CPU_LOAD, 0, 100);
     int32_t gradientColor = this->getTemperatureGradientFrom0To100(mapped100);
     this->refreshGraphSprite(this->cpuLoadSprite, mapped100, gradientColor, xOffset, yOffset);
-    if (load != this->oldCPULoad)
+    if (load != this->source->getPreviousCPULoad())
     {
         this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset + 20);
         this->setTextSize(GRAPH_LABEL_FONT_SIZE);
         this->setTextColor(gradientColor, TFT_BLACK);
         this->printf("%03d%%", load);
-        this->oldCPULoad = load;
     }
 }
 
@@ -196,14 +195,13 @@ void LGFX::refreshMemoryMeter(uint16_t xOffset, uint16_t yOffset, uint64_t usedM
     uint8_t mapped100 = map(usedMemory, MIN_MEMORY, MAX_MEMORY, 0, 100);
     int32_t gradientColor = this->getTemperatureGradientFrom0To100(mapped100);
     this->refreshGraphSprite(this->memorySprite, mapped100, gradientColor, xOffset, yOffset);
-    if (usedMemory != this->oldUsedMemory)
+    if (usedMemory != this->source->getPreviousUsedMemory())
     {
         this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset + 20);
         this->setTextSize(GRAPH_LABEL_FONT_SIZE);
         this->setTextColor(gradientColor, TFT_BLACK);
         this->printf("%03d", usedMemory);
         this->print("GB");
-        this->oldUsedMemory = usedMemory;
     }
 }
 
@@ -218,13 +216,12 @@ void LGFX::refreshCPUTemperatureMeter(uint16_t xOffset, uint16_t yOffset, uint8_
     uint8_t mapped100 = map(temperature, MIN_CPU_TEMPERATURE, MAX_CPU_TEMPERATURE, 0, 100);
     int32_t gradientColor = this->getTemperatureGradientFrom0To100(mapped100);
     this->refreshGraphSprite(this->cpuTemperatureSprite, mapped100, gradientColor, xOffset, yOffset);
-    if (temperature != this->oldCPUTemperature)
+    if (temperature != this->source->getPreviousCPUTemperature())
     {
         this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset + 20);
         this->setTextSize(GRAPH_LABEL_FONT_SIZE);
         this->setTextColor(gradientColor, TFT_BLACK);
         this->printf("%03dC", temperature);
-        this->oldCPUTemperature = temperature;
     }
 }
 
@@ -259,14 +256,13 @@ void LGFX::refreshNetworkDownloadBandwithMeter(uint16_t xOffset, uint16_t yOffse
     // draw new value (on right)
     this->networkDownloadSprite->drawFastVLine(GRAPH_SPRITE_WIDTH - 1, GRAPH_SPRITE_HEIGHT - mappedGraphValue + 1, mappedGraphValue, gradientColor);
     this->networkDownloadSprite->pushSprite(xOffset + 2, yOffset + 2);
-    if (bandwith != this->oldNetworkDownloadBandwith)
+    if (bandwith != this->source->getPreviousUsedNetworkDownloadBandwith())
     {
         this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset + 20);
         this->setTextSize(GRAPH_LABEL_FONT_SIZE);
         this->setTextColor(gradientColor, TFT_BLACK);
         this->printf("%03d", bandwithHumanIntValue);
         this->print(units[currentUnitIndex]);
-        this->oldNetworkDownloadBandwith = bandwith;
     }
 }
 
@@ -300,14 +296,13 @@ void LGFX::refreshNetworkUploadBandwithMeter(uint16_t xOffset, uint16_t yOffset,
     // draw new value (on right)
     this->networkUploadSprite->drawFastVLine(GRAPH_SPRITE_WIDTH - 1, GRAPH_SPRITE_HEIGHT - mappedGraphValue + 1, mappedGraphValue, gradientColor);
     this->networkUploadSprite->pushSprite(xOffset + 2, yOffset + 2);
-    if (bandwith != this->oldNetworkUploadBandwith)
+    if (bandwith != this->source->getPreviousUsedNetworkUploadBandwith())
     {
         this->setCursor(xOffset + SCREEN_WIDTH - 105, yOffset + 20);
         this->setTextSize(GRAPH_LABEL_FONT_SIZE);
         this->setTextColor(gradientColor, TFT_BLACK);
         this->printf("%03d", bandwithHumanIntValue);
         this->print(units[currentUnitIndex]);
-        this->oldNetworkUploadBandwith = bandwith;
     }
 }
 

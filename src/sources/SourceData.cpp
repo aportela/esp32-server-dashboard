@@ -2,6 +2,7 @@
 
 SourceData::SourceData(uint64_t min, uint64_t max) : min(min), max(max)
 {
+    this->previous = 0;
     this->current = 0;
 }
 
@@ -21,18 +22,27 @@ uint64_t SourceData::getMax(void)
 
 void SourceData::setCurrent(uint64_t value)
 {
-    if (value >= this->min && value <= this->max)
+    if (value != this->current)
     {
-        this->current = value;
+        this->previous = this->current;
+        if (value >= this->min && value <= this->max)
+        {
+            this->current = value;
+        }
+        else if (value < this->min)
+        {
+            this->current = this->min;
+        }
+        else if (value > this->max)
+        {
+            this->current = this->max;
+        }
     }
-    else if (value < this->min)
-    {
-        this->current = this->min;
-    }
-    else if (value > this->max)
-    {
-        this->current = this->max;
-    }
+}
+
+uint64_t SourceData::getPrevious(void)
+{
+    return (this->previous);
 }
 
 uint64_t SourceData::getCurrent(void)
