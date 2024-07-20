@@ -32,7 +32,7 @@ public:
     LGFXMeter(LovyanGFX *display, MeterEntity entity, int32_t width, int32_t height, uint16_t xOffset, uint16_t yOffset, int32_t backgroundColor, char *label);
     ~LGFXMeter();
 
-    uint32_t getGradientColorFrom0To100(int8_t value);
+    uint32_t getGradientColorFrom0To100(uint8_t value);
     void refresh(uint64_t value);
 };
 
