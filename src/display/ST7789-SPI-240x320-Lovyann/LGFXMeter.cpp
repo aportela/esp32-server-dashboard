@@ -13,8 +13,18 @@ uint8_t LGFXMeter::map64WithRange0To00(uint64_t x, uint64_t in_min, uint64_t in_
     {
         return 0;
     }
-
-    return 0 + (x - in_min) * (100 - 0) / (in_max - in_min);
+    else if (x < in_min)
+    {
+        return (0);
+    }
+    else if (x > in_max)
+    {
+        return (100);
+    }
+    else
+    {
+        return 0 + (x - in_min) * (100 - 0) / (in_max - in_min);
+    }
 }
 
 LGFXMeter::LGFXMeter(LovyanGFX *display, MeterEntity entity, int32_t width, int32_t height, uint16_t xOffset, uint16_t yOffset, int32_t backgroundColor, char *label)
@@ -76,29 +86,36 @@ LGFXMeter::~LGFXMeter()
 
 uint32_t LGFXMeter::getGradientColorFrom0To100(int8_t value)
 {
-    // NOT REQUIRED
-    // value = constrain(value, 0, 100);
+    if (value > 0)
+    {
+        // NOT REQUIRED
+        // value = constrain(value, 0, 100);
 
-    // blue -> green
-    if (value <= 33)
-    {
-        int blue = 255;
-        int green = map(value, 0, 33, 0, 255);
-        return this->parentDisplay->color565(0, green, blue);
+        // blue -> green
+        if (value <= 33)
+        {
+            int blue = 255;
+            int green = map(value, 0, 33, 0, 255);
+            return this->parentDisplay->color565(0, green, blue);
+        }
+        // green -> yellow
+        else if (value <= 66)
+        {
+            int green = 255;
+            int red = map(value, 34, 66, 0, 255);
+            return this->parentDisplay->color565(red, green, 0);
+        }
+        // yellow -> red
+        else
+        {
+            int red = 255;
+            int green = map(value, 67, 100, 255, 0);
+            return this->parentDisplay->color565(red, green, 0);
+        }
     }
-    // green -> yellow
-    else if (value <= 66)
-    {
-        int green = 255;
-        int red = map(value, 34, 66, 0, 255);
-        return this->parentDisplay->color565(red, green, 0);
-    }
-    // yellow -> red
     else
     {
-        int red = 255;
-        int green = map(value, 67, 100, 255, 0);
-        return this->parentDisplay->color565(red, green, 0);
+        return (TFT_BLACK);
     }
 }
 
@@ -113,7 +130,7 @@ void LGFXMeter::formatValueAsMemory(uint64_t value, char *label)
     static const uint8_t numUnits = sizeof(units) / sizeof(units[0]) - 1;
     uint8_t currentUnitIndex = 0;
     double decValue = (double)value;
-    while (decValue > 999.0 && currentUnitIndex < numUnits)
+    while (decValue >= 1000.0 && currentUnitIndex < numUnits)
     {
         decValue /= 1000;
         currentUnitIndex++;
@@ -128,13 +145,13 @@ void LGFXMeter::refresh(uint64_t value)
     switch (this->entity)
     {
     case METER_ENTITY_CPU_LOAD:
-        mapped100 = map64WithRange0To00(value, 0, 100);
+        mapped100 = map(value, 0, 100, 0, 100);
         break;
     case METER_ENTITY_MEMORY:
         mapped100 = map64WithRange0To00(value, 0, 32000000000);
         break;
     case METER_ENTITY_CPU_TEMPERATURE:
-        mapped100 = map64WithRange0To00(value, 0, 100);
+        mapped100 = map(value, 0, 100, 0, 100);
         break;
     case METER_ENTITY_NETWORK_BANDWITH_DOWNLOAD:
         mapped100 = map64WithRange0To00(value, 0, 512000000);
