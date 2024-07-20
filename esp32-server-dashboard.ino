@@ -23,6 +23,7 @@ LGFXMeter *cpuLoadMeter = nullptr;
 #error NO_DISPLAY_DRIVER
 #endif
 
+#include "src/sources/MeterEntity.hpp"
 #include "src/sources/Source.hpp"
 #include "src/sources/dummy/DummySource.hpp"
 
@@ -42,7 +43,7 @@ void setup()
     // screen->initNetworkDownloadBandwithMeter(0, 126);
     // screen->initNetworkUploadBandwithMeter(0, 168);
     screen->setSource(dummySRC);
-    cpuLoadMeter = new LGFXMeter(screen, 200, 30, 0, 42, TFT_BLACK, "CPU LOAD");
+    cpuLoadMeter = new LGFXMeter(screen, METER_ENTITY_CPU_LOAD, 200, 30, 0, 42, TFT_BLACK, "CPU LOAD");
 #endif
 }
 

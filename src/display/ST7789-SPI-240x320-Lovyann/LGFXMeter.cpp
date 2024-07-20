@@ -6,12 +6,13 @@
 #define MAIN_LABEL_COLOR TFT_WHITE
 #define MAIN_LABEL_BACKGROUND TFT_BLACK
 
-LGFXMeter::LGFXMeter(LovyanGFX *display, int32_t width, int32_t height, uint16_t xOffset, uint16_t yOffset, int32_t backgroundColor, char *label)
+LGFXMeter::LGFXMeter(LovyanGFX *display, MeterEntity entity, int32_t width, int32_t height, uint16_t xOffset, uint16_t yOffset, int32_t backgroundColor, char *label)
 {
     this->parentDisplay = display;
     this->graphSprite = new lgfx::LGFX_Sprite(display);
     this->graphSprite->createSprite(width, height);
     this->graphSprite->fillSprite(backgroundColor);
+    this->entity = entity;
     this->width = width;
     this->height = height;
     this->xOffset = xOffset;
@@ -33,7 +34,12 @@ LGFXMeter::LGFXMeter(LovyanGFX *display, int32_t width, int32_t height, uint16_t
     this->parentDisplay->setCursor(this->valueLabelXOffset, this->valueLabelYOffset);
     this->parentDisplay->setTextSize(GRAPH_LABEL__FONT_SIZE);
     this->parentDisplay->setTextColor(MAIN_LABEL_COLOR, MAIN_LABEL_BACKGROUND);
-    this->parentDisplay->print("000%");
+    switch (this->entity)
+    {
+    case METER_ENTITY_CPU_LOAD:
+        this->parentDisplay->print("000%");
+        break;
+    }
 
     this->previousMappedValue = 0;
     this->previousGradientcolor = 0;
@@ -93,8 +99,14 @@ void LGFXMeter::refresh(uint64_t value)
         this->parentDisplay->setCursor(this->valueLabelXOffset, this->valueLabelYOffset);
         this->parentDisplay->setTextSize(GRAPH_LABEL__FONT_SIZE);
         this->parentDisplay->setTextColor(color, MAIN_LABEL_BACKGROUND);
-        sprintf(this->formattedValueLabel, "%03d", value);
-        this->parentDisplay->print(this->formattedValueLabel);
+        char formattedValueLabel[32] = "";
+        switch (this->entity)
+        {
+        case METER_ENTITY_CPU_LOAD:
+            sprintf(formattedValueLabel, "%03d", value);
+            break;
+        }
+        this->parentDisplay->print(formattedValueLabel);
         this->previousValue = value;
     }
 }
