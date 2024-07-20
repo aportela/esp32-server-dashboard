@@ -119,25 +119,20 @@ uint64_t DummySource::getTotalNetworkDownloadBandwith(void)
 
 uint64_t DummySource::getUsedNetworkDownloadBandwith(void)
 {
-    uint64_t current = this->currentNetworkDownloadBandwith->getCurrent();
-    if (current + 500000 < MAX_NETWORK_DOWNLOAD_BANDWITH)
-    {
-        current += 1000000;
-    }
-    /*
+    uint64_t current = this->currentMemory->getCurrent();
+    const uint64_t change = 100000;
     if (random(0, 20) % 2 == 0)
     {
-        if (current + 5000000 < MAX_NETWORK_DOWNLOAD_BANDWITH)
+        if (current < MAX_NETWORK_DOWNLOAD_BANDWITH - change)
         {
-            current += 5000000;
+            current += change;
         }
     }
-    else if (current - 5000000 > MIN_NETWORK_DOWNLOAD_BANDWITH)
+    else if (current > MIN_NETWORK_DOWNLOAD_BANDWITH + change)
     {
-        current -= 5000000;
+        current -= change;
     }
-    */
-    this->currentNetworkDownloadBandwith->setCurrent(current);
+    this->currentMemory->setCurrent(current);
     return (current);
 }
 
@@ -148,18 +143,19 @@ uint64_t DummySource::getTotalNetworkUploadBandwith(void)
 
 uint64_t DummySource::getUsedNetworkUploadBandwith(void)
 {
-    uint64_t current = this->currentNetworkUploadBandwith->getCurrent();
+    uint64_t current = this->currentMemory->getCurrent();
+    const uint64_t change = 100000;
     if (random(0, 20) % 2 == 0)
     {
-        if (current + 5000000 < MAX_NETWORK_UPLOAD_BANDWITH)
+        if (current < MAX_NETWORK_UPLOAD_BANDWITH - change)
         {
-            current += 5000000;
+            current += change;
         }
     }
-    else if (current - 5000000 > MIN_NETWORK_UPLOAD_BANDWITH)
+    else if (current > MIN_NETWORK_UPLOAD_BANDWITH + change)
     {
-        current -= 5000000;
+        current -= change;
     }
-    this->currentNetworkUploadBandwith->setCurrent(current);
+    this->currentMemory->setCurrent(current);
     return (current);
 }
