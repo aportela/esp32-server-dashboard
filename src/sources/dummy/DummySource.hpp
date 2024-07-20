@@ -5,7 +5,7 @@
 #define MAX_CPU_LOAD 100
 
 #define MIN_MEMORY 0
-#define MAX_MEMORY 32 // GB
+#define MAX_MEMORY 32000000000 // 32 GB
 
 #define MIN_CPU_TEMPERATURE 0
 #define MAX_CPU_TEMPERATURE 100 // Celsious
