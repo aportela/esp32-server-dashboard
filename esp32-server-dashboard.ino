@@ -47,11 +47,11 @@ void setup()
     // screen->initNetworkDownloadBandwithMeter(0, 126);
     // screen->initNetworkUploadBandwithMeter(0, 168);
     screen->setSource(dummySRC);
-    cpuLoadMeter = new LGFXMeter(screen, METER_ENTITY_CPU_LOAD, 200, 30, 0, 0, TFT_BLACK, "CPU LOAD");
-    memoryLoadMeter = new LGFXMeter(screen, METER_ENTITY_MEMORY, 200, 30, 0, 42, TFT_BLACK, "MEMORY");
-    cpuTemperatureLoadMeter = new LGFXMeter(screen, METER_ENTITY_CPU_TEMPERATURE, 200, 30, 0, 84, TFT_BLACK, "CPU TEMP");
-    networkDownloadBandwithLoadMeter = new LGFXMeter(screen, METER_ENTITY_NETWORK_BANDWITH_DOWNLOAD, 200, 30, 0, 126, TFT_BLACK, "WAN DOWN");
-    networkUploadBandwithLoadMeter = new LGFXMeter(screen, METER_ENTITY_NETWORK_BANDWITH_UPLOAD, 200, 30, 0, 168, TFT_BLACK, "WAN UP");
+    cpuLoadMeter = new LGFXMeter(screen, METER_ENTITY_CPU_LOAD, 195, 30, 0, 0, TFT_BLACK, "CPU LOAD");
+    memoryLoadMeter = new LGFXMeter(screen, METER_ENTITY_MEMORY, 195, 30, 0, 42, TFT_BLACK, "MEMORY");
+    cpuTemperatureLoadMeter = new LGFXMeter(screen, METER_ENTITY_CPU_TEMPERATURE, 195, 30, 0, 84, TFT_BLACK, "CPU TEMP");
+    networkDownloadBandwithLoadMeter = new LGFXMeter(screen, METER_ENTITY_NETWORK_BANDWITH_DOWNLOAD, 195, 30, 0, 126, TFT_BLACK, "WAN DOWN");
+    networkUploadBandwithLoadMeter = new LGFXMeter(screen, METER_ENTITY_NETWORK_BANDWITH_UPLOAD, 195, 30, 0, 168, TFT_BLACK, "WAN UP");
 #endif
 }
 
