@@ -148,17 +148,17 @@ void convertMillisToString(unsigned long long millis_diff, char *buffer, size_t 
     else if (millis_diff >= millis_in_minute)
     {
         time = (double)millis_diff / millis_in_minute;
-        strcpy(unit, time > 1 ? "minutes" : "minute");
+        strcpy(unit, time > 1 ? "mins" : "min");
     }
     else
     {
         time = (double)millis_diff / millis_in_second;
-        strcpy(unit, time > 1 ? "seconds" : "second");
+        strcpy(unit, time > 1 ? "secs" : "sec");
     }
     snprintf(buffer, buffer_size, "%.1f %s", time, unit);
 }
 
-void LGFX::refreshDebug(uint16_t xOffset, uint16_t yOffset)
+void LGFX::refreshDebug(uint16_t xOffset, uint16_t yOffset, int32_t wifiSignalStrength)
 {
     this->fpsDebug->loop();
 
@@ -168,6 +168,14 @@ void LGFX::refreshDebug(uint16_t xOffset, uint16_t yOffset)
     this->debugSprite->setCursor(0, 0);
     char timeString[50];
     convertMillisToString(millis() - this->startMillis, timeString, sizeof(timeString));
-    this->debugSprite->printf("Dashboard uptime: %s - FPS: %03u", timeString, this->fpsDebug->getFPS());
+    this->debugSprite->printf("Runtime: %s - FPS: %03u - Wifi: %03ddBm", timeString, this->fpsDebug->getFPS(), wifiSignalStrength);
+    /*
+        RSSI > - 30 dBm	 Amazing
+        RSSI < – 55 dBm	 Very good signal
+        RSSI < – 67 dBm	 Fairly Good
+        RSSI < – 70 dBm	 Okay
+        RSSI < – 80 dBm	 Not good
+        RSSI < – 90 dBm	 Extremely weak signal (unusable)
+    */
     this->debugSprite->pushSprite(xOffset, yOffset);
 }

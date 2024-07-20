@@ -30,7 +30,7 @@ public:
     ~LGFX();
     void addMeter(LGFXMeter *meter);
     void setSource(ISource *src);
-    void refreshDebug(uint16_t xOffset, uint16_t yOffset);
+    void refreshDebug(uint16_t xOffset, uint16_t yOffset, int32_t wifiSignalStrength);
 };
 
 #endif

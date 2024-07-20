@@ -44,6 +44,8 @@ LGFXMeter *networkUploadBandwithLoadMeter = nullptr;
 #error NO_DISPLAY_DRIVER
 #endif
 
+#include "WiFi.h"
+#include "WiFi-Settings.h"
 #include "src/sources/MeterEntity.hpp"
 #include "src/sources/Source.hpp"
 #include "src/sources/dummy/DummySource.hpp"
@@ -52,6 +54,9 @@ Source *dummySRC = nullptr;
 
 void setup()
 {
+    const char *ssid = WIFI_SSID;
+    const char *password = WIFI_PASSWORD;
+    WiFi.begin(ssid, password);
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     dummySRC = new DummySource();
     screen = new LGFX(PIN_SDA, PIN_SCL, PIN_CS, PIN_DC, PIN_RST, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_ROTATION);
@@ -68,17 +73,52 @@ void setup()
 #endif
 }
 
+bool WIFIFirstConnectionSuccess = false;
+bool WIFIForcingReconnection = false;
+
 void loop()
 {
+    if (WiFi.status() != WL_CONNECTED)
+    {
+        // waiting for first connection
+        if (!WIFIFirstConnectionSuccess)
+        {
+            delay(500);
+        }
+        else
+        {
+            // previous conection lost
+            if (!WIFIForcingReconnection)
+            {
+                // force new reconnection
+                WiFi.reconnect();
+                WIFIForcingReconnection = true;
+            }
+            else
+            {
+                // waiting for reconnection
+                delay(500);
+            }
+        }
+    }
+    else
+    {
+        // this controls that connection is valid
+        if (!WIFIFirstConnectionSuccess)
+        {
+            WIFIFirstConnectionSuccess = true;
+        }
+        WIFIForcingReconnection = false;
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
-    dummySRC->refresh();
-    cpuLoadMeter->refresh(dummySRC->getCurrentCPULoad());
-    memoryLoadMeter->refresh(dummySRC->getUsedMemory());
-    cpuTemperatureLoadMeter->refresh(dummySRC->getCurrentCPUTemperature());
-    networkDownloadBandwithLoadMeter->refresh(dummySRC->getUsedNetworkDownloadBandwith());
-    networkUploadBandwithLoadMeter->refresh(dummySRC->getUsedNetworkUploadBandwith());
-    screen->refreshDebug(0, 210);
-#else
-    delay(50);
+        dummySRC->refresh();
+        cpuLoadMeter->refresh(dummySRC->getCurrentCPULoad());
+        memoryLoadMeter->refresh(dummySRC->getUsedMemory());
+        cpuTemperatureLoadMeter->refresh(dummySRC->getCurrentCPUTemperature());
+        networkDownloadBandwithLoadMeter->refresh(dummySRC->getUsedNetworkDownloadBandwith());
+        networkUploadBandwithLoadMeter->refresh(dummySRC->getUsedNetworkUploadBandwith());
+#endif
+    }
+#ifdef DISPLAY_DRIVER_LOVYANN_ST7789
+    screen->refreshDebug(0, 210, WiFi.RSSI());
 #endif
 }
