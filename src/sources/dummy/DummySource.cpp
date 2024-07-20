@@ -5,23 +5,23 @@ DummySource::DummySource(void) : Source()
 {
 
     this->currentCPULoad = new SourceData(MIN_CPU_LOAD, MAX_CPU_LOAD);
-    this->currentCPULoad->setCurrent(random(MIN_CPU_LOAD, MAX_CPU_LOAD));
+    this->currentCPULoad->setCurrent(MIN_CPU_LOAD);
 
     this->currentMemory = new SourceData(MIN_MEMORY, MAX_MEMORY);
-    this->currentMemory->setCurrent(MAX_MEMORY / 8);
+    this->currentMemory->setCurrent(MIN_MEMORY);
 
     this->currentCPUTemperature = new SourceData(MIN_CPU_TEMPERATURE, MAX_CPU_TEMPERATURE);
-    this->currentCPUTemperature->setCurrent(random(MIN_CPU_TEMPERATURE, MAX_CPU_TEMPERATURE));
+    this->currentCPUTemperature->setCurrent(MIN_CPU_TEMPERATURE);
 
     this->currentMemory = new SourceData(MIN_MEMORY, MAX_MEMORY);
     this->currentMemory->setCurrent(random(MIN_MEMORY, MAX_MEMORY));
 
     this->currentNetworkDownloadBandwith = new SourceData(MIN_NETWORK_DOWNLOAD_BANDWITH, MAX_NETWORK_DOWNLOAD_BANDWITH);
-    this->currentNetworkDownloadBandwith->setCurrent(0);
-    // this->currentNetworkDownloadBandwith->setCurrent(MAX_NETWORK_DOWNLOAD_BANDWITH / (random(1, 5) * 2));
+    this->currentNetworkDownloadBandwith->setCurrent(MIN_NETWORK_DOWNLOAD_BANDWITH);
+    // this->currentNetworkDownloadBandwith->setCurrent(MIN_NETWORK_DOWNLOAD_BANDWITH);
 
     this->currentNetworkUploadBandwith = new SourceData(MIN_NETWORK_UPLOAD_BANDWITH, MAX_NETWORK_UPLOAD_BANDWITH);
-    this->currentNetworkUploadBandwith->setCurrent(MAX_NETWORK_DOWNLOAD_BANDWITH / (random(1, 5) * 2));
+    this->currentNetworkUploadBandwith->setCurrent(MIN_NETWORK_UPLOAD_BANDWITH);
 }
 
 DummySource::~DummySource()
@@ -78,16 +78,17 @@ uint64_t DummySource::getTotalMemory(void)
 uint64_t DummySource::getUsedMemory(void)
 {
     uint64_t current = this->currentMemory->getCurrent();
+    const uint64_t change = 1000000000;
     if (random(0, 20) % 2 == 0)
     {
-        if (current < MAX_MEMORY - 5000000)
+        if (current < MAX_MEMORY - change)
         {
-            current += 5000000; // + 512 Mb
+            current += change;
         }
     }
-    else if (current > MIN_MEMORY + 5000000)
+    else if (current > MIN_MEMORY + change)
     {
-        current -= 5000000; // - 512 Mb
+        current -= change;
     }
     this->currentMemory->setCurrent(current);
     return (current);
@@ -103,7 +104,7 @@ uint64_t DummySource::getCurrentCPUTemperature(void)
             current++;
         }
     }
-    else if (current > MIN_CPU_TEMPERATURE)
+    else if (current > (MAX_CPU_TEMPERATURE / 5))
     {
         current--;
     }
