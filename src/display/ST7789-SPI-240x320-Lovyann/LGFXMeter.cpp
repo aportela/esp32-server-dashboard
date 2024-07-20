@@ -73,13 +73,12 @@ uint32_t LGFXMeter::getGradientColorFrom0To100(int8_t value)
     }
 }
 
-void LGFXMeter::refresh(uint8_t value)
+void LGFXMeter::refresh(uint64_t value)
 {
     uint8_t mapped100 = map(value, 0, 100, 0, 100);
     int32_t color = (mapped100 != this->previousMappedValue) ? this->getGradientColorFrom0To100(mapped100) : this->previousGradientcolor;
     this->previousMappedValue = mapped100;
     this->previousGradientcolor = color;
-
     uint8_t mappedGraphValue = map(mapped100, 0, 100, 0, this->height);
     // create graph animation moving sprite to left 1 pixel
     this->graphSprite->scroll(-1, 0);
@@ -89,8 +88,13 @@ void LGFXMeter::refresh(uint8_t value)
     this->graphSprite->pushSprite(this->xOffset + 2, this->yOffset + 2);
 
     // label value update
-    this->parentDisplay->setCursor(this->valueLabelXOffset, this->valueLabelYOffset);
-    this->parentDisplay->setTextSize(GRAPH_LABEL__FONT_SIZE);
-    this->parentDisplay->setTextColor(color, MAIN_LABEL_BACKGROUND);
-    this->parentDisplay->printf("%03d", value);
+    if (value != this->previousValue)
+    {
+        this->parentDisplay->setCursor(this->valueLabelXOffset, this->valueLabelYOffset);
+        this->parentDisplay->setTextSize(GRAPH_LABEL__FONT_SIZE);
+        this->parentDisplay->setTextColor(color, MAIN_LABEL_BACKGROUND);
+        sprintf(this->formattedValueLabel, "%03d", value);
+        this->parentDisplay->print(this->formattedValueLabel);
+        this->previousValue = value;
+    }
 }

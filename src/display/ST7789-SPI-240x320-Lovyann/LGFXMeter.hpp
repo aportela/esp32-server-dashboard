@@ -20,13 +20,15 @@ private:
     // this is for preventing recalc data if no changes required
     uint64_t previousMappedValue;
     int32_t previousGradientcolor;
+    char formattedValueLabel[32];
+    uint64_t previousValue;
 
 public:
     LGFXMeter(LovyanGFX *display, int32_t width, int32_t height, uint16_t xOffset, uint16_t yOffset, int32_t backgroundColor, char *label);
     ~LGFXMeter();
 
     uint32_t getGradientColorFrom0To100(int8_t value);
-    void refresh(uint8_t value);
+    void refresh(uint64_t value);
 };
 
 #endif
