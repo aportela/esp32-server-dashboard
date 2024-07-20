@@ -58,8 +58,6 @@ LGFX::LGFX(uint8_t PIN_SDA, uint8_t PIN_SCL, uint8_t PIN_CS, uint8_t PIN_DC, uin
 
     setPanel(&_panel_instance);
 
-    this->mCPULoad = new LGFXMeter(this);
-
     this->cpuLoadSprite = new lgfx::LGFX_Sprite(this);
     this->cpuLoadSprite->createSprite(GRAPH_SPRITE_WIDTH, GRAPH_SPRITE_HEIGHT);
     this->cpuLoadSprite->fillSprite(GRAPH_SPRITE_BACKGROUND);
@@ -92,8 +90,6 @@ LGFX::LGFX(uint8_t PIN_SDA, uint8_t PIN_SCL, uint8_t PIN_CS, uint8_t PIN_DC, uin
 
 LGFX::~LGFX()
 {
-    delete this->mCPULoad;
-    this->mCPULoad = nullptr;
     delete this->cpuLoadSprite;
     this->cpuLoadSprite = nullptr;
     delete this->memorySprite;
@@ -106,6 +102,10 @@ LGFX::~LGFX()
     this->networkUploadSprite = nullptr;
     delete this->fpsDebug;
     this->fpsDebug = nullptr;
+}
+
+void LGFX::addMeter(LGFXMeter *meter)
+{
 }
 
 void LGFX::setSource(ISource *src)

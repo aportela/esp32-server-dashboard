@@ -6,9 +6,27 @@
 
 class LGFXMeter
 {
+private:
+    LovyanGFX *parentDisplay = nullptr;
+    lgfx::LGFX_Sprite *graphSprite = nullptr;
+    int32_t width;
+    int32_t height;
+    uint16_t xOffset;
+    uint16_t yOffset;
+
+    uint16_t valueLabelXOffset;
+    uint16_t valueLabelYOffset;
+
+    // this is for preventing recalc data if no changes required
+    uint64_t previousMappedValue;
+    int32_t previousGradientcolor;
+
 public:
-    LGFXMeter(LovyanGFX *parent);
+    LGFXMeter(LovyanGFX *display, int32_t width, int32_t height, uint16_t xOffset, uint16_t yOffset, int32_t backgroundColor, char *label);
     ~LGFXMeter();
+
+    uint32_t getGradientColorFrom0To100(int8_t value);
+    void refresh(uint8_t value);
 };
 
 #endif
