@@ -8,7 +8,7 @@ DummySource::DummySource(void) : Source()
     this->currentCPULoad->setCurrent(random(MIN_CPU_LOAD, MAX_CPU_LOAD));
 
     this->currentMemory = new SourceData(MIN_MEMORY, MAX_MEMORY);
-    this->currentMemory->setCurrent(random(MIN_MEMORY, MAX_MEMORY));
+    this->currentMemory->setCurrent(MAX_MEMORY / 8);
 
     this->currentCPUTemperature = new SourceData(MIN_CPU_TEMPERATURE, MAX_CPU_TEMPERATURE);
     this->currentCPUTemperature->setCurrent(random(MIN_CPU_TEMPERATURE, MAX_CPU_TEMPERATURE));
@@ -32,7 +32,7 @@ bool inc = false;
 
 uint64_t DummySource::getCurrentCPULoad(void)
 {
-    uint8_t current = this->currentCPULoad->getCurrent();
+    uint64_t current = this->currentCPULoad->getCurrent();
     if (random(0, 20) % 2 == 0)
     {
         if (current < MAX_CPU_LOAD)
@@ -77,17 +77,17 @@ uint64_t DummySource::getTotalMemory(void)
 
 uint64_t DummySource::getUsedMemory(void)
 {
-    uint8_t current = this->currentMemory->getCurrent();
+    uint64_t current = this->currentMemory->getCurrent();
     if (random(0, 20) % 2 == 0)
     {
-        if (current < MAX_MEMORY)
+        if (current < MAX_MEMORY - 5000000)
         {
-            current++;
+            current += 5000000; // + 512 Mb
         }
     }
-    else if (current > MIN_MEMORY)
+    else if (current > MIN_MEMORY + 5000000)
     {
-        current--;
+        current -= 5000000; // - 512 Mb
     }
     this->currentMemory->setCurrent(current);
     return (current);
@@ -95,7 +95,7 @@ uint64_t DummySource::getUsedMemory(void)
 
 uint64_t DummySource::getCurrentCPUTemperature(void)
 {
-    uint8_t current = this->currentCPUTemperature->getCurrent();
+    uint64_t current = this->currentCPUTemperature->getCurrent();
     if (random(0, 20) % 2 == 0)
     {
         if (current < MAX_CPU_TEMPERATURE)
