@@ -50,13 +50,14 @@ void setup()
     cpuLoadMeter = new LGFXMeter(screen, METER_ENTITY_CPU_LOAD, 195, 30, 0, 0, TFT_BLACK, "CPU LOAD");
     memoryLoadMeter = new LGFXMeter(screen, METER_ENTITY_MEMORY, 195, 30, 0, 42, TFT_BLACK, "MEMORY");
     cpuTemperatureLoadMeter = new LGFXMeter(screen, METER_ENTITY_CPU_TEMPERATURE, 195, 30, 0, 84, TFT_BLACK, "CPU TEMP");
-    networkDownloadBandwithLoadMeter = new LGFXMeter(screen, METER_ENTITY_NETWORK_BANDWITH_DOWNLOAD, 195, 30, 0, 126, TFT_BLACK, "WAN DOWN");
-    networkUploadBandwithLoadMeter = new LGFXMeter(screen, METER_ENTITY_NETWORK_BANDWITH_UPLOAD, 195, 30, 0, 168, TFT_BLACK, "WAN UP");
+    networkDownloadBandwithLoadMeter = new LGFXMeter(screen, METER_ENTITY_NETWORK_BANDWITH_DOWNLOAD, 195, 30, 0, 126, TFT_BLACK, "WAN DOWNLOAD");
+    networkUploadBandwithLoadMeter = new LGFXMeter(screen, METER_ENTITY_NETWORK_BANDWITH_UPLOAD, 195, 30, 0, 168, TFT_BLACK, "WAN UPLOAD");
 #endif
 }
 
 void loop()
 {
+    Serial.println("Looping");
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     dummySRC->refresh();
     // screen->refreshCPULoadMeter(0, 0);
@@ -64,11 +65,11 @@ void loop()
     //   screen->refreshCPUTemperatureMeter(0, 84);
     //   screen->refreshNetworkDownloadBandwithMeter(0, 126);
     //   screen->refreshNetworkUploadBandwithMeter(0, 168);
-    cpuLoadMeter->refresh(dummySRC->getCurrentCPULoad());
-    memoryLoadMeter->refresh(dummySRC->getUsedMemory());
-    cpuTemperatureLoadMeter->refresh(dummySRC->getCurrentCPUTemperature());
-    networkDownloadBandwithLoadMeter->refresh(dummySRC->getPreviousUsedNetworkDownloadBandwith());
-    networkUploadBandwithLoadMeter->refresh(dummySRC->getUsedNetworkUploadBandwith());
+    // cpuLoadMeter->refresh(dummySRC->getCurrentCPULoad());
+    // memoryLoadMeter->refresh(dummySRC->getUsedMemory());
+    // cpuTemperatureLoadMeter->refresh(dummySRC->getCurrentCPUTemperature());
+    networkDownloadBandwithLoadMeter->refresh(2560000);
+    // networkUploadBandwithLoadMeter->refresh(256000000);
     screen->refreshDebug(0, 210);
 #else
     delay(50);
