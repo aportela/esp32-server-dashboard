@@ -5,11 +5,28 @@
 #include "src/display/ST7789-SPI-240x320-Lovyann/LGFX.hpp"
 #include "src/display/ST7789-SPI-240x320-Lovyann/LGFXMeter.hpp"
 
+// #define ESP32_WROOM
+#define ESP32_C3_SUPER_MINI
+
+#ifdef ESP32_C3_SUPER_MINI
+// ESP32 C3 SUPER MINI
 #define PIN_CS 5
 #define PIN_RST 9
 #define PIN_DC 8
 #define PIN_SDA 6
 #define PIN_SCL 4
+#else
+#ifdef ESP32_WROOM
+// ESP32 WROOM custom pins
+#define PIN_CS 5
+#define PIN_RST 4
+#define PIN_DC 2
+#define PIN_SDA 23
+#define PIN_SCL 18
+#else
+#error UNSUPPORTED_MODEL
+#endif // ESP32_WROOM
+#endif // ESP32_C3_SUPER_MINI
 
 // these are my custom/valid values for a ST7789 240x320 screen
 #define SCREEN_WIDTH 240
@@ -41,35 +58,25 @@ void setup()
     screen->init();
     screen->fillScreen(TFT_BLACK);
     // screen->drawRect(0, 0, 320, 240, TFT_WHITE); // this is for screen bounds debugging purposes only
-    // screen->initCPULoadMeter(0, 0);
-    // screen->initMemoryMeter(0, 42);
-    // screen->initCPUTemperatureMeter(0, 84);
-    // screen->initNetworkDownloadBandwithMeter(0, 126);
-    // screen->initNetworkUploadBandwithMeter(0, 168);
     screen->setSource(dummySRC);
     cpuLoadMeter = new LGFXMeter(screen, METER_ENTITY_CPU_LOAD, 195, 30, 0, 0, TFT_BLACK, "CPU LOAD");
     memoryLoadMeter = new LGFXMeter(screen, METER_ENTITY_MEMORY, 195, 30, 0, 42, TFT_BLACK, "MEMORY");
     cpuTemperatureLoadMeter = new LGFXMeter(screen, METER_ENTITY_CPU_TEMPERATURE, 195, 30, 0, 84, TFT_BLACK, "CPU TEMP");
     networkDownloadBandwithLoadMeter = new LGFXMeter(screen, METER_ENTITY_NETWORK_BANDWITH_DOWNLOAD, 195, 30, 0, 126, TFT_BLACK, "WAN DOWNLOAD");
     networkUploadBandwithLoadMeter = new LGFXMeter(screen, METER_ENTITY_NETWORK_BANDWITH_UPLOAD, 195, 30, 0, 168, TFT_BLACK, "WAN UPLOAD");
+
 #endif
 }
 
 void loop()
 {
-    Serial.println("Looping");
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     dummySRC->refresh();
-    // screen->refreshCPULoadMeter(0, 0);
-    //   screen->refreshMemoryMeter(0, 42);
-    //   screen->refreshCPUTemperatureMeter(0, 84);
-    //   screen->refreshNetworkDownloadBandwithMeter(0, 126);
-    //   screen->refreshNetworkUploadBandwithMeter(0, 168);
-    // cpuLoadMeter->refresh(dummySRC->getCurrentCPULoad());
-    // memoryLoadMeter->refresh(dummySRC->getUsedMemory());
-    // cpuTemperatureLoadMeter->refresh(dummySRC->getCurrentCPUTemperature());
-    networkDownloadBandwithLoadMeter->refresh(2560000);
-    // networkUploadBandwithLoadMeter->refresh(256000000);
+    cpuLoadMeter->refresh(dummySRC->getCurrentCPULoad());
+    memoryLoadMeter->refresh(dummySRC->getUsedMemory());
+    cpuTemperatureLoadMeter->refresh(dummySRC->getCurrentCPUTemperature());
+    networkDownloadBandwithLoadMeter->refresh(dummySRC->getUsedNetworkDownloadBandwith());
+    networkUploadBandwithLoadMeter->refresh(dummySRC->getUsedNetworkUploadBandwith());
     screen->refreshDebug(0, 210);
 #else
     delay(50);
