@@ -6,6 +6,8 @@
 #define MAIN_LABEL_COLOR TFT_WHITE
 #define MAIN_LABEL_BACKGROUND TFT_BLACK
 
+#define MAIN_LABEL_MIN_COLOR 0x001F
+
 // by chatGPT
 uint8_t LGFXMeter::map64WithRange0To00(uint64_t x, uint64_t in_min, uint64_t in_max)
 {
@@ -75,7 +77,7 @@ LGFXMeter::LGFXMeter(LovyanGFX *display, MeterEntity entity, int32_t width, int3
     }
 
     this->previousMappedValue = 0;
-    this->previousGradientcolor = 0;
+    this->previousGradientcolor = MAIN_LABEL_MIN_COLOR;
 }
 
 LGFXMeter::~LGFXMeter()
@@ -84,38 +86,29 @@ LGFXMeter::~LGFXMeter()
     this->graphSprite = nullptr;
 }
 
-uint32_t LGFXMeter::getGradientColorFrom0To100(int8_t value)
+uint32_t LGFXMeter::getGradientColorFrom0To100(uint8_t value)
 {
-    if (value > 0)
+    value = constrain(value, 0, 100);
+    // blue -> green
+    if (value <= 33)
     {
-        // NOT REQUIRED
-        // value = constrain(value, 0, 100);
-
-        // blue -> green
-        if (value <= 33)
-        {
-            int blue = 255;
-            int green = map(value, 0, 33, 0, 255);
-            return this->parentDisplay->color565(0, green, blue);
-        }
-        // green -> yellow
-        else if (value <= 66)
-        {
-            int green = 255;
-            int red = map(value, 34, 66, 0, 255);
-            return this->parentDisplay->color565(red, green, 0);
-        }
-        // yellow -> red
-        else
-        {
-            int red = 255;
-            int green = map(value, 67, 100, 255, 0);
-            return this->parentDisplay->color565(red, green, 0);
-        }
+        int blue = 255;
+        int green = map(value, 0, 33, 0, 255);
+        return this->parentDisplay->color565(0, green, blue);
     }
+    // green -> yellow
+    else if (value <= 66)
+    {
+        int green = 255;
+        int red = map(value, 34, 66, 0, 255);
+        return this->parentDisplay->color565(red, green, 0);
+    }
+    // yellow -> red
     else
     {
-        return (TFT_BLACK);
+        int red = 255;
+        int green = map(value, 67, 100, 255, 0);
+        return this->parentDisplay->color565(red, green, 0);
     }
 }
 
@@ -160,7 +153,7 @@ void LGFXMeter::refresh(uint64_t value)
         mapped100 = map64WithRange0To00(value, 0, 512000000);
         break;
     }
-    int32_t color = (mapped100 != this->previousMappedValue) ? this->getGradientColorFrom0To100(mapped100) : this->previousGradientcolor;
+    int32_t color = value > 0 ? (mapped100 != this->previousMappedValue) ? this->getGradientColorFrom0To100(mapped100) : this->previousGradientcolor : TFT_WHITE;
     this->previousMappedValue = mapped100;
     this->previousGradientcolor = color;
     uint8_t mappedGraphValue = map(mapped100, 0, 100, 0, this->height);
