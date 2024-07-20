@@ -25,25 +25,11 @@ private:
     uint64_t startMillis;
     ISource *source;
 
-    uint32_t getTemperatureGradientFrom0To100(int8_t value);
-    void initGraph(uint16_t xOffset, uint16_t yOffset, char *label);
-    void refreshGraphSprite(lgfx::LGFX_Sprite *sprite, uint8_t valueMappedTo100, int32_t color, uint16_t xOffset, uint16_t yOffset);
-
 public:
     LGFX(uint8_t PIN_SDA, uint8_t PIN_SCL, uint8_t PIN_CS, uint8_t PIN_DC, uint8_t PIN_RST, uint16_t width, uint16_t height, uint8_t rotation);
     ~LGFX();
     void addMeter(LGFXMeter *meter);
     void setSource(ISource *src);
-    void initCPULoadMeter(uint16_t xOffset, uint16_t yOffset);
-    void refreshCPULoadMeter(uint16_t xOffset, uint16_t yOffset);
-    void initMemoryMeter(uint16_t xOffset, uint16_t yOffset);
-    void refreshMemoryMeter(uint16_t xOffset, uint16_t yOffset);
-    void initCPUTemperatureMeter(uint16_t xOffset, uint16_t yOffset);
-    void refreshCPUTemperatureMeter(uint16_t xOffset, uint16_t yOffset);
-    void initNetworkDownloadBandwithMeter(uint16_t xOffset, uint16_t yOffset);
-    void refreshNetworkDownloadBandwithMeter(uint16_t xOffset, uint16_t yOffset);
-    void initNetworkUploadBandwithMeter(uint16_t xOffset, uint16_t yOffset);
-    void refreshNetworkUploadBandwithMeter(uint16_t xOffset, uint16_t yOffset);
     void refreshDebug(uint16_t xOffset, uint16_t yOffset);
 };
 
