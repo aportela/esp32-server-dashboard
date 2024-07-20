@@ -77,6 +77,7 @@ LGFXMeter::LGFXMeter(LovyanGFX *display, MeterEntity entity, int32_t width, int3
     }
 
     this->previousMappedValue = 0;
+    // WARNING: using TFT_BLACK will create some garbage because at this time, when Lovyann GFX write text with TFT_BLACK color & TFT_BLACK background do not overwrite old area correctly so I use the "first" (0) custom gradient color for a mapped (0-100) value
     this->previousGradientcolor = MAIN_LABEL_MIN_COLOR;
 }
 
