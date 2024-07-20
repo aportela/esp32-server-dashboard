@@ -51,16 +51,16 @@ LGFXMeter::LGFXMeter(LovyanGFX *display, MeterEntity entity, int32_t width, int3
         this->parentDisplay->print("000%");
         break;
     case METER_ENTITY_MEMORY:
-        this->parentDisplay->print("000Gb / 000Gb");
+        this->parentDisplay->print("000Gb  /  032Gb");
         break;
     case METER_ENTITY_CPU_TEMPERATURE:
         this->parentDisplay->print("000C");
         break;
     case METER_ENTITY_NETWORK_BANDWITH_DOWNLOAD:
-        this->parentDisplay->print("000Mb / 000Mb");
+        this->parentDisplay->print("000Mb  /  512Mb");
         break;
     case METER_ENTITY_NETWORK_BANDWITH_UPLOAD:
-        this->parentDisplay->print("000Mb / 000Mb");
+        this->parentDisplay->print("000Mb  /  512Mb");
         break;
     }
 
