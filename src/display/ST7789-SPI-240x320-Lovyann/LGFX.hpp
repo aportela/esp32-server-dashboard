@@ -31,6 +31,7 @@ public:
     void addMeter(LGFXMeter *meter);
     void setSource(ISource *src);
     void refreshDebug(uint16_t xOffset, uint16_t yOffset, int32_t wifiSignalStrength);
+    void refreshInfo(uint64_t runtime, bool WIFIConnected, IPAddress ip, uint8_t mac[6], int WifidBSignal);
 };
 
 #endif

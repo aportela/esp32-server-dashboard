@@ -3,6 +3,10 @@
 
 // #include <Preferences.h>
 
+// WARNING: ESP32 C3 SUPER MINI requires "USB CDC on boot" ENABLED (under Arduino IDE Menu -> Tools)
+#define SERIAL_DEBUG
+#define SERIAL_SPEED 9600
+
 #define DISPLAY_DRIVER_LOVYANN_ST7789 // at this time, only LovyAnn ST7789 driver support
 
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
@@ -64,9 +68,23 @@ Source *dummySRC = nullptr;
 
 void setup()
 {
+#ifdef SERIAL_DEBUG
+    Serial.begin(SERIAL_SPEED);
+    while (!Serial)
+    {
+        yield();
+        delay(10);
+    }
+    Serial.println("Starting esp32-server-dashboard");
+#endif
     // preferences.begin("esp32-server-dashboard", false);
     // preferences.getString("WIFI_SSID", "");
     // preferences.getString("WIFI_PASSWORD", "");
+
+    // TODO: allow configuration via serial port with commands, ex: SET_CFG WIFI_PASSWORD=secret
+    // TODO: default info screen if no valid settings found
+    // TODO: rotary encoder controller, button pressed at boot = enter settings mode, movement = toggle between screens
+    // TODO: wifi graph signal
     const char *ssid = WIFI_SSID;
     const char *password = WIFI_PASSWORD;
     WiFi.begin(ssid, password);
@@ -76,13 +94,14 @@ void setup()
     screen->init();
     screen->fillScreen(TFT_BLACK);
     // screen->drawRect(0, 0, 320, 240, TFT_WHITE); // this is for screen bounds debugging purposes only
+    /*
     screen->setSource(dummySRC);
     cpuLoadMeter = new LGFXMeter(screen, METER_ENTITY_CPU_LOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 0, TFT_BLACK, "CPU LOAD");
     memoryLoadMeter = new LGFXMeter(screen, METER_ENTITY_MEMORY, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 42, TFT_BLACK, "MEMORY");
     cpuTemperatureLoadMeter = new LGFXMeter(screen, METER_ENTITY_CPU_TEMPERATURE, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 84, TFT_BLACK, "CPU TEMP");
     networkDownloadBandwithLoadMeter = new LGFXMeter(screen, METER_ENTITY_NETWORK_BANDWITH_DOWNLOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 126, TFT_BLACK, "WAN DOWNLOAD");
     networkUploadBandwithLoadMeter = new LGFXMeter(screen, METER_ENTITY_NETWORK_BANDWITH_UPLOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 168, TFT_BLACK, "WAN UPLOAD");
-
+    */
 #endif
 }
 
@@ -96,6 +115,9 @@ void loop()
         // waiting for first connection
         if (!WIFIFirstConnectionSuccess)
         {
+#ifdef SERIAL_DEBUG
+            Serial.println("Waiting for WIFI connection");
+#endif
             delay(500);
         }
         else
@@ -106,9 +128,15 @@ void loop()
                 // force new reconnection
                 WiFi.reconnect();
                 WIFIForcingReconnection = true;
+#ifdef SERIAL_DEBUG
+                Serial.println("Forcing WIFI reconnection");
+#endif
             }
             else
             {
+#ifdef SERIAL_DEBUG
+                Serial.println("Waiting for WIFI reconnection");
+#endif
                 // waiting for reconnection
                 delay(500);
             }
@@ -123,15 +151,21 @@ void loop()
         }
         WIFIForcingReconnection = false;
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
-        dummySRC->refresh();
-        cpuLoadMeter->refresh(dummySRC->getCurrentCPULoad());
-        memoryLoadMeter->refresh(dummySRC->getUsedMemory());
-        cpuTemperatureLoadMeter->refresh(dummySRC->getCurrentCPUTemperature());
-        networkDownloadBandwithLoadMeter->refresh(dummySRC->getUsedNetworkDownloadBandwith());
-        networkUploadBandwithLoadMeter->refresh(dummySRC->getUsedNetworkUploadBandwith());
+        /*
+            dummySRC->refresh();
+            cpuLoadMeter->refresh(dummySRC->getCurrentCPULoad());
+            memoryLoadMeter->refresh(dummySRC->getUsedMemory());
+            cpuTemperatureLoadMeter->refresh(dummySRC->getCurrentCPUTemperature());
+            networkDownloadBandwithLoadMeter->refresh(dummySRC->getUsedNetworkDownloadBandwith());
+            networkUploadBandwithLoadMeter->refresh(dummySRC->getUsedNetworkUploadBandwith());
+        */
 #endif
     }
+    uint8_t mac[6];
+    WiFi.macAddress(mac);
+    screen->refreshInfo(millis(), WiFi.status() == WL_CONNECTED, WiFi.localIP(), mac, WiFi.RSSI());
+    delay(50);
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
-    screen->refreshDebug(0, 210, WiFi.RSSI());
+    // screen->refreshDebug(0, 210, WiFi.RSSI());
 #endif
 }

@@ -179,3 +179,72 @@ void LGFX::refreshDebug(uint16_t xOffset, uint16_t yOffset, int32_t wifiSignalSt
     */
     this->debugSprite->pushSprite(xOffset, yOffset);
 }
+
+void LGFX::refreshInfo(uint64_t runtime, bool WIFIConnected, IPAddress ip, uint8_t mac[6], int WifidBSignal)
+{
+    this->setTextSize(1);
+    this->setTextColor(TFT_WHITE, TFT_BLACK);
+    this->setCursor(0, 0);
+    this->println("STATUS");
+    this->printf("RUNTINE (ms): %llu\n", runtime);
+    this->printf("WIFI STATUS: %s\n", WIFIConnected ? "CONNECTED      " : "NOT CONNECTED");
+
+    if (WIFIConnected)
+    {
+        this->printf("WIFI MAC: %02X:%02X:%02X:%02X:%02X:%02X\n", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+        this->printf("WIFI IP: %d.%d.%d.%d\n", ip[0], ip[1], ip[2], ip[3]);
+        this->printf("WIFI SIGNAL: %03ddBm\n", WifidBSignal);
+    }
+    else
+    {
+        this->println("WIFI MAC:                                  ");
+        this->println("WIFI IP:                                   ");
+        this->println("WIFI SIGNAL:                               ");
+    }
+
+    int32_t colors[6];
+    if (WIFIConnected)
+    {
+        if (WifidBSignal < -90)
+        {
+            colors[0] = TFT_GREEN;
+            colors[1] = colors[2] = colors[3] = colors[4] = colors[5] = TFT_DARKGREY;
+        }
+        else if (WifidBSignal < -80)
+        {
+            colors[0] = colors[1] = TFT_GREEN;
+            colors[2] = colors[3] = colors[4] = colors[5] = TFT_DARKGREY;
+        }
+        else if (WifidBSignal < -70)
+        {
+            colors[0] = colors[1] = colors[2] = TFT_GREEN;
+            colors[3] = colors[4] = colors[5] = TFT_DARKGREY;
+        }
+        else if (WifidBSignal < -67)
+        {
+            colors[0] = colors[1] = colors[2] = colors[3] = TFT_GREEN;
+            colors[4] = colors[5] = TFT_DARKGREY;
+        }
+        else if (WifidBSignal < -55)
+        {
+            colors[0] = colors[1] = colors[2] = colors[3] = colors[4] = TFT_GREEN;
+            colors[5] = TFT_DARKGREY;
+        }
+        else if (WifidBSignal > -30)
+        {
+            colors[0] = colors[1] = colors[2] = colors[3] = colors[4] = colors[5] = TFT_GREEN;
+        }
+    }
+    else
+    {
+        colors[0] = colors[1] = colors[2] = colors[3] = colors[4] = colors[5] = TFT_GREEN;
+    }
+    uint16_t x = 100;
+    uint16_t height = 20;
+    for (uint8_t i = 0; i < 6; i++)
+    {
+        this->fillRect(x, 100, 10, height, colors[i]);
+        x += 20;
+        height += 10;
+    }
+}
