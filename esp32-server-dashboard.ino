@@ -1,3 +1,8 @@
+// https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/protocols/mqtt.html
+// #include <mqtt_client.h>
+
+// #include <Preferences.h>
+
 #define DISPLAY_DRIVER_LOVYANN_ST7789 // at this time, only LovyAnn ST7789 driver support
 
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
@@ -52,8 +57,16 @@ LGFXMeter *networkUploadBandwithLoadMeter = nullptr;
 
 Source *dummySRC = nullptr;
 
+// Preferences preferences;
+
+#define METER_GRAPH_WIDTH 195
+#define METER_GRAPH_HEIGHT 30
+
 void setup()
 {
+    // preferences.begin("esp32-server-dashboard", false);
+    // preferences.getString("WIFI_SSID", "");
+    // preferences.getString("WIFI_PASSWORD", "");
     const char *ssid = WIFI_SSID;
     const char *password = WIFI_PASSWORD;
     WiFi.begin(ssid, password);
@@ -64,11 +77,11 @@ void setup()
     screen->fillScreen(TFT_BLACK);
     // screen->drawRect(0, 0, 320, 240, TFT_WHITE); // this is for screen bounds debugging purposes only
     screen->setSource(dummySRC);
-    cpuLoadMeter = new LGFXMeter(screen, METER_ENTITY_CPU_LOAD, 195, 30, 0, 0, TFT_BLACK, "CPU LOAD");
-    memoryLoadMeter = new LGFXMeter(screen, METER_ENTITY_MEMORY, 195, 30, 0, 42, TFT_BLACK, "MEMORY");
-    cpuTemperatureLoadMeter = new LGFXMeter(screen, METER_ENTITY_CPU_TEMPERATURE, 195, 30, 0, 84, TFT_BLACK, "CPU TEMP");
-    networkDownloadBandwithLoadMeter = new LGFXMeter(screen, METER_ENTITY_NETWORK_BANDWITH_DOWNLOAD, 195, 30, 0, 126, TFT_BLACK, "WAN DOWNLOAD");
-    networkUploadBandwithLoadMeter = new LGFXMeter(screen, METER_ENTITY_NETWORK_BANDWITH_UPLOAD, 195, 30, 0, 168, TFT_BLACK, "WAN UPLOAD");
+    cpuLoadMeter = new LGFXMeter(screen, METER_ENTITY_CPU_LOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 0, TFT_BLACK, "CPU LOAD");
+    memoryLoadMeter = new LGFXMeter(screen, METER_ENTITY_MEMORY, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 42, TFT_BLACK, "MEMORY");
+    cpuTemperatureLoadMeter = new LGFXMeter(screen, METER_ENTITY_CPU_TEMPERATURE, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 84, TFT_BLACK, "CPU TEMP");
+    networkDownloadBandwithLoadMeter = new LGFXMeter(screen, METER_ENTITY_NETWORK_BANDWITH_DOWNLOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 126, TFT_BLACK, "WAN DOWNLOAD");
+    networkUploadBandwithLoadMeter = new LGFXMeter(screen, METER_ENTITY_NETWORK_BANDWITH_UPLOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 168, TFT_BLACK, "WAN UPLOAD");
 
 #endif
 }
