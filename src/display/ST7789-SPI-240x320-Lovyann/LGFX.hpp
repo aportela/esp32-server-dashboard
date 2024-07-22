@@ -5,8 +5,10 @@
 #include <stdint.h>
 #include "../FPSDebug.hpp"
 #include "LGFXMeter.hpp"
+#include "LGFXScreenInfo.hpp"
 #include "../../sources/ISource.hpp"
 #include "../../sources/SourceData.hpp"
+#include "../../utils/SystemStatus.hpp"
 
 class LGFX : public lgfx::LGFX_Device
 {
@@ -19,8 +21,10 @@ private:
     lgfx::LGFX_Sprite *networkDownloadSprite = nullptr;
     lgfx::LGFX_Sprite *networkUploadSprite = nullptr;
     lgfx::LGFX_Sprite *debugSprite = nullptr;
+    SystemStatus *sysStats = nullptr;
+    LGFXScreenInfo *screenInfo = nullptr;
 
-    FPSDebug *fpsDebug;
+    FPSDebug *fpsDebug = nullptr;
 
     uint64_t startMillis;
     ISource *source;
@@ -31,7 +35,9 @@ public:
     void addMeter(LGFXMeter *meter);
     void setSource(ISource *src);
     void refreshDebug(uint16_t xOffset, uint16_t yOffset, int32_t wifiSignalStrength);
-    void refreshInfo(uint64_t runtime, bool WIFIConnected, IPAddress ip, uint8_t mac[6], int WifidBSignal);
+
+    void initScreenInfo(void);
+    void refreshScreenInfo(void);
 };
 
 #endif

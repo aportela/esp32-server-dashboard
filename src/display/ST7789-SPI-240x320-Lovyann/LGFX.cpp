@@ -1,5 +1,7 @@
 #include "LGFX.hpp"
 #include "../../sources/dummy/DummySource.hpp"
+#include "src/utils/FormatUtils.hpp"
+#include <WiFi.h>
 
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 240
@@ -86,6 +88,7 @@ LGFX::LGFX(uint8_t PIN_SDA, uint8_t PIN_SCL, uint8_t PIN_CS, uint8_t PIN_DC, uin
 
     this->setFont(&fonts::Font2);
     this->startMillis = millis();
+    this->sysStats = new SystemStatus();
 }
 
 LGFX::~LGFX()
@@ -102,6 +105,8 @@ LGFX::~LGFX()
     this->networkUploadSprite = nullptr;
     delete this->fpsDebug;
     this->fpsDebug = nullptr;
+    delete this->sysStats;
+    this->sysStats = nullptr;
 }
 
 void LGFX::addMeter(LGFXMeter *meter)
@@ -180,71 +185,119 @@ void LGFX::refreshDebug(uint16_t xOffset, uint16_t yOffset, int32_t wifiSignalSt
     this->debugSprite->pushSprite(xOffset, yOffset);
 }
 
-void LGFX::refreshInfo(uint64_t runtime, bool WIFIConnected, IPAddress ip, uint8_t mac[6], int WifidBSignal)
+void LGFX::initScreenInfo(void)
 {
+    this->screenInfo = new LGFXScreenInfo(this, this->fpsDebug, this->sysStats);
+    /*
+    this->fillScreen(TFT_BLACK);
+    this->setFont(&fonts::FreeMono9pt7b);
     this->setTextSize(1);
-    this->setTextColor(TFT_WHITE, TFT_BLACK);
-    this->setCursor(0, 0);
-    this->println("STATUS");
-    this->printf("RUNTINE (ms): %llu\n", runtime);
-    this->printf("WIFI STATUS: %s\n", WIFIConnected ? "CONNECTED      " : "NOT CONNECTED");
+    this->setTextColor(TFT_WHITE);
+    this->setCursor(32, 4);
+    this->println("ESP32-SERVER-DASBBOARD");
+    */
+}
 
-    if (WIFIConnected)
+void LGFX::refreshScreenInfo()
+{
+    this->screenInfo->refresh();
+    /*
+    this->fpsDebug->loop();
+    this->sysStats->refresh();
+
+    char str[100];
+    FormatUtils::millisToString(sysStats->getRuntime(), str, 100);
+
+    this->fillRect(0, 32, 130, 55, this->sysStats->isWIFIConnected() ? TFT_GREEN : TFT_RED);
+
+    this->setCursor(0, 40);
+    this->setFont(&fonts::FreeSansBold24pt7b);
+    this->setTextColor(TFT_WHITE);
+    this->println(" WIFI");
+    this->setFont(&fonts::FreeMono9pt7b);
+    this->setTextColor(TFT_WHITE, TFT_BLACK);
+    this->print("SSID: ");
+    this->println(WiFi.SSID());
+    // this->print(WiFi.encryptionType());
+    this->printf("RUNTIME: %s\n", str);
+    this->printf("FPS: %03u\n", this->fpsDebug->getFPS());
+
+    if (this->sysStats->isWIFIConnected())
     {
-        this->printf("WIFI MAC: %02X:%02X:%02X:%02X:%02X:%02X\n", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-        this->printf("WIFI IP: %d.%d.%d.%d\n", ip[0], ip[1], ip[2], ip[3]);
-        this->printf("WIFI SIGNAL: %03ddBm\n", WifidBSignal);
+        this->println("STATUS: CONNECTED");
+        char WIFIMacAddress[19];
+        this->sysStats->getWIFIMacAddress(WIFIMacAddress, 19);
+        char WIFIIPAddress[16];
+        this->sysStats->getWIFIIPAddress(WIFIIPAddress, 16);
+        this->printf("MAC: %s\n", WIFIMacAddress);
+        this->printf("IP: %s\n", WIFIIPAddress);
     }
     else
     {
-        this->println("WIFI MAC:                                  ");
-        this->println("WIFI IP:                                   ");
-        this->println("WIFI SIGNAL:                               ");
+        this->println("STATUS: NOT CONNECTED");
+        this->println("MAC: NOT AVAILABLE");
+        this->println("IP: NOT AVAILABLE");
+        this->println("SIGNAL: NOT AVAILABLE");
     }
 
-    int32_t colors[6];
-    if (WIFIConnected)
+    uint32_t colors[4];
+    if (this->sysStats->isWIFIConnected())
     {
-        if (WifidBSignal < -90)
+        if (this->sysStats->getWIFISignalStrength() <= -90)
+        {
+            colors[0] = TFT_DARKGREY;
+            colors[1] = TFT_DARKGREY;
+            colors[2] = TFT_DARKGREY;
+            colors[3] = TFT_DARKGREY;
+        }
+        else if (this->sysStats->getWIFISignalStrength() <= -80)
         {
             colors[0] = TFT_GREEN;
-            colors[1] = colors[2] = colors[3] = colors[4] = colors[5] = TFT_DARKGREY;
+            colors[1] = TFT_DARKGREY;
+            colors[2] = TFT_DARKGREY;
+            colors[3] = TFT_DARKGREY;
         }
-        else if (WifidBSignal < -80)
+        else if (this->sysStats->getWIFISignalStrength() <= -70)
         {
-            colors[0] = colors[1] = TFT_GREEN;
-            colors[2] = colors[3] = colors[4] = colors[5] = TFT_DARKGREY;
+            colors[0] = TFT_GREEN;
+            colors[1] = TFT_GREEN;
+            colors[2] = TFT_DARKGREY;
+            colors[3] = TFT_DARKGREY;
         }
-        else if (WifidBSignal < -70)
+        else if (this->sysStats->getWIFISignalStrength() <= -67)
         {
-            colors[0] = colors[1] = colors[2] = TFT_GREEN;
-            colors[3] = colors[4] = colors[5] = TFT_DARKGREY;
+            colors[0] = TFT_GREEN;
+            colors[1] = TFT_GREEN;
+            colors[2] = TFT_GREEN;
+            colors[3] = TFT_DARKGREY;
         }
-        else if (WifidBSignal < -67)
+        else if (this->sysStats->getWIFISignalStrength() >= -30)
         {
-            colors[0] = colors[1] = colors[2] = colors[3] = TFT_GREEN;
-            colors[4] = colors[5] = TFT_DARKGREY;
-        }
-        else if (WifidBSignal < -55)
-        {
-            colors[0] = colors[1] = colors[2] = colors[3] = colors[4] = TFT_GREEN;
-            colors[5] = TFT_DARKGREY;
-        }
-        else if (WifidBSignal > -30)
-        {
-            colors[0] = colors[1] = colors[2] = colors[3] = colors[4] = colors[5] = TFT_GREEN;
+            colors[0] = TFT_GREEN;
+            colors[1] = TFT_GREEN;
+            colors[2] = TFT_GREEN;
+            colors[3] = TFT_GREEN;
         }
     }
     else
     {
-        colors[0] = colors[1] = colors[2] = colors[3] = colors[4] = colors[5] = TFT_GREEN;
+        colors[0] = TFT_DARKGREY;
+        colors[1] = TFT_DARKGREY;
+        colors[2] = TFT_DARKGREY;
+        colors[3] = TFT_DARKGREY;
     }
-    uint16_t x = 100;
-    uint16_t height = 20;
-    for (uint8_t i = 0; i < 6; i++)
+
+    this->setCursor(155, 44);
+    this->printf("%03ddBm", this->sysStats->getWIFISignalStrength());
+    uint16_t x = 215;
+    uint16_t y = 76;
+    uint16_t height = 8;
+    for (uint8_t i = 0; i < 4; i++)
     {
-        this->fillRect(x, 100, 10, height, colors[i]);
-        x += 20;
-        height += 10;
+        this->fillRect(x, y, 12, height, colors[1]);
+        x += 24;
+        y -= 12;
+        height += 12;
     }
+    */
 }
