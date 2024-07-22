@@ -21,18 +21,40 @@ LGFXScreenInfo::LGFXScreenInfo(LovyanGFX *display, FPSDebug *fpsDebug, SystemSta
     this->refreshWIFISignalStrength = true;
     this->refreshWIFISignalLevelGraph = true;
     this->refreshWIFIData = true;
+    this->refresh(true);
 }
 
 LGFXScreenInfo::~LGFXScreenInfo()
 {
 }
 
-void LGFXScreenInfo::refresh(void)
+void LGFXScreenInfo::refresh(bool firstRun)
 {
     this->fpsDebug->loop();
     this->sysStats->refresh();
 
-    if (this->refreshWIFILogo)
+    if (!firstRun)
+    {
+        if (this->wasConnected != this->sysStats->isWIFIConnected())
+        {
+            this->refreshWIFILogo = true;
+            this->refreshWIFISignalStrength = true;
+            this->refreshWIFISignalLevelGraph = true;
+            this->refreshWIFIData = true;
+        }
+        else if (this->previousSignalStrength != this->sysStats->getWIFISignalStrength())
+        {
+            this->refreshWIFISignalStrength = true;
+            this->refreshWIFISignalLevelGraph = true;
+        }
+        this->wasConnected = this->sysStats->isWIFIConnected();
+        this->previousSignalStrength = this->sysStats->getWIFISignalStrength();
+    }
+    else
+    {
+        this->wasConnected = this->sysStats->isWIFIConnected();
+    }
+    if (firstRun || this->refreshWIFILogo)
     {
         this->parentDisplay->fillRect(18, 30, 130, 55, this->sysStats->isWIFIConnected() ? TFT_GREEN : TFT_RED);
         this->parentDisplay->setFont(BIG_FONT);
@@ -42,7 +64,7 @@ void LGFXScreenInfo::refresh(void)
         this->parentDisplay->print("WIFI");
         this->refreshWIFILogo = false;
     }
-    if (this->refreshWIFISignalStrength)
+    if (firstRun || this->refreshWIFISignalStrength)
     {
         this->parentDisplay->setFont(CUSTOM_FONT);
         this->parentDisplay->setTextSize(1);
@@ -57,7 +79,7 @@ void LGFXScreenInfo::refresh(void)
             this->parentDisplay->printf("     ", this->sysStats->getWIFISignalStrength());
         }
     }
-    if (this->refreshWIFISignalLevelGraph)
+    if (firstRun || this->refreshWIFISignalLevelGraph)
     {
         int colors[5];
         if (this->sysStats->isWIFIConnected())
@@ -130,13 +152,13 @@ void LGFXScreenInfo::refresh(void)
             height += 12;
         }
     }
-    if (this->refreshWIFIData)
+    if (firstRun || this->refreshWIFIData)
     {
         this->parentDisplay->setFont(CUSTOM_FONT);
         this->parentDisplay->setTextSize(1);
         this->parentDisplay->setTextColor(TFT_WHITE, TFT_BLACK);
-        this->parentDisplay->setCursor(12, 100);
-        this->parentDisplay->print("SSID : ");
+        this->parentDisplay->setCursor(10, 100);
+        this->parentDisplay->print("SSID ");
         char ssid[32];
         this->sysStats->getWIFISSID(ssid, 32);
         this->parentDisplay->println(ssid);
@@ -144,11 +166,11 @@ void LGFXScreenInfo::refresh(void)
         this->sysStats->getWIFIMacAddress(WIFIMacAddress, 19);
         char WIFIIPAddress[16];
         this->sysStats->getWIFIIPAddress(WIFIIPAddress, 16);
-        this->parentDisplay->setCursor(22, 120);
-        this->parentDisplay->print("MAC : ");
+        this->parentDisplay->setCursor(20, 120);
+        this->parentDisplay->print("MAC ");
         this->parentDisplay->println(WIFIMacAddress);
-        this->parentDisplay->setCursor(32, 140);
-        this->parentDisplay->print("IP : ");
+        this->parentDisplay->setCursor(30, 140);
+        this->parentDisplay->print("IP ");
         this->parentDisplay->println(WIFIIPAddress);
         this->refreshWIFIData = false;
     }

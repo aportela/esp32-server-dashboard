@@ -4,7 +4,6 @@
 // #include <Preferences.h>
 
 // WARNING: ESP32 C3 SUPER MINI requires "USB CDC on boot" ENABLED (under Arduino IDE Menu -> Tools)
-#define SERIAL_DEBUG
 #define SERIAL_SPEED 9600
 
 #define DISPLAY_DRIVER_LOVYANN_ST7789 // at this time, only LovyAnn ST7789 driver support
@@ -66,17 +65,38 @@ Source *dummySRC = nullptr;
 #define METER_GRAPH_WIDTH 195
 #define METER_GRAPH_HEIGHT 30
 
-void setup()
+void initSerialPort()
 {
-#ifdef SERIAL_DEBUG
     Serial.begin(SERIAL_SPEED);
     while (!Serial)
     {
         yield();
         delay(10);
     }
+}
+
+void processSerialPort()
+{
+    while (Serial.available() > 0)
+    {
+        String rx = Serial.readStringUntil('\n');
+        if (rx == "REBOOT")
+        {
+
+            Serial.println("Rebooting");
+            ESP.restart();
+        }
+        else
+        {
+            Serial.printf("Unknown cmd %s\n", rx);
+        }
+    }
+}
+
+void setup()
+{
+    initSerialPort();
     Serial.println("Starting esp32-server-dashboard");
-#endif
     // preferences.begin("esp32-server-dashboard", false);
     // preferences.getString("WIFI_SSID", "");
     // preferences.getString("WIFI_PASSWORD", "");
@@ -95,13 +115,13 @@ void setup()
     screen->fillScreen(TFT_BLACK);
     screen->drawRect(0, 0, 320, 240, TFT_WHITE); // this is for screen bounds debugging purposes only
                                                  /*
-                                                 screen->setSource(dummySRC);
-                                                 cpuLoadMeter = new LGFXMeter(screen, METER_ENTITY_CPU_LOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 0, TFT_BLACK, "CPU LOAD");
-                                                 memoryLoadMeter = new LGFXMeter(screen, METER_ENTITY_MEMORY, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 42, TFT_BLACK, "MEMORY");
-                                                 cpuTemperatureLoadMeter = new LGFXMeter(screen, METER_ENTITY_CPU_TEMPERATURE, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 84, TFT_BLACK, "CPU TEMP");
-                                                 networkDownloadBandwithLoadMeter = new LGFXMeter(screen, METER_ENTITY_NETWORK_BANDWITH_DOWNLOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 126, TFT_BLACK, "WAN DOWNLOAD");
-                                                 networkUploadBandwithLoadMeter = new LGFXMeter(screen, METER_ENTITY_NETWORK_BANDWITH_UPLOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 168, TFT_BLACK, "WAN UPLOAD");
-                                                 */
+                                                  screen->setSource(dummySRC);
+                                                  cpuLoadMeter = new LGFXMeter(screen, METER_ENTITY_CPU_LOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 0, TFT_BLACK, "CPU LOAD");
+                                                  memoryLoadMeter = new LGFXMeter(screen, METER_ENTITY_MEMORY, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 42, TFT_BLACK, "MEMORY");
+                                                  cpuTemperatureLoadMeter = new LGFXMeter(screen, METER_ENTITY_CPU_TEMPERATURE, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 84, TFT_BLACK, "CPU TEMP");
+                                                  networkDownloadBandwithLoadMeter = new LGFXMeter(screen, METER_ENTITY_NETWORK_BANDWITH_DOWNLOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 126, TFT_BLACK, "WAN DOWNLOAD");
+                                                  networkUploadBandwithLoadMeter = new LGFXMeter(screen, METER_ENTITY_NETWORK_BANDWITH_UPLOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 168, TFT_BLACK, "WAN UPLOAD");
+                                                  */
     screen->initScreenInfo();
 #endif
 }
@@ -111,14 +131,13 @@ bool WIFIForcingReconnection = false;
 
 void loop()
 {
+    processSerialPort();
     if (WiFi.status() != WL_CONNECTED)
     {
         // waiting for first connection
         if (!WIFIFirstConnectionSuccess)
         {
-#ifdef SERIAL_DEBUG
             Serial.println("Waiting for WIFI connection");
-#endif
             delay(500);
         }
         else
@@ -129,15 +148,11 @@ void loop()
                 // force new reconnection
                 WiFi.reconnect();
                 WIFIForcingReconnection = true;
-#ifdef SERIAL_DEBUG
                 Serial.println("Forcing WIFI reconnection");
-#endif
             }
             else
             {
-#ifdef SERIAL_DEBUG
                 Serial.println("Waiting for WIFI reconnection");
-#endif
                 // waiting for reconnection
                 delay(500);
             }
@@ -153,13 +168,13 @@ void loop()
         WIFIForcingReconnection = false;
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
         /*
-            dummySRC->refresh();
-            cpuLoadMeter->refresh(dummySRC->getCurrentCPULoad());
-            memoryLoadMeter->refresh(dummySRC->getUsedMemory());
-            cpuTemperatureLoadMeter->refresh(dummySRC->getCurrentCPUTemperature());
-            networkDownloadBandwithLoadMeter->refresh(dummySRC->getUsedNetworkDownloadBandwith());
-            networkUploadBandwithLoadMeter->refresh(dummySRC->getUsedNetworkUploadBandwith());
-        */
+                dummySRC->refresh();
+                cpuLoadMeter->refresh(dummySRC->getCurrentCPULoad());
+                memoryLoadMeter->refresh(dummySRC->getUsedMemory());
+                cpuTemperatureLoadMeter->refresh(dummySRC->getCurrentCPUTemperature());
+                networkDownloadBandwithLoadMeter->refresh(dummySRC->getUsedNetworkDownloadBandwith());
+                networkUploadBandwithLoadMeter->refresh(dummySRC->getUsedNetworkUploadBandwith());
+            */
 #endif
     }
     screen->refreshScreenInfo();

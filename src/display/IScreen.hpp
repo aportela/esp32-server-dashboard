@@ -5,7 +5,7 @@ class IScreen
 {
 public:
     virtual ~IScreen() {}
-    virtual void refresh(void) = 0;
+    virtual void refresh(bool firstRun) = 0;
 };
 
 #endif

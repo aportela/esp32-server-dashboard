@@ -16,7 +16,7 @@ protected:
 public:
     LGFXScreen(LovyanGFX *display, FPSDebug *fpsDebug, SystemStatus *sysStats);
     ~LGFXScreen();
-    virtual void refresh(void) = 0;
+    virtual void refresh(bool firstRun) = 0;
 };
 
 #endif

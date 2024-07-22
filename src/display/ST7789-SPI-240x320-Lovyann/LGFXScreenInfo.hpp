@@ -10,11 +10,13 @@ private:
     bool refreshWIFISignalStrength;
     bool refreshWIFISignalLevelGraph;
     bool refreshWIFIData;
+    bool wasConnected = false;
+    long previousSignalStrength;
 
 public:
     LGFXScreenInfo(LovyanGFX *display, FPSDebug *fpsDebug, SystemStatus *sysStats);
     ~LGFXScreenInfo();
-    void refresh(void) override;
+    void refresh(bool firstRun) override;
 };
 
 #endif

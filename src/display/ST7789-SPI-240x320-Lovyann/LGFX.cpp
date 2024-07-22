@@ -200,7 +200,7 @@ void LGFX::initScreenInfo(void)
 
 void LGFX::refreshScreenInfo()
 {
-    this->screenInfo->refresh();
+    this->screenInfo->refresh(false);
     /*
     this->fpsDebug->loop();
     this->sysStats->refresh();
