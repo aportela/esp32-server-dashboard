@@ -1,6 +1,9 @@
 #include "LGFXScreenInfo.hpp"
 #include "../../utils/FormatUtils.hpp"
 
+#define DEFAULT_FONT &fonts::Font0
+#define CUSTOM_FONT &fonts::FreeMono9pt7b
+#define BIG_FONT &fonts::FreeSansBold24pt7b
 #define MAIN_SPRITE_WIDTH 312
 #define MAIN_SPRITE_HEIGHT 216
 
@@ -8,11 +11,11 @@ LGFXScreenInfo::LGFXScreenInfo(LovyanGFX *display, FPSDebug *fpsDebug, SystemSta
 {
 
     this->parentDisplay->drawRect(0, 0, 320, 240, TFT_WHITE);
-    this->parentDisplay->setFont(&fonts::FreeMono9pt7b);
-    this->parentDisplay->setTextSize(1);
+    this->parentDisplay->setFont(DEFAULT_FONT);
+    this->parentDisplay->setTextSize(2);
     this->parentDisplay->setTextColor(TFT_WHITE);
-    this->parentDisplay->setCursor(40, 4);
-    this->parentDisplay->println("ESP32-SERVER-DASBBOARD");
+    this->parentDisplay->setCursor(25, 4);
+    this->parentDisplay->println("ESP32-SERVER-DASHBBOARD");
 
     this->refreshWIFILogo = true;
     this->refreshWIFISignalStrength = true;
@@ -31,21 +34,21 @@ void LGFXScreenInfo::refresh(void)
 
     if (this->refreshWIFILogo)
     {
-        this->parentDisplay->fillRect(15, 30, 130, 55, this->sysStats->isWIFIConnected() ? TFT_GREEN : TFT_RED);
-        this->parentDisplay->setFont(&fonts::FreeSansBold24pt7b);
+        this->parentDisplay->fillRect(18, 30, 130, 55, this->sysStats->isWIFIConnected() ? TFT_GREEN : TFT_RED);
+        this->parentDisplay->setFont(BIG_FONT);
         this->parentDisplay->setTextSize(1);
         this->parentDisplay->setTextColor(TFT_WHITE);
-        this->parentDisplay->setCursor(25, 40);
+        this->parentDisplay->setCursor(28, 40);
         this->parentDisplay->print("WIFI");
         this->refreshWIFILogo = false;
     }
     if (this->refreshWIFISignalStrength)
     {
-        this->parentDisplay->setFont(&fonts::FreeMono9pt7b);
+        this->parentDisplay->setFont(CUSTOM_FONT);
         this->parentDisplay->setTextSize(1);
-        this->parentDisplay->setCursor(165, 40);
         this->parentDisplay->setTextColor(TFT_WHITE, TFT_BLACK);
-        this->parentDisplay->printf("%+03ddBm", this->sysStats->getWIFISignalStrength());
+        this->parentDisplay->setCursor(172, 36);
+        this->parentDisplay->printf("%+02ddBm", this->sysStats->getWIFISignalStrength());
     }
     if (this->refreshWIFISignalLevelGraph)
     {
@@ -124,50 +127,54 @@ void LGFXScreenInfo::refresh(void)
     {
         if (this->sysStats->isWIFIConnected())
         {
-            this->parentDisplay->setFont(&fonts::FreeSansBold24pt7b);
+            this->parentDisplay->setFont(CUSTOM_FONT);
             this->parentDisplay->setTextSize(1);
-            this->parentDisplay->setTextColor(TFT_WHITE);
-            this->parentDisplay->setCursor(12, 100);
-            // this->parentDisplay->print("SSID: ");
-            //  this->parentDisplay->print(WiFi.SSID());
-
+            this->parentDisplay->setTextColor(TFT_WHITE, TFT_BLACK);
+            this->parentDisplay->setCursor(10, 100);
+            this->parentDisplay->print("SSID : ");
+            char ssid[32];
+            this->sysStats->getWIFISSID(ssid, 32);
+            this->parentDisplay->println(ssid);
             char WIFIMacAddress[19];
             this->sysStats->getWIFIMacAddress(WIFIMacAddress, 19);
             char WIFIIPAddress[16];
             this->sysStats->getWIFIIPAddress(WIFIIPAddress, 16);
-            this->parentDisplay->setCursor(12, 110);
-            this->parentDisplay->print("MAC: ");
-            // this->parentDisplay->print(WIFIMacAddress);
-            this->parentDisplay->setCursor(12, 110);
-            // this->parentDisplay->print("IP: ");
-            this->parentDisplay->print(WIFIIPAddress);
+            this->parentDisplay->setCursor(20, 120);
+            this->parentDisplay->print("MAC : ");
+            this->parentDisplay->println(WIFIMacAddress);
+            this->parentDisplay->setCursor(30, 140);
+            this->parentDisplay->print("IP : ");
+            this->parentDisplay->println(WIFIIPAddress);
         }
         else
         {
-            this->parentDisplay->setFont(&fonts::FreeSansBold24pt7b);
+            this->parentDisplay->setFont(CUSTOM_FONT);
             this->parentDisplay->setTextSize(1);
-            this->parentDisplay->setTextColor(TFT_WHITE);
-            this->parentDisplay->setCursor(12, 100);
-            // this->parentDisplay->print("SSID: ");
-            //  this->parentDisplay->print(WiFi.SSID());
-
+            this->parentDisplay->setTextColor(TFT_WHITE, TFT_BLACK);
+            this->parentDisplay->setCursor(10, 100);
+            this->parentDisplay->print("SSID : ");
+            char ssid[32];
+            this->sysStats->getWIFISSID(ssid, 32);
+            this->parentDisplay->println(ssid);
             char WIFIMacAddress[19];
             this->sysStats->getWIFIMacAddress(WIFIMacAddress, 19);
             char WIFIIPAddress[16];
             this->sysStats->getWIFIIPAddress(WIFIIPAddress, 16);
-            this->parentDisplay->setCursor(12, 110);
-            this->parentDisplay->print("MAC: ");
-            // this->parentDisplay->print(WIFIMacAddress);
-            this->parentDisplay->setCursor(12, 110);
-            this->parentDisplay->print("IP: ");
-            // this->parentDisplay->print(WIFIIPAddress);
+            this->parentDisplay->setCursor(10, 120);
+            this->parentDisplay->print("MAC : ");
+            this->parentDisplay->println(WIFIMacAddress);
+            this->parentDisplay->setCursor(10, 140);
+            this->parentDisplay->print("IP : ");
+            this->parentDisplay->println(WIFIIPAddress);
+            this->parentDisplay->setCursor(20, 160);
         }
         this->refreshWIFIData = false;
     }
     char str[100];
     FormatUtils::millisToString(sysStats->getRuntime(), str, 100);
+    this->parentDisplay->setFont(CUSTOM_FONT);
     this->parentDisplay->setTextSize(1);
-    this->parentDisplay->setCursor(12, 220);
     this->parentDisplay->setTextColor(TFT_WHITE, TFT_BLACK);
-    this->parentDisplay->printf("FPS: %03u Runtime: %s", this->fpsDebug->getFPS(), str);
+    this->parentDisplay->setCursor(12, 220);
+    this->parentDisplay->printf("%03uFPS - Runtime: %s", this->fpsDebug->getFPS(), str);
 }
