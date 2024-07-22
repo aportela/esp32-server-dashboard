@@ -9,6 +9,7 @@ private:
     bool refreshWIFILogo;
     bool refreshWIFISignalStrength;
     bool refreshWIFISignalLevelGraph;
+    bool refreshWIFIData;
 
 public:
     LGFXScreenInfo(LovyanGFX *display, FPSDebug *fpsDebug, SystemStatus *sysStats);
