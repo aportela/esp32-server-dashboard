@@ -23,6 +23,30 @@ void SystemStatus::refresh(void)
         IPAddress ip = WiFi.localIP();
         sprintf(this->ipAddress, "%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
         this->signalStrength = WiFi.RSSI();
+        if (this->signalStrength < -90)
+        {
+            this->signalQuality = WIFISignalQuality_NONE;
+        }
+        else if (this->signalStrength < -80)
+        {
+            this->signalQuality = WIFISignalQuality_WORST;
+        }
+        else if (this->signalStrength < -70)
+        {
+            this->signalQuality = WIFISignalQuality_BAD;
+        }
+        else if (this->signalStrength < -67)
+        {
+            this->signalQuality = WIFISignalQuality_NORMAL;
+        }
+        else if (this->signalStrength < -30)
+        {
+            this->signalQuality = WIFISignalQuality_GOOD;
+        }
+        else
+        {
+            this->signalQuality = WIFISignalQuality_BEST;
+        }
         strncpy(this->ssid, WiFi.SSID().c_str(), sizeof(this->ssid));
     }
     else
@@ -31,6 +55,7 @@ void SystemStatus::refresh(void)
         strcpy(this->ipAddress, "");
         strcpy(this->ssid, "");
         this->signalStrength = 0;
+        this->signalQuality = WIFISignalQuality_NONE;
     }
 }
 
@@ -56,6 +81,11 @@ void SystemStatus::getWIFIIPAddress(char *address, size_t count)
 long SystemStatus::getWIFISignalStrength(void)
 {
     return (this->signalStrength);
+}
+
+WIFISignalQuality SystemStatus::getWIFISignalQuality(void)
+{
+    return (this->signalQuality);
 }
 
 void SystemStatus::getWIFISSID(char *ssid, size_t count)

@@ -12,6 +12,7 @@ private:
     bool refreshWIFIData;
     bool wasConnected = false;
     long previousSignalStrength;
+    WIFISignalQuality previousSignalQuality;
 
 public:
     LGFXScreenInfo(LovyanGFX *display, FPSDebug *fpsDebug, SystemStatus *sysStats);
