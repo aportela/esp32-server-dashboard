@@ -12,8 +12,8 @@ private:
     char macAddress[19];
     char ipAddress[16];
     long signalStrength;
-    char ssid[32];
-    char savedPassword[64];
+    char ssid[33];
+    char savedPassword[65];
 
 public:
     SystemStatus(void);
