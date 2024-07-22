@@ -23,11 +23,13 @@ void SystemStatus::refresh(void)
         IPAddress ip = WiFi.localIP();
         sprintf(this->ipAddress, "%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
         this->signalStrength = WiFi.RSSI();
+        strncpy(this->ssid, WiFi.SSID().c_str(), 31);
     }
     else
     {
         strcpy(this->macAddress, "");
         strcpy(this->ipAddress, "");
+        strcpy(this->ssid, "");
         this->signalStrength = 0;
     }
 }
@@ -58,7 +60,7 @@ long SystemStatus::getWIFISignalStrength(void)
 
 void SystemStatus::getWIFISSID(char *ssid, size_t count)
 {
-    strncpy(ssid, "", count);
+    strncpy(ssid, this->ssid, count);
 }
 
 void SystemStatus::getWIFISavedPassword(char *password, size_t count)
