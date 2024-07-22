@@ -9,8 +9,7 @@
 
 LGFXScreenInfo::LGFXScreenInfo(LovyanGFX *display, FPSDebug *fpsDebug, SystemStatus *sysStats) : LGFXScreen(display, fpsDebug, sysStats)
 {
-
-    this->parentDisplay->drawRect(0, 0, 320, 240, TFT_WHITE);
+    // this->parentDisplay->drawRect(0, 0, 320, 240, TFT_WHITE); // this is for screen bounds debugging purposes only
     this->parentDisplay->setFont(DEFAULT_FONT);
     this->parentDisplay->setTextSize(2);
     this->parentDisplay->setTextColor(TFT_WHITE);
@@ -125,49 +124,24 @@ void LGFXScreenInfo::refresh(void)
     }
     if (this->refreshWIFIData)
     {
-        if (this->sysStats->isWIFIConnected())
-        {
-            this->parentDisplay->setFont(CUSTOM_FONT);
-            this->parentDisplay->setTextSize(1);
-            this->parentDisplay->setTextColor(TFT_WHITE, TFT_BLACK);
-            this->parentDisplay->setCursor(10, 100);
-            this->parentDisplay->print("SSID : ");
-            char ssid[32];
-            this->sysStats->getWIFISSID(ssid, 32);
-            this->parentDisplay->println(ssid);
-            char WIFIMacAddress[19];
-            this->sysStats->getWIFIMacAddress(WIFIMacAddress, 19);
-            char WIFIIPAddress[16];
-            this->sysStats->getWIFIIPAddress(WIFIIPAddress, 16);
-            this->parentDisplay->setCursor(20, 120);
-            this->parentDisplay->print("MAC : ");
-            this->parentDisplay->println(WIFIMacAddress);
-            this->parentDisplay->setCursor(30, 140);
-            this->parentDisplay->print("IP : ");
-            this->parentDisplay->println(WIFIIPAddress);
-        }
-        else
-        {
-            this->parentDisplay->setFont(CUSTOM_FONT);
-            this->parentDisplay->setTextSize(1);
-            this->parentDisplay->setTextColor(TFT_WHITE, TFT_BLACK);
-            this->parentDisplay->setCursor(10, 100);
-            this->parentDisplay->print("SSID : ");
-            char ssid[32];
-            this->sysStats->getWIFISSID(ssid, 32);
-            this->parentDisplay->println(ssid);
-            char WIFIMacAddress[19];
-            this->sysStats->getWIFIMacAddress(WIFIMacAddress, 19);
-            char WIFIIPAddress[16];
-            this->sysStats->getWIFIIPAddress(WIFIIPAddress, 16);
-            this->parentDisplay->setCursor(10, 120);
-            this->parentDisplay->print("MAC : ");
-            this->parentDisplay->println(WIFIMacAddress);
-            this->parentDisplay->setCursor(10, 140);
-            this->parentDisplay->print("IP : ");
-            this->parentDisplay->println(WIFIIPAddress);
-            this->parentDisplay->setCursor(20, 160);
-        }
+        this->parentDisplay->setFont(CUSTOM_FONT);
+        this->parentDisplay->setTextSize(1);
+        this->parentDisplay->setTextColor(TFT_WHITE, TFT_BLACK);
+        this->parentDisplay->setCursor(12, 100);
+        this->parentDisplay->print("SSID : ");
+        char ssid[32];
+        this->sysStats->getWIFISSID(ssid, 32);
+        this->parentDisplay->println(ssid);
+        char WIFIMacAddress[19];
+        this->sysStats->getWIFIMacAddress(WIFIMacAddress, 19);
+        char WIFIIPAddress[16];
+        this->sysStats->getWIFIIPAddress(WIFIIPAddress, 16);
+        this->parentDisplay->setCursor(22, 120);
+        this->parentDisplay->print("MAC : ");
+        this->parentDisplay->println(WIFIMacAddress);
+        this->parentDisplay->setCursor(32, 140);
+        this->parentDisplay->print("IP : ");
+        this->parentDisplay->println(WIFIIPAddress);
         this->refreshWIFIData = false;
     }
     char str[100];
