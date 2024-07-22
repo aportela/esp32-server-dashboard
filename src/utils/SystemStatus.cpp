@@ -23,7 +23,7 @@ void SystemStatus::refresh(void)
         IPAddress ip = WiFi.localIP();
         sprintf(this->ipAddress, "%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
         this->signalStrength = WiFi.RSSI();
-        strncpy(this->ssid, WiFi.SSID().c_str(), 31);
+        strncpy(this->ssid, WiFi.SSID().c_str(), sizeof(this->ssid));
     }
     else
     {
