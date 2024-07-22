@@ -48,7 +48,14 @@ void LGFXScreenInfo::refresh(void)
         this->parentDisplay->setTextSize(1);
         this->parentDisplay->setTextColor(TFT_WHITE, TFT_BLACK);
         this->parentDisplay->setCursor(172, 36);
-        this->parentDisplay->printf("%+02ddBm", this->sysStats->getWIFISignalStrength());
+        if (this->sysStats->isWIFIConnected())
+        {
+            this->parentDisplay->printf("%+02ddBm", this->sysStats->getWIFISignalStrength());
+        }
+        else
+        {
+            this->parentDisplay->printf("     ", this->sysStats->getWIFISignalStrength());
+        }
     }
     if (this->refreshWIFISignalLevelGraph)
     {
