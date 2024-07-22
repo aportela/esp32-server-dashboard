@@ -10,6 +10,7 @@
 LGFXScreenInfo::LGFXScreenInfo(LovyanGFX *display, FPSDebug *fpsDebug, SystemStatus *sysStats) : LGFXScreen(display, fpsDebug, sysStats)
 {
     // this->parentDisplay->drawRect(0, 0, 320, 240, TFT_WHITE); // this is for screen bounds debugging purposes only
+    this->parentDisplay->setTextWrap(false);
     this->parentDisplay->setFont(DEFAULT_FONT);
     this->parentDisplay->setTextSize(2);
     this->parentDisplay->setTextColor(TFT_WHITE);
@@ -150,5 +151,5 @@ void LGFXScreenInfo::refresh(void)
     this->parentDisplay->setTextSize(1);
     this->parentDisplay->setTextColor(TFT_WHITE, TFT_BLACK);
     this->parentDisplay->setCursor(12, 220);
-    this->parentDisplay->printf("%03uFPS - Runtime: %s", this->fpsDebug->getFPS(), str);
+    this->parentDisplay->printf("%03uFPS - Runtime: %s    ", this->fpsDebug->getFPS(), str);
 }
