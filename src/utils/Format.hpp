@@ -11,7 +11,7 @@ public:
     Format(void);
     ~Format();
 
-    static void millisToString(uint64_t millis_diff, char *buffer, size_t buffer_size);
+    static void millisToHumanStr(uint64_t millis_diff, char *buffer, size_t buffer_size);
 };
 
 #endif

@@ -114,7 +114,7 @@ void LGFX::setSource(ISource *src)
     this->source = src;
 }
 
-void convertMillisToString(unsigned long long millis_diff, char *buffer, size_t buffer_size)
+void convertmillisToHumanStr(unsigned long long millis_diff, char *buffer, size_t buffer_size)
 {
     const unsigned long long millis_in_second = 1000;
     const unsigned long long millis_in_minute = millis_in_second * 60;
@@ -168,7 +168,7 @@ void LGFX::refreshDebug(uint16_t xOffset, uint16_t yOffset, int32_t wifiSignalSt
     this->debugSprite->setTextColor(TFT_WHITE, TFT_BLACK);
     this->debugSprite->setCursor(0, 0);
     char timeString[50];
-    convertMillisToString(millis(), timeString, sizeof(timeString));
+    convertmillisToHumanStr(millis(), timeString, sizeof(timeString));
     this->debugSprite->printf("Runtime: %s - FPS: %03u - Wifi: %03ddBm", timeString, this->fpsDebug->getFPS(), wifiSignalStrength);
     /*
         RSSI > - 30 dBm	 Amazing

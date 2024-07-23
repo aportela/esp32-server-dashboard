@@ -189,7 +189,7 @@ void LGFXScreenInfo::refresh(bool firstRun)
         this->refreshWIFIData = false;
     }
     char str[100];
-    Format::millisToString(millis(), str, 100);
+    Format::millisToHumanStr(millis(), str, 100);
     this->parentDisplay->setFont(CUSTOM_FONT);
     this->parentDisplay->setTextSize(1);
     this->parentDisplay->setTextColor(TFT_WHITE, TFT_BLACK);

@@ -1,6 +1,6 @@
 #include "Format.hpp"
 
-void Format::millisToString(uint64_t millis_diff, char *buffer, size_t buffer_size)
+void Format::millisToHumanStr(uint64_t millis_diff, char *buffer, size_t buffer_size)
 {
     static const uint64_t millis_in_second = 1000;
     static const uint64_t millis_in_minute = millis_in_second * 60;
