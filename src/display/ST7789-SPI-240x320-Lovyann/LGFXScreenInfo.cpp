@@ -42,6 +42,12 @@ void LGFXScreenInfo::refresh(bool firstRun)
             this->refreshWIFISignalLevelGraph = true;
             this->refreshWIFIData = true;
         }
+        else if (isConnected && (strlen(this->WIFISSID) == 0 || strlen(this->WIFIIPAddress) == 0 || strlen(this->WIFIMacAddress) == 0))
+        {
+            // UGLY: I think there is a "timming" bug that not assign ssid/address on some connected networks so every time that connected status found if no
+            // data is assigned try to refresh
+            this->refreshWIFIData = true;
+        }
         long currentSignalStrength = WifiManager::getSignalStrength();
         if (this->previousSignalStrength != currentSignalStrength)
         {
@@ -167,25 +173,30 @@ void LGFXScreenInfo::refresh(bool firstRun)
     }
     if (firstRun || this->refreshWIFIData)
     {
+        Serial.println("RefreshWifidAta");
+        // TODO: clear if changed (because str length)
+        // char WIFISSID[WIFI_SSID_CHAR_ARR_LENGTH] = {'\0'};
+        WifiManager::getSSID(this->WIFISSID, sizeof(this->WIFISSID));
+        Serial.println(this->WIFISSID);
+        // char WIFIMacAddress[MAC_ADDRESS_CHAR_ARR_LENGTH] = {'\0'};
+        WifiManager::getMacAddress(this->WIFIMacAddress, sizeof(this->WIFIMacAddress));
+        Serial.println(this->WIFIMacAddress);
+        // char WIFIIPAddress[IP_ADDRESS_CHAR_ARR_LENGTH] = {'\0'};
+        WifiManager::getIPAddress(this->WIFIIPAddress, sizeof(this->WIFIIPAddress));
+        Serial.println(this->WIFIIPAddress);
+
         this->parentDisplay->setFont(CUSTOM_FONT);
         this->parentDisplay->setTextSize(1);
         this->parentDisplay->setTextColor(TFT_WHITE, TFT_BLACK);
         this->parentDisplay->setCursor(10, 100);
         this->parentDisplay->print("SSID ");
-        // TODO: clear if changed (because str length)
-        char WIFISSID[33] = {'\0'};
-        WifiManager::getSSID(WIFISSID, sizeof(WIFISSID));
-        this->parentDisplay->println(WIFISSID);
-        char WIFIMacAddress[19] = {'\0'};
-        WifiManager::getMacAddress(WIFIMacAddress, sizeof(WIFIMacAddress));
-        char WIFIIPAddress[16] = {'\0'};
-        WifiManager::getIPAddress(WIFIIPAddress, sizeof(WIFIIPAddress));
+        this->parentDisplay->println(this->WIFISSID);
         this->parentDisplay->setCursor(20, 120);
         this->parentDisplay->print("MAC ");
-        this->parentDisplay->println(WIFIMacAddress);
+        this->parentDisplay->println(this->WIFIMacAddress);
         this->parentDisplay->setCursor(30, 140);
         this->parentDisplay->print("IP ");
-        this->parentDisplay->println(WIFIIPAddress);
+        this->parentDisplay->println(this->WIFIIPAddress);
         this->refreshWIFIData = false;
     }
     char str[100];

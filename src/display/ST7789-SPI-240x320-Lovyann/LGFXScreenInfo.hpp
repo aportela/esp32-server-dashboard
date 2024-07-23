@@ -13,6 +13,9 @@ private:
     bool refreshWIFISignalLevelGraph;
     bool refreshWIFIData;
     bool wasConnected = false;
+    char WIFISSID[WIFI_SSID_CHAR_ARR_LENGTH] = {'\0'};
+    char WIFIMacAddress[MAC_ADDRESS_CHAR_ARR_LENGTH] = {'\0'};
+    char WIFIIPAddress[IP_ADDRESS_CHAR_ARR_LENGTH] = {'\0'};
     long previousSignalStrength;
     WIFISignalQuality previousSignalQuality;
 
