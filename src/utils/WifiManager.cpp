@@ -39,8 +39,8 @@ void WifiManager::disconnect(void)
     }
     validConnection = false;
     tryingConnection = false;
-    sprintf(macAddress, "");
-    sprintf(ipAddress, "");
+    std::sprintf(macAddress, "");
+    std::sprintf(ipAddress, "");
     signalStrength = -91;
     signalQuality = WIFISignalQuality_NONE;
 }
@@ -60,9 +60,9 @@ void WifiManager::loop(void)
         {
             uint8_t mac[6];
             WiFi.macAddress(mac);
-            sprintf(macAddress, "%02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+            std::sprintf(macAddress, "%02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
             IPAddress ip = WiFi.localIP();
-            sprintf(ipAddress, "%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
+            std::sprintf(ipAddress, "%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
             tryingConnection = false;
             validConnection = true; // allow future re-connections to this network
         }
@@ -77,19 +77,19 @@ void WifiManager::loop(void)
     }
 }
 
-void WifiManager::getSSID(char *ssid, size_t count)
+void WifiManager::getSSID(char *buffer, size_t buffer_size)
 {
-    strncpy(ssid, WiFiSSID, count);
+    strncpy(buffer, WiFiSSID, buffer_size);
 }
 
-void WifiManager::getMacAddress(char *address, size_t count)
+void WifiManager::getMacAddress(char *buffer, size_t buffer_size)
 {
-    strncpy(address, macAddress, count);
+    strncpy(buffer, macAddress, buffer_size);
 }
 
-void WifiManager::getIPAddress(char *address, size_t count)
+void WifiManager::getIPAddress(char *buffer, size_t buffer_size)
 {
-    strncpy(address, ipAddress, count);
+    strncpy(buffer, ipAddress, buffer_size);
 }
 
 long WifiManager::getSignalStrength(void)
