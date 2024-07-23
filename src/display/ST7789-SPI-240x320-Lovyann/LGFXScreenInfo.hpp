@@ -7,6 +7,7 @@
 class LGFXScreenInfo : public LGFXScreen
 {
 private:
+    char previousRuntimeStr[16] = {'\0'};
     bool refreshWIFILogo;
     bool refreshWIFISignalStrength;
     bool refreshWIFISignalLevelGraph;

@@ -190,9 +190,13 @@ void LGFXScreenInfo::refresh(bool firstRun)
     }
     char str[100];
     Format::millisToHumanStr(millis(), str, 100);
-    this->parentDisplay->setFont(CUSTOM_FONT);
-    this->parentDisplay->setTextSize(1);
-    this->parentDisplay->setTextColor(TFT_WHITE, TFT_BLACK);
-    this->parentDisplay->setCursor(12, 220);
-    this->parentDisplay->printf("%03uFPS - Runtime: %s    ", this->fpsDebug->getFPS(), str);
+    if (strcmp(str, previousRuntimeStr) != 0)
+    {
+        this->parentDisplay->setFont(CUSTOM_FONT);
+        this->parentDisplay->setTextSize(1);
+        this->parentDisplay->setTextColor(TFT_WHITE, TFT_BLACK);
+        this->parentDisplay->setCursor(12, 220);
+        this->parentDisplay->printf("%03uFPS - Runtime: %s    ", this->fpsDebug->getFPS(), str);
+        strncpy(this->previousRuntimeStr, str, sizeof(this->previousRuntimeStr));
+    }
 }
