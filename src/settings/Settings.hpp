@@ -8,7 +8,7 @@
 class Settings
 {
 private:
-    Preferences preferences;
+    Preferences *preferences;
 
     void getValue(const char *key, char *value, size_t count);
     void setValue(const char *key, const char *value);

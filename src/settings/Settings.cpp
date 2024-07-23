@@ -21,23 +21,24 @@ Settings::Settings(void)
     {
         Serial.println("NVS OK");
     }
+    this->preferences = new Preferences();
 }
 
 Settings::~Settings()
 {
-    // delete this->preferences;
-    // this->preferences = nullptr;
+    delete this->preferences;
+    this->preferences = nullptr;
 }
 
 void Settings::getValue(const char *key, char *value, size_t count)
 {
     Serial.println("GET VALUE");
     Serial.println(key);
-    if (this->preferences.begin("esp32-server-dashboard", false))
+    if (this->preferences->begin("esp32-server-dashboard", false))
     {
-        if (this->preferences.isKey(key))
+        if (this->preferences->isKey(key))
         {
-            this->preferences.getString(key, value, count);
+            this->preferences->getString(key, value, count);
             Serial.println(value);
         }
         else
@@ -48,7 +49,7 @@ void Settings::getValue(const char *key, char *value, size_t count)
                 value[0] = '\0';
             }
         }
-        this->preferences.end();
+        this->preferences->end();
     }
     else
     {
@@ -61,9 +62,9 @@ void Settings::setValue(const char *key, const char *value)
     Serial.println("SET VALUE");
     Serial.println(key);
     Serial.println(value);
-    if (this->preferences.begin("esp32-server-dashboard", false))
+    if (this->preferences->begin("esp32-server-dashboard", false))
     {
-        if (this->preferences.putString(key, value))
+        if (this->preferences->putString(key, value))
         {
             Serial.println("OK");
         }
@@ -71,7 +72,7 @@ void Settings::setValue(const char *key, const char *value)
         {
             Serial.println("ERROR");
         }
-        this->preferences.end();
+        this->preferences->end();
     }
     else
     {
@@ -83,11 +84,11 @@ void Settings::setValue(const char *key, const char *value)
 
 void Settings::clear(void)
 {
-    if (this->preferences.begin("esp32-server-dashboard", false))
+    if (this->preferences->begin("esp32-server-dashboard", false))
     {
 
-        this->preferences.clear();
-        this->preferences.end();
+        this->preferences->clear();
+        this->preferences->end();
     }
     else
     {
