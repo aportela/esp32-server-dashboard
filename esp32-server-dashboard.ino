@@ -52,8 +52,7 @@ LGFXMeter *networkUploadBandwithLoadMeter = nullptr;
 #error NO_DISPLAY_DRIVER
 #endif
 
-#include "WiFi.h"
-#include "WiFi-Settings.h"
+#include "src/utils/WifiManager.hpp"
 #include "src/sources/MeterEntity.hpp"
 #include "src/sources/Source.hpp"
 #include "src/sources/dummy/DummySource.hpp"
@@ -62,6 +61,8 @@ LGFXMeter *networkUploadBandwithLoadMeter = nullptr;
 Source *dummySRC = nullptr;
 
 Settings *settings = nullptr;
+
+WifiManager wifi;
 
 #define METER_GRAPH_WIDTH 195
 #define METER_GRAPH_HEIGHT 30
@@ -121,27 +122,14 @@ void processSerialPort()
 bool WIFIEnabled = false;
 void setup()
 {
+
     settings = new Settings();
     initSerialPort();
     Serial.println("Starting esp32-server-dashboard");
     // TODO: default info screen if no valid settings found
     // TODO: rotary encoder controller, button pressed at boot = enter settings mode, movement = toggle between screens
-    char *ssid = WIFI_SSID;
-    char *password = WIFI_PASSWORD;
-    // char ssid[33] = {'\0'};
-    // char password[65] = {'\0'};
-    // settings->getWIFISSID(ssid, 32);
-    // settings->getWIFIPassword(password, 64);
-    WIFIEnabled = strlen(ssid) > 0;
-    if (WIFIEnabled)
-    {
-        WiFi.mode(WIFI_STA);
-        WiFi.begin(ssid, password);
-    }
-    else
-    {
-        Serial.println("Previous WIFI SSID not found, send via serial port 'SET_WIFI_SSSID xxxxxxxxxxxxx'");
-    }
+    WifiManager::setCredentials(WIFI_SSID, WIFI_PASSWORD);
+    WifiManager::connect(true);
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     dummySRC = new DummySource();
     screen = new LGFX(PIN_SDA, PIN_SCL, PIN_CS, PIN_DC, PIN_RST, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_ROTATION);
@@ -166,57 +154,15 @@ bool WIFIForcingReconnection = false;
 void loop()
 {
     processSerialPort();
-    if (WiFi.status() != WL_CONNECTED)
-    {
-        if (WIFIEnabled)
-        {
-            // waiting for first connection
-            if (!WIFIFirstConnectionSuccess)
-            {
-                Serial.println("Waiting for WIFI connection");
-                delay(500);
-            }
-            else
-            {
-                // previous conection lost
-                if (!WIFIForcingReconnection)
-                {
-                    // force new reconnection
-                    WiFi.reconnect();
-                    WIFIForcingReconnection = true;
-                    Serial.println("Forcing WIFI reconnection");
-                }
-                else
-                {
-                    Serial.println("Waiting for WIFI reconnection");
-                    // waiting for reconnection
-                    delay(500);
-                }
-            }
-        }
-    }
-    else
-    {
-        if (WIFIEnabled)
-        {
-            // this controls that connection is valid
-            if (!WIFIFirstConnectionSuccess)
-            {
-                WIFIFirstConnectionSuccess = true;
-            }
-            WIFIForcingReconnection = false;
-        }
-#ifdef DISPLAY_DRIVER_LOVYANN_ST7789
-        /*
-            dummySRC->refresh();
-            cpuLoadMeter->refresh(dummySRC->getCurrentCPULoad());
-            memoryLoadMeter->refresh(dummySRC->getUsedMemory());
-            cpuTemperatureLoadMeter->refresh(dummySRC->getCurrentCPUTemperature());
-            networkDownloadBandwithLoadMeter->refresh(dummySRC->getUsedNetworkDownloadBandwith());
-            networkUploadBandwithLoadMeter->refresh(dummySRC->getUsedNetworkUploadBandwith());
-        */
-#endif
-    }
+    WifiManager::loop();
+    /*
+        dummySRC->refresh();
+        cpuLoadMeter->refresh(dummySRC->getCurrentCPULoad());
+        memoryLoadMeter->refresh(dummySRC->getUsedMemory());
+        cpuTemperatureLoadMeter->refresh(dummySRC->getCurrentCPUTemperature());
+        networkDownloadBandwithLoadMeter->refresh(dummySRC->getUsedNetworkDownloadBandwith());
+        networkUploadBandwithLoadMeter->refresh(dummySRC->getUsedNetworkUploadBandwith());
+    */
     screen->refreshScreenInfo();
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     // screen->refreshDebug(0, 210, WiFi.RSSI());
