@@ -4,16 +4,7 @@
 #include <cstdint>
 #include <cstddef>
 
-enum WIFISignalQuality
-{
-    WIFISignalQuality_NONE,
-    WIFISignalQuality_WORST,
-    WIFISignalQuality_BAD,
-    WIFISignalQuality_NORMAL,
-    WIFISignalQuality_GOOD,
-    WIFISignalQuality_BEST
-
-};
+#include "WifiManager.hpp"
 
 class SystemStatus
 {
