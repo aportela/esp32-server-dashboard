@@ -1,6 +1,3 @@
-// https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/protocols/mqtt.html
-// #include <mqtt_client.h>
-
 // #include <Preferences.h>
 
 #define DISPLAY_DRIVER_LOVYANN_ST7789 // at this time, only LovyAnn ST7789 driver support
@@ -51,6 +48,7 @@ LGFXMeter *networkUploadBandwithLoadMeter = nullptr;
 
 #include "src/utils/WifiManager.hpp"
 #include "src/utils/SerialManager.hpp"
+#include "src/utils/MQTT.hpp"
 #include "src/sources/MeterEntity.hpp"
 #include "src/sources/Source.hpp"
 #include "src/sources/dummy/DummySource.hpp"
