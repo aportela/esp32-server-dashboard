@@ -87,10 +87,20 @@ void processSerialPort()
             Serial.println("Rebooting");
             ESP.restart();
         }
-        if (rx == "CLEAR_SETTINGS")
+        else if (rx == "CLEAR_SETTINGS")
         {
             Serial.println("Reseting settings");
             settings->clear();
+        }
+        else if (rx == "CONNECT_WIFI")
+        {
+            Serial.println("Connecting WIFI");
+            WifiManager::connect(false);
+        }
+        else if (rx == "DISCONNECT_WIFI")
+        {
+            Serial.println("Disconnecting WIFI");
+            WifiManager::disconnect();
         }
         else if (rx.startsWith("SET_WIFI_SSID ") && rx.length() > 14)
         {
@@ -102,7 +112,7 @@ void processSerialPort()
                 settings->setWIFISSID(rxSSID.c_str());
             }
         }
-        else if (rx.startsWith("SET_WIFI_PASSWORD "))
+        else if (rx.startsWith("SET_WIFI_PASSWORD ") && rx.length() > 18)
         {
             String rxPassword = rx.substring(18);
             if (rxPassword.length() > 0)
