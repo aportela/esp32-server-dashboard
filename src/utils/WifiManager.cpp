@@ -39,6 +39,10 @@ void WifiManager::disconnect(void)
     }
     validConnection = false;
     tryingConnection = false;
+    sprintf(macAddress, "");
+    sprintf(ipAddress, "");
+    signalStrength = -91;
+    signalQuality = WIFISignalQuality_NONE;
 }
 
 bool WifiManager::isConnected(void)
