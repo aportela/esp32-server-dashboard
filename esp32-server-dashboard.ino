@@ -3,9 +3,6 @@
 
 // #include <Preferences.h>
 
-// WARNING: ESP32 C3 SUPER MINI requires "USB CDC on boot" ENABLED (under Arduino IDE Menu -> Tools)
-#define SERIAL_SPEED 9600
-
 #define DISPLAY_DRIVER_LOVYANN_ST7789 // at this time, only LovyAnn ST7789 driver support
 
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
@@ -53,6 +50,7 @@ LGFXMeter *networkUploadBandwithLoadMeter = nullptr;
 #endif
 
 #include "src/utils/WifiManager.hpp"
+#include "src/utils/SerialManager.hpp"
 #include "src/sources/MeterEntity.hpp"
 #include "src/sources/Source.hpp"
 #include "src/sources/dummy/DummySource.hpp"
@@ -67,74 +65,12 @@ WifiManager wifi;
 #define METER_GRAPH_WIDTH 195
 #define METER_GRAPH_HEIGHT 30
 
-void initSerialPort()
-{
-    Serial.begin(SERIAL_SPEED);
-    while (!Serial)
-    {
-        yield();
-        delay(10);
-    }
-}
-
-void processSerialPort()
-{
-    while (Serial.available() > 0)
-    {
-        String rx = Serial.readStringUntil('\n');
-        if (rx == "REBOOT")
-        {
-            Serial.println("Rebooting");
-            ESP.restart();
-        }
-        else if (rx == "CLEAR_SETTINGS")
-        {
-            Serial.println("Reseting settings");
-            settings->clear();
-        }
-        else if (rx == "CONNECT_WIFI")
-        {
-            Serial.println("Connecting WIFI");
-            WifiManager::connect(false);
-        }
-        else if (rx == "DISCONNECT_WIFI")
-        {
-            Serial.println("Disconnecting WIFI");
-            WifiManager::disconnect();
-        }
-        else if (rx.startsWith("SET_WIFI_SSID ") && rx.length() > 14)
-        {
-            String rxSSID = rx.substring(14);
-            if (rxSSID.length() > 0)
-            {
-                Serial.println("Received new SSID");
-                Serial.println(rxSSID);
-                settings->setWIFISSID(rxSSID.c_str());
-            }
-        }
-        else if (rx.startsWith("SET_WIFI_PASSWORD ") && rx.length() > 18)
-        {
-            String rxPassword = rx.substring(18);
-            if (rxPassword.length() > 0)
-            {
-                Serial.println("Received new password");
-                Serial.println(rxPassword);
-                settings->setWIFIPassword(rxPassword.c_str());
-            }
-        }
-        else
-        {
-            Serial.printf("Unknown cmd %s\n", rx.c_str());
-        }
-    }
-}
-
 bool WIFIEnabled = false;
 void setup()
 {
 
     settings = new Settings();
-    initSerialPort();
+    SerialManager::init(SerialManager::DEFAULT_SPEED);
     Serial.println("Starting esp32-server-dashboard");
     // TODO: default info screen if no valid settings found
     // TODO: rotary encoder controller, button pressed at boot = enter settings mode, movement = toggle between screens
@@ -163,7 +99,7 @@ bool WIFIForcingReconnection = false;
 
 void loop()
 {
-    processSerialPort();
+    SerialManager::loop();
     WifiManager::loop();
     /*
         dummySRC->refresh();
