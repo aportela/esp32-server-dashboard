@@ -1,8 +1,9 @@
 #include "SerialManager.hpp"
 #include "WifiManager.hpp"
 #include <Arduino.h>
+#include "../settings/Settings.hpp"
 
-// const uint32t SerialManager::DEFAULT_SPEED = 115200;
+// Settings SerialManager::settings = nullptr;
 
 void SerialManager::init(uint32_t speed)
 {
@@ -46,7 +47,7 @@ void SerialManager::loop(void)
             {
                 Serial.println("Received new SSID");
                 Serial.println(rxSSID);
-                // settings->setWIFISSID(rxSSID.c_str());
+                // SerialManager::settings->setWIFISSID(rxSSID.c_str());
             }
         }
         else if (rx.startsWith("SET_WIFI_PASSWORD ") && rx.length() > 18)
@@ -56,7 +57,8 @@ void SerialManager::loop(void)
             {
                 Serial.println("Received new password");
                 Serial.println(rxPassword);
-                // settings->setWIFIPassword(rxPassword.c_str());
+                Settings *s = new Settings();
+                s->setWIFIPassword(rxPassword.c_str());
             }
         }
         else
