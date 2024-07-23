@@ -4,12 +4,12 @@
 #include <cstdint>
 #include <cstdio>
 
-class FormatUtils
+class Format
 {
 private:
 public:
-    FormatUtils(void);
-    ~FormatUtils();
+    Format(void);
+    ~Format();
 
     static void millisToString(uint64_t millis_diff, char *buffer, size_t buffer_size);
 };

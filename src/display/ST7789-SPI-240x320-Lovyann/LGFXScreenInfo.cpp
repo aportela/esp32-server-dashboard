@@ -1,5 +1,5 @@
 #include "LGFXScreenInfo.hpp"
-#include "../../utils/FormatUtils.hpp"
+#include "../../utils/Format.hpp"
 
 #define DEFAULT_FONT &fonts::Font0
 #define CUSTOM_FONT &fonts::FreeMono9pt7b
@@ -189,7 +189,7 @@ void LGFXScreenInfo::refresh(bool firstRun)
         this->refreshWIFIData = false;
     }
     char str[100];
-    FormatUtils::millisToString(millis(), str, 100);
+    Format::millisToString(millis(), str, 100);
     this->parentDisplay->setFont(CUSTOM_FONT);
     this->parentDisplay->setTextSize(1);
     this->parentDisplay->setTextColor(TFT_WHITE, TFT_BLACK);
