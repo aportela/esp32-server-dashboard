@@ -1,12 +1,12 @@
 #include "WifiManager.hpp"
 
-char WifiManager::WiFiSSID[33] = {'\0'};
-char WifiManager::WiFiPassword[65] = {'\0'};
+char WifiManager::WiFiSSID[WIFI_SSID_CHAR_ARR_LENGTH] = {'\0'};
+char WifiManager::WiFiPassword[WIFI_PASSWORD_CHAR_ARR_LENGTH] = {'\0'};
 bool WifiManager::tryingConnection = false;
 bool WifiManager::validConnection = false;
 bool WifiManager::reconnect = false;
-char WifiManager::macAddress[19] = {'\0'};
-char WifiManager::ipAddress[16] = {'\0'};
+char WifiManager::macAddress[MAC_ADDRESS_CHAR_ARR_LENGTH] = {'\0'};
+char WifiManager::ipAddress[IP_ADDRESS_CHAR_ARR_LENGTH] = {'\0'};
 long WifiManager::signalStrength = -91;
 WIFISignalQuality WifiManager::signalQuality = WIFISignalQuality_NONE;
 
@@ -59,7 +59,6 @@ void WifiManager::loop(void)
             sprintf(macAddress, "%02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
             IPAddress ip = WiFi.localIP();
             sprintf(ipAddress, "%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
-
             tryingConnection = false;
             validConnection = true; // allow future re-connections to this network
         }

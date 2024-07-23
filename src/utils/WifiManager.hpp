@@ -7,6 +7,12 @@
 #include <cstdint>
 #include <cstdio>
 
+#define WIFI_SSID_CHAR_ARR_LENGTH 33
+#define WIFI_PASSWORD_CHAR_ARR_LENGTH 65
+
+#define MAC_ADDRESS_CHAR_ARR_LENGTH 19
+#define IP_ADDRESS_CHAR_ARR_LENGTH 16
+
 enum WIFISignalQuality
 {
     WIFISignalQuality_NONE,
@@ -21,13 +27,13 @@ enum WIFISignalQuality
 class WifiManager
 {
 private:
-    static char WiFiSSID[33];
-    static char WiFiPassword[65];
+    static char WiFiSSID[WIFI_SSID_CHAR_ARR_LENGTH];
+    static char WiFiPassword[WIFI_PASSWORD_CHAR_ARR_LENGTH];
     static bool tryingConnection;
     static bool validConnection;
     static bool reconnect;
-    static char macAddress[19];
-    static char ipAddress[16];
+    static char macAddress[MAC_ADDRESS_CHAR_ARR_LENGTH];
+    static char ipAddress[IP_ADDRESS_CHAR_ARR_LENGTH];
     static long signalStrength;
     static WIFISignalQuality signalQuality;
 
