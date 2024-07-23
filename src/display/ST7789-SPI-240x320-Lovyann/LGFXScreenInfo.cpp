@@ -173,18 +173,13 @@ void LGFXScreenInfo::refresh(bool firstRun)
     }
     if (firstRun || this->refreshWIFIData)
     {
-        Serial.println("RefreshWifidAta");
         // TODO: clear if changed (because str length)
         // char WIFISSID[WIFI_SSID_CHAR_ARR_LENGTH] = {'\0'};
         WifiManager::getSSID(this->WIFISSID, sizeof(this->WIFISSID));
-        Serial.println(this->WIFISSID);
         // char WIFIMacAddress[MAC_ADDRESS_CHAR_ARR_LENGTH] = {'\0'};
         WifiManager::getMacAddress(this->WIFIMacAddress, sizeof(this->WIFIMacAddress));
-        Serial.println(this->WIFIMacAddress);
         // char WIFIIPAddress[IP_ADDRESS_CHAR_ARR_LENGTH] = {'\0'};
         WifiManager::getIPAddress(this->WIFIIPAddress, sizeof(this->WIFIIPAddress));
-        Serial.println(this->WIFIIPAddress);
-
         this->parentDisplay->setFont(CUSTOM_FONT);
         this->parentDisplay->setTextSize(1);
         this->parentDisplay->setTextColor(TFT_WHITE, TFT_BLACK);
