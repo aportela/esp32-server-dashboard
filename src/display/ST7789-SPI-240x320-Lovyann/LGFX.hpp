@@ -8,7 +8,6 @@
 #include "LGFXScreenInfo.hpp"
 #include "../../sources/ISource.hpp"
 #include "../../sources/SourceData.hpp"
-#include "../../utils/SystemStatus.hpp"
 
 class LGFX : public lgfx::LGFX_Device
 {
@@ -21,12 +20,10 @@ private:
     lgfx::LGFX_Sprite *networkDownloadSprite = nullptr;
     lgfx::LGFX_Sprite *networkUploadSprite = nullptr;
     lgfx::LGFX_Sprite *debugSprite = nullptr;
-    SystemStatus *sysStats = nullptr;
     LGFXScreenInfo *screenInfo = nullptr;
 
     FPSDebug *fpsDebug = nullptr;
 
-    uint64_t startMillis;
     ISource *source;
 
 public:

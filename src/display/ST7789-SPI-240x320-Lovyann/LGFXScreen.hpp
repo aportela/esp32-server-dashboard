@@ -4,17 +4,15 @@
 #include <LovyanGFX.hpp>
 #include "../IScreen.hpp"
 #include "../FPSDebug.hpp"
-#include "../../utils/SystemStatus.hpp"
 
 class LGFXScreen : public IScreen
 {
 protected:
     LovyanGFX *parentDisplay = nullptr;
     FPSDebug *fpsDebug;
-    SystemStatus *sysStats = nullptr;
 
 public:
-    LGFXScreen(LovyanGFX *display, FPSDebug *fpsDebug, SystemStatus *sysStats);
+    LGFXScreen(LovyanGFX *display, FPSDebug *fpsDebug);
     ~LGFXScreen();
     virtual void refresh(bool firstRun) = 0;
 };

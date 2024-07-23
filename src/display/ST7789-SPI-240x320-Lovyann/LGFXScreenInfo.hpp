@@ -2,6 +2,7 @@
 #define ESP32_SERVER_DASHBOARD_LGFX_SCREEN_INFO_H
 
 #include "LGFXScreen.hpp"
+#include "../../utils/WifiManager.hpp"
 
 class LGFXScreenInfo : public LGFXScreen
 {
@@ -15,7 +16,7 @@ private:
     WIFISignalQuality previousSignalQuality;
 
 public:
-    LGFXScreenInfo(LovyanGFX *display, FPSDebug *fpsDebug, SystemStatus *sysStats);
+    LGFXScreenInfo(LovyanGFX *display, FPSDebug *fpsDebug);
     ~LGFXScreenInfo();
     void refresh(bool firstRun) override;
 };
