@@ -34,24 +34,28 @@ void LGFXScreenInfo::refresh(bool firstRun)
 
     if (!firstRun)
     {
-        if (this->wasConnected != WifiManager::isConnected())
+        bool isConnected = WifiManager::isConnected();
+        if (this->wasConnected != isConnected)
         {
             this->refreshWIFILogo = true;
             this->refreshWIFISignalStrength = true;
             this->refreshWIFISignalLevelGraph = true;
             this->refreshWIFIData = true;
         }
-        if (this->previousSignalStrength != WifiManager::getSignalStrength())
+        long currentSignalStrength = WifiManager::getSignalStrength();
+        if (this->previousSignalStrength != currentSignalStrength)
         {
             this->refreshWIFISignalStrength = true;
         }
-        if (this->previousSignalQuality != WifiManager::getSignalQuality(WifiManager::getSignalStrength()))
+        WIFISignalQuality currentSignalQuality = WifiManager::getSignalQuality(currentSignalStrength);
+        if (this->previousSignalQuality != currentSignalQuality)
         {
+            // TODO: not refreshing on disconnect
             this->refreshWIFISignalLevelGraph = true;
         }
-        this->wasConnected = WifiManager::isConnected();
-        this->previousSignalStrength = WifiManager::getSignalStrength();
-        this->previousSignalQuality = WifiManager::getSignalQuality(WifiManager::getSignalStrength());
+        this->wasConnected = isConnected;
+        this->previousSignalStrength = currentSignalStrength;
+        this->previousSignalQuality = currentSignalQuality;
     }
     else
     {
@@ -79,7 +83,7 @@ void LGFXScreenInfo::refresh(bool firstRun)
         }
         else
         {
-            this->parentDisplay->printf("     ", WifiManager::getSignalStrength());
+            this->parentDisplay->printf("      ", WifiManager::getSignalStrength());
         }
     }
     if (firstRun || this->refreshWIFISignalLevelGraph)
@@ -141,40 +145,48 @@ void LGFXScreenInfo::refresh(bool firstRun)
                 colors[4] = TFT_DARKGREY;
                 break;
             }
-            uint16_t x = 195;
-            uint16_t y = 76;
-            uint16_t height = 8;
-            for (uint8_t i = 0; i < 5; i++)
-            {
-                this->parentDisplay->fillRect(x, y, 12, height, colors[i]);
-                x += 24;
-                y -= 12;
-                height += 12;
-            }
         }
-        if (firstRun || this->refreshWIFIData)
+        else
         {
-            this->parentDisplay->setFont(CUSTOM_FONT);
-            this->parentDisplay->setTextSize(1);
-            this->parentDisplay->setTextColor(TFT_WHITE, TFT_BLACK);
-            this->parentDisplay->setCursor(10, 100);
-            this->parentDisplay->print("SSID ");
-            // TODO: clear if changed (because str length)
-            char WIFISSID[33] = {'\0'};
-            WifiManager::getSSID(WIFISSID, sizeof(WIFISSID));
-            this->parentDisplay->println(WIFISSID);
-            char WIFIMacAddress[19] = {'\0'};
-            WifiManager::getMacAddress(WIFIMacAddress, sizeof(WIFIMacAddress));
-            char WIFIIPAddress[16] = {'\0'};
-            WifiManager::getIPAddress(WIFIIPAddress, sizeof(WIFIIPAddress));
-            this->parentDisplay->setCursor(20, 120);
-            this->parentDisplay->print("MAC ");
-            this->parentDisplay->println(WIFIMacAddress);
-            this->parentDisplay->setCursor(30, 140);
-            this->parentDisplay->print("IP ");
-            this->parentDisplay->println(WIFIIPAddress);
-            this->refreshWIFIData = false;
+            colors[0] = TFT_DARKGREY;
+            colors[1] = TFT_DARKGREY;
+            colors[2] = TFT_DARKGREY;
+            colors[3] = TFT_DARKGREY;
+            colors[4] = TFT_DARKGREY;
         }
+        uint16_t x = 195;
+        uint16_t y = 76;
+        uint16_t height = 8;
+        for (uint8_t i = 0; i < 5; i++)
+        {
+            this->parentDisplay->fillRect(x, y, 12, height, colors[i]);
+            x += 24;
+            y -= 12;
+            height += 12;
+        }
+    }
+    if (firstRun || this->refreshWIFIData)
+    {
+        this->parentDisplay->setFont(CUSTOM_FONT);
+        this->parentDisplay->setTextSize(1);
+        this->parentDisplay->setTextColor(TFT_WHITE, TFT_BLACK);
+        this->parentDisplay->setCursor(10, 100);
+        this->parentDisplay->print("SSID ");
+        // TODO: clear if changed (because str length)
+        char WIFISSID[33] = {'\0'};
+        WifiManager::getSSID(WIFISSID, sizeof(WIFISSID));
+        this->parentDisplay->println(WIFISSID);
+        char WIFIMacAddress[19] = {'\0'};
+        WifiManager::getMacAddress(WIFIMacAddress, sizeof(WIFIMacAddress));
+        char WIFIIPAddress[16] = {'\0'};
+        WifiManager::getIPAddress(WIFIIPAddress, sizeof(WIFIIPAddress));
+        this->parentDisplay->setCursor(20, 120);
+        this->parentDisplay->print("MAC ");
+        this->parentDisplay->println(WIFIMacAddress);
+        this->parentDisplay->setCursor(30, 140);
+        this->parentDisplay->print("IP ");
+        this->parentDisplay->println(WIFIIPAddress);
+        this->refreshWIFIData = false;
     }
     char str[100];
     FormatUtils::millisToString(millis(), str, 100);
