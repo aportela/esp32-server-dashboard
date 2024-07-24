@@ -16,6 +16,7 @@ SourceData::SourceData(uint64_t min, uint64_t max)
     }
     this->previous = 1;
     this->current = 0;
+    this->lastTimestamp = 0;
 }
 
 SourceData::~SourceData()
@@ -32,7 +33,7 @@ uint64_t SourceData::getMax(void)
     return (this->max);
 }
 
-void SourceData::setCurrent(uint64_t value)
+void SourceData::setCurrent(uint64_t value, uint64_t lastTimestamp)
 {
     if (value != this->current)
     {
@@ -50,6 +51,7 @@ void SourceData::setCurrent(uint64_t value)
             this->current = this->max;
         }
     }
+    this->lastTimestamp = lastTimestamp;
 }
 
 uint64_t SourceData::getPrevious(void)
