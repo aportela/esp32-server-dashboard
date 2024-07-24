@@ -1,5 +1,6 @@
 #include "LGFXScreenInfo.hpp"
 #include "../../utils/Format.hpp"
+#include "../../utils/SerialManager.hpp"
 
 #define DEFAULT_FONT &fonts::Font0
 #define CUSTOM_FONT &fonts::FreeMono9pt7b
@@ -17,6 +18,12 @@ LGFXScreenInfo::LGFXScreenInfo(LovyanGFX *display, FPSDebug *fpsDebug) : LGFXScr
     this->parentDisplay->setCursor(25, 4);
     this->parentDisplay->println("ESP32-SERVER-DASHBBOARD");
 
+    this->parentDisplay->setFont(CUSTOM_FONT);
+    this->parentDisplay->setTextSize(1);
+    this->parentDisplay->setCursor(40, 180);
+    this->parentDisplay->print("Serial speed ");
+    this->parentDisplay->print(SerialManager::DEFAULT_SPEED);
+    this->parentDisplay->println(" bauds");
     this->refreshWIFILogo = true;
     this->refreshWIFISignalStrength = true;
     this->refreshWIFISignalLevelGraph = true;
