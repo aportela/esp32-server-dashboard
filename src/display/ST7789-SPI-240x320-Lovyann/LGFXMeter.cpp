@@ -29,6 +29,7 @@ uint8_t LGFXMeter::map64WithRange0To00(uint64_t x, uint64_t in_min, uint64_t in_
     }
 }
 
+// TODO set min/max on constructor
 LGFXMeter::LGFXMeter(LovyanGFX *display, MeterEntity entity, int32_t width, int32_t height, uint16_t xOffset, uint16_t yOffset, int32_t backgroundColor, char *label)
 {
     this->parentDisplay = display;
@@ -40,6 +41,8 @@ LGFXMeter::LGFXMeter(LovyanGFX *display, MeterEntity entity, int32_t width, int3
     this->height = height;
     this->xOffset = xOffset;
     this->yOffset = yOffset;
+    this->min = 0;
+    this->max = 0;
 
     this->parentDisplay->drawFastVLine(xOffset, yOffset, (height + 4), AXIS_COLOR_);
     this->parentDisplay->drawFastHLine(xOffset, yOffset + (height + 4), (width + 4), AXIS_COLOR_);
@@ -87,6 +90,16 @@ LGFXMeter::~LGFXMeter()
     this->graphSprite = nullptr;
 }
 
+void LGFXMeter::setMin(uint64_t value)
+{
+    this->min = value;
+}
+
+void LGFXMeter::setMax(uint64_t value)
+{
+    this->max = value;
+}
+
 uint32_t LGFXMeter::getGradientColorFrom0To100(uint8_t value)
 {
     value = constrain(value, 0, 100);
@@ -124,9 +137,9 @@ void LGFXMeter::formatValueAsMemory(uint64_t value, char *label)
     static const uint8_t numUnits = sizeof(units) / sizeof(units[0]) - 1;
     uint8_t currentUnitIndex = 0;
     double decValue = (double)value;
-    while (decValue >= 1000.0 && currentUnitIndex < numUnits)
+    while (decValue >= 1024.0 && currentUnitIndex < numUnits)
     {
-        decValue /= 1000;
+        decValue /= 1024;
         currentUnitIndex++;
     }
     sprintf(label, "%03d", (int)decValue);
@@ -139,19 +152,19 @@ void LGFXMeter::refresh(uint64_t value)
     switch (this->entity)
     {
     case METER_ENTITY_CPU_LOAD:
-        mapped100 = map(value, 0, 100, 0, 100);
+        mapped100 = map(value, this->min, this->max, 0, 100);
         break;
     case METER_ENTITY_MEMORY:
-        mapped100 = map64WithRange0To00(value, 0, 32000000000);
+        mapped100 = map64WithRange0To00(value, this->min, this->max);
         break;
     case METER_ENTITY_CPU_TEMPERATURE:
         mapped100 = map(value, 0, 100, 0, 100);
         break;
     case METER_ENTITY_NETWORK_BANDWITH_DOWNLOAD:
-        mapped100 = map64WithRange0To00(value, 0, 512000000);
+        mapped100 = map64WithRange0To00(value, this->min, this->max);
         break;
     case METER_ENTITY_NETWORK_BANDWITH_UPLOAD:
-        mapped100 = map64WithRange0To00(value, 0, 512000000);
+        mapped100 = map64WithRange0To00(value, this->min, this->max);
         break;
     }
     int32_t color = value > 0 ? (mapped100 != this->previousMappedValue) ? this->getGradientColorFrom0To100(mapped100) : this->previousGradientcolor : TFT_WHITE;
