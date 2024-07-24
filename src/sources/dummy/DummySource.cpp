@@ -5,19 +5,19 @@ DummySource::DummySource(void) : Source()
 {
 
     this->currentCPULoad = new SourceData(MIN_CPU_LOAD, MAX_CPU_LOAD);
-    this->currentCPULoad->setCurrent(MIN_CPU_LOAD);
+    this->currentCPULoad->setCurrent(MIN_CPU_LOAD, millis());
 
     this->currentMemory = new SourceData(MIN_MEMORY, MAX_MEMORY);
-    this->currentMemory->setCurrent(MIN_MEMORY);
+    this->currentMemory->setCurrent(MIN_MEMORY, millis());
 
     this->currentCPUTemperature = new SourceData(MIN_CPU_TEMPERATURE, MAX_CPU_TEMPERATURE);
-    this->currentCPUTemperature->setCurrent(MIN_CPU_TEMPERATURE);
+    this->currentCPUTemperature->setCurrent(MIN_CPU_TEMPERATURE, millis());
 
     this->currentNetworkDownloadBandwith = new SourceData(MIN_NETWORK_DOWNLOAD_BANDWITH, MAX_NETWORK_DOWNLOAD_BANDWITH);
-    this->currentNetworkDownloadBandwith->setCurrent(MIN_NETWORK_DOWNLOAD_BANDWITH);
+    this->currentNetworkDownloadBandwith->setCurrent(MIN_NETWORK_DOWNLOAD_BANDWITH, millis());
 
     this->currentNetworkUploadBandwith = new SourceData(MIN_NETWORK_UPLOAD_BANDWITH, MAX_NETWORK_UPLOAD_BANDWITH);
-    this->currentNetworkUploadBandwith->setCurrent(MIN_NETWORK_UPLOAD_BANDWITH);
+    this->currentNetworkUploadBandwith->setCurrent(MIN_NETWORK_UPLOAD_BANDWITH, millis());
 }
 
 DummySource::~DummySource()
@@ -62,7 +62,7 @@ uint64_t DummySource::getCurrentCPULoad(void)
             inc = !inc;
         }
     }
-    this->currentCPULoad->setCurrent(current);
+    this->currentCPULoad->setCurrent(current, millis());
     return (current);
 }
 
@@ -86,7 +86,7 @@ uint64_t DummySource::getUsedMemory(void)
     {
         current -= change;
     }
-    this->currentMemory->setCurrent(current);
+    this->currentMemory->setCurrent(current, millis());
     return (current);
 }
 
@@ -104,7 +104,7 @@ uint64_t DummySource::getCurrentCPUTemperature(void)
     {
         current--;
     }
-    this->currentCPUTemperature->setCurrent(current);
+    this->currentCPUTemperature->setCurrent(current, millis());
     return (current);
 }
 
@@ -128,7 +128,7 @@ uint64_t DummySource::getUsedNetworkDownloadBandwith(void)
     {
         current -= change;
     }
-    this->currentNetworkDownloadBandwith->setCurrent(current);
+    this->currentNetworkDownloadBandwith->setCurrent(current, millis());
     return (current);
 }
 
@@ -152,6 +152,6 @@ uint64_t DummySource::getUsedNetworkUploadBandwith(void)
     {
         current -= change;
     }
-    this->currentNetworkUploadBandwith->setCurrent(current);
+    this->currentNetworkUploadBandwith->setCurrent(current, millis());
     return (current);
 }
