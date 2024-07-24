@@ -184,14 +184,6 @@ void LGFX::refreshDebug(uint16_t xOffset, uint16_t yOffset, int32_t wifiSignalSt
 void LGFX::initScreenInfo(void)
 {
     this->screenInfo = new LGFXScreenInfo(this, this->fpsDebug);
-    /*
-    this->fillScreen(TFT_BLACK);
-    this->setFont(&fonts::FreeMono9pt7b);
-    this->setTextSize(1);
-    this->setTextColor(TFT_WHITE);
-    this->setCursor(32, 4);
-    this->println("ESP32-SERVER-DASBBOARD");
-    */
 }
 
 void LGFX::refreshScreenInfo()
