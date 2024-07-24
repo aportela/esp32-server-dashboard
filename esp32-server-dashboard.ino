@@ -52,18 +52,25 @@ LGFXMeter *networkUploadBandwithLoadMeter = nullptr;
 #include "src/sources/MeterEntity.hpp"
 #include "src/sources/Source.hpp"
 #include "src/sources/dummy/DummySource.hpp"
+#include "src/sources/mqtt/MQTTTelegrafSource.hpp"
 #include "src/Settings/Settings.hpp"
 
 Source *dummySRC = nullptr;
-
+MQTTTelegrafSource *mqttTelegrafSRC = nullptr;
 Settings *settings = nullptr;
-
 WifiManager wifi;
+
+enum appScreen
+{
+    APP_SCREEN_INFO,
+    APP_SCREEN_RESUME_DATA
+};
+
+appScreen currentScreen = APP_SCREEN_RESUME_DATA;
 
 #define METER_GRAPH_WIDTH 195
 #define METER_GRAPH_HEIGHT 30
 
-bool WIFIEnabled = false;
 void setup()
 {
 
@@ -74,41 +81,59 @@ void setup()
     // TODO: rotary encoder controller, button pressed at boot = enter settings mode, movement = toggle between screens
     WifiManager::setCredentials(WIFI_SSID, WIFI_PASSWORD);
     WifiManager::connect(true);
+    char mac[32] = {'\0'};
+    WifiManager::getMacAddress(mac, sizeof(mac));
+    mqttTelegrafSRC = new MQTTTelegrafSource("mqtt://127.0.0.1", mac, "telegraf/HOST_NAME/#");
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     dummySRC = new DummySource();
+
     screen = new LGFX(PIN_SDA, PIN_SCL, PIN_CS, PIN_DC, PIN_RST, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_ROTATION);
     screen->init();
     screen->fillScreen(TFT_BLACK);
-    screen->drawRect(0, 0, 320, 240, TFT_WHITE); // this is for screen bounds debugging purposes only
-    /*
-    screen->setSource(dummySRC);
-    cpuLoadMeter = new LGFXMeter(screen, METER_ENTITY_CPU_LOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 0, TFT_BLACK, "CPU LOAD");
-    memoryLoadMeter = new LGFXMeter(screen, METER_ENTITY_MEMORY, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 42, TFT_BLACK, "MEMORY");
-    cpuTemperatureLoadMeter = new LGFXMeter(screen, METER_ENTITY_CPU_TEMPERATURE, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 84, TFT_BLACK, "CPU TEMP");
-    networkDownloadBandwithLoadMeter = new LGFXMeter(screen, METER_ENTITY_NETWORK_BANDWITH_DOWNLOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 126, TFT_BLACK, "WAN DOWNLOAD");
-    networkUploadBandwithLoadMeter = new LGFXMeter(screen, METER_ENTITY_NETWORK_BANDWITH_UPLOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 168, TFT_BLACK, "WAN UPLOAD");
-    */
-    screen->initScreenInfo();
+    // screen->drawRect(0, 0, 320, 240, TFT_WHITE); // this is for screen bounds debugging purposes only
+
+    if (currentScreen == APP_SCREEN_RESUME_DATA)
+    {
+        cpuLoadMeter = new LGFXMeter(screen, METER_ENTITY_CPU_LOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 0, TFT_BLACK, "CPU LOAD");
+        cpuLoadMeter->setMin(0);
+        cpuLoadMeter->setMax(100);
+        memoryLoadMeter = new LGFXMeter(screen, METER_ENTITY_MEMORY, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 42, TFT_BLACK, "MEMORY");
+        memoryLoadMeter->setMin(0);
+        memoryLoadMeter->setMax(34231410688); // 32 Gb
+        cpuTemperatureLoadMeter = new LGFXMeter(screen, METER_ENTITY_CPU_TEMPERATURE, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 84, TFT_BLACK, "CPU TEMP");
+        cpuTemperatureLoadMeter->setMin(0);
+        cpuTemperatureLoadMeter->setMax(100);
+        networkDownloadBandwithLoadMeter = new LGFXMeter(screen, METER_ENTITY_NETWORK_BANDWITH_DOWNLOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 126, TFT_BLACK, "WAN DOWNLOAD");
+        networkDownloadBandwithLoadMeter->setMin(0);
+        networkDownloadBandwithLoadMeter->setMax(536870912); // 512 Mb
+        networkUploadBandwithLoadMeter = new LGFXMeter(screen, METER_ENTITY_NETWORK_BANDWITH_UPLOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 168, TFT_BLACK, "WAN UPLOAD");
+    }
+    else if (currentScreen == APP_SCREEN_INFO)
+    {
+        screen->initScreenInfo();
+    }
 #endif
 }
-
-bool WIFIFirstConnectionSuccess = false;
-bool WIFIForcingReconnection = false;
 
 void loop()
 {
     SerialManager::loop();
     WifiManager::loop();
-    /*
-        dummySRC->refresh();
-        cpuLoadMeter->refresh(dummySRC->getCurrentCPULoad());
-        memoryLoadMeter->refresh(dummySRC->getUsedMemory());
-        cpuTemperatureLoadMeter->refresh(dummySRC->getCurrentCPUTemperature());
-        networkDownloadBandwithLoadMeter->refresh(dummySRC->getUsedNetworkDownloadBandwith());
-        networkUploadBandwithLoadMeter->refresh(dummySRC->getUsedNetworkUploadBandwith());
-    */
-    screen->refreshScreenInfo();
+
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
-    // screen->refreshDebug(0, 210, WiFi.RSSI());
+    if (currentScreen == APP_SCREEN_RESUME_DATA)
+    {
+        // dummySRC->refresh();
+        cpuLoadMeter->refresh(mqttTelegrafSRC->getCurrentCPULoad());
+        memoryLoadMeter->refresh(mqttTelegrafSRC->getUsedMemory());
+        cpuTemperatureLoadMeter->refresh(mqttTelegrafSRC->getCurrentCPUTemperature());
+        networkDownloadBandwithLoadMeter->refresh(mqttTelegrafSRC->getUsedNetworkDownloadBandwith());
+        networkUploadBandwithLoadMeter->refresh(mqttTelegrafSRC->getUsedNetworkUploadBandwith());
+        screen->refreshDebug(0, 210, WifiManager::getSignalStrength());
+    }
+    else if (currentScreen == APP_SCREEN_INFO)
+    {
+        screen->refreshScreenInfo();
+    }
 #endif
 }
