@@ -13,9 +13,6 @@ DummySource::DummySource(void) : Source()
     this->currentCPUTemperature = new SourceData(MIN_CPU_TEMPERATURE, MAX_CPU_TEMPERATURE);
     this->currentCPUTemperature->setCurrent(MIN_CPU_TEMPERATURE);
 
-    this->currentMemory = new SourceData(MIN_MEMORY, MAX_MEMORY);
-    this->currentMemory->setCurrent(random(MIN_MEMORY, MAX_MEMORY));
-
     this->currentNetworkDownloadBandwith = new SourceData(MIN_NETWORK_DOWNLOAD_BANDWITH, MAX_NETWORK_DOWNLOAD_BANDWITH);
     this->currentNetworkDownloadBandwith->setCurrent(MIN_NETWORK_DOWNLOAD_BANDWITH);
 
