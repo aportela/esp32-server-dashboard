@@ -4,12 +4,15 @@
 #include <inttypes.h>
 #include <Arduino.h>
 
+// char MQTTTelegrafSource::cpuTopic[MAX_TOPIC_LENGTH] = {'\0'};
+// char MQTTTelegrafSource::memTopic[MAX_TOPIC_LENGTH] = {'\0'};
+
 MQTTTelegrafSource *MQTTTelegrafSource::instance = nullptr;
 MQTTTelegrafSource::MQTTTelegrafSource(const char *uri, const char *clientId, const char *topic) : Source()
 {
 
     MQTT::setCallback(MQTTTelegrafSource::onMessageReceived);
-    MQTT::init(clientId, uri, "telegraf/HOST_NAME/#");
+    MQTT::init(clientId, uri, topic);
 
     this->currentCPULoad = new SourceData(MIN_CPU_LOAD, 100);
     this->currentCPULoad->setCurrent(MIN_CPU_LOAD, millis());
@@ -33,6 +36,35 @@ MQTTTelegrafSource::~MQTTTelegrafSource()
 {
 }
 
+/*
+void MQTTTelegrafSource::setCPUTopic(const char *topic)
+{
+    if (strlen(topic) <= MAX_TOPIC_LENGTH)
+    {
+        strncpy(MQTTTelegrafSource::cpuTopic, topic, sizeof(topic) - 1);
+        MQTTTelegrafSource::cpuTopic[sizeof(topic) - 1] = '\0';
+    }
+    else
+    {
+        // TODO: ERROR
+        MQTTTelegrafSource::cpuTopic[0] = '\0';
+    }
+}
+
+void MQTTTelegrafSource::setMemoryTopic(const char *topic)
+{
+    if (strlen(topic) <= MAX_TOPIC_LENGTH)
+    {
+        strncpy(MQTTTelegrafSource::memTopic, topic, sizeof(topic) - 1);
+        MQTTTelegrafSource::memTopic[sizeof(topic) - 1] = '\0';
+    }
+    else
+    {
+        // TODO: ERROR
+        MQTTTelegrafSource::memTopic[0] = '\0';
+    }
+}
+*/
 void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payload)
 {
     // Serial.print("Topic: ");
@@ -67,7 +99,6 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
     }
     else if (strcmp(topic, "telegraf/HOST_NAME/mem") == 0)
     {
-        Serial.println(payload);
         uint64_t used = 0;
         const char *search = "used=";
         const char *start = strstr(payload, search);
@@ -89,7 +120,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
             // TODO SET TOTAL ?
         }
     }
-    else if (strcmp(topic, "telegraf/HOST_NAME/net") == 0 && strncmp(payload, "net,host=HOST_NAME,interface=Ethernet\ 10G\ (SFP+)", 51) == 0)
+    else if (strcmp(topic, "telegraf/HOST_NAME/net") == 0 && strncmp(payload, "net,host=HOST_NAME,interface=Ethernet\ 10G\ (SFP+)", 20) == 0)
     {
         Serial.println(payload);
         uint64_t recv = 0;
