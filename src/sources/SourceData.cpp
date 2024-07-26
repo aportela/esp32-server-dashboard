@@ -64,6 +64,11 @@ uint64_t SourceData::getCurrent(void)
     return (this->current);
 }
 
+uint64_t SourceData::getCurrentTimestamp(void)
+{
+    return (this->lastTimestamp);
+}
+
 bool SourceData::changed(void)
 {
     return (this->previous != this->current);

@@ -20,6 +20,7 @@ public:
     void setCurrent(uint64_t value, uint64_t lastTimestamp);
     uint64_t getPrevious(void);
     uint64_t getCurrent(void);
+    uint64_t getCurrentTimestamp(void);
     bool changed(void);
 };
 
