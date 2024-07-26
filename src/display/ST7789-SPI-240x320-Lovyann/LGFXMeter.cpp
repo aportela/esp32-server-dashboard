@@ -148,6 +148,7 @@ void LGFXMeter::formatValueAsMemory(uint64_t value, char *label)
 
 void LGFXMeter::refresh(uint64_t value)
 {
+    // TODO: refresh on changes only (by param?)
     uint8_t mapped100 = 0;
     switch (this->entity)
     {
