@@ -29,6 +29,7 @@ private:
     uint8_t map64WithRange0To00(uint64_t x, uint64_t in_min, uint64_t in_max);
     void formatValueAsCPULoad(uint64_t value, char *label);
     void formatValueAsMemory(uint64_t value, char *label);
+    void displayDefaultValues(void);
 
 public:
     LGFXMeter(LovyanGFX *display, MeterEntity entity, int32_t width, int32_t height, uint16_t xOffset, uint16_t yOffset, int32_t backgroundColor, char *label);

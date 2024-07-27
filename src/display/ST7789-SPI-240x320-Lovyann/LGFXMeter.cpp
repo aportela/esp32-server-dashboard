@@ -60,6 +60,21 @@ LGFXMeter::LGFXMeter(LovyanGFX *display, MeterEntity entity, int32_t width, int3
     this->parentDisplay->setCursor(this->valueLabelXOffset, this->valueLabelYOffset);
     this->parentDisplay->setTextSize(GRAPH_LABEL__FONT_SIZE);
     this->parentDisplay->setTextColor(MAIN_LABEL_COLOR, MAIN_LABEL_BACKGROUND);
+
+    this->displayDefaultValues();
+    this->previousMappedValue = 0;
+    // WARNING: using TFT_BLACK will create some garbage because at this time, when Lovyann GFX write text with TFT_BLACK color & TFT_BLACK background do not overwrite old area correctly so I use the "first" (0) custom gradient color for a mapped (0-100) value
+    this->previousGradientcolor = MAIN_LABEL_MIN_COLOR;
+}
+
+LGFXMeter::~LGFXMeter()
+{
+    delete this->graphSprite;
+    this->graphSprite = nullptr;
+}
+
+void LGFXMeter::displayDefaultValues(void)
+{
     switch (this->entity)
     {
     case METER_ENTITY_CPU_LOAD:
@@ -78,16 +93,6 @@ LGFXMeter::LGFXMeter(LovyanGFX *display, MeterEntity entity, int32_t width, int3
         this->parentDisplay->print("000Mb  /  512Mb");
         break;
     }
-
-    this->previousMappedValue = 0;
-    // WARNING: using TFT_BLACK will create some garbage because at this time, when Lovyann GFX write text with TFT_BLACK color & TFT_BLACK background do not overwrite old area correctly so I use the "first" (0) custom gradient color for a mapped (0-100) value
-    this->previousGradientcolor = MAIN_LABEL_MIN_COLOR;
-}
-
-LGFXMeter::~LGFXMeter()
-{
-    delete this->graphSprite;
-    this->graphSprite = nullptr;
 }
 
 void LGFXMeter::setMin(uint64_t value)
@@ -98,6 +103,7 @@ void LGFXMeter::setMin(uint64_t value)
 void LGFXMeter::setMax(uint64_t value)
 {
     this->max = value;
+    this->displayDefaultValues();
 }
 
 uint32_t LGFXMeter::getGradientColorFrom0To100(uint8_t value)
