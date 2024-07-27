@@ -8,6 +8,7 @@
 class LGFXScreenInfo : public LGFXScreen
 {
 private:
+    bool firstRun = true;
     char previousRuntimeStr[16] = {'\0'};
     bool refreshWIFILogo;
     bool refreshWIFISignalStrength;
@@ -23,7 +24,7 @@ private:
 public:
     LGFXScreenInfo(LovyanGFX *display);
     ~LGFXScreenInfo();
-    void refresh(bool firstRun) override;
+    void refresh(bool force = false) override;
 };
 
 #endif
