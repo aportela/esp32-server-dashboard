@@ -4,18 +4,6 @@
 #include "../../utils/FPS.hpp"
 #include "../../utils/CommonDefines.hpp"
 
-// #define DEBUG_SCREEN_TITLE_BOUNDS
-
-#ifdef DEBUG_SCREEN_TITLE_BOUNDS
-
-#ifndef SCREEN_WIDTH
-#define SCREEN_WIDTH 320
-#endif
-#ifndef SCREEN_HEIGHT
-#define SCREEN_HEIGHT 240
-#endif
-#endif
-
 #define SCREEN_TITLE_TEXT "ESP32-SERVER-DASHBBOARD"
 #define SCREEN_TITLE_TEXT_COLOR TFT_WHITE
 #define SCREEN_TITLE_TEXT_BG_COLOR TFT_BLACK
@@ -64,11 +52,6 @@ LGFXScreenInfo::LGFXScreenInfo(LovyanGFX *display) : LGFXScreen(display)
 {
     if (display != nullptr)
     {
-#ifdef DEBUG_SCREEN_TITLE_BOUNDS
-        this->parentDisplay->drawRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, TFT_WHITE);
-#endif
-        this->parentDisplay->setTextWrap(false);
-
         // top title
         this->parentDisplay->setFont(SCREEN_TITLE_FONT);
         this->parentDisplay->setTextSize(SCREEN_TITLE_FONT_SIZE);
