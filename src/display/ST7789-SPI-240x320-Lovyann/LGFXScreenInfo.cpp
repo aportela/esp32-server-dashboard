@@ -2,34 +2,90 @@
 #include "../../utils/Format.hpp"
 #include "../../utils/SerialManager.hpp"
 #include "../../utils/FPS.hpp"
+#include "../../utils/CommonDefines.hpp"
 
-#define DEFAULT_FONT &fonts::Font0
+// #define DEBUG_SCREEN_TITLE_BOUNDS
+
+#ifdef DEBUG_SCREEN_TITLE_BOUNDS
+
+#ifndef SCREEN_WIDTH
+#define SCREEN_WIDTH 320
+#endif
+#ifndef SCREEN_HEIGHT
+#define SCREEN_HEIGHT 240
+#endif
+#endif
+
+#define SCREEN_TITLE_TEXT "ESP32-SERVER-DASHBBOARD"
+#define SCREEN_TITLE_TEXT_COLOR TFT_WHITE
+#define SCREEN_TITLE_TEXT_BG_COLOR TFT_BLACK
+#define SCREEN_TITLE_FONT &fonts::Font0
+#define SCREEN_TITLE_FONT_SIZE 2
+#define SCREEN_TITLE_X_OFFSET 22
+#define SCREEN_TITLE_Y_OFFSET 4
+
+#define SCREEN_WIFI_LOGO_RECT_X_OFFSET 18
+#define SCREEN_WIFI_LOGO_RECT_Y_OFFSET 30
+#define SCREEN_WIFI_LOGO_RECT_WIDTH 130
+#define SCREEN_WIFI_LOGO_RECT_HEIGHT 55
+#define SCREEN_WIFI_LOGO_BG_COLOR_CONNECTED TFT_GREEN
+#define SCREEN_WIFI_LOGO_BG_COLOR_DISCONNECTED TFT_RED
+#define SCREEN_WIFI_LOGO_FONT &fonts::FreeSansBold24pt7b
+#define SCREEN_WIFI_LOGO_FONT_SIZE 1
+#define SCREEN_WIFI_LOGO_TEXT_COLOR TFT_WHITE
+#define SCREEN_WIFI_LOGO_TEXT_X_OFFSET 28
+#define SCREEN_WIFI_LOGO_TEXT_Y_OFFSET 40
+#define SCREEN_WIFI_LOGO_TEXT "WIFI"
+
+#define SCREEN_WIFI_SIGNAL_STRENGTH_FONT &fonts::FreeMono9pt7b
+#define SCREEN_WIFI_SIGNAL_STRENGTH_FONT_SIZE 1
+#define SCREEN_WIFI_SIGNAL_STRENGTH_TEXT_COLOR TFT_WHITE
+#define SCREEN_WIFI_SIGNAL_STRENGTH_TEXT_BG_COLOR TFT_BLACK
+#define SCREEN_WIFI_SIGNAL_STRENGTH_TEXT_X_OFFSET 172
+#define SCREEN_WIFI_SIGNAL_STRENGTH_TEXT_Y_OFFSET 36
+
 #define CUSTOM_FONT &fonts::FreeMono9pt7b
 #define BIG_FONT &fonts::FreeSansBold24pt7b
 #define MAIN_SPRITE_WIDTH 312
 #define MAIN_SPRITE_HEIGHT 216
 
+#define TOTAL_WIFI_SIGNAL_LEVEL_BARS 5
+#define WIFI_SIGNAL_LEVEL_BARS_START_X_OFFSET 195
+#define WIFI_SIGNAL_LEVEL_BARS_START_Y_OFFSET 76
+#define WIFI_SIGNAL_LEVEL_BARS_START_MIN_HEIGHT 8
+#define WIFI_SIGNAL_LEVEL_BARS_HEIGHT_INCREMENT 12
+#define WIFI_SIGNAL_LEVEL_BARS_WIDTH 12
+#define WIFI_SIGNAL_LEVEL_BARS_NEXT_X_OFFSET 24
+
+#define SCREEN_BOTTOM_BAR_FONT &fonts::FreeMono9pt7b
+#define SCREEN_BOTTOM_BAR_FONT_SIZE 1
+#define SCREEN_BOTTOM_BAR_TEXT_COLOR TFT_WHITE
+#define SCREEN_BOTTOM_BAR_TEXT_BG_COLOR TFT_BLACK
+#define SCREEN_BOTTOM_BAR_TEXT_X_OFFSET 12
+#define SCREEN_BOTTOM_BAR_TEXT_Y_OFFSET 220
+
+#define SCREEN_COMMON_TEXTDATA_FIELD_X_OFFSET 5
+#define SCREEN_COMMON_TEXTDATA_FIELD_VALUE_X_OFFSET 60
+
 LGFXScreenInfo::LGFXScreenInfo(LovyanGFX *display) : LGFXScreen(display)
 {
-    // this->parentDisplay->drawRect(0, 0, 320, 240, TFT_WHITE); // this is for screen bounds debugging purposes only
-    this->parentDisplay->setTextWrap(false);
-    this->parentDisplay->setFont(DEFAULT_FONT);
-    this->parentDisplay->setTextSize(2);
-    this->parentDisplay->setTextColor(TFT_WHITE);
-    this->parentDisplay->setCursor(25, 4);
-    this->parentDisplay->println("ESP32-SERVER-DASHBBOARD");
+    if (display != nullptr)
+    {
+#ifdef DEBUG_SCREEN_TITLE_BOUNDS
+        this->parentDisplay->drawRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, TFT_WHITE);
+#endif
+        this->parentDisplay->setTextWrap(false);
 
-    this->parentDisplay->setFont(CUSTOM_FONT);
-    this->parentDisplay->setTextSize(1);
-    this->parentDisplay->setCursor(40, 180);
-    this->parentDisplay->print("Serial speed ");
-    this->parentDisplay->print(SerialManager::DEFAULT_SPEED);
-    this->parentDisplay->println(" bauds");
-    this->refreshWIFILogo = true;
-    this->refreshWIFISignalStrength = true;
-    this->refreshWIFISignalLevelGraph = true;
-    this->refreshWIFIData = true;
-    this->refresh(true);
+        // top title
+        this->parentDisplay->setFont(SCREEN_TITLE_FONT);
+        this->parentDisplay->setTextSize(SCREEN_TITLE_FONT_SIZE);
+        this->parentDisplay->setTextColor(SCREEN_TITLE_TEXT_COLOR, SCREEN_TITLE_TEXT_BG_COLOR);
+        this->parentDisplay->setCursor(SCREEN_TITLE_X_OFFSET, SCREEN_TITLE_Y_OFFSET);
+        this->parentDisplay->println(SCREEN_TITLE_TEXT);
+
+        this->wasConnected = WifiManager::isConnected();
+        this->refresh(true);
+    }
 }
 
 LGFXScreenInfo::~LGFXScreenInfo()
@@ -37,181 +93,231 @@ LGFXScreenInfo::~LGFXScreenInfo()
     this->parentDisplay = nullptr;
 }
 
-void LGFXScreenInfo::refresh(bool firstRun)
+void LGFXScreenInfo::refreshWIFILogo(void)
 {
-    FPS::loop();
+    this->parentDisplay->fillRect(SCREEN_WIFI_LOGO_RECT_X_OFFSET, SCREEN_WIFI_LOGO_RECT_Y_OFFSET, SCREEN_WIFI_LOGO_RECT_WIDTH, SCREEN_WIFI_LOGO_RECT_HEIGHT, WifiManager::isConnected() ? SCREEN_WIFI_LOGO_BG_COLOR_CONNECTED : SCREEN_WIFI_LOGO_BG_COLOR_DISCONNECTED);
+    this->parentDisplay->setFont(SCREEN_WIFI_LOGO_FONT);
+    this->parentDisplay->setTextSize(SCREEN_WIFI_LOGO_FONT_SIZE);
+    this->parentDisplay->setTextColor(SCREEN_WIFI_LOGO_TEXT_COLOR);
+    this->parentDisplay->setCursor(SCREEN_WIFI_LOGO_TEXT_X_OFFSET, SCREEN_WIFI_LOGO_TEXT_Y_OFFSET);
+    this->parentDisplay->print(SCREEN_WIFI_LOGO_TEXT);
+}
 
-    if (!firstRun)
+void LGFXScreenInfo::refreshWIFISignalStrength(void)
+{
+    this->parentDisplay->setFont(SCREEN_WIFI_SIGNAL_STRENGTH_FONT);
+    this->parentDisplay->setTextSize(SCREEN_WIFI_SIGNAL_STRENGTH_FONT_SIZE);
+    this->parentDisplay->setTextColor(SCREEN_WIFI_SIGNAL_STRENGTH_TEXT_COLOR, SCREEN_WIFI_SIGNAL_STRENGTH_TEXT_BG_COLOR);
+    this->parentDisplay->setCursor(SCREEN_WIFI_SIGNAL_STRENGTH_TEXT_X_OFFSET, SCREEN_WIFI_SIGNAL_STRENGTH_TEXT_Y_OFFSET);
+    if (WifiManager::isConnected())
     {
-        bool isConnected = WifiManager::isConnected();
-        if (this->wasConnected != isConnected)
-        {
-            this->refreshWIFILogo = true;
-            this->refreshWIFISignalStrength = true;
-            this->refreshWIFISignalLevelGraph = true;
-            this->refreshWIFIData = true;
-        }
-        else if (isConnected && (strlen(this->WIFISSID) == 0 || strlen(this->WIFIIPAddress) == 0 || strlen(this->WIFIMacAddress) == 0))
-        {
-            // UGLY: I think there is a "timming" bug that not assign ssid/address on some connected networks so every time that connected status found if no
-            // data is assigned try to refresh
-            this->refreshWIFIData = true;
-        }
-        long currentSignalStrength = WifiManager::getSignalStrength();
-        if (this->previousSignalStrength != currentSignalStrength)
-        {
-            this->refreshWIFISignalStrength = true;
-        }
-        WIFISignalQuality currentSignalQuality = WifiManager::getSignalQuality(currentSignalStrength);
-        if (this->previousSignalQuality != currentSignalQuality)
-        {
-            // TODO: not refreshing on disconnect
-            this->refreshWIFISignalLevelGraph = true;
-        }
-        this->wasConnected = isConnected;
-        this->previousSignalStrength = currentSignalStrength;
-        this->previousSignalQuality = currentSignalQuality;
+        this->parentDisplay->printf("%+02ddBm", WifiManager::getSignalStrength());
     }
     else
     {
-        this->wasConnected = WifiManager::isConnected();
+        this->parentDisplay->printf("      ", WifiManager::getSignalStrength());
     }
-    if (firstRun || this->refreshWIFILogo)
-    {
-        this->parentDisplay->fillRect(18, 30, 130, 55, WifiManager::isConnected() ? TFT_GREEN : TFT_RED);
-        this->parentDisplay->setFont(BIG_FONT);
-        this->parentDisplay->setTextSize(1);
-        this->parentDisplay->setTextColor(TFT_WHITE);
-        this->parentDisplay->setCursor(28, 40);
-        this->parentDisplay->print("WIFI");
-        this->refreshWIFILogo = false;
-    }
-    if (firstRun || this->refreshWIFISignalStrength)
-    {
-        this->parentDisplay->setFont(CUSTOM_FONT);
-        this->parentDisplay->setTextSize(1);
-        this->parentDisplay->setTextColor(TFT_WHITE, TFT_BLACK);
-        this->parentDisplay->setCursor(172, 36);
-        if (WifiManager::isConnected())
-        {
-            this->parentDisplay->printf("%+02ddBm", WifiManager::getSignalStrength());
-        }
-        else
-        {
-            this->parentDisplay->printf("      ", WifiManager::getSignalStrength());
-        }
-    }
-    if (firstRun || this->refreshWIFISignalLevelGraph)
-    {
-        int colors[5];
-        if (WifiManager::isConnected())
-        {
-            switch (WifiManager::getSignalQuality(WifiManager::getSignalStrength()))
-            {
-            case WIFISignalQuality_NONE:
-                colors[0] = TFT_DARKGREY;
-                colors[1] = TFT_DARKGREY;
-                colors[2] = TFT_DARKGREY;
-                colors[3] = TFT_DARKGREY;
-                colors[4] = TFT_DARKGREY;
-                break;
-            case WIFISignalQuality_WORST:
-                colors[0] = TFT_GREEN;
-                colors[1] = TFT_DARKGREY;
-                colors[2] = TFT_DARKGREY;
-                colors[3] = TFT_DARKGREY;
-                colors[4] = TFT_DARKGREY;
-                break;
-            case WIFISignalQuality_BAD:
-                colors[0] = TFT_GREEN;
-                colors[1] = TFT_GREEN;
-                colors[2] = TFT_DARKGREY;
-                colors[3] = TFT_DARKGREY;
-                colors[4] = TFT_DARKGREY;
-                break;
-            case WIFISignalQuality_NORMAL:
+}
 
-                colors[0] = TFT_GREEN;
-                colors[1] = TFT_GREEN;
-                colors[2] = TFT_GREEN;
-                colors[3] = TFT_DARKGREY;
-                colors[4] = TFT_DARKGREY;
-                break;
-            case WIFISignalQuality_GOOD:
-                colors[0] = TFT_GREEN;
-                colors[1] = TFT_GREEN;
-                colors[2] = TFT_GREEN;
-                colors[3] = TFT_GREEN;
-                colors[4] = TFT_DARKGREY;
-                break;
-            case WIFISignalQuality_BEST:
-
-                colors[0] = TFT_GREEN;
-                colors[1] = TFT_GREEN;
-                colors[2] = TFT_GREEN;
-                colors[3] = TFT_GREEN;
-                colors[4] = TFT_GREEN;
-                break;
-            default:
-                colors[0] = TFT_DARKGREY;
-                colors[1] = TFT_DARKGREY;
-                colors[2] = TFT_DARKGREY;
-                colors[3] = TFT_DARKGREY;
-                colors[4] = TFT_DARKGREY;
-                break;
-            }
-        }
-        else
+void LGFXScreenInfo::refreshWIFISignalLevelBars(void)
+{
+    int colors[TOTAL_WIFI_SIGNAL_LEVEL_BARS];
+    if (WifiManager::isConnected())
+    {
+        switch (WifiManager::getSignalQuality(WifiManager::getSignalStrength()))
         {
+        case WIFISignalQuality_NONE:
             colors[0] = TFT_DARKGREY;
             colors[1] = TFT_DARKGREY;
             colors[2] = TFT_DARKGREY;
             colors[3] = TFT_DARKGREY;
             colors[4] = TFT_DARKGREY;
-        }
-        uint16_t x = 195;
-        uint16_t y = 76;
-        uint16_t height = 8;
-        for (uint8_t i = 0; i < 5; i++)
-        {
-            this->parentDisplay->fillRect(x, y, 12, height, colors[i]);
-            x += 24;
-            y -= 12;
-            height += 12;
+            break;
+        case WIFISignalQuality_WORST:
+            colors[0] = TFT_GREEN;
+            colors[1] = TFT_DARKGREY;
+            colors[2] = TFT_DARKGREY;
+            colors[3] = TFT_DARKGREY;
+            colors[4] = TFT_DARKGREY;
+            break;
+        case WIFISignalQuality_BAD:
+            colors[0] = TFT_GREEN;
+            colors[1] = TFT_GREEN;
+            colors[2] = TFT_DARKGREY;
+            colors[3] = TFT_DARKGREY;
+            colors[4] = TFT_DARKGREY;
+            break;
+        case WIFISignalQuality_NORMAL:
+
+            colors[0] = TFT_GREEN;
+            colors[1] = TFT_GREEN;
+            colors[2] = TFT_GREEN;
+            colors[3] = TFT_DARKGREY;
+            colors[4] = TFT_DARKGREY;
+            break;
+        case WIFISignalQuality_GOOD:
+            colors[0] = TFT_GREEN;
+            colors[1] = TFT_GREEN;
+            colors[2] = TFT_GREEN;
+            colors[3] = TFT_GREEN;
+            colors[4] = TFT_DARKGREY;
+            break;
+        case WIFISignalQuality_BEST:
+
+            colors[0] = TFT_GREEN;
+            colors[1] = TFT_GREEN;
+            colors[2] = TFT_GREEN;
+            colors[3] = TFT_GREEN;
+            colors[4] = TFT_GREEN;
+            break;
+        default:
+            colors[0] = TFT_DARKGREY;
+            colors[1] = TFT_DARKGREY;
+            colors[2] = TFT_DARKGREY;
+            colors[3] = TFT_DARKGREY;
+            colors[4] = TFT_DARKGREY;
+            break;
         }
     }
-    if (firstRun || this->refreshWIFIData)
+    else
     {
-        // TODO: clear if changed (because str length)
-        // char WIFISSID[WIFI_SSID_CHAR_ARR_LENGTH] = {'\0'};
-        WifiManager::getSSID(this->WIFISSID, sizeof(this->WIFISSID));
-        // char WIFIMacAddress[MAC_ADDRESS_CHAR_ARR_LENGTH] = {'\0'};
-        WifiManager::getMacAddress(this->WIFIMacAddress, sizeof(this->WIFIMacAddress));
-        // char WIFIIPAddress[IP_ADDRESS_CHAR_ARR_LENGTH] = {'\0'};
-        WifiManager::getIPAddress(this->WIFIIPAddress, sizeof(this->WIFIIPAddress));
-        this->parentDisplay->setFont(CUSTOM_FONT);
-        this->parentDisplay->setTextSize(1);
-        this->parentDisplay->setTextColor(TFT_WHITE, TFT_BLACK);
-        this->parentDisplay->setCursor(10, 100);
-        this->parentDisplay->print("SSID ");
-        this->parentDisplay->println(this->WIFISSID);
-        this->parentDisplay->setCursor(20, 120);
-        this->parentDisplay->print("MAC ");
-        this->parentDisplay->println(this->WIFIMacAddress);
-        this->parentDisplay->setCursor(30, 140);
-        this->parentDisplay->print("IP ");
-        this->parentDisplay->println(this->WIFIIPAddress);
-        this->refreshWIFIData = false;
+        colors[0] = TFT_DARKGREY;
+        colors[1] = TFT_DARKGREY;
+        colors[2] = TFT_DARKGREY;
+        colors[3] = TFT_DARKGREY;
+        colors[4] = TFT_DARKGREY;
     }
-    char str[100];
-    Format::millisToHumanStr(millis(), str, 100);
+    uint16_t x = WIFI_SIGNAL_LEVEL_BARS_START_X_OFFSET;
+    uint16_t y = WIFI_SIGNAL_LEVEL_BARS_START_Y_OFFSET;
+    uint16_t height = WIFI_SIGNAL_LEVEL_BARS_START_MIN_HEIGHT;
+    for (uint8_t i = 0; i < TOTAL_WIFI_SIGNAL_LEVEL_BARS; i++)
+    {
+        this->parentDisplay->fillRect(x, y, WIFI_SIGNAL_LEVEL_BARS_WIDTH, height, colors[i]);
+        x += WIFI_SIGNAL_LEVEL_BARS_NEXT_X_OFFSET;
+        y -= WIFI_SIGNAL_LEVEL_BARS_HEIGHT_INCREMENT;
+        height += WIFI_SIGNAL_LEVEL_BARS_HEIGHT_INCREMENT;
+    }
+}
+
+void LGFXScreenInfo::refreshWIFIData(void)
+{
+    // TODO: clear if changed (because str length)
+    // char WIFISSID[WIFI_SSID_CHAR_ARR_LENGTH] = {'\0'};
+    WifiManager::getSSID(this->WIFISSID, sizeof(this->WIFISSID));
+    // char WIFIMacAddress[MAC_ADDRESS_CHAR_ARR_LENGTH] = {'\0'};
+    WifiManager::getMacAddress(this->WIFIMacAddress, sizeof(this->WIFIMacAddress));
+    // char WIFIIPAddress[IP_ADDRESS_CHAR_ARR_LENGTH] = {'\0'};
+    WifiManager::getIPAddress(this->WIFIIPAddress, sizeof(this->WIFIIPAddress));
+    this->parentDisplay->setFont(CUSTOM_FONT);
+    this->parentDisplay->setTextSize(1);
+    this->parentDisplay->setTextColor(TFT_WHITE, TFT_BLACK);
+    this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_X_OFFSET, 100);
+    this->parentDisplay->print("SSID ");
+    this->parentDisplay->println(this->WIFISSID);
+    this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_X_OFFSET, 120);
+    this->parentDisplay->print(" MAC ");
+    this->parentDisplay->println(this->WIFIMacAddress);
+    this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_X_OFFSET, 140);
+    this->parentDisplay->print("  IP ");
+    this->parentDisplay->println(this->WIFIIPAddress);
+}
+
+void LGFXScreenInfo::refreshCommonData(bool forceDrawAll)
+{
+    this->parentDisplay->setFont(CUSTOM_FONT);
+    this->parentDisplay->setTextSize(1);
+    if (forceDrawAll)
+    {
+        this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_X_OFFSET, 160);
+        this->parentDisplay->printf(" VER %s (%s)", ESP32_SERVER_DASHBOARD_CURRENT_VERSION, ESP32_SERVER_DASHBOARD_CURRENT_VERSION_DATE);
+        this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_X_OFFSET, 180);
+        this->parentDisplay->printf(" SPD %u bauds", SerialManager::DEFAULT_SPEED);
+    }
+
+    if (forceDrawAll)
+    {
+        this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_X_OFFSET, 200);
+        this->parentDisplay->print(" FPS ");
+    }
+    this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_VALUE_X_OFFSET, 200);
+    this->parentDisplay->printf("%04u", FPS::getFPS());
+
+    if (forceDrawAll)
+    {
+        this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_X_OFFSET, 220);
+        this->parentDisplay->print(" RUN ");
+    }
+    char str[sizeof(previousRuntimeStr)];
+    Format::millisToHumanStr(millis(), str, sizeof(previousRuntimeStr));
     if (strcmp(str, previousRuntimeStr) != 0)
     {
-        this->parentDisplay->setFont(CUSTOM_FONT);
-        this->parentDisplay->setTextSize(1);
-        this->parentDisplay->setTextColor(TFT_WHITE, TFT_BLACK);
-        this->parentDisplay->setCursor(12, 220);
-        this->parentDisplay->printf("%03uFPS - Runtime: %s    ", FPS::getFPS(), str);
+        this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_VALUE_X_OFFSET, 220);
+        this->parentDisplay->printf("%s    ", str);
         strncpy(this->previousRuntimeStr, str, sizeof(this->previousRuntimeStr));
+    }
+}
+
+void LGFXScreenInfo::refresh(bool force)
+{
+    if (this->parentDisplay != nullptr)
+    {
+        this->WIFILogoChanged = false;
+        this->WIFISignalStrengthChanged = false;
+        this->WIFISignalLevelBarsChanged = false;
+        this->WIFIDataChanged = false;
+        FPS::loop();
+
+        bool isConnected = WifiManager::isConnected();
+        if (!force)
+        {
+            if (this->wasConnected != isConnected)
+            {
+                this->WIFILogoChanged = true;
+                this->WIFISignalStrengthChanged = true;
+                this->WIFISignalLevelBarsChanged = true;
+                this->WIFIDataChanged = true;
+            }
+            else if (isConnected && (strlen(this->WIFISSID) == 0 || strlen(this->WIFIIPAddress) == 0 || strlen(this->WIFIMacAddress) == 0))
+            {
+                // UGLY: I think there is a "timming" bug that not assign ssid/address on some connected networks so every time that connected status found if no
+                // data is assigned try to refresh
+                this->WIFIDataChanged = true;
+            }
+        }
+        long currentSignalStrength = WifiManager::getSignalStrength();
+        if (this->previousSignalStrength != currentSignalStrength)
+        {
+            this->WIFISignalStrengthChanged = true;
+        }
+        WIFISignalQuality currentSignalQuality = WifiManager::getSignalQuality(currentSignalStrength);
+        if (this->previousSignalQuality != currentSignalQuality)
+        {
+            this->WIFISignalLevelBarsChanged = true;
+        }
+        this->wasConnected = isConnected;
+        this->previousSignalStrength = currentSignalStrength;
+        this->previousSignalQuality = currentSignalQuality;
+
+        if (force || this->WIFILogoChanged)
+        {
+            this->refreshWIFILogo();
+        }
+
+        if (force || this->WIFISignalStrengthChanged)
+        {
+            this->refreshWIFISignalStrength();
+        }
+
+        if (force || this->WIFISignalLevelBarsChanged)
+        {
+            this->refreshWIFISignalLevelBars();
+        }
+
+        if (force || this->WIFIDataChanged)
+        {
+            this->refreshWIFIData();
+        }
+
+        this->refreshCommonData(force);
     }
 }
