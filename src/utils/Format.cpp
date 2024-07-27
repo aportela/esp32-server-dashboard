@@ -15,32 +15,32 @@ void Format::millisToHumanStr(uint64_t millis_diff, char *buffer, size_t buffer_
     if (millis_diff >= millis_in_year)
     {
         time = (double)millis_diff / millis_in_year;
-        unit = (time > 1) ? "years" : "year";
+        unit = (time >= 2) ? "years" : "year";
     }
     else if (millis_diff >= millis_in_month)
     {
         time = (double)millis_diff / millis_in_month;
-        unit = (time > 1) ? "months" : "month";
+        unit = (time >= 2) ? "months" : "month";
     }
     else if (millis_diff >= millis_in_day)
     {
         time = (double)millis_diff / millis_in_day;
-        unit = (time > 1) ? "days" : "day";
+        unit = (time >= 2) ? "days" : "day";
     }
     else if (millis_diff >= millis_in_hour)
     {
         time = (double)millis_diff / millis_in_hour;
-        unit = (time > 1) ? "hours" : "hour";
+        unit = (time >= 2) ? "hours" : "hour";
     }
     else if (millis_diff >= millis_in_minute)
     {
         time = (double)millis_diff / millis_in_minute;
-        unit = (time > 1) ? "mins" : "min";
+        unit = (time >= 2) ? "mins" : "min";
     }
     else
     {
         time = (double)millis_diff / millis_in_second;
-        unit = (time > 1) ? "secs" : "sec";
+        unit = (time >= 2) ? "secs" : "sec";
     }
 
     std::snprintf(buffer, buffer_size, "%.1f %s", time, unit);
