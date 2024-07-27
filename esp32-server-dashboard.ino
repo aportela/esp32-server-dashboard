@@ -66,7 +66,7 @@ enum appScreen
     APP_SCREEN_RESUME_DATA
 };
 
-appScreen currentScreen = APP_SCREEN_RESUME_DATA;
+appScreen currentScreen = APP_SCREEN_INFO;
 
 #define METER_GRAPH_WIDTH 195
 #define METER_GRAPH_HEIGHT 30
@@ -151,7 +151,7 @@ void loop()
             networkUploadBandwithLoadMeter->refresh(mqttTelegrafSRC->getUsedNetworkUploadBandwith());
         }
         screen->refreshDebug(0, 210, WifiManager::getSignalStrength());
-        currentMillis = mqttTelegrafSRC->getCurrent()();
+        currentMillis = mqttTelegrafSRC->getCurrent(CPU_LOAD);
     }
     else if (currentScreen == APP_SCREEN_INFO)
     {
