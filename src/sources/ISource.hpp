@@ -17,7 +17,7 @@ class ISource
 {
 public:
     virtual ~ISource() {}
-    virtual bool changed(EntitySource entity) = 0;
+    virtual bool changed(EntitySource entity, uint64_t fromTimestamp) = 0;
     virtual uint64_t getPrevious(EntitySource entity) = 0;
     virtual uint64_t getCurrent(EntitySource entity) = 0;
     virtual uint64_t getPreviousCPULoad(void) = 0;

@@ -17,7 +17,7 @@ protected:
 public:
     Source();
     ~Source();
-    bool changed(EntitySource entity) override;
+    bool changed(EntitySource entity, uint64_t fromTimestamp) override;
     uint64_t getPrevious(EntitySource entity);
     uint64_t getCurrent(EntitySource entity);
     uint64_t getPreviousCPULoad(void) override;

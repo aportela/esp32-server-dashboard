@@ -6,22 +6,22 @@
 class SourceData
 {
 private:
-    uint64_t lastTimestamp;
     uint64_t min;
     uint64_t max;
     uint64_t previous;
     uint64_t current;
+    uint64_t currentTimestamp;
 
 public:
     SourceData(uint64_t min, uint64_t max);
     ~SourceData();
     uint64_t getMin(void);
     uint64_t getMax(void);
-    void setCurrent(uint64_t value, uint64_t lastTimestamp);
+    void setCurrent(uint64_t value, uint64_t timestamp);
     uint64_t getPrevious(void);
     uint64_t getCurrent(void);
     uint64_t getCurrentTimestamp(void);
-    bool changed(void);
+    bool changed(uint64_t fromTimestamp);
 };
 
 #endif

@@ -1,9 +1,7 @@
 #include "Source.hpp"
-#include <Arduino.h>
 
 Source::Source()
 {
-    randomSeed(analogRead(0) ^ (micros() * esp_random()));
 }
 
 Source::~Source()
@@ -35,24 +33,24 @@ Source::~Source()
     }
 }
 
-bool Source::changed(EntitySource entity)
+bool Source::changed(EntitySource entity, uint64_t fromTimestamp)
 {
     switch (entity)
     {
     case CPU_LOAD:
-        return (this->currentCPULoad->changed());
+        return (this->currentCPULoad->changed(fromTimestamp));
         break;
     case MEMORY:
-        return (this->currentMemory->changed());
+        return (this->currentMemory->changed(fromTimestamp));
         break;
     case CPU_TEMPERATURE:
-        return (this->currentCPUTemperature->changed());
+        return (this->currentCPUTemperature->changed(fromTimestamp));
         break;
     case NETWORK_BANDWITH_DOWNLOAD:
-        return (this->currentNetworkDownloadBandwith->changed());
+        return (this->currentNetworkDownloadBandwith->changed(fromTimestamp));
         break;
     case NETWORK_BANDWITH_UPLOAD:
-        return (this->currentNetworkUploadBandwith->changed());
+        return (this->currentNetworkUploadBandwith->changed(fromTimestamp));
         break;
     default:
         return (true);
