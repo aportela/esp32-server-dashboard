@@ -12,7 +12,7 @@ class IScreen
 {
 public:
     virtual ~IScreen() {}
-    virtual void refresh(bool firstRun) = 0;
+    virtual void refresh(bool force = false) = 0;
 };
 
 #endif
