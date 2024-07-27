@@ -86,6 +86,9 @@ LGFX::LGFX(uint8_t PIN_SDA, uint8_t PIN_SCL, uint8_t PIN_CS, uint8_t PIN_DC, uin
     this->debugSprite->setFont(&fonts::Font2);
 
     this->setFont(&fonts::Font2);
+
+    this->init();
+    this->fillScreen(TFT_BLACK);
 }
 
 LGFX::~LGFX()
