@@ -4,7 +4,6 @@
 #include "LGFXScreen.hpp"
 
 #include "../../utils/WifiManager.hpp"
-#include "../FPSDebug.hpp"
 
 class LGFXScreenInfo : public LGFXScreen
 {
@@ -22,7 +21,7 @@ private:
     WIFISignalQuality previousSignalQuality;
 
 public:
-    LGFXScreenInfo(LovyanGFX *display, FPSDebug *fpsDebug);
+    LGFXScreenInfo(LovyanGFX *display);
     ~LGFXScreenInfo();
     void refresh(bool firstRun) override;
 };

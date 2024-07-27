@@ -6,14 +6,13 @@
 class FPSDebug
 {
 public:
-  ~FPSDebug() {}
-  void loop(void);
-  uint16_t getFPS(void);
+  static void loop(void);
+  static uint16_t getFPS(void);
 
 private:
-  uint64_t frameCount = 0;
-  uint64_t lastTime = 0;
-  uint16_t fps = 0;
+  static uint64_t frameCount;
+  static uint64_t lastTime;
+  static uint16_t fps;
 };
 
 #endif

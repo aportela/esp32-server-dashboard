@@ -3,7 +3,6 @@
 
 #include <LovyanGFX.hpp>
 #include <stdint.h>
-#include "../FPSDebug.hpp"
 #include "LGFXMeter.hpp"
 #include "LGFXScreenInfo.hpp"
 #include "../../sources/ISource.hpp"
@@ -21,9 +20,6 @@ private:
     lgfx::LGFX_Sprite *networkUploadSprite = nullptr;
     lgfx::LGFX_Sprite *debugSprite = nullptr;
     LGFXScreenInfo *screenInfo = nullptr;
-
-    FPSDebug *fpsDebug = nullptr;
-
     ISource *source;
 
 public:

@@ -1,6 +1,7 @@
 #include "LGFX.hpp"
 #include "../../sources/dummy/DummySource.hpp"
 #include "src/utils/Format.hpp"
+#include "../FPSDebug.hpp"
 #include <WiFi.h>
 
 #define SCREEN_WIDTH 320
@@ -84,8 +85,6 @@ LGFX::LGFX(uint8_t PIN_SDA, uint8_t PIN_SCL, uint8_t PIN_CS, uint8_t PIN_DC, uin
     this->debugSprite->createSprite(DEBUG_SPRITE_WIDTH, DEBUG_SPRITE_HEIGHT);
     this->debugSprite->setFont(&fonts::Font2);
 
-    this->fpsDebug = new FPSDebug();
-
     this->setFont(&fonts::Font2);
 }
 
@@ -101,8 +100,6 @@ LGFX::~LGFX()
     this->networkDownloadSprite = nullptr;
     delete this->networkUploadSprite;
     this->networkUploadSprite = nullptr;
-    delete this->fpsDebug;
-    this->fpsDebug = nullptr;
 }
 
 void LGFX::addMeter(LGFXMeter *meter)
@@ -161,7 +158,7 @@ void convertmillisToHumanStr(unsigned long long millis_diff, char *buffer, size_
 
 void LGFX::refreshDebug(uint16_t xOffset, uint16_t yOffset, int32_t wifiSignalStrength)
 {
-    this->fpsDebug->loop();
+    FPSDebug::loop();
 
     this->debugSprite->fillSprite(DEBUG_SPRITE_BACKGROUND);
     this->debugSprite->setTextSize(1);
@@ -169,7 +166,7 @@ void LGFX::refreshDebug(uint16_t xOffset, uint16_t yOffset, int32_t wifiSignalSt
     this->debugSprite->setCursor(0, 0);
     char timeString[50];
     convertmillisToHumanStr(millis(), timeString, sizeof(timeString));
-    this->debugSprite->printf("Runtime: %s - FPS: %03u - Wifi: %03ddBm", timeString, this->fpsDebug->getFPS(), wifiSignalStrength);
+    this->debugSprite->printf("Runtime: %s - FPS: %03u - Wifi: %03ddBm", timeString, FPSDebug::getFPS(), wifiSignalStrength);
     /*
         RSSI > - 30 dBm	 Amazing
         RSSI < – 55 dBm	 Very good signal
@@ -183,11 +180,11 @@ void LGFX::refreshDebug(uint16_t xOffset, uint16_t yOffset, int32_t wifiSignalSt
 
 void LGFX::initScreenInfo(void)
 {
-    this->screenInfo = new LGFXScreenInfo(this, this->fpsDebug);
+    this->screenInfo = new LGFXScreenInfo(this);
 }
 
 void LGFX::refreshScreenInfo()
 {
-    this->fpsDebug->loop();
+    FPSDebug::loop();
     this->screenInfo->refresh(false);
 }

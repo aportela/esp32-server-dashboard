@@ -1,6 +1,7 @@
 #include "LGFXScreenInfo.hpp"
 #include "../../utils/Format.hpp"
 #include "../../utils/SerialManager.hpp"
+#include "../FPSDebug.hpp"
 
 #define DEFAULT_FONT &fonts::Font0
 #define CUSTOM_FONT &fonts::FreeMono9pt7b
@@ -8,7 +9,7 @@
 #define MAIN_SPRITE_WIDTH 312
 #define MAIN_SPRITE_HEIGHT 216
 
-LGFXScreenInfo::LGFXScreenInfo(LovyanGFX *display, FPSDebug *fpsDebug) : LGFXScreen(display, fpsDebug)
+LGFXScreenInfo::LGFXScreenInfo(LovyanGFX *display) : LGFXScreen(display)
 {
     // this->parentDisplay->drawRect(0, 0, 320, 240, TFT_WHITE); // this is for screen bounds debugging purposes only
     this->parentDisplay->setTextWrap(false);
@@ -38,7 +39,7 @@ LGFXScreenInfo::~LGFXScreenInfo()
 
 void LGFXScreenInfo::refresh(bool firstRun)
 {
-    this->fpsDebug->loop();
+    FPSDebug::loop();
 
     if (!firstRun)
     {
@@ -210,7 +211,7 @@ void LGFXScreenInfo::refresh(bool firstRun)
         this->parentDisplay->setTextSize(1);
         this->parentDisplay->setTextColor(TFT_WHITE, TFT_BLACK);
         this->parentDisplay->setCursor(12, 220);
-        this->parentDisplay->printf("%03uFPS - Runtime: %s    ", this->fpsDebug->getFPS(), str);
+        this->parentDisplay->printf("%03uFPS - Runtime: %s    ", FPSDebug::getFPS(), str);
         strncpy(this->previousRuntimeStr, str, sizeof(this->previousRuntimeStr));
     }
 }

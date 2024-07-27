@@ -1,17 +1,24 @@
 #include <Arduino.h>
 #include "FPSDebug.hpp"
 
-uint16_t FPSDebug::getFPS(void) {
-  return (this->fps);
+uint64_t FPSDebug::frameCount = 0;
+uint64_t FPSDebug::lastTime = 0;
+uint16_t FPSDebug::fps = 0;
+
+uint16_t FPSDebug::getFPS(void)
+{
+  return (FPSDebug::fps);
 }
 
-void FPSDebug::loop(void) {
+void FPSDebug::loop(void)
+{
   uint64_t currentTime = millis();
-  uint64_t elapsedTime = currentTime - lastTime;
-  if (elapsedTime >= 1000) {
-    this->fps = static_cast<uint16_t>(static_cast<float>(this->frameCount) / (static_cast<float>(elapsedTime) / 1000.0));
-    this->frameCount = 0;
-    this->lastTime = currentTime;
+  uint64_t elapsedTime = currentTime - FPSDebug::lastTime;
+  if (elapsedTime >= 1000)
+  {
+    FPSDebug::fps = static_cast<uint16_t>(static_cast<float>(FPSDebug::frameCount) / (static_cast<float>(elapsedTime) / 1000.0));
+    FPSDebug::frameCount = 0;
+    FPSDebug::lastTime = currentTime;
   }
-  this->frameCount++;
+  FPSDebug::frameCount++;
 }
