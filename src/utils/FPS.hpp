@@ -3,6 +3,9 @@
 
 #include <stdint.h>
 
+/*
+  WARNING: THIS IS NOT A "REAL FPS DATA", ONLY AN APROXIMATTION FOR BENCH & OPTIMIZE MAX SCREEN UPDATES
+*/
 class FPS
 {
 public:
