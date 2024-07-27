@@ -1,0 +1,23 @@
+
+
+LOOP
+
+    Wifi refresh
+    MQTT refresh
+    Serial refresh
+
+    SCREEN refresh
+
+        if INFO
+
+            UPDATE LOGO on CONNECTION_CHANGED
+            UPDATE WIFI strenght ON CONNECTION_CHANGED || strenght changes
+            UPDATE WIFI level ON CONNECTION_CHANGED || level changes
+
+            UPDATE METADATA on CONNECTION_CHANGED
+
+            UPDATE serial speed on NONE
+
+            Update BOTTOM DEBUG always
+
+        else if DASH
