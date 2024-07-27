@@ -83,7 +83,9 @@ void setup()
     WifiManager::connect(true);
     char mac[32] = {'\0'};
     WifiManager::getMacAddress(mac, sizeof(mac));
-    mqttTelegrafSRC = new MQTTTelegrafSource("mqtt://127.0.0.1", mac, "telegraf/HOST_NAME/#");
+    mqttTelegrafSRC = new MQTTTelegrafSource("mqtt://192.168.24.5", mac, "telegraf/HOST_NAME/#");
+    // mqttTelegrafSRC->setCPUTopic("telegraf/HOST_NAME/cpu");
+    // mqttTelegrafSRC->setMemoryTopic("telegraf/HOST_NAME/mem");
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     dummySRC = new DummySource();
 
@@ -115,6 +117,8 @@ void setup()
 #endif
 }
 
+bool refreshAlways = false;
+uint64_t currentMillis = millis();
 void loop()
 {
     SerialManager::loop();
@@ -123,13 +127,31 @@ void loop()
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     if (currentScreen == APP_SCREEN_RESUME_DATA)
     {
+        Serial.println("REFRESH");
         // dummySRC->refresh();
-        cpuLoadMeter->refresh(mqttTelegrafSRC->getCurrentCPULoad());
-        memoryLoadMeter->refresh(mqttTelegrafSRC->getUsedMemory());
-        cpuTemperatureLoadMeter->refresh(mqttTelegrafSRC->getCurrentCPUTemperature());
-        networkDownloadBandwithLoadMeter->refresh(mqttTelegrafSRC->getUsedNetworkDownloadBandwith());
-        networkUploadBandwithLoadMeter->refresh(mqttTelegrafSRC->getUsedNetworkUploadBandwith());
+        if (refreshAlways || mqttTelegrafSRC->changed(CPU_LOAD, currentMillis))
+        {
+            cpuLoadMeter->refresh(mqttTelegrafSRC->getCurrentCPULoad());
+            Serial.println("REFRESH CPU");
+        }
+        if (refreshAlways || mqttTelegrafSRC->changed(MEMORY, currentMillis))
+        {
+            memoryLoadMeter->refresh(mqttTelegrafSRC->getUsedMemory());
+        }
+        if (refreshAlways || mqttTelegrafSRC->changed(CPU_TEMPERATURE, currentMillis))
+        {
+            cpuTemperatureLoadMeter->refresh(mqttTelegrafSRC->getCurrentCPUTemperature());
+        }
+        if (refreshAlways || mqttTelegrafSRC->changed(NETWORK_BANDWITH_DOWNLOAD, currentMillis))
+        {
+            networkDownloadBandwithLoadMeter->refresh(mqttTelegrafSRC->getUsedNetworkDownloadBandwith());
+        }
+        if (refreshAlways || mqttTelegrafSRC->changed(NETWORK_BANDWITH_UPLOAD, currentMillis))
+        {
+            networkUploadBandwithLoadMeter->refresh(mqttTelegrafSRC->getUsedNetworkUploadBandwith());
+        }
         screen->refreshDebug(0, 210, WifiManager::getSignalStrength());
+        currentMillis = mqttTelegrafSRC->getCurrent()();
     }
     else if (currentScreen == APP_SCREEN_INFO)
     {
