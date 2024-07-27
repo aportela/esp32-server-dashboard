@@ -1,9 +1,11 @@
 #include "LGFXScreen.hpp"
 
-LGFXScreen::LGFXScreen(LovyanGFX *display)
+LGFXScreen::LGFXScreen(LovyanGFX *display) : parentDisplay(display)
 {
-    this->parentDisplay = display;
-    this->parentDisplay->fillScreen(TFT_BLACK);
+    if (display != nullptr)
+    {
+        this->parentDisplay->fillScreen(TFT_BLACK);
+    }
 }
 
 LGFXScreen::~LGFXScreen()
