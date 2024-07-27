@@ -15,20 +15,19 @@ private:
     bool WIFISignalLevelBarsChanged;
     bool WIFIDataChanged;
 
+    // properties for tracking changes
+    long previousSignalStrength;
+    WIFISignalQuality previousSignalQuality;
+    char previousRuntimeStr[16] = {'\0'};
+
     char WIFISSID[WIFI_SSID_CHAR_ARR_LENGTH] = {'\0'};
     char WIFIMacAddress[MAC_ADDRESS_CHAR_ARR_LENGTH] = {'\0'};
     char WIFIIPAddress[IP_ADDRESS_CHAR_ARR_LENGTH] = {'\0'};
 
-    char previousRuntimeStr[16] = {'\0'};
-
-    // properties for tracking changes
-    long previousSignalStrength;
-    WIFISignalQuality previousSignalQuality;
-
     void refreshWIFILogo(void);
     void refreshWIFISignalStrength(void);
     void refreshWIFISignalLevelBars(void);
-    void refreshWIFIData(void);
+    void refreshWIFIData(bool forceDrawAll);
     void refreshCommonData(bool forceDrawAll);
 
 public:

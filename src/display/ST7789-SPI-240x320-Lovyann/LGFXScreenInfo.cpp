@@ -44,11 +44,6 @@
 #define SCREEN_WIFI_SIGNAL_STRENGTH_TEXT_X_OFFSET 172
 #define SCREEN_WIFI_SIGNAL_STRENGTH_TEXT_Y_OFFSET 36
 
-#define CUSTOM_FONT &fonts::FreeMono9pt7b
-#define BIG_FONT &fonts::FreeSansBold24pt7b
-#define MAIN_SPRITE_WIDTH 312
-#define MAIN_SPRITE_HEIGHT 216
-
 #define TOTAL_WIFI_SIGNAL_LEVEL_BARS 5
 #define WIFI_SIGNAL_LEVEL_BARS_START_X_OFFSET 195
 #define WIFI_SIGNAL_LEVEL_BARS_START_Y_OFFSET 76
@@ -57,12 +52,10 @@
 #define WIFI_SIGNAL_LEVEL_BARS_WIDTH 12
 #define WIFI_SIGNAL_LEVEL_BARS_NEXT_X_OFFSET 24
 
-#define SCREEN_BOTTOM_BAR_FONT &fonts::FreeMono9pt7b
-#define SCREEN_BOTTOM_BAR_FONT_SIZE 1
-#define SCREEN_BOTTOM_BAR_TEXT_COLOR TFT_WHITE
-#define SCREEN_BOTTOM_BAR_TEXT_BG_COLOR TFT_BLACK
-#define SCREEN_BOTTOM_BAR_TEXT_X_OFFSET 12
-#define SCREEN_BOTTOM_BAR_TEXT_Y_OFFSET 220
+#define SCREEN_COMMON_TEXTDATA_FONT &fonts::FreeMono9pt7b
+#define SCREEN_COMMON_TEXTDATA_FONT_SIZE 1
+#define SCREEN_COMMON_TEXTDATA_COLOR TFT_WHITE
+#define SCREEN_COMMON_TEXTDATA_BG_COLOR TFT_BLACK
 
 #define SCREEN_COMMON_TEXTDATA_FIELD_X_OFFSET 5
 #define SCREEN_COMMON_TEXTDATA_FIELD_VALUE_X_OFFSET 60
@@ -199,33 +192,42 @@ void LGFXScreenInfo::refreshWIFISignalLevelBars(void)
     }
 }
 
-void LGFXScreenInfo::refreshWIFIData(void)
+void LGFXScreenInfo::refreshWIFIData(bool forceDrawAll)
 {
-    // TODO: clear if changed (because str length)
-    // char WIFISSID[WIFI_SSID_CHAR_ARR_LENGTH] = {'\0'};
     WifiManager::getSSID(this->WIFISSID, sizeof(this->WIFISSID));
-    // char WIFIMacAddress[MAC_ADDRESS_CHAR_ARR_LENGTH] = {'\0'};
     WifiManager::getMacAddress(this->WIFIMacAddress, sizeof(this->WIFIMacAddress));
-    // char WIFIIPAddress[IP_ADDRESS_CHAR_ARR_LENGTH] = {'\0'};
     WifiManager::getIPAddress(this->WIFIIPAddress, sizeof(this->WIFIIPAddress));
-    this->parentDisplay->setFont(CUSTOM_FONT);
-    this->parentDisplay->setTextSize(1);
-    this->parentDisplay->setTextColor(TFT_WHITE, TFT_BLACK);
-    this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_X_OFFSET, 100);
-    this->parentDisplay->print("SSID ");
-    this->parentDisplay->println(this->WIFISSID);
-    this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_X_OFFSET, 120);
-    this->parentDisplay->print(" MAC ");
-    this->parentDisplay->println(this->WIFIMacAddress);
-    this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_X_OFFSET, 140);
-    this->parentDisplay->print("  IP ");
-    this->parentDisplay->println(this->WIFIIPAddress);
+    this->parentDisplay->setFont(SCREEN_COMMON_TEXTDATA_FONT);
+    this->parentDisplay->setTextSize(SCREEN_COMMON_TEXTDATA_FONT_SIZE);
+    this->parentDisplay->setTextColor(SCREEN_COMMON_TEXTDATA_COLOR, SCREEN_COMMON_TEXTDATA_BG_COLOR);
+    if (forceDrawAll)
+    {
+        this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_X_OFFSET, 100);
+        this->parentDisplay->print("SSID ");
+    }
+    this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_VALUE_X_OFFSET, 100);
+    this->parentDisplay->printf("%s", this->WIFISSID);
+    if (forceDrawAll)
+    {
+        this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_X_OFFSET, 120);
+        this->parentDisplay->print(" MAC ");
+    }
+    this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_VALUE_X_OFFSET, 120);
+    this->parentDisplay->print(this->WIFIMacAddress);
+    if (forceDrawAll)
+    {
+        this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_X_OFFSET, 140);
+        this->parentDisplay->print("  IP ");
+    }
+    this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_VALUE_X_OFFSET, 140);
+    this->parentDisplay->printf("%s", this->WIFIIPAddress);
 }
 
 void LGFXScreenInfo::refreshCommonData(bool forceDrawAll)
 {
-    this->parentDisplay->setFont(CUSTOM_FONT);
-    this->parentDisplay->setTextSize(1);
+    this->parentDisplay->setFont(SCREEN_COMMON_TEXTDATA_FONT);
+    this->parentDisplay->setTextSize(SCREEN_COMMON_TEXTDATA_FONT_SIZE);
+    this->parentDisplay->setTextColor(SCREEN_COMMON_TEXTDATA_COLOR, SCREEN_COMMON_TEXTDATA_BG_COLOR);
     if (forceDrawAll)
     {
         this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_X_OFFSET, 160);
@@ -315,7 +317,7 @@ void LGFXScreenInfo::refresh(bool force)
 
         if (force || this->WIFIDataChanged)
         {
-            this->refreshWIFIData();
+            this->refreshWIFIData(force);
         }
 
         this->refreshCommonData(force);
