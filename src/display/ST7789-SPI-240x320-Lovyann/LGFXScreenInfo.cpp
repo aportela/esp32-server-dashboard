@@ -1,7 +1,7 @@
 #include "LGFXScreenInfo.hpp"
 #include "../../utils/Format.hpp"
 #include "../../utils/SerialManager.hpp"
-#include "../FPSDebug.hpp"
+#include "../../utils/FPSDebug.hpp"
 
 #define DEFAULT_FONT &fonts::Font0
 #define CUSTOM_FONT &fonts::FreeMono9pt7b

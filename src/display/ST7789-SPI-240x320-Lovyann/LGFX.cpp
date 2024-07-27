@@ -1,7 +1,7 @@
 #include "LGFX.hpp"
 #include "../../sources/dummy/DummySource.hpp"
 #include "src/utils/Format.hpp"
-#include "../FPSDebug.hpp"
+#include "../../utils/FPSDebug.hpp"
 #include <WiFi.h>
 
 #define SCREEN_WIDTH 320
