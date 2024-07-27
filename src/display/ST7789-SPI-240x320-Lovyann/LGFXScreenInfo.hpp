@@ -2,7 +2,9 @@
 #define ESP32_SERVER_DASHBOARD_LGFX_SCREEN_INFO_H
 
 #include "LGFXScreen.hpp"
+
 #include "../../utils/WifiManager.hpp"
+#include "../FPSDebug.hpp"
 
 class LGFXScreenInfo : public LGFXScreen
 {

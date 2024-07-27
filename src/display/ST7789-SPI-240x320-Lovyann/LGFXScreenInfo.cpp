@@ -33,6 +33,7 @@ LGFXScreenInfo::LGFXScreenInfo(LovyanGFX *display, FPSDebug *fpsDebug) : LGFXScr
 
 LGFXScreenInfo::~LGFXScreenInfo()
 {
+    this->parentDisplay = nullptr;
 }
 
 void LGFXScreenInfo::refresh(bool firstRun)

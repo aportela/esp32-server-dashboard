@@ -9,7 +9,7 @@ class LGFXScreen : public IScreen
 {
 protected:
     LovyanGFX *parentDisplay = nullptr;
-    FPSDebug *fpsDebug;
+    FPSDebug *fpsDebug = nullptr;
 
 public:
     LGFXScreen(LovyanGFX *display, FPSDebug *fpsDebug);

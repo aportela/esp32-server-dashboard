@@ -3,8 +3,8 @@
 LGFXScreen::LGFXScreen(LovyanGFX *display, FPSDebug *fpsDebug)
 {
     this->parentDisplay = display;
-    this->parentDisplay->fillScreen(TFT_BLACK);
     this->fpsDebug = fpsDebug;
+    this->parentDisplay->fillScreen(TFT_BLACK);
 }
 
 LGFXScreen::~LGFXScreen()

@@ -60,13 +60,7 @@ MQTTTelegrafSource *mqttTelegrafSRC = nullptr;
 Settings *settings = nullptr;
 WifiManager wifi;
 
-enum appScreen
-{
-    APP_SCREEN_INFO,
-    APP_SCREEN_RESUME_DATA
-};
-
-appScreen currentScreen = APP_SCREEN_INFO;
+// appScreen currentScreen = APP_SCREEN_INFO;
 
 #define METER_GRAPH_WIDTH 195
 #define METER_GRAPH_HEIGHT 30
@@ -94,7 +88,8 @@ void setup()
     screen->fillScreen(TFT_BLACK);
     // screen->drawRect(0, 0, 320, 240, TFT_WHITE); // this is for screen bounds debugging purposes only
 
-    if (currentScreen == APP_SCREEN_RESUME_DATA)
+    if (false)
+    // if (screen->getCurrentScreen() == APP_SCREEN_RESUME_DATA)
     {
         cpuLoadMeter = new LGFXMeter(screen, METER_ENTITY_CPU_LOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 0, TFT_BLACK, "CPU LOAD");
         cpuLoadMeter->setMin(0);
@@ -110,7 +105,8 @@ void setup()
         networkDownloadBandwithLoadMeter->setMax(536870912); // 512 Mb
         networkUploadBandwithLoadMeter = new LGFXMeter(screen, METER_ENTITY_NETWORK_BANDWITH_UPLOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 168, TFT_BLACK, "WAN UPLOAD");
     }
-    else if (currentScreen == APP_SCREEN_INFO)
+    else
+    // else if (screen->getCurrentScreen() == APP_SCREEN_INFO)
     {
         screen->initScreenInfo();
     }
@@ -125,7 +121,7 @@ void loop()
     WifiManager::loop();
 
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
-    if (currentScreen == APP_SCREEN_RESUME_DATA)
+    if (false) // if (screen->getCurrentScreen() == APP_SCREEN_RESUME_DATA)
     {
         Serial.println("REFRESH");
         // dummySRC->refresh();
@@ -153,9 +149,54 @@ void loop()
         screen->refreshDebug(0, 210, WifiManager::getSignalStrength());
         currentMillis = mqttTelegrafSRC->getCurrent(CPU_LOAD);
     }
-    else if (currentScreen == APP_SCREEN_INFO)
+    // else if (screen->getCurrentScreen() == APP_SCREEN_INFO)
+    else
     {
         screen->refreshScreenInfo();
     }
 #endif
 }
+
+/*
+
+appScreen LGFX::getCurrentScreen(void)
+{
+    return (this->currentScreen);
+}
+
+bool LGFX::flip(appScreen scr)
+{
+    if (scr != currentScreen)
+    {
+        this->previousScreen = this->currentScreen;
+        this->currentScreen = APP_SCREEN_NONE; // lock screen while making changes
+        this->fillScreen(TFT_BLACK);
+        // free old screen resources
+        switch (this->previousScreen)
+        {
+        case APP_SCREEN_INFO:
+            delete this->screenInfo;
+            this->screenInfo = nullptr;
+            break;
+        case APP_SCREEN_RESUME_DATA:
+            // TODO
+            break;
+        }
+        // create new screen resources
+        switch (scr)
+        {
+        case APP_SCREEN_INFO:
+            this->initScreenInfo();
+            break;
+        case APP_SCREEN_RESUME_DATA:
+            // TODO
+            break;
+        }
+        this->currentScreen = scr; // set screen (unlock) at end
+    }
+    else
+    {
+        return (false);
+    }
+}
+*/
