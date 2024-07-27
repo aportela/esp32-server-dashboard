@@ -1,7 +1,7 @@
 #include "LGFXScreenInfo.hpp"
 #include "../../utils/Format.hpp"
 #include "../../utils/SerialManager.hpp"
-#include "../../utils/FPSDebug.hpp"
+#include "../../utils/FPS.hpp"
 
 #define DEFAULT_FONT &fonts::Font0
 #define CUSTOM_FONT &fonts::FreeMono9pt7b
@@ -39,7 +39,7 @@ LGFXScreenInfo::~LGFXScreenInfo()
 
 void LGFXScreenInfo::refresh(bool firstRun)
 {
-    FPSDebug::loop();
+    FPS::loop();
 
     if (!firstRun)
     {
@@ -211,7 +211,7 @@ void LGFXScreenInfo::refresh(bool firstRun)
         this->parentDisplay->setTextSize(1);
         this->parentDisplay->setTextColor(TFT_WHITE, TFT_BLACK);
         this->parentDisplay->setCursor(12, 220);
-        this->parentDisplay->printf("%03uFPS - Runtime: %s    ", FPSDebug::getFPS(), str);
+        this->parentDisplay->printf("%03uFPS - Runtime: %s    ", FPS::getFPS(), str);
         strncpy(this->previousRuntimeStr, str, sizeof(this->previousRuntimeStr));
     }
 }

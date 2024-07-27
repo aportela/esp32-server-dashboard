@@ -1,7 +1,7 @@
 #include "LGFX.hpp"
 #include "../../sources/dummy/DummySource.hpp"
 #include "src/utils/Format.hpp"
-#include "../../utils/FPSDebug.hpp"
+#include "../../utils/FPS.hpp"
 #include <WiFi.h>
 
 #define SCREEN_WIDTH 320
@@ -158,7 +158,7 @@ void convertmillisToHumanStr(unsigned long long millis_diff, char *buffer, size_
 
 void LGFX::refreshDebug(uint16_t xOffset, uint16_t yOffset, int32_t wifiSignalStrength)
 {
-    FPSDebug::loop();
+    FPS::loop();
 
     this->debugSprite->fillSprite(DEBUG_SPRITE_BACKGROUND);
     this->debugSprite->setTextSize(1);
@@ -166,7 +166,7 @@ void LGFX::refreshDebug(uint16_t xOffset, uint16_t yOffset, int32_t wifiSignalSt
     this->debugSprite->setCursor(0, 0);
     char timeString[50];
     convertmillisToHumanStr(millis(), timeString, sizeof(timeString));
-    this->debugSprite->printf("Runtime: %s - FPS: %03u - Wifi: %03ddBm", timeString, FPSDebug::getFPS(), wifiSignalStrength);
+    this->debugSprite->printf("Runtime: %s - FPS: %03u - Wifi: %03ddBm", timeString, FPS::getFPS(), wifiSignalStrength);
     /*
         RSSI > - 30 dBm	 Amazing
         RSSI < – 55 dBm	 Very good signal
@@ -185,6 +185,6 @@ void LGFX::initScreenInfo(void)
 
 void LGFX::refreshScreenInfo()
 {
-    FPSDebug::loop();
+    FPS::loop();
     this->screenInfo->refresh(false);
 }

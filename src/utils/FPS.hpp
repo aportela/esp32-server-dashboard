@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-class FPSDebug
+class FPS
 {
 public:
   static void loop(void);
