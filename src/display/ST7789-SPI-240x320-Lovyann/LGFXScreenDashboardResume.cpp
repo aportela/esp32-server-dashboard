@@ -109,10 +109,8 @@ void LGFXScreenDashboardResume::refresh(bool force)
             uint64_t currentMillis = millis();
             if (force || this->currentSource->changed(ET_GLOBAL_CPU_LOAD, currentMillis))
             {
-                // cpuLoadMeter->refresh(this->currentSource->getCurrentGlobalCPULoad());
-                cpuLoadMeter->refresh(50);
+                // this->cpuLoadMeter->refresh(this->currentSource->getCurrentGlobalCPULoad());
             }
-
             if (force || this->currentSource->changed(ET_USED_MEMORY, currentMillis))
             {
                 // this->memoryLoadMeter->refresh(this->currentSource->getUsedMemory());
