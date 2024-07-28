@@ -3,14 +3,14 @@
 
 #include <stdint.h>
 #include <LovyanGFX.hpp>
-#include "../../sources/MeterEntity.hpp"
+#include "../../EntityType.hpp"
 
 class LGFXMeter
 {
 private:
     LovyanGFX *parentDisplay = nullptr;
     lgfx::LGFX_Sprite *graphSprite = nullptr;
-    MeterEntity entity;
+    EntityType entity;
     uint64_t min;
     uint64_t max;
     int32_t width;
@@ -32,7 +32,7 @@ private:
     void displayDefaultValues(void);
 
 public:
-    LGFXMeter(LovyanGFX *display, MeterEntity entity, int32_t width, int32_t height, uint16_t xOffset, uint16_t yOffset, int32_t backgroundColor, char *label);
+    LGFXMeter(LovyanGFX *display, EntityType entity, int32_t width, int32_t height, uint16_t xOffset, uint16_t yOffset, int32_t backgroundColor, char *label);
     ~LGFXMeter();
     void setMin(uint64_t value);
     void setMax(uint64_t value);

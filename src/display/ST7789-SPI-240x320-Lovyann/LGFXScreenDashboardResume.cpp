@@ -10,19 +10,19 @@ LGFXScreenDashboardResume::LGFXScreenDashboardResume(LovyanGFX *display) : LGFXS
     if (display != nullptr)
     {
 
-        this->cpuLoadMeter = new LGFXMeter(this->parentDisplay, METER_ENTITY_CPU_LOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 0, METER_BG_COLOR, "CPU LOAD");
+        this->cpuLoadMeter = new LGFXMeter(this->parentDisplay, ET_CPU_LOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 0, METER_BG_COLOR, "CPU LOAD");
         this->cpuLoadMeter->setMin(0);
         this->cpuLoadMeter->setMax(100);
-        this->memoryLoadMeter = new LGFXMeter(this->parentDisplay, METER_ENTITY_MEMORY, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 42, METER_BG_COLOR, "MEMORY");
+        this->memoryLoadMeter = new LGFXMeter(this->parentDisplay, ET_USED_MEMORY, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 42, METER_BG_COLOR, "MEMORY");
         this->memoryLoadMeter->setMin(0);
         this->memoryLoadMeter->setMax(34231410688); // 32 Gb
-        this->cpuTemperatureLoadMeter = new LGFXMeter(this->parentDisplay, METER_ENTITY_CPU_TEMPERATURE, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 84, METER_BG_COLOR, "CPU TEMP");
+        this->cpuTemperatureLoadMeter = new LGFXMeter(this->parentDisplay, ET_GLOBAL_CPU_TEMPERATURE, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 84, METER_BG_COLOR, "CPU TEMP");
         this->cpuTemperatureLoadMeter->setMin(0);
         this->cpuTemperatureLoadMeter->setMax(100);
-        this->networkDownloadBandwithLoadMeter = new LGFXMeter(this->parentDisplay, METER_ENTITY_NETWORK_BANDWITH_DOWNLOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 126, METER_BG_COLOR, "WAN DOWNLOAD");
+        this->networkDownloadBandwithLoadMeter = new LGFXMeter(this->parentDisplay, ET_NETWORK_BANDWITH_DOWNLOAD_SPEED, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 126, METER_BG_COLOR, "WAN DOWNLOAD");
         this->networkDownloadBandwithLoadMeter->setMin(0);
         this->networkDownloadBandwithLoadMeter->setMax(536870912); // 512 Mb
-        this->networkUploadBandwithLoadMeter = new LGFXMeter(this->parentDisplay, METER_ENTITY_NETWORK_BANDWITH_UPLOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 168, METER_BG_COLOR, "WAN UPLOAD");
+        this->networkUploadBandwithLoadMeter = new LGFXMeter(this->parentDisplay, ET_NETWORK_BANDWITH_UPLOAD_SPEED, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 168, METER_BG_COLOR, "WAN UPLOAD");
         this->refresh(true);
     }
 }

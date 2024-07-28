@@ -30,7 +30,7 @@ uint8_t LGFXMeter::map64WithRange0To00(uint64_t x, uint64_t in_min, uint64_t in_
 }
 
 // TODO set min/max on constructor
-LGFXMeter::LGFXMeter(LovyanGFX *display, MeterEntity entity, int32_t width, int32_t height, uint16_t xOffset, uint16_t yOffset, int32_t backgroundColor, char *label)
+LGFXMeter::LGFXMeter(LovyanGFX *display, EntityType entity, int32_t width, int32_t height, uint16_t xOffset, uint16_t yOffset, int32_t backgroundColor, char *label)
 {
     this->parentDisplay = display;
     this->graphSprite = new lgfx::LGFX_Sprite(display);
@@ -76,19 +76,19 @@ void LGFXMeter::displayDefaultValues(void)
     this->parentDisplay->setTextColor(MAIN_LABEL_COLOR, MAIN_LABEL_BACKGROUND);
     switch (this->entity)
     {
-    case METER_ENTITY_CPU_LOAD:
+    case ET_CPU_LOAD:
         this->parentDisplay->print("000%");
         break;
-    case METER_ENTITY_MEMORY:
+    case ET_USED_MEMORY:
         this->parentDisplay->print("000Gb  /  032Gb");
         break;
-    case METER_ENTITY_CPU_TEMPERATURE:
+    case ET_GLOBAL_CPU_TEMPERATURE:
         this->parentDisplay->print("000C");
         break;
-    case METER_ENTITY_NETWORK_BANDWITH_DOWNLOAD:
+    case ET_NETWORK_BANDWITH_DOWNLOAD_SPEED:
         this->parentDisplay->print("000Mb  /  512Mb");
         break;
-    case METER_ENTITY_NETWORK_BANDWITH_UPLOAD:
+    case ET_NETWORK_BANDWITH_UPLOAD_SPEED:
         this->parentDisplay->print("000Mb  /  512Mb");
         break;
     }
@@ -157,19 +157,19 @@ void LGFXMeter::refresh(uint64_t value)
     uint8_t mapped100 = 0;
     switch (this->entity)
     {
-    case METER_ENTITY_CPU_LOAD:
+    case ET_CPU_LOAD:
         mapped100 = map(value, this->min, this->max, 0, 100);
         break;
-    case METER_ENTITY_MEMORY:
+    case ET_USED_MEMORY:
         mapped100 = map64WithRange0To00(value, this->min, this->max);
         break;
-    case METER_ENTITY_CPU_TEMPERATURE:
+    case ET_GLOBAL_CPU_TEMPERATURE:
         mapped100 = map(value, 0, 100, 0, 100);
         break;
-    case METER_ENTITY_NETWORK_BANDWITH_DOWNLOAD:
+    case ET_NETWORK_BANDWITH_DOWNLOAD_SPEED:
         mapped100 = map64WithRange0To00(value, this->min, this->max);
         break;
-    case METER_ENTITY_NETWORK_BANDWITH_UPLOAD:
+    case ET_NETWORK_BANDWITH_UPLOAD_SPEED:
         mapped100 = map64WithRange0To00(value, this->min, this->max);
         break;
     }
@@ -193,19 +193,19 @@ void LGFXMeter::refresh(uint64_t value)
         char formattedValueLabel[16];
         switch (this->entity)
         {
-        case METER_ENTITY_CPU_LOAD:
+        case ET_CPU_LOAD:
             this->formatValueAsCPULoad(value, formattedValueLabel);
             break;
-        case METER_ENTITY_MEMORY:
+        case ET_USED_MEMORY:
             this->formatValueAsMemory(value, formattedValueLabel);
             break;
-        case METER_ENTITY_CPU_TEMPERATURE:
+        case ET_GLOBAL_CPU_TEMPERATURE:
             this->formatValueAsCPULoad(value, formattedValueLabel);
             break;
-        case METER_ENTITY_NETWORK_BANDWITH_DOWNLOAD:
+        case ET_NETWORK_BANDWITH_DOWNLOAD_SPEED:
             this->formatValueAsMemory(value, formattedValueLabel);
             break;
-        case METER_ENTITY_NETWORK_BANDWITH_UPLOAD:
+        case ET_NETWORK_BANDWITH_UPLOAD_SPEED:
             this->formatValueAsMemory(value, formattedValueLabel);
             break;
         }

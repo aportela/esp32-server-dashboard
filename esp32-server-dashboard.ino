@@ -49,7 +49,7 @@ LGFXMeter *networkUploadBandwithLoadMeter = nullptr;
 #include "src/utils/WifiManager.hpp"
 #include "src/utils/SerialManager.hpp"
 #include "src/utils/MQTT.hpp"
-#include "src/sources/MeterEntity.hpp"
+#include "src/EntityType.hpp"
 #include "src/sources/Source.hpp"
 #include "src/sources/dummy/DummySource.hpp"
 #include "src/sources/mqtt/MQTTTelegrafSource.hpp"
@@ -92,19 +92,19 @@ void setup()
     if (false)
     // if (screen->getCurrentScreen() == APP_SCREEN_RESUME_DATA)
     {
-        cpuLoadMeter = new LGFXMeter(screen, METER_ENTITY_CPU_LOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 0, TFT_BLACK, "CPU LOAD");
+        cpuLoadMeter = new LGFXMeter(screen, ET_CPU_LOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 0, TFT_BLACK, "CPU LOAD");
         cpuLoadMeter->setMin(0);
         cpuLoadMeter->setMax(100);
-        memoryLoadMeter = new LGFXMeter(screen, METER_ENTITY_MEMORY, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 42, TFT_BLACK, "MEMORY");
+        memoryLoadMeter = new LGFXMeter(screen, ET_USED_MEMORY, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 42, TFT_BLACK, "MEMORY");
         memoryLoadMeter->setMin(0);
         memoryLoadMeter->setMax(34231410688); // 32 Gb
-        cpuTemperatureLoadMeter = new LGFXMeter(screen, METER_ENTITY_CPU_TEMPERATURE, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 84, TFT_BLACK, "CPU TEMP");
+        cpuTemperatureLoadMeter = new LGFXMeter(screen, ET_GLOBAL_CPU_TEMPERATURE, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 84, TFT_BLACK, "CPU TEMP");
         cpuTemperatureLoadMeter->setMin(0);
         cpuTemperatureLoadMeter->setMax(100);
-        networkDownloadBandwithLoadMeter = new LGFXMeter(screen, METER_ENTITY_NETWORK_BANDWITH_DOWNLOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 126, TFT_BLACK, "WAN DOWNLOAD");
+        networkDownloadBandwithLoadMeter = new LGFXMeter(screen, ET_NETWORK_BANDWITH_DOWNLOAD_SPEED, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 126, TFT_BLACK, "WAN DOWNLOAD");
         networkDownloadBandwithLoadMeter->setMin(0);
         networkDownloadBandwithLoadMeter->setMax(536870912); // 512 Mb
-        networkUploadBandwithLoadMeter = new LGFXMeter(screen, METER_ENTITY_NETWORK_BANDWITH_UPLOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 168, TFT_BLACK, "WAN UPLOAD");
+        networkUploadBandwithLoadMeter = new LGFXMeter(screen, ET_NETWORK_BANDWITH_UPLOAD_SPEED, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 168, TFT_BLACK, "WAN UPLOAD");
     }
     else
     // else if (screen->getCurrentScreen() == APP_SCREEN_INFO)
