@@ -4,36 +4,35 @@
 #include <stdint.h>
 #include "ISource.hpp"
 #include "EntityData.hpp"
+#include "../EntityType.hpp"
 
 class Source : public ISource
 {
 protected:
-    EntityData *currentCPULoad;
-    EntityData *currentMemory;
-    EntityData *currentCPUTemperature;
-    EntityData *currentNetworkDownloadBandwith;
-    EntityData *currentNetworkUploadBandwith;
+    EntityData *currentGlobalCPULoadData;
+    EntityData *currentUsedMemoryData;
+    EntityData *currentGlobalCPUTemperatureData;
+    EntityData *currentNetworkDownloadUsedBandwithData;
+    EntityData *currentNetworkUploadUsedBandwithData;
 
 public:
     Source();
     ~Source();
-    bool changed(EntitySource entity, uint64_t fromTimestamp) override;
-    uint64_t getPrevious(EntitySource entity);
-    uint64_t getCurrent(EntitySource entity);
-    uint64_t getPreviousCPULoad(void) override;
-    virtual uint64_t getCurrentCPULoad(void) = 0;
-    virtual uint64_t getTotalMemory(void) = 0;
-    uint64_t getPreviousUsedMemory(void) override;
-    virtual uint64_t getUsedMemory(void) = 0;
-    uint64_t getPreviousCPUTemperature(void) override;
-    virtual uint64_t getCurrentCPUTemperature(void) = 0;
-    virtual uint64_t getTotalNetworkDownloadBandwith(void) = 0;
-    uint64_t getPreviousUsedNetworkDownloadBandwith(void) override;
-    virtual uint64_t getUsedNetworkDownloadBandwith(void) = 0;
-    virtual uint64_t getTotalNetworkUploadBandwith(void) = 0;
-    uint64_t getPreviousUsedNetworkUploadBandwith(void) override;
-    virtual uint64_t getUsedNetworkUploadBandwith(void) = 0;
-    void refresh(void);
+    bool changed(EntityType entity, uint64_t fromTimestamp) override;
+    void setMin(EntityType entityType, uint64_t min) override;
+    void setMax(EntityType entityType, uint64_t max) override;
+    uint64_t getMin(EntityType entity);
+    uint64_t getMax(EntityType entity);
+    uint64_t getPreviousValue(EntityType entity);
+    uint64_t getCurrentValue(EntityType entity);
+    uint64_t getCurrentGlobalCPULoad(void);
+    uint64_t getTotalMemory(void);
+    uint64_t getUsedMemory(void);
+    uint64_t getCurrentGlobalCPUTemperature(void);
+    uint64_t getTotalNetworkDownloadBandwidth(void);
+    uint64_t getCurrentNetworkDownloadUsedBandwidth(void);
+    uint64_t getTotalNetworkUploadBandwidth(void);
+    uint64_t getCurrentNetworkUploadUsedBandwidth(void);
 };
 
 #endif

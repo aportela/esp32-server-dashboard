@@ -2,6 +2,8 @@
 #include "../SizesAndOffsets-320x240.hpp"
 #include "../../utils/WifiManager.hpp"
 #include "../../utils/FPS.hpp"
+#include "../../EntityType.hpp"
+#include <stdexcept>
 
 #define METER_GRAPH_WIDTH 195
 #define METER_GRAPH_HEIGHT 30
@@ -12,11 +14,11 @@
 #define DEBUG_SPRITE_HEIGHT 13
 #define DEBUG_SPRITE_BACKGROUND TFT_BLACK
 
-LGFXScreenDashboardResume::LGFXScreenDashboardResume(LovyanGFX *display, ISource *source) : LGFXScreen(display)
+LGFXScreenDashboardResume::LGFXScreenDashboardResume(LovyanGFX *display, Source *source) : LGFXScreen(display)
 {
     if (display != nullptr)
     {
-        this->cpuLoadMeter = new LGFXMeter(this->parentDisplay, ET_CPU_LOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 0, METER_BG_COLOR, "CPU LOAD");
+        this->cpuLoadMeter = new LGFXMeter(this->parentDisplay, ET_GLOBAL_CPU_LOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 0, METER_BG_COLOR, "CPU LOAD");
         this->cpuLoadMeter->setMin(0);
         this->cpuLoadMeter->setMax(100);
         this->memoryLoadMeter = new LGFXMeter(this->parentDisplay, ET_USED_MEMORY, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 42, METER_BG_COLOR, "MEMORY");
@@ -102,27 +104,31 @@ void LGFXScreenDashboardResume::refresh(bool force)
 {
     if (this->parentDisplay != nullptr)
     {
-        uint64_t currentMillis = millis();
+        if (this->currentSource != nullptr)
+        {
+            uint64_t currentMillis = millis();
+            if (force || this->currentSource->changed(ET_GLOBAL_CPU_LOAD, currentMillis))
+            {
+                // cpuLoadMeter->refresh(this->currentSource->getCurrentGlobalCPULoad());
+                cpuLoadMeter->refresh(50);
+            }
 
-        if (force || this->currentSource->changed(CPU_LOAD, currentMillis))
-        {
-            // cpuLoadMeter->refresh(this->currentSource->getCurrentCPULoad());
-        }
-        if (force || this->currentSource->changed(MEMORY, currentMillis))
-        {
-            // this->memoryLoadMeter->refresh(this->currentSource->getUsedMemory());
-        }
-        if (force || this->currentSource->changed(CPU_TEMPERATURE, currentMillis))
-        {
-            // this->cpuTemperatureLoadMeter->refresh(this->currentSource->getCurrentCPUTemperature());
-        }
-        if (force || this->currentSource->changed(NETWORK_BANDWITH_DOWNLOAD, currentMillis))
-        {
-            // this->networkDownloadBandwithLoadMeter->refresh(this->currentSource->getUsedNetworkDownloadBandwith());
-        }
-        if (force || this->currentSource->changed(NETWORK_BANDWITH_UPLOAD, currentMillis))
-        {
-            // this->networkUploadBandwithLoadMeter->refresh(this->currentSource->getUsedNetworkUploadBandwith());
+            if (force || this->currentSource->changed(ET_USED_MEMORY, currentMillis))
+            {
+                // this->memoryLoadMeter->refresh(this->currentSource->getUsedMemory());
+            }
+            if (force || this->currentSource->changed(ET_GLOBAL_CPU_TEMPERATURE, currentMillis))
+            {
+                // this->cpuTemperatureLoadMeter->refresh(this->currentSource->getCurrentGlobalCPUTemperature());
+            }
+            if (force || this->currentSource->changed(ET_NETWORK_BANDWITH_DOWNLOAD_SPEED, currentMillis))
+            {
+                // this->networkDownloadBandwithLoadMeter->refresh(this->currentSource->getCurrentNetworkDownloadUsedBandwidth());
+            }
+            if (force || this->currentSource->changed(ET_NETWORK_BANDWITH_UPLOAD_SPEED, currentMillis))
+            {
+                // this->networkUploadBandwithLoadMeter->refresh(this->currentSource->getCurrentNetworkUploadUsedBandwidth());
+            }
         }
         // TODO: current source == null WARNING on bottom
         this->refreshDebug(0, 210, WifiManager::getSignalStrength());

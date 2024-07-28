@@ -2,142 +2,251 @@
 
 Source::Source()
 {
+    this->currentGlobalCPULoadData = new EntityData();
+    this->currentUsedMemoryData = new EntityData();
+    this->currentGlobalCPUTemperatureData = new EntityData();
+    this->currentNetworkDownloadUsedBandwithData = new EntityData();
+    this->currentNetworkUploadUsedBandwithData = new EntityData();
 }
 
 Source::~Source()
 {
-    if (this->currentCPULoad != nullptr)
+    if (this->currentGlobalCPULoadData != nullptr)
     {
-        delete this->currentCPULoad;
-        this->currentCPULoad = nullptr;
+        delete this->currentGlobalCPULoadData;
+        this->currentGlobalCPULoadData = nullptr;
     }
-    if (this->currentMemory != nullptr)
+    if (this->currentUsedMemoryData != nullptr)
     {
-        delete this->currentMemory;
-        this->currentMemory = nullptr;
+        delete this->currentUsedMemoryData;
+        this->currentUsedMemoryData = nullptr;
     }
-    if (this->currentCPUTemperature != nullptr)
+    if (this->currentGlobalCPUTemperatureData != nullptr)
     {
-        delete this->currentCPUTemperature;
-        this->currentCPUTemperature = nullptr;
+        delete this->currentGlobalCPUTemperatureData;
+        this->currentGlobalCPUTemperatureData = nullptr;
     }
-    if (this->currentNetworkDownloadBandwith != nullptr)
+    if (this->currentNetworkDownloadUsedBandwithData != nullptr)
     {
-        delete this->currentNetworkDownloadBandwith;
-        this->currentNetworkDownloadBandwith = nullptr;
+        delete this->currentNetworkDownloadUsedBandwithData;
+        this->currentNetworkDownloadUsedBandwithData = nullptr;
     }
-    if (this->currentNetworkUploadBandwith != nullptr)
+    if (this->currentNetworkUploadUsedBandwithData != nullptr)
     {
-        delete this->currentNetworkUploadBandwith;
-        this->currentNetworkUploadBandwith = nullptr;
+        delete this->currentNetworkUploadUsedBandwithData;
+        this->currentNetworkUploadUsedBandwithData = nullptr;
     }
 }
 
-bool Source::changed(EntitySource entity, uint64_t fromTimestamp)
+bool Source::changed(EntityType entity, uint64_t fromTimestamp)
 {
     switch (entity)
     {
-    case CPU_LOAD:
-        return (this->currentCPULoad->changed(fromTimestamp));
+    case ET_GLOBAL_CPU_LOAD:
+        return (this->currentGlobalCPULoadData->changed(fromTimestamp));
         break;
-    case MEMORY:
-        return (this->currentMemory->changed(fromTimestamp));
+    case ET_USED_MEMORY:
+        return (this->currentUsedMemoryData->changed(fromTimestamp));
         break;
-    case CPU_TEMPERATURE:
-        return (this->currentCPUTemperature->changed(fromTimestamp));
+    case ET_GLOBAL_CPU_TEMPERATURE:
+        return (this->currentGlobalCPUTemperatureData->changed(fromTimestamp));
         break;
-    case NETWORK_BANDWITH_DOWNLOAD:
-        return (this->currentNetworkDownloadBandwith->changed(fromTimestamp));
+    case ET_NETWORK_BANDWITH_DOWNLOAD_SPEED:
+        return (this->currentNetworkDownloadUsedBandwithData->changed(fromTimestamp));
         break;
-    case NETWORK_BANDWITH_UPLOAD:
-        return (this->currentNetworkUploadBandwith->changed(fromTimestamp));
+    case ET_NETWORK_BANDWITH_UPLOAD_SPEED:
+        return (this->currentNetworkUploadUsedBandwithData->changed(fromTimestamp));
         break;
     default:
-        return (true);
+        return (false);
         break;
     }
 }
 
-uint64_t Source::getPrevious(EntitySource entity)
+void Source::setMin(EntityType entity, uint64_t min)
 {
     switch (entity)
     {
-    case CPU_LOAD:
-        return (this->currentCPULoad->getPrevious());
+    case ET_GLOBAL_CPU_LOAD:
+        return (this->currentGlobalCPULoadData->setMin(min));
         break;
-    case MEMORY:
-        return (this->currentMemory->getPrevious());
+    case ET_USED_MEMORY:
+        return (this->currentUsedMemoryData->setMin(min));
         break;
-    case CPU_TEMPERATURE:
-        return (this->currentCPUTemperature->getPrevious());
+    case ET_GLOBAL_CPU_TEMPERATURE:
+        return (this->currentGlobalCPUTemperatureData->setMin(min));
         break;
-    case NETWORK_BANDWITH_DOWNLOAD:
-        return (this->currentNetworkDownloadBandwith->getPrevious());
+    case ET_NETWORK_BANDWITH_DOWNLOAD_SPEED:
+        return (this->currentNetworkDownloadUsedBandwithData->setMin(min));
         break;
-    case NETWORK_BANDWITH_UPLOAD:
-        return (this->currentNetworkUploadBandwith->getPrevious());
+    case ET_NETWORK_BANDWITH_UPLOAD_SPEED:
+        return (this->currentNetworkUploadUsedBandwithData->setMin(min));
         break;
     default:
-        return (0);
         break;
     }
 }
 
-uint64_t Source::getCurrent(EntitySource entity)
+void Source::setMax(EntityType entity, uint64_t max)
 {
     switch (entity)
     {
-    case CPU_LOAD:
-        return (this->currentCPULoad->getCurrent());
+    case ET_GLOBAL_CPU_LOAD:
+        return (this->currentGlobalCPULoadData->setMax(max));
         break;
-    case MEMORY:
-        return (this->currentMemory->getCurrent());
+    case ET_USED_MEMORY:
+        return (this->currentUsedMemoryData->setMax(max));
         break;
-    case CPU_TEMPERATURE:
-        return (this->currentCPUTemperature->getCurrent());
+    case ET_GLOBAL_CPU_TEMPERATURE:
+        return (this->currentGlobalCPUTemperatureData->setMax(max));
         break;
-    case NETWORK_BANDWITH_DOWNLOAD:
-        return (this->currentNetworkDownloadBandwith->getCurrent());
+    case ET_NETWORK_BANDWITH_DOWNLOAD_SPEED:
+        return (this->currentNetworkDownloadUsedBandwithData->setMax(max));
         break;
-    case NETWORK_BANDWITH_UPLOAD:
-        return (this->currentNetworkUploadBandwith->getCurrent());
+    case ET_NETWORK_BANDWITH_UPLOAD_SPEED:
+        return (this->currentNetworkUploadUsedBandwithData->setMax(max));
         break;
     default:
-        return (0);
         break;
     }
 }
 
-uint64_t Source::getPreviousCPULoad(void)
+uint64_t Source::getMin(EntityType entity)
 {
-    return (this->currentCPULoad->getPrevious());
+    switch (entity)
+    {
+    case ET_GLOBAL_CPU_LOAD:
+        return (this->currentGlobalCPULoadData->getMin());
+        break;
+    case ET_USED_MEMORY:
+        return (this->currentUsedMemoryData->getMin());
+        break;
+    case ET_GLOBAL_CPU_TEMPERATURE:
+        return (this->currentGlobalCPUTemperatureData->getMin());
+        break;
+    case ET_NETWORK_BANDWITH_DOWNLOAD_SPEED:
+        return (this->currentNetworkDownloadUsedBandwithData->getMin());
+        break;
+    case ET_NETWORK_BANDWITH_UPLOAD_SPEED:
+        return (this->currentNetworkUploadUsedBandwithData->getMin());
+        break;
+    default:
+        return (false);
+        break;
+    }
 }
 
-uint64_t Source::getPreviousUsedMemory(void)
+uint64_t Source::getMax(EntityType entity)
 {
-    return (this->currentMemory->getPrevious());
+    switch (entity)
+    {
+    case ET_GLOBAL_CPU_LOAD:
+        return (this->currentGlobalCPULoadData->getMax());
+        break;
+    case ET_USED_MEMORY:
+        return (this->currentUsedMemoryData->getMax());
+        break;
+    case ET_GLOBAL_CPU_TEMPERATURE:
+        return (this->currentGlobalCPUTemperatureData->getMax());
+        break;
+    case ET_NETWORK_BANDWITH_DOWNLOAD_SPEED:
+        return (this->currentNetworkDownloadUsedBandwithData->getMax());
+        break;
+    case ET_NETWORK_BANDWITH_UPLOAD_SPEED:
+        return (this->currentNetworkUploadUsedBandwithData->getMax());
+        break;
+    default:
+        return (false);
+        break;
+    }
 }
 
-uint64_t Source::getPreviousCPUTemperature(void)
+uint64_t Source::getPreviousValue(EntityType entity)
 {
-    return (this->currentCPUTemperature->getPrevious());
+    switch (entity)
+    {
+    case ET_GLOBAL_CPU_LOAD:
+        return (this->currentGlobalCPULoadData->getPreviousValue());
+        break;
+    case ET_USED_MEMORY:
+        return (this->currentUsedMemoryData->getPreviousValue());
+        break;
+    case ET_GLOBAL_CPU_TEMPERATURE:
+        return (this->currentGlobalCPUTemperatureData->getPreviousValue());
+        break;
+    case ET_NETWORK_BANDWITH_DOWNLOAD_SPEED:
+        return (this->currentNetworkDownloadUsedBandwithData->getPreviousValue());
+        break;
+    case ET_NETWORK_BANDWITH_UPLOAD_SPEED:
+        return (this->currentNetworkUploadUsedBandwithData->getPreviousValue());
+        break;
+    default:
+        return (false);
+        break;
+    }
 }
 
-uint64_t Source::getPreviousUsedNetworkDownloadBandwith(void)
+uint64_t Source::getCurrentValue(EntityType entity)
 {
-    return (this->currentNetworkDownloadBandwith->getPrevious());
+    switch (entity)
+    {
+    case ET_GLOBAL_CPU_LOAD:
+        return (this->currentGlobalCPULoadData->getCurrentValue());
+        break;
+    case ET_USED_MEMORY:
+        return (this->currentUsedMemoryData->getCurrentValue());
+        break;
+    case ET_GLOBAL_CPU_TEMPERATURE:
+        return (this->currentGlobalCPUTemperatureData->getCurrentValue());
+        break;
+    case ET_NETWORK_BANDWITH_DOWNLOAD_SPEED:
+        return (this->currentNetworkDownloadUsedBandwithData->getCurrentValue());
+        break;
+    case ET_NETWORK_BANDWITH_UPLOAD_SPEED:
+        return (this->currentNetworkUploadUsedBandwithData->getCurrentValue());
+        break;
+    default:
+        return (false);
+        break;
+    }
 }
 
-uint64_t Source::getPreviousUsedNetworkUploadBandwith(void)
+uint64_t Source::getCurrentGlobalCPULoad(void)
 {
-    return (this->currentNetworkUploadBandwith->getPrevious());
+    return (this->currentGlobalCPULoadData->getCurrentValue());
 }
 
-void Source::refresh(void)
+uint64_t Source::getTotalMemory(void)
 {
-    this->getCurrentCPULoad();
-    this->getUsedMemory();
-    this->getCurrentCPUTemperature();
-    this->getUsedNetworkDownloadBandwith();
-    this->getUsedNetworkUploadBandwith();
+    return (this->currentUsedMemoryData->getMax());
+}
+
+uint64_t Source::getUsedMemory(void)
+{
+    return (this->currentUsedMemoryData->getCurrentValue());
+}
+
+uint64_t Source::getCurrentGlobalCPUTemperature(void)
+{
+    return (this->currentGlobalCPUTemperatureData->getCurrentValue());
+}
+
+uint64_t Source::getTotalNetworkDownloadBandwidth(void)
+{
+    return (this->currentNetworkDownloadUsedBandwithData->getMax());
+}
+
+uint64_t Source::getCurrentNetworkDownloadUsedBandwidth(void)
+{
+    return (this->currentNetworkDownloadUsedBandwithData->getCurrentValue());
+}
+
+uint64_t Source::getTotalNetworkUploadBandwidth(void)
+{
+    return (this->currentNetworkUploadUsedBandwithData->getMax());
+}
+
+uint64_t Source::getCurrentNetworkUploadUsedBandwidth(void)
+{
+    return (this->currentNetworkUploadUsedBandwithData->getCurrentValue());
 }

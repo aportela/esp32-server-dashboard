@@ -60,7 +60,7 @@ LGFX::~LGFX()
     }
 }
 
-void LGFX::setSource(ISource *src)
+void LGFX::setSource(Source *src)
 {
     this->source = src;
 }

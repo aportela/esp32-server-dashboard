@@ -4,7 +4,7 @@
 #include "LGFXScreen.hpp"
 #include "LGFXMeter.hpp"
 
-#include "../../sources/ISource.hpp"
+#include "../../sources/Source.hpp"
 
 class LGFXScreenDashboardResume : public LGFXScreen
 {
@@ -17,12 +17,12 @@ private:
 
     lgfx::LGFX_Sprite *debugSprite = nullptr;
 
-    ISource *currentSource;
+    Source *currentSource;
 
     void refreshDebug(uint16_t xOffset, uint16_t yOffset, int32_t wifiSignalStrength);
 
 public:
-    LGFXScreenDashboardResume(LovyanGFX *display, ISource *source);
+    LGFXScreenDashboardResume(LovyanGFX *display, Source *source);
     ~LGFXScreenDashboardResume();
     void refresh(bool force = false) override;
 };

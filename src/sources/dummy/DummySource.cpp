@@ -1,59 +1,58 @@
 #include "DummySource.hpp"
 #include <Arduino.h>
 
+#define MIN_CPU_LOAD 0
+#define MAX_CPU_LOAD 100
+
+#define MIN_MEMORY 0
+#define MAX_MEMORY 32000000000 // 32 GB
+
+#define MIN_CPU_TEMPERATURE 0
+#define MAX_CPU_TEMPERATURE 100 // Celsious
+
+#define MIN_NETWORK_DOWNLOAD_BANDWITH 0
+#define MAX_NETWORK_DOWNLOAD_BANDWITH 512000000 // Mbytes
+
+#define MIN_NETWORK_UPLOAD_BANDWITH 0
+#define MAX_NETWORK_UPLOAD_BANDWITH 512000000 // Mbytes
+
 DummySource::DummySource(void) : Source()
 {
+    this->currentGlobalCPULoadData->setMin(MIN_CPU_LOAD);
+    this->currentGlobalCPULoadData->setMax(MAX_CPU_LOAD);
+    this->currentGlobalCPULoadData->setCurrentValue(MIN_CPU_LOAD, millis());
 
-    this->currentCPULoad = new EntityData(MIN_CPU_LOAD, MAX_CPU_LOAD);
-    this->currentCPULoad->setCurrent(MIN_CPU_LOAD, millis());
+    this->currentUsedMemoryData->setMin(MIN_MEMORY);
+    this->currentUsedMemoryData->setMax(MAX_MEMORY);
+    this->currentUsedMemoryData->setCurrentValue(MIN_MEMORY, millis());
 
-    this->currentMemory = new EntityData(MIN_MEMORY, MAX_MEMORY);
-    this->currentMemory->setCurrent(MIN_MEMORY, millis());
+    this->currentGlobalCPUTemperatureData->setMin(MIN_CPU_TEMPERATURE);
+    this->currentGlobalCPUTemperatureData->setMax(MAX_CPU_TEMPERATURE);
+    this->currentGlobalCPUTemperatureData->setCurrentValue(MIN_CPU_TEMPERATURE, millis());
 
-    this->currentCPUTemperature = new EntityData(MIN_CPU_TEMPERATURE, MAX_CPU_TEMPERATURE);
-    this->currentCPUTemperature->setCurrent(MIN_CPU_TEMPERATURE, millis());
+    this->currentNetworkDownloadUsedBandwithData->setMin(MIN_NETWORK_DOWNLOAD_BANDWITH);
+    this->currentNetworkDownloadUsedBandwithData->setMax(MAX_NETWORK_DOWNLOAD_BANDWITH);
+    this->currentNetworkDownloadUsedBandwithData->setCurrentValue(MIN_NETWORK_DOWNLOAD_BANDWITH, millis());
 
-    this->currentNetworkDownloadBandwith = new EntityData(MIN_NETWORK_DOWNLOAD_BANDWITH, MAX_NETWORK_DOWNLOAD_BANDWITH);
-    this->currentNetworkDownloadBandwith->setCurrent(MIN_NETWORK_DOWNLOAD_BANDWITH, millis());
-
-    this->currentNetworkUploadBandwith = new EntityData(MIN_NETWORK_UPLOAD_BANDWITH, MAX_NETWORK_UPLOAD_BANDWITH);
-    this->currentNetworkUploadBandwith->setCurrent(MIN_NETWORK_UPLOAD_BANDWITH, millis());
+    this->currentNetworkUploadUsedBandwithData->setMin(MIN_NETWORK_UPLOAD_BANDWITH);
+    this->currentNetworkUploadUsedBandwithData->setMax(MAX_NETWORK_UPLOAD_BANDWITH);
+    this->currentNetworkUploadUsedBandwithData->setCurrentValue(MIN_NETWORK_UPLOAD_BANDWITH, millis());
+    // init random seed
+    randomSeed(analogRead(0) ^ (micros() * esp_random()));
 }
 
 DummySource::~DummySource()
 {
-    if (this->currentCPULoad != nullptr)
-    {
-        delete this->currentCPULoad;
-        this->currentCPULoad = nullptr;
-    }
-    if (this->currentMemory != nullptr)
-    {
-        delete this->currentMemory;
-        this->currentMemory = nullptr;
-    }
-    if (this->currentCPUTemperature != nullptr)
-    {
-        delete this->currentCPUTemperature;
-        this->currentCPUTemperature = nullptr;
-    }
-    if (this->currentNetworkDownloadBandwith != nullptr)
-    {
-        delete this->currentNetworkDownloadBandwith;
-        this->currentNetworkDownloadBandwith = nullptr;
-    }
-    if (this->currentNetworkUploadBandwith != nullptr)
-    {
-        delete this->currentNetworkUploadBandwith;
-        this->currentNetworkUploadBandwith = nullptr;
-    }
 }
 
-bool inc = false;
-
-uint64_t DummySource::getCurrentCPULoad(void)
+void DummySource::refresh(void)
 {
-    uint64_t current = this->currentCPULoad->getCurrent();
+    uint64_t current = 0;
+    uint64_t change = 0;
+    uint64_t currentMillis = millis();
+
+    // cpu load
+    current = this->currentGlobalCPULoadData->getCurrentValue();
     if (random(0, 20) % 2 == 0)
     {
         if (current < MAX_CPU_LOAD)
@@ -65,7 +64,7 @@ uint64_t DummySource::getCurrentCPULoad(void)
     {
         current--;
     }
-    if (inc)
+    if (this->inc)
     {
         if (current < MAX_CPU_LOAD)
         {
@@ -73,7 +72,7 @@ uint64_t DummySource::getCurrentCPULoad(void)
         }
         else
         {
-            inc = !inc;
+            this->inc = !this->inc;
         }
     }
     else
@@ -84,22 +83,14 @@ uint64_t DummySource::getCurrentCPULoad(void)
         }
         else
         {
-            inc = !inc;
+            this->inc = !this->inc;
         }
     }
-    this->currentCPULoad->setCurrent(current, millis());
-    return (current);
-}
+    this->currentGlobalCPULoadData->setCurrentValue(current, currentMillis);
 
-uint64_t DummySource::getTotalMemory(void)
-{
-    return (this->currentMemory->getMax());
-}
-
-uint64_t DummySource::getUsedMemory(void)
-{
-    uint64_t current = this->currentMemory->getCurrent();
-    const uint64_t change = 1000000000;
+    /*
+    current = this->currentUsedMemoryData->getCurrentValue();
+    change = 1000000000;
     if (random(0, 20) % 2 == 0)
     {
         if (current < MAX_MEMORY - change)
@@ -111,13 +102,9 @@ uint64_t DummySource::getUsedMemory(void)
     {
         current -= change;
     }
-    this->currentMemory->setCurrent(current, millis());
-    return (current);
-}
+    this->currentUsedMemoryData->setCurrentValue(current, currentMillis);
 
-uint64_t DummySource::getCurrentCPUTemperature(void)
-{
-    uint64_t current = this->currentCPUTemperature->getCurrent();
+    current = this->currentGlobalCPUTemperatureData->getCurrentValue();
     if (random(0, 20) % 2 == 0)
     {
         if (current < MAX_CPU_TEMPERATURE)
@@ -129,19 +116,10 @@ uint64_t DummySource::getCurrentCPUTemperature(void)
     {
         current--;
     }
-    this->currentCPUTemperature->setCurrent(current, millis());
-    return (current);
-}
+    this->currentGlobalCPUTemperatureData->setCurrentValue(current, currentMillis);
 
-uint64_t DummySource::getTotalNetworkDownloadBandwith(void)
-{
-    return (this->currentNetworkDownloadBandwith->getMax());
-}
-
-uint64_t DummySource::getUsedNetworkDownloadBandwith(void)
-{
-    uint64_t current = this->currentNetworkDownloadBandwith->getCurrent();
-    const uint64_t change = random(10000, 5000000);
+    current = this->currentNetworkDownloadUsedBandwithData->getCurrentValue();
+    change = random(10000, 5000000);
     if (random(0, 20) % 2 == 0)
     {
         if (current < MAX_NETWORK_DOWNLOAD_BANDWITH - change)
@@ -153,19 +131,10 @@ uint64_t DummySource::getUsedNetworkDownloadBandwith(void)
     {
         current -= change;
     }
-    this->currentNetworkDownloadBandwith->setCurrent(current, millis());
-    return (current);
-}
+    this->currentNetworkDownloadUsedBandwithData->setCurrentValue(current, currentMillis);
 
-uint64_t DummySource::getTotalNetworkUploadBandwith(void)
-{
-    return (this->currentNetworkUploadBandwith->getMax());
-}
-
-uint64_t DummySource::getUsedNetworkUploadBandwith(void)
-{
-    uint64_t current = this->currentNetworkUploadBandwith->getCurrent();
-    const uint64_t change = random(500000, 10000000);
+    current = this->currentNetworkUploadUsedBandwithData->getCurrentValue();
+    change = random(500000, 10000000);
     if (random(0, 20) % 2 == 0)
     {
         if (current < MAX_NETWORK_UPLOAD_BANDWITH - change)
@@ -177,6 +146,6 @@ uint64_t DummySource::getUsedNetworkUploadBandwith(void)
     {
         current -= change;
     }
-    this->currentNetworkUploadBandwith->setCurrent(current, millis());
-    return (current);
+    this->currentNetworkUploadUsedBandwithData->setCurrentValue(current, currentMillis);
+    */
 }

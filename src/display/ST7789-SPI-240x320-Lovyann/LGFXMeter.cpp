@@ -79,7 +79,7 @@ void LGFXMeter::displayDefaultValues(void)
     this->parentDisplay->setCursor(this->valueLabelXOffset, this->valueLabelYOffset);
     switch (this->entity)
     {
-    case ET_CPU_LOAD:
+    case ET_GLOBAL_CPU_LOAD:
         this->parentDisplay->print("000%");
         break;
     case ET_USED_MEMORY:
@@ -160,7 +160,7 @@ void LGFXMeter::refresh(uint64_t value)
     uint8_t mapped100 = 0;
     switch (this->entity)
     {
-    case ET_CPU_LOAD:
+    case ET_GLOBAL_CPU_LOAD:
         mapped100 = map(value, this->min, this->max, 0, 100);
         break;
     case ET_USED_MEMORY:
@@ -197,7 +197,7 @@ void LGFXMeter::refresh(uint64_t value)
         char formattedValueLabel[16];
         switch (this->entity)
         {
-        case ET_CPU_LOAD:
+        case ET_GLOBAL_CPU_LOAD:
             this->formatValueAsCPULoad(value, formattedValueLabel);
             break;
         case ET_USED_MEMORY:
