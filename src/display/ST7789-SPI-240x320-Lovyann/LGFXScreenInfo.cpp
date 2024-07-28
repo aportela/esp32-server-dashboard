@@ -246,11 +246,11 @@ void LGFXScreenInfo::refresh(bool force)
 {
     if (this->parentDisplay != nullptr)
     {
+        FPS::loop();
         this->WIFILogoChanged = false;
         this->WIFISignalStrengthChanged = false;
         this->WIFISignalLevelBarsChanged = false;
         this->WIFIDataChanged = false;
-        FPS::loop();
 
         bool isConnected = WifiManager::isConnected();
         if (!force)
