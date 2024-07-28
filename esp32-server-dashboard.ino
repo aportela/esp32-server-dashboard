@@ -54,6 +54,7 @@ LGFXMeter *networkUploadBandwithLoadMeter = nullptr;
 #include "src/sources/dummy/DummySource.hpp"
 #include "src/sources/mqtt/MQTTTelegrafSource.hpp"
 #include "src/Settings/Settings.hpp"
+#include "src/display/ScreenType.hpp"
 
 Source *dummySRC = nullptr;
 MQTTTelegrafSource *mqttTelegrafSRC = nullptr;
@@ -108,7 +109,7 @@ void setup()
     else
     // else if (screen->getCurrentScreen() == APP_SCREEN_INFO)
     {
-        screen->initScreenInfo();
+        screen->initScreen(ST_INFO);
     }
 #endif
 }
@@ -152,7 +153,7 @@ void loop()
     // else if (screen->getCurrentScreen() == APP_SCREEN_INFO)
     else
     {
-        screen->refreshScreenInfo();
+        screen->refresh();
     }
 #endif
 }
