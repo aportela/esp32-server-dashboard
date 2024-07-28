@@ -1,16 +1,14 @@
 #include "LGFXScreenDashboardResume.hpp"
+#include "../SizesAndOffsets-320x240.hpp"
 #include "../../utils/WifiManager.hpp"
 #include "../../utils/FPS.hpp"
 
 #define METER_GRAPH_WIDTH 195
 #define METER_GRAPH_HEIGHT 30
 
-#define SCREEN_WIDTH 320
-#define SCREEN_HEIGHT 240
-
 #define METER_BG_COLOR TFT_BLACK
 
-#define DEBUG_SPRITE_WIDTH SCREEN_WIDTH - 20
+#define DEBUG_SPRITE_WIDTH DISPLAY_WIDTH - 20
 #define DEBUG_SPRITE_HEIGHT 13
 #define DEBUG_SPRITE_BACKGROUND TFT_BLACK
 

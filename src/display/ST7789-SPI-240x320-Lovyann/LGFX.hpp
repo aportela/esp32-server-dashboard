@@ -3,9 +3,7 @@
 
 #include <LovyanGFX.hpp>
 #include <stdint.h>
-#include "LGFXMeter.hpp"
-#include "LGFXScreenInfo.hpp"
-#include "LGFXScreenDashboardResume.hpp"
+#include "LGFXScreen.hpp"
 #include "../ScreenType.hpp"
 #include "../../sources/ISource.hpp"
 

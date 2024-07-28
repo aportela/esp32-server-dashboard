@@ -1,11 +1,13 @@
 // #include <Preferences.h>
 
-#define DISPLAY_DRIVER_LOVYANN_ST7789 // at this time, only LovyAnn ST7789 driver support
+#define DISPLAY_DRIVER_LOVYANN_ST7789 // at this time, only LovyAnn ST7789 (320x240) driver is supported
 
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
 
+#include "src/display/SizesAndOffsets-320x240.hpp"
 #include "src/display/ST7789-SPI-240x320-Lovyann/LGFX.hpp"
-#include "src/display/ST7789-SPI-240x320-Lovyann/LGFXMeter.hpp"
+
+// these are my custom/valid pin values for a ST7789 display on some esp32 models
 
 // #define ESP32_WROOM
 #define ESP32_C3_SUPER_MINI
@@ -30,21 +32,11 @@
 #endif // ESP32_WROOM
 #endif // ESP32_C3_SUPER_MINI
 
-// these are my custom/valid values for a ST7789 240x320 screen
-#define SCREEN_WIDTH 240
-#define SCREEN_HEIGHT 320
-#define SCREEN_ROTATION 3
-
 LGFX *screen = nullptr;
-LGFXMeter *cpuLoadMeter = nullptr;
-LGFXMeter *memoryLoadMeter = nullptr;
-LGFXMeter *cpuTemperatureLoadMeter = nullptr;
-LGFXMeter *networkDownloadBandwithLoadMeter = nullptr;
-LGFXMeter *networkUploadBandwithLoadMeter = nullptr;
 
 #else
 #error NO_DISPLAY_DRIVER
-#endif
+#endif // DISPLAY_DRIVER_LOVYANN_ST7789
 
 #include "src/utils/WifiManager.hpp"
 #include "src/utils/SerialManager.hpp"
@@ -59,7 +51,6 @@ LGFXMeter *networkUploadBandwithLoadMeter = nullptr;
 Source *dummySRC = nullptr;
 MQTTTelegrafSource *mqttTelegrafSRC = nullptr;
 Settings *settings = nullptr;
-WifiManager wifi;
 
 // appScreen currentScreen = APP_SCREEN_INFO;
 
@@ -68,7 +59,6 @@ WifiManager wifi;
 
 void setup()
 {
-
     settings = new Settings();
     SerialManager::init(SerialManager::DEFAULT_SPEED);
     Serial.println("Starting esp32-server-dashboard");
@@ -84,120 +74,18 @@ void setup()
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     dummySRC = new DummySource();
 
-    screen = new LGFX(PIN_SDA, PIN_SCL, PIN_CS, PIN_DC, PIN_RST, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_ROTATION);
+    screen = new LGFX(PIN_SDA, PIN_SCL, PIN_CS, PIN_DC, PIN_RST, DISPLAY_WIDTH, DISPLAY_HEIGHT, DISPLAY_DRIVER_LOVYANN_320x240_ROTATION);
     screen->setSource(dummySRC);
 
-    if (false)
-    // if (screen->getCurrentScreen() == APP_SCREEN_RESUME_DATA)
-    {
-        cpuLoadMeter = new LGFXMeter(screen, ET_CPU_LOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 0, TFT_BLACK, "CPU LOAD");
-        cpuLoadMeter->setMin(0);
-        cpuLoadMeter->setMax(100);
-        memoryLoadMeter = new LGFXMeter(screen, ET_USED_MEMORY, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 42, TFT_BLACK, "MEMORY");
-        memoryLoadMeter->setMin(0);
-        memoryLoadMeter->setMax(34231410688); // 32 Gb
-        cpuTemperatureLoadMeter = new LGFXMeter(screen, ET_GLOBAL_CPU_TEMPERATURE, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 84, TFT_BLACK, "CPU TEMP");
-        cpuTemperatureLoadMeter->setMin(0);
-        cpuTemperatureLoadMeter->setMax(100);
-        networkDownloadBandwithLoadMeter = new LGFXMeter(screen, ET_NETWORK_BANDWITH_DOWNLOAD_SPEED, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 126, TFT_BLACK, "WAN DOWNLOAD");
-        networkDownloadBandwithLoadMeter->setMin(0);
-        networkDownloadBandwithLoadMeter->setMax(536870912); // 512 Mb
-        networkUploadBandwithLoadMeter = new LGFXMeter(screen, ET_NETWORK_BANDWITH_UPLOAD_SPEED, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 168, TFT_BLACK, "WAN UPLOAD");
-    }
-    else
-    // else if (screen->getCurrentScreen() == APP_SCREEN_INFO)
-    {
-        screen->initScreen(ST_DATA_RESUME);
-    }
-#endif
+    screen->initScreen(ST_DATA_RESUME);
+#endif // DISPLAY_DRIVER_LOVYANN_ST7789
 }
 
-bool refreshAlways = false;
-uint64_t currentMillis = millis();
 void loop()
 {
     SerialManager::loop();
     WifiManager::loop();
-
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
-    if (false) // if (screen->getCurrentScreen() == APP_SCREEN_RESUME_DATA)
-    {
-        /*
-        Serial.println("REFRESH");
-        // dummySRC->refresh();
-        if (refreshAlways || mqttTelegrafSRC->changed(CPU_LOAD, currentMillis))
-        {
-            cpuLoadMeter->refresh(mqttTelegrafSRC->getCurrentCPULoad());
-            Serial.println("REFRESH CPU");
-        }
-        if (refreshAlways || mqttTelegrafSRC->changed(MEMORY, currentMillis))
-        {
-            memoryLoadMeter->refresh(mqttTelegrafSRC->getUsedMemory());
-        }
-        if (refreshAlways || mqttTelegrafSRC->changed(CPU_TEMPERATURE, currentMillis))
-        {
-            cpuTemperatureLoadMeter->refresh(mqttTelegrafSRC->getCurrentCPUTemperature());
-        }
-        if (refreshAlways || mqttTelegrafSRC->changed(NETWORK_BANDWITH_DOWNLOAD, currentMillis))
-        {
-            networkDownloadBandwithLoadMeter->refresh(mqttTelegrafSRC->getUsedNetworkDownloadBandwith());
-        }
-        if (refreshAlways || mqttTelegrafSRC->changed(NETWORK_BANDWITH_UPLOAD, currentMillis))
-        {
-            networkUploadBandwithLoadMeter->refresh(mqttTelegrafSRC->getUsedNetworkUploadBandwith());
-        }
-        // screen->refreshDebug(0, 210, WifiManager::getSignalStrength());
-        currentMillis = mqttTelegrafSRC->getCurrent(CPU_LOAD);
-        */
-    }
-    // else if (screen->getCurrentScreen() == APP_SCREEN_INFO)
-    else
-    {
-        screen->refresh();
-    }
-#endif
+    screen->refresh();
+#endif // DISPLAY_DRIVER_LOVYANN_ST7789
 }
-
-/*
-
-appScreen LGFX::getCurrentScreen(void)
-{
-    return (this->currentScreen);
-}
-
-bool LGFX::flip(appScreen scr)
-{
-    if (scr != currentScreen)
-    {
-        this->previousScreen = this->currentScreen;
-        this->currentScreen = APP_SCREEN_NONE; // lock screen while making changes
-        this->fillScreen(TFT_BLACK);
-        // free old screen resources
-        switch (this->previousScreen)
-        {
-        case APP_SCREEN_INFO:
-            delete this->screenInfo;
-            this->screenInfo = nullptr;
-            break;
-        case APP_SCREEN_RESUME_DATA:
-            // TODO
-            break;
-        }
-        // create new screen resources
-        switch (scr)
-        {
-        case APP_SCREEN_INFO:
-            this->initScreenInfo();
-            break;
-        case APP_SCREEN_RESUME_DATA:
-            // TODO
-            break;
-        }
-        this->currentScreen = scr; // set screen (unlock) at end
-    }
-    else
-    {
-        return (false);
-    }
-}
-*/

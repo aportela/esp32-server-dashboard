@@ -2,21 +2,11 @@
 #include "../../sources/dummy/DummySource.hpp"
 #include "src/utils/Format.hpp"
 #include "../../utils/FPS.hpp"
+#include "LGFXScreenInfo.hpp"
+#include "LGFXScreenDashboardResume.hpp"
 #include <WiFi.h>
 
-#define SCREEN_WIDTH 320
-#define SCREEN_HEIGHT 240
-
-#define GRAPH_SPRITE_WIDTH 200
-#define GRAPH_SPRITE_HEIGHT 30
-#define GRAPH_SPRITE_BACKGROUND TFT_BLACK
-
-#define X_AXIS_LENGTH GRAPH_SPRITE_WIDTH + 4
-#define Y_AXIS_LENGTH GRAPH_SPRITE_HEIGHT + 4
-
-#define AXIS_COLOR TFT_WHITE
-
-#define GRAPH_LABEL_FONT_SIZE 1
+#include "../SizesAndOffsets-320x240.hpp"
 
 LGFX::LGFX(uint8_t PIN_SDA, uint8_t PIN_SCL, uint8_t PIN_CS, uint8_t PIN_DC, uint8_t PIN_RST, uint16_t width, uint16_t height, uint8_t rotation)
 {
