@@ -85,8 +85,6 @@ void setup()
     dummySRC = new DummySource();
 
     screen = new LGFX(PIN_SDA, PIN_SCL, PIN_CS, PIN_DC, PIN_RST, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_ROTATION);
-    screen->init();
-    screen->fillScreen(TFT_BLACK);
     // screen->drawRect(0, 0, 320, 240, TFT_WHITE); // this is for screen bounds debugging purposes only
 
     if (false)
