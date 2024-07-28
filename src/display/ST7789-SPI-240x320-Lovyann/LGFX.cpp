@@ -71,10 +71,10 @@ LGFX::LGFX(uint8_t PIN_SDA, uint8_t PIN_SCL, uint8_t PIN_CS, uint8_t PIN_DC, uin
 
 LGFX::~LGFX()
 {
-    if (this->screenInfo != nullptr)
+    if (this->currentScreen != nullptr)
     {
-        delete this->screenInfo;
-        this->screenInfo = nullptr;
+        delete this->currentScreen;
+        this->currentScreen = nullptr;
     }
     if (this->debugSprite != nullptr)
     {
@@ -164,22 +164,35 @@ void LGFX::initScreen(ScreenType screenType)
     switch (screenType)
     {
     case ST_INFO:
-        if (this->screenInfo == nullptr)
+        if (this->currentScreen == nullptr)
         {
-            this->screenInfo = new LGFXScreenInfo(this);
+            this->currentScreen = new LGFXScreenInfo(this);
         }
         this->currentScreenType = screenType;
         break;
     case ST_DATA_RESUME:
-        if (this->screenDashboardResume == nullptr)
+        if (this->currentScreen == nullptr)
         {
-            this->screenDashboardResume = new LGFXScreenDashboardResume(this);
+            this->currentScreen = new LGFXScreenDashboardResume(this);
         }
         this->currentScreenType = screenType;
         break;
     case ST_NONE:
     default:
         break;
+    }
+}
+
+void LGFX::deleteCurrentScreen(void)
+{
+    if (this->currentScreenType != ST_NONE)
+    {
+        if (this->currentScreen != nullptr)
+        {
+            delete this->currentScreen;
+            this->currentScreen = nullptr;
+            this->currentScreenType == ST_NONE;
+        }
     }
 }
 
@@ -187,28 +200,18 @@ void LGFX::flipToScreen(ScreenType screenType)
 {
     if (screenType != this->currentScreenType)
     {
+        this->deleteCurrentScreen();
         this->initScreen(screenType);
     }
 }
 
 void LGFX::refresh(void)
 {
-    switch (this->currentScreenType)
+    if (this->currentScreenType != ST_NONE)
     {
-    case ST_INFO:
-        if (this->screenInfo != nullptr)
+        if (this->currentScreen != nullptr)
         {
-            this->screenInfo->refresh(false);
+            this->currentScreen->refresh(false);
         }
-        break;
-    case ST_DATA_RESUME:
-        if (this->screenDashboardResume != nullptr)
-        {
-            this->screenDashboardResume->refresh(false);
-        }
-        break;
-    case ST_NONE:
-    default:
-        break;
     }
 }

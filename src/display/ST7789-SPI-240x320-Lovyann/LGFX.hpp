@@ -20,8 +20,9 @@ private:
 
     ScreenType currentScreenType = ST_NONE;
 
-    LGFXScreenInfo *screenInfo = nullptr;
-    LGFXScreenDashboardResume *screenDashboardResume = nullptr;
+    LGFXScreen *currentScreen = nullptr;
+
+    void deleteCurrentScreen(void);
 
 public:
     LGFX(uint8_t PIN_SDA, uint8_t PIN_SCL, uint8_t PIN_CS, uint8_t PIN_DC, uint8_t PIN_RST, uint16_t width, uint16_t height, uint8_t rotation);
