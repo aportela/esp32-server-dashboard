@@ -3,16 +3,16 @@
 
 #include <stdint.h>
 #include "ISource.hpp"
-#include "SourceData.hpp"
+#include "EntityData.hpp"
 
 class Source : public ISource
 {
 protected:
-    SourceData *currentCPULoad;
-    SourceData *currentMemory;
-    SourceData *currentCPUTemperature;
-    SourceData *currentNetworkDownloadBandwith;
-    SourceData *currentNetworkUploadBandwith;
+    EntityData *currentCPULoad;
+    EntityData *currentMemory;
+    EntityData *currentCPUTemperature;
+    EntityData *currentNetworkDownloadBandwith;
+    EntityData *currentNetworkUploadBandwith;
 
 public:
     Source();

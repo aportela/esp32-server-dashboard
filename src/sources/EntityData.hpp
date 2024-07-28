@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-class SourceData
+class EntityData
 {
 private:
     uint64_t min;
@@ -13,8 +13,8 @@ private:
     uint64_t currentTimestamp;
 
 public:
-    SourceData(uint64_t min, uint64_t max);
-    ~SourceData();
+    EntityData(uint64_t min, uint64_t max);
+    ~EntityData();
     uint64_t getMin(void);
     uint64_t getMax(void);
     void setCurrent(uint64_t value, uint64_t timestamp);

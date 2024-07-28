@@ -1,6 +1,6 @@
-#include "SourceData.hpp"
+#include "EntityData.hpp"
 
-SourceData::SourceData(uint64_t min, uint64_t max)
+EntityData::EntityData(uint64_t min, uint64_t max)
 {
     // security check to avoid a possible exchange of values ​​that could create a failure
     if (min <= max)
@@ -19,21 +19,21 @@ SourceData::SourceData(uint64_t min, uint64_t max)
     this->currentTimestamp = 0;
 }
 
-SourceData::~SourceData()
+EntityData::~EntityData()
 {
 }
 
-uint64_t SourceData::getMin(void)
+uint64_t EntityData::getMin(void)
 {
     return (this->min);
 }
 
-uint64_t SourceData::getMax(void)
+uint64_t EntityData::getMax(void)
 {
     return (this->max);
 }
 
-void SourceData::setCurrent(uint64_t value, uint64_t timestamp)
+void EntityData::setCurrent(uint64_t value, uint64_t timestamp)
 {
     if (value != this->current)
     {
@@ -54,22 +54,22 @@ void SourceData::setCurrent(uint64_t value, uint64_t timestamp)
     this->currentTimestamp = timestamp;
 }
 
-uint64_t SourceData::getPrevious(void)
+uint64_t EntityData::getPrevious(void)
 {
     return (this->previous);
 }
 
-uint64_t SourceData::getCurrent(void)
+uint64_t EntityData::getCurrent(void)
 {
     return (this->current);
 }
 
-uint64_t SourceData::getCurrentTimestamp(void)
+uint64_t EntityData::getCurrentTimestamp(void)
 {
     return (this->currentTimestamp);
 }
 
-bool SourceData::changed(uint64_t fromTimestamp)
+bool EntityData::changed(uint64_t fromTimestamp)
 {
     return (fromTimestamp != this->currentTimestamp);
 }

@@ -4,19 +4,19 @@
 DummySource::DummySource(void) : Source()
 {
 
-    this->currentCPULoad = new SourceData(MIN_CPU_LOAD, MAX_CPU_LOAD);
+    this->currentCPULoad = new EntityData(MIN_CPU_LOAD, MAX_CPU_LOAD);
     this->currentCPULoad->setCurrent(MIN_CPU_LOAD, millis());
 
-    this->currentMemory = new SourceData(MIN_MEMORY, MAX_MEMORY);
+    this->currentMemory = new EntityData(MIN_MEMORY, MAX_MEMORY);
     this->currentMemory->setCurrent(MIN_MEMORY, millis());
 
-    this->currentCPUTemperature = new SourceData(MIN_CPU_TEMPERATURE, MAX_CPU_TEMPERATURE);
+    this->currentCPUTemperature = new EntityData(MIN_CPU_TEMPERATURE, MAX_CPU_TEMPERATURE);
     this->currentCPUTemperature->setCurrent(MIN_CPU_TEMPERATURE, millis());
 
-    this->currentNetworkDownloadBandwith = new SourceData(MIN_NETWORK_DOWNLOAD_BANDWITH, MAX_NETWORK_DOWNLOAD_BANDWITH);
+    this->currentNetworkDownloadBandwith = new EntityData(MIN_NETWORK_DOWNLOAD_BANDWITH, MAX_NETWORK_DOWNLOAD_BANDWITH);
     this->currentNetworkDownloadBandwith->setCurrent(MIN_NETWORK_DOWNLOAD_BANDWITH, millis());
 
-    this->currentNetworkUploadBandwith = new SourceData(MIN_NETWORK_UPLOAD_BANDWITH, MAX_NETWORK_UPLOAD_BANDWITH);
+    this->currentNetworkUploadBandwith = new EntityData(MIN_NETWORK_UPLOAD_BANDWITH, MAX_NETWORK_UPLOAD_BANDWITH);
     this->currentNetworkUploadBandwith->setCurrent(MIN_NETWORK_UPLOAD_BANDWITH, millis());
 }
 

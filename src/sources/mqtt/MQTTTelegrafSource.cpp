@@ -14,19 +14,19 @@ MQTTTelegrafSource::MQTTTelegrafSource(const char *uri, const char *clientId, co
     MQTT::setCallback(MQTTTelegrafSource::onMessageReceived);
     MQTT::init(clientId, uri, topic);
 
-    this->currentCPULoad = new SourceData(MIN_CPU_LOAD, 100);
+    this->currentCPULoad = new EntityData(MIN_CPU_LOAD, 100);
     this->currentCPULoad->setCurrent(MIN_CPU_LOAD, millis());
 
-    this->currentMemory = new SourceData(MIN_MEMORY, MAX_MEMORY);
+    this->currentMemory = new EntityData(MIN_MEMORY, MAX_MEMORY);
     this->currentMemory->setCurrent(MIN_CPU_LOAD, millis());
 
-    this->currentCPUTemperature = new SourceData(MIN_CPU_TEMPERATURE, MAX_CPU_TEMPERATURE);
+    this->currentCPUTemperature = new EntityData(MIN_CPU_TEMPERATURE, MAX_CPU_TEMPERATURE);
     this->currentCPUTemperature->setCurrent(MIN_CPU_TEMPERATURE, millis());
 
-    this->currentNetworkDownloadBandwith = new SourceData(MIN_NETWORK_DOWNLOAD_BANDWITH, MAX_NETWORK_DOWNLOAD_BANDWITH);
+    this->currentNetworkDownloadBandwith = new EntityData(MIN_NETWORK_DOWNLOAD_BANDWITH, MAX_NETWORK_DOWNLOAD_BANDWITH);
     this->currentNetworkDownloadBandwith->setCurrent(MIN_NETWORK_DOWNLOAD_BANDWITH, millis());
 
-    this->currentNetworkUploadBandwith = new SourceData(MIN_NETWORK_UPLOAD_BANDWITH, MAX_NETWORK_UPLOAD_BANDWITH);
+    this->currentNetworkUploadBandwith = new EntityData(MIN_NETWORK_UPLOAD_BANDWITH, MAX_NETWORK_UPLOAD_BANDWITH);
     this->currentNetworkUploadBandwith->setCurrent(MIN_NETWORK_UPLOAD_BANDWITH, millis());
 
     MQTTTelegrafSource::instance = this;
@@ -71,7 +71,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
     // Serial.println(topic);
     // Serial.print("Message: ");
     // Serial.println(payload);
-    //  TODO: read real timestamps
+    // TODO: read real timestamps
     if (strcmp(topic, "telegraf/HOST_NAME/cpu") == 0 && strncmp(payload, "cpu,cpu=cpu-total", 17) == 0)
     {
 
@@ -88,7 +88,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
             {
                 float cpu_usage = 100.0 - usage_idle; // Porcentaje de uso total de la CPU
                 // Serial.printf("Total CPU Usage: %.2f%%\n", cpu_usage);
-                Serial.printf("Total CPU Usage: %d%%\n", (uint8_t)cpu_usage);
+                // Serial.printf("Total CPU Usage: %d%%\n", (uint8_t)cpu_usage);
                 MQTTTelegrafSource::instance->currentCPULoad->setCurrent((uint8_t)cpu_usage, millis());
             }
             else
@@ -120,7 +120,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
             // TODO SET TOTAL ?
         }
     }
-    else if (strcmp(topic, "telegraf/HOST_NAME/net") == 0 && strncmp(payload, "net,host=HOST_NAME,interface=Ethernet\ 10G\ (SFP+)", 20) == 0)
+    else if (false && strcmp(topic, "telegraf/HOST_NAME/net") == 0 && strncmp(payload, "net,host=HOST_NAME,interface=Ethernet\ 10G\ (SFP+)", 20) == 0)
     {
         if (strstr(payload, "interface=Wi-Fi"))
         {
