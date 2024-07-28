@@ -2,7 +2,6 @@
 #define ESP32_SERVER_DASHBOARD_SOURCE_INTERFACE_H
 
 #include <stdint.h>
-#include "EntityData.hpp"
 
 enum EntitySource
 {
