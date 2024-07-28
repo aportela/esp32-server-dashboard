@@ -40,6 +40,7 @@ Source::~Source()
 
 bool Source::changed(EntityType entity, uint64_t fromTimestamp) const
 {
+
     switch (entity)
     {
     case ET_GLOBAL_CPU_LOAD:
@@ -154,6 +155,31 @@ uint64_t Source::getMax(EntityType entity) const
         break;
     case ET_NETWORK_BANDWITH_UPLOAD_SPEED:
         return (this->currentNetworkUploadUsedBandwithData->getMax());
+        break;
+    default:
+        return (false);
+        break;
+    }
+}
+
+uint64_t Source::getCurrentTimestamp(EntityType entity) const
+{
+    switch (entity)
+    {
+    case ET_GLOBAL_CPU_LOAD:
+        return (this->currentGlobalCPULoadData->getCurrentTimestamp());
+        break;
+    case ET_USED_MEMORY:
+        return (this->currentUsedMemoryData->getCurrentTimestamp());
+        break;
+    case ET_GLOBAL_CPU_TEMPERATURE:
+        return (this->currentGlobalCPUTemperatureData->getCurrentTimestamp());
+        break;
+    case ET_NETWORK_BANDWITH_DOWNLOAD_SPEED:
+        return (this->currentNetworkDownloadUsedBandwithData->getCurrentTimestamp());
+        break;
+    case ET_NETWORK_BANDWITH_UPLOAD_SPEED:
+        return (this->currentNetworkUploadUsedBandwithData->getCurrentTimestamp());
         break;
     default:
         return (false);

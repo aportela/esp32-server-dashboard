@@ -13,6 +13,7 @@ public:
     virtual void setMax(EntityType entityType, uint64_t max) = 0;
     virtual uint64_t getMin(EntityType entityType) const = 0;
     virtual uint64_t getMax(EntityType entityType) const = 0;
+    virtual uint64_t getCurrentTimestamp(EntityType entity) const = 0;
     virtual uint64_t getPreviousValue(EntityType entityType) const = 0;
     virtual uint64_t getCurrentValue(EntityType entityType) const = 0;
 };

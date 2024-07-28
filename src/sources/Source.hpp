@@ -23,6 +23,7 @@ public:
     void setMax(EntityType entityType, uint64_t max) override;
     uint64_t getMin(EntityType entity) const override;
     uint64_t getMax(EntityType entity) const override;
+    uint64_t getCurrentTimestamp(EntityType entity) const override;
     uint64_t getPreviousValue(EntityType entity) const override;
     uint64_t getCurrentValue(EntityType entity) const override;
     uint64_t getCurrentGlobalCPULoad(void) const;
