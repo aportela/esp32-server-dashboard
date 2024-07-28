@@ -61,31 +61,9 @@ LGFX::LGFX(uint8_t PIN_SDA, uint8_t PIN_SCL, uint8_t PIN_CS, uint8_t PIN_DC, uin
 
     setPanel(&_panel_instance);
 
-    this->cpuLoadSprite = new lgfx::LGFX_Sprite(this);
-    this->cpuLoadSprite->createSprite(GRAPH_SPRITE_WIDTH, GRAPH_SPRITE_HEIGHT);
-    this->cpuLoadSprite->fillSprite(GRAPH_SPRITE_BACKGROUND);
-
-    this->memorySprite = new lgfx::LGFX_Sprite(this);
-    this->memorySprite->createSprite(GRAPH_SPRITE_WIDTH, GRAPH_SPRITE_HEIGHT);
-    this->memorySprite->fillSprite(GRAPH_SPRITE_BACKGROUND);
-
-    this->cpuTemperatureSprite = new lgfx::LGFX_Sprite(this);
-    this->cpuTemperatureSprite->createSprite(GRAPH_SPRITE_WIDTH, GRAPH_SPRITE_HEIGHT);
-    this->cpuTemperatureSprite->fillSprite(GRAPH_SPRITE_BACKGROUND);
-
-    this->networkDownloadSprite = new lgfx::LGFX_Sprite(this);
-    this->networkDownloadSprite->createSprite(GRAPH_SPRITE_WIDTH, GRAPH_SPRITE_HEIGHT);
-    this->networkDownloadSprite->fillSprite(GRAPH_SPRITE_BACKGROUND);
-
-    this->networkUploadSprite = new lgfx::LGFX_Sprite(this);
-    this->networkUploadSprite->createSprite(GRAPH_SPRITE_WIDTH, GRAPH_SPRITE_HEIGHT);
-    this->networkUploadSprite->fillSprite(GRAPH_SPRITE_BACKGROUND);
-
     this->debugSprite = new lgfx::LGFX_Sprite(this);
     this->debugSprite->createSprite(DEBUG_SPRITE_WIDTH, DEBUG_SPRITE_HEIGHT);
     this->debugSprite->setFont(&fonts::Font2);
-
-    this->setFont(&fonts::Font2);
 
     this->init();
     this->fillScreen(TFT_BLACK);
@@ -93,16 +71,16 @@ LGFX::LGFX(uint8_t PIN_SDA, uint8_t PIN_SCL, uint8_t PIN_CS, uint8_t PIN_DC, uin
 
 LGFX::~LGFX()
 {
-    delete this->cpuLoadSprite;
-    this->cpuLoadSprite = nullptr;
-    delete this->memorySprite;
-    this->memorySprite = nullptr;
-    delete this->cpuTemperatureSprite;
-    this->cpuTemperatureSprite = nullptr;
-    delete this->networkDownloadSprite;
-    this->networkDownloadSprite = nullptr;
-    delete this->networkUploadSprite;
-    this->networkUploadSprite = nullptr;
+    if (this->screenInfo != nullptr)
+    {
+        delete this->screenInfo;
+        this->screenInfo = nullptr;
+    }
+    if (this->debugSprite != nullptr)
+    {
+        delete this->debugSprite;
+        this->debugSprite = nullptr;
+    }
 }
 
 void LGFX::addMeter(LGFXMeter *meter)
@@ -181,13 +159,47 @@ void LGFX::refreshDebug(uint16_t xOffset, uint16_t yOffset, int32_t wifiSignalSt
     this->debugSprite->pushSprite(xOffset, yOffset);
 }
 
-void LGFX::initScreenInfo(void)
+void LGFX::initScreen(appScreen scr)
 {
-    this->screenInfo = new LGFXScreenInfo(this);
+    switch (scr)
+    {
+    case APP_SCREEN_INFO:
+        if (this->screenInfo == nullptr)
+        {
+            this->screenInfo = new LGFXScreenInfo(this);
+        }
+        this->currentScreen = scr;
+        break;
+    case APP_SCREEN_RESUME_DATA:
+        break;
+    case APP_SCREEN_NONE:
+    default:
+        break;
+    }
 }
 
-void LGFX::refreshScreenInfo()
+void LGFX::flipToScreen(appScreen scr)
 {
-    FPS::loop();
-    this->screenInfo->refresh(false);
+    if (scr != this->currentScreen)
+    {
+        this->initScreen(scr);
+    }
+}
+
+void LGFX::refresh(void)
+{
+    switch (this->currentScreen)
+    {
+    case APP_SCREEN_INFO:
+        if (this->screenInfo != nullptr)
+        {
+            this->screenInfo->refresh(false);
+        }
+        break;
+    case APP_SCREEN_RESUME_DATA:
+        break;
+    case APP_SCREEN_NONE:
+    default:
+        break;
+    }
 }
