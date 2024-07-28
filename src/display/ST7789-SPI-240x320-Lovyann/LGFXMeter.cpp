@@ -1,7 +1,8 @@
 #include "LGFXMeter.hpp"
 
 #define AXIS_COLOR_ TFT_WHITE
-#define GRAPH_LABEL__FONT_SIZE 1
+#define GRAPH_LABEL_FONT &fonts::Font2
+#define GRAPH_LABEL_FONT_SIZE 1
 
 #define MAIN_LABEL_COLOR TFT_WHITE
 #define MAIN_LABEL_BACKGROUND TFT_BLACK
@@ -52,9 +53,10 @@ LGFXMeter::LGFXMeter(LovyanGFX *display, EntityType entity, int32_t width, int32
 
     this->valueLabelXOffset = xOffset + width + 12;
     this->valueLabelYOffset = yOffset + 19;
-    this->parentDisplay->setCursor(this->valueLabelXOffset, yOffset);
-    this->parentDisplay->setTextSize(GRAPH_LABEL__FONT_SIZE);
+    this->parentDisplay->setFont(GRAPH_LABEL_FONT);
+    this->parentDisplay->setTextSize(GRAPH_LABEL_FONT_SIZE);
     this->parentDisplay->setTextColor(MAIN_LABEL_COLOR, MAIN_LABEL_BACKGROUND);
+    this->parentDisplay->setCursor(this->valueLabelXOffset, yOffset);
     this->parentDisplay->print(label);
 
     this->displayDefaultValues();
@@ -71,9 +73,10 @@ LGFXMeter::~LGFXMeter()
 
 void LGFXMeter::displayDefaultValues(void)
 {
-    this->parentDisplay->setCursor(this->valueLabelXOffset, this->valueLabelYOffset);
-    this->parentDisplay->setTextSize(GRAPH_LABEL__FONT_SIZE);
+    this->parentDisplay->setFont(GRAPH_LABEL_FONT);
+    this->parentDisplay->setTextSize(GRAPH_LABEL_FONT_SIZE);
     this->parentDisplay->setTextColor(MAIN_LABEL_COLOR, MAIN_LABEL_BACKGROUND);
+    this->parentDisplay->setCursor(this->valueLabelXOffset, this->valueLabelYOffset);
     switch (this->entity)
     {
     case ET_CPU_LOAD:
@@ -187,9 +190,10 @@ void LGFXMeter::refresh(uint64_t value)
     // label value update
     if (value != this->previousValue)
     {
-        this->parentDisplay->setCursor(this->valueLabelXOffset, this->valueLabelYOffset);
-        this->parentDisplay->setTextSize(GRAPH_LABEL__FONT_SIZE);
+        this->parentDisplay->setFont(GRAPH_LABEL_FONT);
+        this->parentDisplay->setTextSize(GRAPH_LABEL_FONT_SIZE);
         this->parentDisplay->setTextColor(color, MAIN_LABEL_BACKGROUND);
+        this->parentDisplay->setCursor(this->valueLabelXOffset, this->valueLabelYOffset);
         char formattedValueLabel[16];
         switch (this->entity)
         {

@@ -4,7 +4,7 @@
 #include "LGFXScreen.hpp"
 #include "LGFXMeter.hpp"
 
-#include "../../utils/WifiManager.hpp"
+#include "../../sources/ISource.hpp"
 
 class LGFXScreenDashboardResume : public LGFXScreen
 {
@@ -15,8 +15,14 @@ private:
     LGFXMeter *networkDownloadBandwithLoadMeter = nullptr;
     LGFXMeter *networkUploadBandwithLoadMeter = nullptr;
 
+    lgfx::LGFX_Sprite *debugSprite = nullptr;
+
+    ISource *currentSource;
+
+    void refreshDebug(uint16_t xOffset, uint16_t yOffset, int32_t wifiSignalStrength);
+
 public:
-    LGFXScreenDashboardResume(LovyanGFX *display);
+    LGFXScreenDashboardResume(LovyanGFX *display, ISource *source);
     ~LGFXScreenDashboardResume();
     void refresh(bool force = false) override;
 };

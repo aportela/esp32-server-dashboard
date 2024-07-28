@@ -85,7 +85,7 @@ void setup()
     dummySRC = new DummySource();
 
     screen = new LGFX(PIN_SDA, PIN_SCL, PIN_CS, PIN_DC, PIN_RST, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_ROTATION);
-    // screen->drawRect(0, 0, 320, 240, TFT_WHITE); // this is for screen bounds debugging purposes only
+    screen->setSource(dummySRC);
 
     if (false)
     // if (screen->getCurrentScreen() == APP_SCREEN_RESUME_DATA)
@@ -107,7 +107,7 @@ void setup()
     else
     // else if (screen->getCurrentScreen() == APP_SCREEN_INFO)
     {
-        screen->initScreen(ST_INFO);
+        screen->initScreen(ST_DATA_RESUME);
     }
 #endif
 }
@@ -122,6 +122,7 @@ void loop()
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     if (false) // if (screen->getCurrentScreen() == APP_SCREEN_RESUME_DATA)
     {
+        /*
         Serial.println("REFRESH");
         // dummySRC->refresh();
         if (refreshAlways || mqttTelegrafSRC->changed(CPU_LOAD, currentMillis))
@@ -145,8 +146,9 @@ void loop()
         {
             networkUploadBandwithLoadMeter->refresh(mqttTelegrafSRC->getUsedNetworkUploadBandwith());
         }
-        screen->refreshDebug(0, 210, WifiManager::getSignalStrength());
+        // screen->refreshDebug(0, 210, WifiManager::getSignalStrength());
         currentMillis = mqttTelegrafSRC->getCurrent(CPU_LOAD);
+        */
     }
     // else if (screen->getCurrentScreen() == APP_SCREEN_INFO)
     else
