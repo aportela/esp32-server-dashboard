@@ -110,19 +110,19 @@ void LGFXScreenDashboardResume::refresh(bool force)
         }
         if (force || this->currentSource->changed(MEMORY, currentMillis))
         {
-            // memoryLoadMeter->refresh(this->currentSource->getUsedMemory());
+            // this->memoryLoadMeter->refresh(this->currentSource->getUsedMemory());
         }
         if (force || this->currentSource->changed(CPU_TEMPERATURE, currentMillis))
         {
-            // cpuTemperatureLoadMeter->refresh(this->currentSource->getCurrentCPUTemperature());
+            // this->cpuTemperatureLoadMeter->refresh(this->currentSource->getCurrentCPUTemperature());
         }
         if (force || this->currentSource->changed(NETWORK_BANDWITH_DOWNLOAD, currentMillis))
         {
-            // networkDownloadBandwithLoadMeter->refresh(this->currentSource->getUsedNetworkDownloadBandwith());
+            // this->networkDownloadBandwithLoadMeter->refresh(this->currentSource->getUsedNetworkDownloadBandwith());
         }
         if (force || this->currentSource->changed(NETWORK_BANDWITH_UPLOAD, currentMillis))
         {
-            // networkUploadBandwithLoadMeter->refresh(this->currentSource->getUsedNetworkUploadBandwith());
+            // this->networkUploadBandwithLoadMeter->refresh(this->currentSource->getUsedNetworkUploadBandwith());
         }
         // TODO: current source == null WARNING on bottom
         this->refreshDebug(0, 210, WifiManager::getSignalStrength());
