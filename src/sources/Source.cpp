@@ -38,7 +38,7 @@ Source::~Source()
     }
 }
 
-bool Source::changed(EntityType entity, uint64_t fromTimestamp)
+bool Source::changed(EntityType entity, uint64_t fromTimestamp) const
 {
     switch (entity)
     {
@@ -111,7 +111,7 @@ void Source::setMax(EntityType entity, uint64_t max)
     }
 }
 
-uint64_t Source::getMin(EntityType entity)
+uint64_t Source::getMin(EntityType entity) const
 {
     switch (entity)
     {
@@ -136,7 +136,7 @@ uint64_t Source::getMin(EntityType entity)
     }
 }
 
-uint64_t Source::getMax(EntityType entity)
+uint64_t Source::getMax(EntityType entity) const
 {
     switch (entity)
     {
@@ -161,7 +161,7 @@ uint64_t Source::getMax(EntityType entity)
     }
 }
 
-uint64_t Source::getPreviousValue(EntityType entity)
+uint64_t Source::getPreviousValue(EntityType entity) const
 {
     switch (entity)
     {
@@ -186,7 +186,7 @@ uint64_t Source::getPreviousValue(EntityType entity)
     }
 }
 
-uint64_t Source::getCurrentValue(EntityType entity)
+uint64_t Source::getCurrentValue(EntityType entity) const
 {
     switch (entity)
     {
@@ -211,42 +211,42 @@ uint64_t Source::getCurrentValue(EntityType entity)
     }
 }
 
-uint64_t Source::getCurrentGlobalCPULoad(void)
+uint64_t Source::getCurrentGlobalCPULoad(void) const
 {
     return (this->currentGlobalCPULoadData->getCurrentValue());
 }
 
-uint64_t Source::getTotalMemory(void)
+uint64_t Source::getTotalMemory(void) const
 {
     return (this->currentUsedMemoryData->getMax());
 }
 
-uint64_t Source::getUsedMemory(void)
+uint64_t Source::getUsedMemory(void) const
 {
     return (this->currentUsedMemoryData->getCurrentValue());
 }
 
-uint64_t Source::getCurrentGlobalCPUTemperature(void)
+uint64_t Source::getCurrentGlobalCPUTemperature(void) const
 {
     return (this->currentGlobalCPUTemperatureData->getCurrentValue());
 }
 
-uint64_t Source::getTotalNetworkDownloadBandwidth(void)
+uint64_t Source::getTotalNetworkDownloadBandwidth(void) const
 {
     return (this->currentNetworkDownloadUsedBandwithData->getMax());
 }
 
-uint64_t Source::getCurrentNetworkDownloadUsedBandwidth(void)
+uint64_t Source::getCurrentNetworkDownloadUsedBandwidth(void) const
 {
     return (this->currentNetworkDownloadUsedBandwithData->getCurrentValue());
 }
 
-uint64_t Source::getTotalNetworkUploadBandwidth(void)
+uint64_t Source::getTotalNetworkUploadBandwidth(void) const
 {
     return (this->currentNetworkUploadUsedBandwithData->getMax());
 }
 
-uint64_t Source::getCurrentNetworkUploadUsedBandwidth(void)
+uint64_t Source::getCurrentNetworkUploadUsedBandwidth(void) const
 {
     return (this->currentNetworkUploadUsedBandwithData->getCurrentValue());
 }
