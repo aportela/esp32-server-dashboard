@@ -171,6 +171,11 @@ void LGFX::initScreen(ScreenType screenType)
         this->currentScreenType = screenType;
         break;
     case ST_DATA_RESUME:
+        if (this->screenDashboardResume == nullptr)
+        {
+            this->screenDashboardResume = new LGFXScreenDashboardResume(this);
+        }
+        this->currentScreenType = screenType;
         break;
     case ST_NONE:
     default:
@@ -197,6 +202,10 @@ void LGFX::refresh(void)
         }
         break;
     case ST_DATA_RESUME:
+        if (this->screenDashboardResume != nullptr)
+        {
+            this->screenDashboardResume->refresh(false);
+        }
         break;
     case ST_NONE:
     default:

@@ -5,9 +5,9 @@
 #include <stdint.h>
 #include "LGFXMeter.hpp"
 #include "LGFXScreenInfo.hpp"
+#include "LGFXScreenDashboardResume.hpp"
 #include "../ScreenType.hpp"
 #include "../../sources/ISource.hpp"
-#include "../../sources/SourceData.hpp"
 
 class LGFX : public lgfx::LGFX_Device
 {
@@ -15,10 +15,13 @@ private:
     lgfx::Panel_ST7789 _panel_instance;
     lgfx::Bus_SPI _bus_instance;
     lgfx::LGFX_Sprite *debugSprite = nullptr;
-    LGFXScreenInfo *screenInfo = nullptr;
+
     ISource *source;
 
     ScreenType currentScreenType = ST_NONE;
+
+    LGFXScreenInfo *screenInfo = nullptr;
+    LGFXScreenDashboardResume *screenDashboardResume = nullptr;
 
 public:
     LGFX(uint8_t PIN_SDA, uint8_t PIN_SCL, uint8_t PIN_CS, uint8_t PIN_DC, uint8_t PIN_RST, uint16_t width, uint16_t height, uint8_t rotation);
