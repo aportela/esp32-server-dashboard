@@ -159,46 +159,46 @@ void LGFX::refreshDebug(uint16_t xOffset, uint16_t yOffset, int32_t wifiSignalSt
     this->debugSprite->pushSprite(xOffset, yOffset);
 }
 
-void LGFX::initScreen(appScreen scr)
+void LGFX::initScreen(ScreenType screenType)
 {
-    switch (scr)
+    switch (screenType)
     {
-    case APP_SCREEN_INFO:
+    case ST_INFO:
         if (this->screenInfo == nullptr)
         {
             this->screenInfo = new LGFXScreenInfo(this);
         }
-        this->currentScreen = scr;
+        this->currentScreenType = screenType;
         break;
-    case APP_SCREEN_RESUME_DATA:
+    case ST_DATA_RESUME:
         break;
-    case APP_SCREEN_NONE:
+    case ST_NONE:
     default:
         break;
     }
 }
 
-void LGFX::flipToScreen(appScreen scr)
+void LGFX::flipToScreen(ScreenType screenType)
 {
-    if (scr != this->currentScreen)
+    if (screenType != this->currentScreenType)
     {
-        this->initScreen(scr);
+        this->initScreen(screenType);
     }
 }
 
 void LGFX::refresh(void)
 {
-    switch (this->currentScreen)
+    switch (this->currentScreenType)
     {
-    case APP_SCREEN_INFO:
+    case ST_INFO:
         if (this->screenInfo != nullptr)
         {
             this->screenInfo->refresh(false);
         }
         break;
-    case APP_SCREEN_RESUME_DATA:
+    case ST_DATA_RESUME:
         break;
-    case APP_SCREEN_NONE:
+    case ST_NONE:
     default:
         break;
     }

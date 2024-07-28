@@ -1,0 +1,11 @@
+#ifndef ESP32_SERVER_DASHBOARD_SCREEN_TYPES_H
+#define ESP32_SERVER_DASHBOARD_SCREEN_TYPES_H
+
+enum ScreenType
+{
+    ST_NONE,
+    ST_INFO,
+    ST_DATA_RESUME
+};
+
+#endif

@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include "LGFXMeter.hpp"
 #include "LGFXScreenInfo.hpp"
+#include "../ScreenType.hpp"
 #include "../../sources/ISource.hpp"
 #include "../../sources/SourceData.hpp"
 
@@ -17,7 +18,7 @@ private:
     LGFXScreenInfo *screenInfo = nullptr;
     ISource *source;
 
-    uint8_t currentScreen = APP_SCREEN_NONE;
+    ScreenType currentScreenType = ST_NONE;
 
 public:
     LGFX(uint8_t PIN_SDA, uint8_t PIN_SCL, uint8_t PIN_CS, uint8_t PIN_DC, uint8_t PIN_RST, uint16_t width, uint16_t height, uint8_t rotation);
@@ -26,8 +27,8 @@ public:
     void setSource(ISource *src);
     void refreshDebug(uint16_t xOffset, uint16_t yOffset, int32_t wifiSignalStrength);
 
-    void initScreen(appScreen scr);
-    void flipToScreen(appScreen scr);
+    void initScreen(ScreenType scr);
+    void flipToScreen(ScreenType scr);
     void refresh(void);
     void refreshScreenInfo(void);
 };
