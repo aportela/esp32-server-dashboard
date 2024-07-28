@@ -40,26 +40,18 @@ LGFX *screen = nullptr;
 
 #include "src/utils/WifiManager.hpp"
 #include "src/utils/SerialManager.hpp"
-#include "src/utils/MQTT.hpp"
-#include "src/EntityType.hpp"
-#include "src/sources/Source.hpp"
 #include "src/sources/dummy/DummySource.hpp"
 #include "src/sources/mqtt/MQTTTelegrafSource.hpp"
-#include "src/Settings/Settings.hpp"
+// #include "src/Settings/Settings.hpp"
 #include "src/display/ScreenType.hpp"
 
 Source *dummySRC = nullptr;
 MQTTTelegrafSource *mqttTelegrafSRC = nullptr;
-Settings *settings = nullptr;
-
-// appScreen currentScreen = APP_SCREEN_INFO;
-
-#define METER_GRAPH_WIDTH 195
-#define METER_GRAPH_HEIGHT 30
+// Settings *settings = nullptr;
 
 void setup()
 {
-    settings = new Settings();
+    // settings = new Settings();
     SerialManager::init(SerialManager::DEFAULT_SPEED);
     Serial.println("Starting esp32-server-dashboard");
     // TODO: default info screen if no valid settings found
@@ -68,11 +60,11 @@ void setup()
     WifiManager::connect(true);
     char mac[32] = {'\0'};
     WifiManager::getMacAddress(mac, sizeof(mac));
+    dummySRC = new DummySource();
     mqttTelegrafSRC = new MQTTTelegrafSource("mqtt://192.168.24.5", mac, "telegraf/HOST_NAME/#");
     // mqttTelegrafSRC->setCPUTopic("telegraf/HOST_NAME/cpu");
     // mqttTelegrafSRC->setMemoryTopic("telegraf/HOST_NAME/mem");
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
-    dummySRC = new DummySource();
 
     screen = new LGFX(PIN_SDA, PIN_SCL, PIN_CS, PIN_DC, PIN_RST, DISPLAY_WIDTH, DISPLAY_HEIGHT, DISPLAY_DRIVER_LOVYANN_320x240_ROTATION);
     screen->setSource(dummySRC);
