@@ -107,19 +107,19 @@ void Settings::setWIFIPassword(const char *password)
 
 void Settings::getMQTTTelegrafURI(char *uri, size_t count)
 {
+    this->getValue(KEY_MQTT_TELEGRAF_URI, uri, count);
+}
+
+void Settings::setMQTTTelegrafURI(const char *uri)
+{
     if (strlen(uri) > 0)
     {
-        this->getValue(KEY_MQTT_TELEGRAF_URI, uri, count);
+        this->setValue(KEY_MQTT_TELEGRAF_URI, uri);
     }
     else
     {
         this->deleteKey(KEY_MQTT_TELEGRAF_URI);
     }
-}
-
-void Settings::setMQTTTelegrafURI(const char *uri)
-{
-    this->setValue(KEY_MQTT_TELEGRAF_URI, uri);
 }
 
 void Settings::getMQTTTelegrafGlobalTopic(char *topic, size_t count)
