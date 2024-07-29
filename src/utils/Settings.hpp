@@ -17,7 +17,6 @@ public:
     Settings(void);
     ~Settings();
     void clear(void);
-    void zap(void);
 
     void getWIFISSID(char *ssid, size_t count);
     void setWIFISSID(const char *ssid);
