@@ -22,6 +22,12 @@ public:
     void setWIFISSID(const char *ssid);
     void getWIFIPassword(char *password, size_t count);
     void setWIFIPassword(const char *password);
+
+    void getMQTTTelegrafURI(char *uri, size_t count);
+    void setMQTTTelegrafURI(const char *uri);
+
+    void getMQTTTelegrafGlobalTopic(char *topic, size_t count);
+    void setMQTTTelegrafGlobalTopic(const char *topic);
 };
 
 #endif

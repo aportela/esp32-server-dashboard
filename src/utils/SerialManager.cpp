@@ -69,6 +69,32 @@ void SerialManager::loop(void)
                 Serial.println("WIFI Password saved. Reboot REQUIRED");
             }
         }
+        else if (rx.startsWith("SET_MQTT_TELEGRAF_URI ") && rx.length() > 22)
+        {
+            String uri = rx.substring(22);
+            if (uri.length() > 0)
+            {
+                Serial.println("Received new MQTT Telegraf URI");
+                Serial.println(uri);
+                Settings *s = new Settings();
+                s->setMQTTTelegrafURI(uri.c_str());
+                delete (s);
+                Serial.println("MQTT Telegraf URI saved. Reboot REQUIRED");
+            }
+        }
+        else if (rx.startsWith("SET_MQTT_TELEGRAF_GLOBAL_TOPIC ") && rx.length() > 31)
+        {
+            String topic = rx.substring(31);
+            if (topic.length() > 0)
+            {
+                Serial.println("Received new MQTT Telegraf global topic");
+                Serial.println(topic);
+                Settings *s = new Settings();
+                s->setWIFIPassword(topic.c_str());
+                delete (s);
+                Serial.println("MQTT Telegraf global topic saved. Reboot REQUIRED");
+            }
+        }
         else
         {
             Serial.printf("Unknown cmd %s\n", rx.c_str());

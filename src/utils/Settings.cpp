@@ -5,6 +5,8 @@
 
 #define KEY_WIFI_SSID "WIFI_SSID"
 #define KEY_WIFI_PASSWORD "WIFI_PASSWORD"
+#define KEY_MQTT_TELEGRAF_URI "MQTT_TELEGRAF_URI"
+#define KEY_MQTT_TELEGRAF_GLOBAL_TOPIC "MQTT_TELEGRAF_GLOBAL_TOPIC"
 
 Settings::Settings(void)
 {
@@ -77,4 +79,24 @@ void Settings::getWIFIPassword(char *password, size_t count)
 void Settings::setWIFIPassword(const char *password)
 {
     this->setValue(KEY_WIFI_PASSWORD, password);
+}
+
+void Settings::getMQTTTelegrafURI(char *uri, size_t count)
+{
+    this->getValue(KEY_MQTT_TELEGRAF_URI, uri, count);
+}
+
+void Settings::setMQTTTelegrafURI(const char *uri)
+{
+    this->setValue(KEY_MQTT_TELEGRAF_URI, uri);
+}
+
+void Settings::getMQTTTelegrafGlobalTopic(char *topic, size_t count)
+{
+    this->getValue(KEY_MQTT_TELEGRAF_GLOBAL_TOPIC, topic, count);
+}
+
+void Settings::setMQTTTelegrafGlobalTopic(const char *topic)
+{
+    this->setValue(KEY_MQTT_TELEGRAF_GLOBAL_TOPIC, topic);
 }
