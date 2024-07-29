@@ -3,6 +3,9 @@
 // WARNING: namespaces with length > 15 WILL NOT OPEN NVS CORRECTLY
 #define NAMESPACE "esp32_srv_dashb"
 
+#define KEY_WIFI_SSID "WIFI_SSID"
+#define KEY_WIFI_PASSWORD "WIFI_PASSWORD"
+
 Settings::Settings(void)
 {
     this->preferences = new Preferences();
@@ -58,20 +61,20 @@ void Settings::clear(void)
 
 void Settings::getWIFISSID(char *ssid, size_t count)
 {
-    this->getValue("WIFI_SSID", ssid, count);
+    this->getValue(KEY_WIFI_SSID, ssid, count);
 }
 
 void Settings::setWIFISSID(const char *ssid)
 {
-    this->setValue("WIFI_SSID", ssid);
+    this->setValue(KEY_WIFI_SSID, ssid);
 }
 
 void Settings::getWIFIPassword(char *password, size_t count)
 {
-    this->getValue("WIFI_PASSWORD", password, count);
+    this->getValue(KEY_WIFI_PASSWORD, password, count);
 }
 
 void Settings::setWIFIPassword(const char *password)
 {
-    this->setValue("WIFI_PASSWORD", password);
+    this->setValue(KEY_WIFI_PASSWORD, password);
 }
