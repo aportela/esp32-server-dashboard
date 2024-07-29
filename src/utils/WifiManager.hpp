@@ -2,7 +2,6 @@
 #define ESP32_SERVER_DASHBOARD_WIFI_MANAGER_H
 
 #include <WiFi.h>
-#include <WiFi-Settings.h>
 
 #include <cstdint>
 #include <cstdio>
