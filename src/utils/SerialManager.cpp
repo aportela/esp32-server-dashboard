@@ -1,7 +1,7 @@
 #include "SerialManager.hpp"
 #include "WifiManager.hpp"
 #include <Arduino.h>
-#include "../settings/Settings.hpp"
+#include "Settings.hpp"
 
 // Settings SerialManager::settings = nullptr;
 
@@ -28,7 +28,10 @@ void SerialManager::loop(void)
         else if (rx == "CLEAR_SETTINGS")
         {
             Serial.println("Reseting settings");
-            // settings->clear();
+            Settings *s = new Settings();
+            s->clear();
+            delete (s);
+            Serial.println("Settings cleared. Reboot REQUIRED");
         }
         else if (rx == "CONNECT_WIFI")
         {
@@ -47,7 +50,10 @@ void SerialManager::loop(void)
             {
                 Serial.println("Received new SSID");
                 Serial.println(rxSSID);
-                // SerialManager::settings->setWIFISSID(rxSSID.c_str());
+                Settings *s = new Settings();
+                s->setWIFISSID(rxSSID.c_str());
+                delete (s);
+                Serial.println("WIFI SSID saved. Reboot REQUIRED");
             }
         }
         else if (rx.startsWith("SET_WIFI_PASSWORD ") && rx.length() > 18)
@@ -59,6 +65,8 @@ void SerialManager::loop(void)
                 Serial.println(rxPassword);
                 Settings *s = new Settings();
                 s->setWIFIPassword(rxPassword.c_str());
+                delete (s);
+                Serial.println("WIFI Password saved. Reboot REQUIRED");
             }
         }
         else
