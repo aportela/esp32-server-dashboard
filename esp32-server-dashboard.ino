@@ -9,8 +9,8 @@
 
 // these are my custom/valid pin values for a ST7789 display on some esp32 models
 
-#define ESP32_WROOM
-// #define ESP32_C3_SUPER_MINI
+// #define ESP32_WROOM
+#define ESP32_C3_SUPER_MINI
 
 #ifdef ESP32_C3_SUPER_MINI
 // ESP32 C3 SUPER MINI
