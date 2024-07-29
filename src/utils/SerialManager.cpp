@@ -3,6 +3,11 @@
 #include <Arduino.h>
 #include "Settings.hpp"
 
+#define CMD_SET_WIFI_SSID "SET_WIFI_SSID "
+#define CMD_SET_WIFI_PASSWORD "SET_WIFI_PASSWORD "
+#define CMD_SET_MQTT_TELEGRAF_URI "SET_MQTT_TELEGRAF_URI "
+#define CMD_SET_MQTT_TELEGRAF_GLOBAL_TOPIC "SET_MQTT_TELEGRAF_GLOBAL_TOPIC "
+
 // Settings SerialManager::settings = nullptr;
 
 void SerialManager::init(uint32_t speed)
@@ -33,6 +38,28 @@ void SerialManager::loop(void)
             delete (s);
             Serial.println("Settings cleared. Reboot REQUIRED");
         }
+        else if (rx == "EXPORT_SETTINGS")
+        {
+            Serial.println("Exporting settings:");
+            Serial.println("# EXPORTED SETTINGS BEGIN");
+            Serial.println("CLEAR_SETTINGS");
+            Settings *s = new Settings();
+            char str[512] = {'\0'};
+            s->getWIFISSID(str, sizeof(str));
+            Serial.print(CMD_SET_WIFI_SSID);
+            Serial.println(str);
+            s->getWIFIPassword(str, sizeof(str));
+            Serial.print(CMD_SET_WIFI_PASSWORD);
+            Serial.println(str);
+            s->getMQTTTelegrafURI(str, sizeof(str));
+            Serial.print(CMD_SET_MQTT_TELEGRAF_URI);
+            Serial.println(str);
+            s->getMQTTTelegrafGlobalTopic(str, sizeof(str));
+            Serial.print(CMD_SET_MQTT_TELEGRAF_GLOBAL_TOPIC);
+            Serial.println(str);
+            delete (s);
+            Serial.println("# EXPORTED SETTINGS END");
+        }
         else if (rx == "CONNECT_WIFI")
         {
             Serial.println("Connecting WIFI");
@@ -43,9 +70,9 @@ void SerialManager::loop(void)
             Serial.println("Disconnecting WIFI");
             WifiManager::disconnect();
         }
-        else if (rx.startsWith("SET_WIFI_SSID ") && rx.length() > 14)
+        else if (rx.startsWith(CMD_SET_WIFI_SSID) && rx.length() > strlen(CMD_SET_WIFI_SSID))
         {
-            String rxSSID = rx.substring(14);
+            String rxSSID = rx.substring(strlen(CMD_SET_WIFI_SSID));
             if (rxSSID.length() > 0)
             {
                 Serial.println("Received new SSID");
@@ -56,9 +83,9 @@ void SerialManager::loop(void)
                 Serial.println("WIFI SSID saved. Reboot REQUIRED");
             }
         }
-        else if (rx.startsWith("SET_WIFI_PASSWORD ") && rx.length() > 18)
+        else if (rx.startsWith(CMD_SET_WIFI_PASSWORD) && rx.length() > strlen(CMD_SET_WIFI_PASSWORD))
         {
-            String rxPassword = rx.substring(18);
+            String rxPassword = rx.substring(strlen(CMD_SET_WIFI_PASSWORD));
             if (rxPassword.length() > 0)
             {
                 Serial.println("Received new password");
@@ -69,9 +96,9 @@ void SerialManager::loop(void)
                 Serial.println("WIFI Password saved. Reboot REQUIRED");
             }
         }
-        else if (rx.startsWith("SET_MQTT_TELEGRAF_URI ") && rx.length() > 22)
+        else if (rx.startsWith(CMD_SET_MQTT_TELEGRAF_URI) && rx.length() > strlen(CMD_SET_MQTT_TELEGRAF_URI))
         {
-            String uri = rx.substring(22);
+            String uri = rx.substring(strlen(CMD_SET_MQTT_TELEGRAF_URI));
             if (uri.length() > 0)
             {
                 Serial.println("Received new MQTT Telegraf URI");
@@ -82,9 +109,9 @@ void SerialManager::loop(void)
                 Serial.println("MQTT Telegraf URI saved. Reboot REQUIRED");
             }
         }
-        else if (rx.startsWith("SET_MQTT_TELEGRAF_GLOBAL_TOPIC ") && rx.length() > 31)
+        else if (rx.startsWith(CMD_SET_MQTT_TELEGRAF_GLOBAL_TOPIC) && rx.length() > strlen(CMD_SET_MQTT_TELEGRAF_GLOBAL_TOPIC))
         {
-            String topic = rx.substring(31);
+            String topic = rx.substring(strlen(CMD_SET_MQTT_TELEGRAF_GLOBAL_TOPIC));
             if (topic.length() > 0)
             {
                 Serial.println("Received new MQTT Telegraf global topic");
