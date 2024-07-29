@@ -90,7 +90,7 @@ void SerialManager::loop(void)
                 Serial.println("Received new MQTT Telegraf global topic");
                 Serial.println(topic);
                 Settings *s = new Settings();
-                s->setWIFIPassword(topic.c_str());
+                s->setMQTTTelegrafGlobalTopic(topic.c_str());
                 delete (s);
                 Serial.println("MQTT Telegraf global topic saved. Reboot REQUIRED");
             }
