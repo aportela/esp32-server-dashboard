@@ -3,7 +3,7 @@
 #include "../../utils/WifiManager.hpp"
 #include "../../utils/FPS.hpp"
 #include "../../EntityType.hpp"
-#include <stdexcept>
+#include "../../utils/Format.hpp"
 
 #define METER_GRAPH_WIDTH 195
 #define METER_GRAPH_HEIGHT 30
@@ -41,6 +41,7 @@ LGFXScreenDashboardResume::LGFXScreenDashboardResume(LovyanGFX *display, Source 
     if (source != nullptr)
     {
         this->currentSource = source;
+        this->currentSource->getCurrentTimestamp(ET_GLOBAL_CPU_LOAD);
     }
 }
 
@@ -94,11 +95,16 @@ void LGFXScreenDashboardResume::refreshDebug(uint16_t xOffset, uint16_t yOffset,
     this->debugSprite->setTextSize(1);
     this->debugSprite->setTextColor(TFT_WHITE, TFT_BLACK);
     this->debugSprite->setCursor(0, 0);
-    char timeString[50] = {'\0'};
-    // convertmillisToHumanStr(millis(), timeString, sizeof(timeString));
-    this->debugSprite->printf("Runtime: %s - FPS: %03u - Wifi: %03ddBm", "00 secs", FPS::getFPS(), WifiManager::getSignalStrength());
+
+    char runtimeStr[16];
+    Format::millisToHumanStr(millis(), runtimeStr, sizeof(runtimeStr));
+    this->debugSprite->printf("Runtime: %s - FPS: %03u - Wifi: %03ddBm", runtimeStr, FPS::getFPS(), WifiManager::getSignalStrength());
+
     this->debugSprite->pushSprite(xOffset, yOffset);
 }
+
+uint64_t lastCPUTimestamp = 0;
+uint64_t lastMemoryTimestamp = 0;
 
 void LGFXScreenDashboardResume::refresh(bool force)
 {
@@ -106,14 +112,18 @@ void LGFXScreenDashboardResume::refresh(bool force)
     {
         if (this->currentSource != nullptr)
         {
-            uint64_t currentMillis = millis();
-            if (force || this->currentSource->changed(ET_GLOBAL_CPU_LOAD, currentMillis))
+            /*
+            uint64_t currentCPUMillis = this->currentSource->getCurrentTimestamp(ET_GLOBAL_CPU_LOAD);
+            if (force || currentCPUMillis > lastCPUTimestamp)
             {
-                // this->cpuLoadMeter->refresh(this->currentSource->getCurrentGlobalCPULoad());
+                this->cpuLoadMeter->refresh(this->currentSource->getCurrentGlobalCPULoad());
+                lastCPUTimestamp = currentCPUMillis;
             }
-            if (force || this->currentSource->changed(ET_USED_MEMORY, currentMillis))
+            uint64_t currentMemoryMillis = this->currentSource->getCurrentTimestamp(ET_USED_MEMORY);
+            if (force || currentCPUMillis > lastMemoryTimestamp)
             {
                 // this->memoryLoadMeter->refresh(this->currentSource->getUsedMemory());
+                lastMemoryTimestamp = currentMemoryMillis;
             }
             if (force || this->currentSource->changed(ET_GLOBAL_CPU_TEMPERATURE, currentMillis))
             {
@@ -127,6 +137,7 @@ void LGFXScreenDashboardResume::refresh(bool force)
             {
                 // this->networkUploadBandwithLoadMeter->refresh(this->currentSource->getCurrentNetworkUploadUsedBandwidth());
             }
+            */
         }
         // TODO: current source == null WARNING on bottom
         this->refreshDebug(0, 210, WifiManager::getSignalStrength());
