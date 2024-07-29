@@ -54,6 +54,14 @@ void Settings::setValue(const char *key, const char *value)
     }
 }
 
+void Settings::deleteKey(const char *key)
+{
+    if (this->preferences->begin(NAMESPACE, false))
+    {
+        this->preferences->remove(key);
+    }
+}
+
 void Settings::clear(void)
 {
     if (this->preferences->begin(NAMESPACE, false))
@@ -70,7 +78,14 @@ void Settings::getWIFISSID(char *ssid, size_t count)
 
 void Settings::setWIFISSID(const char *ssid)
 {
-    this->setValue(KEY_WIFI_SSID, ssid);
+    if (strlen(ssid) > 0)
+    {
+        this->setValue(KEY_WIFI_SSID, ssid);
+    }
+    else
+    {
+        this->deleteKey(KEY_WIFI_SSID);
+    }
 }
 
 void Settings::getWIFIPassword(char *password, size_t count)
@@ -80,12 +95,26 @@ void Settings::getWIFIPassword(char *password, size_t count)
 
 void Settings::setWIFIPassword(const char *password)
 {
-    this->setValue(KEY_WIFI_PASSWORD, password);
+    if (strlen(password) > 0)
+    {
+        this->setValue(KEY_WIFI_PASSWORD, password);
+    }
+    else
+    {
+        this->deleteKey(KEY_WIFI_PASSWORD);
+    }
 }
 
 void Settings::getMQTTTelegrafURI(char *uri, size_t count)
 {
-    this->getValue(KEY_MQTT_TELEGRAF_URI, uri, count);
+    if (strlen(uri) > 0)
+    {
+        this->getValue(KEY_MQTT_TELEGRAF_URI, uri, count);
+    }
+    else
+    {
+        this->deleteKey(KEY_MQTT_TELEGRAF_URI);
+    }
 }
 
 void Settings::setMQTTTelegrafURI(const char *uri)
@@ -100,5 +129,12 @@ void Settings::getMQTTTelegrafGlobalTopic(char *topic, size_t count)
 
 void Settings::setMQTTTelegrafGlobalTopic(const char *topic)
 {
-    this->setValue(KEY_MQTT_TELEGRAF_GLOBAL_TOPIC, topic);
+    if (strlen(topic) > 0)
+    {
+        this->setValue(KEY_MQTT_TELEGRAF_GLOBAL_TOPIC, topic);
+    }
+    else
+    {
+        this->deleteKey(KEY_MQTT_TELEGRAF_GLOBAL_TOPIC);
+    }
 }

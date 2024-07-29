@@ -12,6 +12,7 @@ private:
 
     void getValue(const char *key, char *value, size_t count);
     void setValue(const char *key, const char *value);
+    void deleteKey(const char *key);
 
 public:
     Settings(void);
