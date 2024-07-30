@@ -54,6 +54,7 @@ Preferences preferences;
 
 void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
 {
+    char str[1024] = {'\0'};
     switch (cmd)
     {
     case SERIAL_CMDT_REBOOT:
@@ -69,8 +70,6 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
         Serial.println("Serial command received: export settings");
         Serial.println("# EXPORTED SETTINGS BEGIN");
         Serial.println(SerialCommandStr[SERIAL_CMDT_CLEAR_SETTINGS]);
-        /*
-        char str[512] = {'\0'};
         settings->getWIFISSID(str, sizeof(str));
         if (strlen(str) > 0)
         {
@@ -95,7 +94,6 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
             Serial.print(SerialCommandStr[SERIAL_CMDT_SET_MQTT_TELEGRAF_TOPIC]);
             Serial.println(str);
         }
-        */
         Serial.println("REBOOT");
         Serial.println("# EXPORTED SETTINGS END");
         break;
