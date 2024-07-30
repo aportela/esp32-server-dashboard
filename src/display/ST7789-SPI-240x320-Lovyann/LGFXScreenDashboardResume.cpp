@@ -105,6 +105,9 @@ void LGFXScreenDashboardResume::refreshDebug(uint16_t xOffset, uint16_t yOffset,
 
 uint64_t lastCPUTimestamp = 0;
 uint64_t lastMemoryTimestamp = 0;
+uint64_t lastCPUTemperatureTimestamp = 0;
+uint64_t lastDownloadTimestamp = 0;
+uint64_t lastUploadTimestamp = 0;
 
 void LGFXScreenDashboardResume::refresh(bool force)
 {
@@ -112,7 +115,6 @@ void LGFXScreenDashboardResume::refresh(bool force)
     {
         if (this->currentSource != nullptr)
         {
-            /*
             uint64_t currentCPUMillis = this->currentSource->getCurrentTimestamp(ET_GLOBAL_CPU_LOAD);
             if (force || currentCPUMillis > lastCPUTimestamp)
             {
@@ -120,24 +122,29 @@ void LGFXScreenDashboardResume::refresh(bool force)
                 lastCPUTimestamp = currentCPUMillis;
             }
             uint64_t currentMemoryMillis = this->currentSource->getCurrentTimestamp(ET_USED_MEMORY);
-            if (force || currentCPUMillis > lastMemoryTimestamp)
+            if (force || currentMemoryMillis > lastMemoryTimestamp)
             {
-                // this->memoryLoadMeter->refresh(this->currentSource->getUsedMemory());
+                this->memoryLoadMeter->refresh(this->currentSource->getUsedMemory());
                 lastMemoryTimestamp = currentMemoryMillis;
             }
-            if (force || this->currentSource->changed(ET_GLOBAL_CPU_TEMPERATURE, currentMillis))
+            uint64_t currentCPUTemperatureMillis = this->currentSource->getCurrentTimestamp(ET_GLOBAL_CPU_TEMPERATURE);
+            if (force || currentCPUTemperatureMillis > lastCPUTemperatureTimestamp)
             {
-                // this->cpuTemperatureLoadMeter->refresh(this->currentSource->getCurrentGlobalCPUTemperature());
+                this->cpuTemperatureLoadMeter->refresh(this->currentSource->getCurrentGlobalCPUTemperature());
+                lastCPUTemperatureTimestamp = currentCPUTemperatureMillis;
             }
-            if (force || this->currentSource->changed(ET_NETWORK_BANDWITH_DOWNLOAD_SPEED, currentMillis))
+            uint64_t currentDownloadMillis = this->currentSource->getCurrentTimestamp(ET_NETWORK_BANDWITH_DOWNLOAD_SPEED);
+            if (force || currentDownloadMillis > lastDownloadTimestamp)
             {
-                // this->networkDownloadBandwithLoadMeter->refresh(this->currentSource->getCurrentNetworkDownloadUsedBandwidth());
+                this->networkDownloadBandwithLoadMeter->refresh(this->currentSource->getCurrentNetworkDownloadUsedBandwidth());
+                lastDownloadTimestamp = currentDownloadMillis;
             }
-            if (force || this->currentSource->changed(ET_NETWORK_BANDWITH_UPLOAD_SPEED, currentMillis))
+            uint64_t currentUploadMillis = this->currentSource->getCurrentTimestamp(ET_NETWORK_BANDWITH_UPLOAD_SPEED);
+            if (force || currentUploadMillis > lastUploadTimestamp)
             {
-                // this->networkUploadBandwithLoadMeter->refresh(this->currentSource->getCurrentNetworkUploadUsedBandwidth());
+                this->networkUploadBandwithLoadMeter->refresh(this->currentSource->getCurrentNetworkUploadUsedBandwidth());
+                lastUploadTimestamp = currentUploadMillis;
             }
-            */
         }
         // TODO: current source == null WARNING on bottom
         this->refreshDebug(0, 210, WifiManager::getSignalStrength());
