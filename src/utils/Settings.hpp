@@ -8,32 +8,30 @@
 class Settings
 {
 private:
-    Preferences *preferences;
+    static Preferences preferences;
 
-    uint64_t getBigUnsignedIntegerValue(const char *key, uint64_t defaultValue = 0);
-    void setBigIntegerValue(const char *key, uint64_t value);
-    void getValue(const char *key, char *value, size_t count);
-    void setValue(const char *key, const char *value);
-    void deleteKey(const char *key);
+    static uint64_t getBigUnsignedIntegerValue(const char *key, uint64_t defaultValue = 0);
+    static void setBigIntegerValue(const char *key, uint64_t value);
+    static void getValue(const char *key, char *value, size_t count);
+    static void setValue(const char *key, const char *value);
+    static void deleteKey(const char *key);
 
 public:
-    Settings(void);
-    ~Settings();
-    void clear(void);
+    static void clear(void);
 
-    void getWIFISSID(char *ssid, size_t count);
-    void setWIFISSID(const char *ssid);
-    void getWIFIPassword(char *password, size_t count);
-    void setWIFIPassword(const char *password);
+    static void getWIFISSID(char *ssid, size_t count);
+    static void setWIFISSID(const char *ssid);
+    static void getWIFIPassword(char *password, size_t count);
+    static void setWIFIPassword(const char *password);
 
-    void getMQTTTelegrafURI(char *uri, size_t count);
-    void setMQTTTelegrafURI(const char *uri);
+    static void getMQTTTelegrafURI(char *uri, size_t count);
+    static void setMQTTTelegrafURI(const char *uri);
 
-    void getMQTTTelegrafGlobalTopic(char *topic, size_t count);
-    void setMQTTTelegrafGlobalTopic(const char *topic);
+    static void getMQTTTelegrafGlobalTopic(char *topic, size_t count);
+    static void setMQTTTelegrafGlobalTopic(const char *topic);
 
-    uint64_t getTotalMemoryBytes();
-    void setTotalMemoryBytes(uint64_t totalBytes = 0);
+    static uint64_t getTotalMemoryBytes();
+    static void setTotalMemoryBytes(uint64_t totalBytes = 0);
 };
 
 #endif
