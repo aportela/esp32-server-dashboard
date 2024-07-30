@@ -19,6 +19,7 @@ enum SerialCommandType
     SERIAL_CMDT_SET_WIFI_PASSWORD = 8,
     SERIAL_CMDT_SET_MQTT_TELEGRAF_URI = 9,
     SERIAL_CMDT_SET_MQTT_TELEGRAF_TOPIC = 10,
+    SERIAL_CMDT_SET_SCREEN = 11,
 };
 
 extern const char *SerialCommandStr[];

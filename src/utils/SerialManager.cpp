@@ -14,6 +14,7 @@ const char *SerialCommandStr[]{
     "SET_WIFI_PASSWORD ",
     "SET_MQTT_TELEGRAF_URI ",
     "SET_MQTT_TELEGRAF_GLOBAL_TOPIC ",
+    "SET_SCREEN ",
 };
 
 SerialCommandCallback SerialManager::remoteCallback = nullptr;
@@ -150,6 +151,25 @@ void SerialManager::loop(void)
                 if (SerialManager::remoteCallback != nullptr)
                 {
                     SerialManager::remoteCallback(SERIAL_CMDT_SET_MQTT_TELEGRAF_TOPIC, nullptr);
+                }
+            }
+        }
+        else if (rx.startsWith(SerialCommandStr[SERIAL_CMDT_SET_SCREEN]))
+        {
+            uint16_t length = strlen(SerialCommandStr[SERIAL_CMDT_SET_SCREEN]);
+            if (rx.length() > length)
+            {
+                String ScreenName = rx.substring(length);
+                if (SerialManager::remoteCallback != nullptr)
+                {
+                    SerialManager::remoteCallback(SERIAL_CMDT_SET_SCREEN, ScreenName.c_str());
+                }
+            }
+            else
+            {
+                if (SerialManager::remoteCallback != nullptr)
+                {
+                    SerialManager::remoteCallback(SERIAL_CMDT_SET_SCREEN, nullptr);
                 }
             }
         }
