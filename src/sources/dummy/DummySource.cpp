@@ -88,7 +88,6 @@ void DummySource::refresh(void)
     }
     this->currentGlobalCPULoadData->setCurrentValue(current, currentMillis);
 
-    /*
     current = this->currentUsedMemoryData->getCurrentValue();
     change = 1000000000;
     if (random(0, 20) % 2 == 0)
@@ -147,5 +146,4 @@ void DummySource::refresh(void)
         current -= change;
     }
     this->currentNetworkUploadUsedBandwithData->setCurrentValue(current, currentMillis);
-    */
 }
