@@ -193,6 +193,20 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
             }
         }
         break;
+    case SERIAL_CMDT_SET_TOTAL_MEMORY_BYTES:
+        if (value && strlen(value))
+        {
+            Serial.printf("Serial command received: set total memory bytes (%s)\n", value);
+            settings->setTotalMemoryBytes(strtoull(value, nullptr, 10));
+            Serial.println("Total memory bytes saved. Reboot REQUIRED");
+        }
+        else
+        {
+            Serial.println("Serial command received: unset total memory bytes");
+            settings->setTotalMemoryBytes(0);
+            Serial.println("Total memory bytes removed. Reboot REQUIRED");
+        }
+        break;
     default:
         Serial.println("Serial command received (UNKNOWN):");
         if (value)
@@ -232,16 +246,14 @@ void setup()
     {
         char WiFiMacAddress[32] = {'\0'};
         WifiManager::getMacAddress(WiFiMacAddress, sizeof(WiFiMacAddress));
-        // mqttTelegrafSRC = new MQTTTelegrafSource(mqttTelegrafURI, WiFiMacAddress, mqttTelegrafGlobalTopic);
+        mqttTelegrafSRC = new MQTTTelegrafSource(mqttTelegrafURI, WiFiMacAddress, mqttTelegrafGlobalTopic);
     }
 
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
-
     screen = new LGFX(PIN_SDA, PIN_SCL, PIN_CS, PIN_DC, PIN_RST, DISPLAY_DRIVER_LOVYANN_ST7789_WIDTH, DISPLAY_DRIVER_LOVYANN_ST7789_HEIGHT, DISPLAY_DRIVER_LOVYANN_ST7789_ROTATION);
-    screen->setSource(dummySRC);
-
-    screen->initScreen(ST_INFO);
-    // screen->initScreen(ST_DATA_RESUME);
+    screen->setSource(mqttTelegrafSRC);
+    // screen->initScreen(ST_INFO);
+    screen->initScreen(ST_DATA_RESUME);
 #endif // DISPLAY_DRIVER_LOVYANN_ST7789
 }
 
