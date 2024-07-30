@@ -99,6 +99,18 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
             Serial.print(SerialCommandStr[SERIAL_CMDT_SET_TOTAL_MEMORY_BYTES]);
             Serial.println(tmpUint64);
         }
+        tmpUint64 = Settings::getMaxDownloadBandwidthBytes();
+        if (tmpUint64 > 0)
+        {
+            Serial.print(SerialCommandStr[SERIAL_CMDT_SET_MAX_DOWNLOAD_BYTES_BANDWIDTH]);
+            Serial.println(tmpUint64);
+        }
+        tmpUint64 = Settings::getMaxUploadBandwidthBytes();
+        if (tmpUint64 > 0)
+        {
+            Serial.print(SerialCommandStr[SERIAL_CMDT_SET_MAX_UPLOAD_BYTES_BANDWIDTH]);
+            Serial.println(tmpUint64);
+        }
         Serial.println("REBOOT");
         Serial.println("# EXPORTED SETTINGS END");
         break;
@@ -269,6 +281,58 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
             else
             {
                 Serial.println("Error removing total memory bytes");
+            }
+        }
+        break;
+    case SERIAL_CMDT_SET_MAX_DOWNLOAD_BYTES_BANDWIDTH:
+        if (value && strlen(value))
+        {
+            Serial.printf("Serial command received: set max download bandwidth bytes (%s)\n", value);
+            if (Settings::setMaxDownloadBandwidthBytes(strtoull(value, nullptr, 10)))
+            {
+                Serial.println("Max download bandwidth bytes saved. Reboot REQUIRED");
+            }
+            else
+            {
+                Serial.println("Error saving max download bandwidth bytes");
+            }
+        }
+        else
+        {
+            Serial.println("Serial command received: unset max download bandwidth bytes");
+            if (Settings::setMaxDownloadBandwidthBytes(0))
+            {
+                Serial.println("Max download bandwidth bytes removed. Reboot REQUIRED");
+            }
+            else
+            {
+                Serial.println("Error removing max download bandwidth bytes");
+            }
+        }
+        break;
+    case SERIAL_CMDT_SET_MAX_UPLOAD_BYTES_BANDWIDTH:
+        if (value && strlen(value))
+        {
+            Serial.printf("Serial command received: set max upload bandwidth bytes (%s)\n", value);
+            if (Settings::setMaxUploadBandwidthBytes(strtoull(value, nullptr, 10)))
+            {
+                Serial.println("Max upload bandwidth bytes saved. Reboot REQUIRED");
+            }
+            else
+            {
+                Serial.println("Error saving max upload bandwidth bytes");
+            }
+        }
+        else
+        {
+            Serial.println("Serial command received: unset max upload bandwidth bytes");
+            if (Settings::setMaxUploadBandwidthBytes(0))
+            {
+                Serial.println("Max upload bandwidth bytes removed. Reboot REQUIRED");
+            }
+            else
+            {
+                Serial.println("Error removing max upload bandwidth bytes");
             }
         }
         break;

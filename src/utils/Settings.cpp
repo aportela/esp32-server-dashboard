@@ -9,6 +9,8 @@
 #define KEY_MQTT_TELEGRAF_URI "SRC_MQTT_URI"
 #define KEY_MQTT_TELEGRAF_GLOBAL_TOPIC "SRC_MQTT_TOPIC"
 #define KEY_TOTAL_MEMORY_BYTES "T_MEM_BYTES"
+#define KEY_TOTAL_DOWNLOAD_BANDWIDTH_BYTES "T_D_BW_BYTES"
+#define KEY_TOTAL_UPLOAD_BANDWIDTH_BYTES "T_U_BW_BYTES"
 
 Preferences Settings::preferences;
 
@@ -192,5 +194,39 @@ bool Settings::setTotalMemoryBytes(uint64_t totalBytes)
     else
     {
         Settings::deleteKey(KEY_TOTAL_MEMORY_BYTES);
+    }
+}
+
+uint64_t Settings::getMaxDownloadBandwidthBytes()
+{
+    return (Settings::getBigUnsignedIntegerValue(KEY_TOTAL_DOWNLOAD_BANDWIDTH_BYTES, 6));
+}
+
+bool Settings::setMaxDownloadBandwidthBytes(uint64_t totalBytes)
+{
+    if (totalBytes > 0)
+    {
+        return (Settings::setBigIntegerValue(KEY_TOTAL_DOWNLOAD_BANDWIDTH_BYTES, totalBytes));
+    }
+    else
+    {
+        Settings::deleteKey(KEY_TOTAL_DOWNLOAD_BANDWIDTH_BYTES);
+    }
+}
+
+uint64_t Settings::getMaxUploadBandwidthBytes()
+{
+    return (Settings::getBigUnsignedIntegerValue(KEY_TOTAL_UPLOAD_BANDWIDTH_BYTES, 6));
+}
+
+bool Settings::setMaxUploadBandwidthBytes(uint64_t totalBytes)
+{
+    if (totalBytes > 0)
+    {
+        return (Settings::setBigIntegerValue(KEY_TOTAL_UPLOAD_BANDWIDTH_BYTES, totalBytes));
+    }
+    else
+    {
+        Settings::deleteKey(KEY_TOTAL_UPLOAD_BANDWIDTH_BYTES);
     }
 }

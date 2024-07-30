@@ -31,6 +31,12 @@ public:
 
     static uint64_t getTotalMemoryBytes();
     static bool setTotalMemoryBytes(uint64_t totalBytes = 0);
+
+    static uint64_t getMaxDownloadBandwidthBytes();
+    static bool setMaxDownloadBandwidthBytes(uint64_t totalBytes = 0);
+
+    static uint64_t getMaxUploadBandwidthBytes();
+    static bool setMaxUploadBandwidthBytes(uint64_t totalBytes = 0);
 };
 
 #endif
