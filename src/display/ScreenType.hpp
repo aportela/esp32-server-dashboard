@@ -3,9 +3,9 @@
 
 enum ScreenType
 {
-    ST_NONE,
-    ST_INFO,       // STATUS INFO SCREEN
-    ST_DATA_RESUME // MAIN DASHBOARD DATA RESUME
+    ST_NONE = 0,
+    ST_INFO = 1,       // STATUS INFO SCREEN
+    ST_DATA_RESUME = 2 // MAIN DASHBOARD DATA RESUME
 };
 
 #endif
