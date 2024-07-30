@@ -173,7 +173,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
             {
                 char subPayload[strlen(payload)];
                 strncpy(subPayload, startRX, sizeof(subPayload) - 1);
-                subPayload[sizeof(subPayload) - 1] = '\0'; // Asegurar la terminación nula
+                subPayload[sizeof(subPayload) - 1] = '\0';
                 const char *format = "bytes_recv=%" PRIu64 "i";
                 if (sscanf(subPayload, format, &recv) == 1)
                 {
@@ -191,11 +191,11 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
             {
                 char subPayload[strlen(payload)];
                 strncpy(subPayload, startTX, sizeof(subPayload) - 1);
-                subPayload[sizeof(subPayload) - 1] = '\0'; // Asegurar la terminación nula
+                subPayload[sizeof(subPayload) - 1] = '\0';
                 const char *format = "bytes_sent=%" PRIu64 "i";
                 if (sscanf(subPayload, format, &sent) == 1)
                 {
-                    MQTTTelegrafSource::instance->currentNetworkDownloadUsedBandwithData->setCurrentValue(sent, currentMessageTimestamp);
+                    MQTTTelegrafSource::instance->currentNetworkUploadUsedBandwithData->setCurrentValue(sent, currentMessageTimestamp);
                 }
                 else
                 {
