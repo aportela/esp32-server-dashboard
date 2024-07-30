@@ -71,32 +71,32 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
         Serial.println(SerialCommandStr[SERIAL_CMDT_CLEAR_SETTINGS]);
         /*
         char str[512] = {'\0'};
-        s->getWIFISSID(str, sizeof(str));
+        settings->getWIFISSID(str, sizeof(str));
         if (strlen(str) > 0)
         {
-            Serial.print(CMD_SET_WIFI_SSID);
+            Serial.print(SerialCommandStr[SERIAL_CMDT_SET_WIFI_SSID]);
             Serial.println(str);
         }
-        s->getWIFIPassword(str, sizeof(str));
+        settings->getWIFIPassword(str, sizeof(str));
         if (strlen(str) > 0)
         {
-            Serial.print(CMD_SET_WIFI_PASSWORD);
+            Serial.print(SerialCommandStr[SERIAL_CMDT_SET_WIFI_PASSWORD]);
             Serial.println(str);
         }
-        s->getMQTTTelegrafURI(str, sizeof(str));
+        settings->getMQTTTelegrafURI(str, sizeof(str));
         if (strlen(str) > 0)
         {
-            Serial.print(CMD_SET_MQTT_TELEGRAF_URI);
+            Serial.print(SerialCommandStr[SERIAL_CMDT_SET_MQTT_TELEGRAF_URI]);
             Serial.println(str);
         }
-        s->getMQTTTelegrafGlobalTopic(str, sizeof(str));
+        settings->getMQTTTelegrafGlobalTopic(str, sizeof(str));
         if (strlen(str) > 0)
         {
-            Serial.print(CMD_SET_MQTT_TELEGRAF_GLOBAL_TOPIC);
+            Serial.print(SerialCommandStr[SERIAL_CMDT_SET_MQTT_TELEGRAF_TOPIC]);
             Serial.println(str);
         }
-        Serial.println("REBOOT");
         */
+        Serial.println("REBOOT");
         Serial.println("# EXPORTED SETTINGS END");
         break;
     case SERIAL_CMDT_CONNECT_WIFI:
