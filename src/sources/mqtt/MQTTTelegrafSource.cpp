@@ -52,7 +52,10 @@ MQTTTelegrafSource::MQTTTelegrafSource(const char *uri, const char *clientId, co
     this->currentNetworkUploadUsedBandwithData->setMax(MAX_NETWORK_UPLOAD_BANDWITH);
     this->currentNetworkUploadUsedBandwithData->setCurrentValue(MIN_NETWORK_UPLOAD_BANDWITH, millis());
 
-    MQTTTelegrafSource::instance = this;
+    if (instance == nullptr)
+    {
+        MQTTTelegrafSource::instance = this;
+    }
 }
 
 MQTTTelegrafSource::~MQTTTelegrafSource()
@@ -92,8 +95,8 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
 {
     // Serial.print("Topic: ");
     // Serial.println(topic);
-    //  Serial.print("Message: ");
-    //  Serial.println(payload);
+    // Serial.print("Message: ");
+    // Serial.println(payload);
 
     uint64_t currentMessageTimestamp = millis(); // by default use current esp32 timestamp (failover for payload timestamp parse errors)
 
