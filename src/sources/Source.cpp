@@ -164,77 +164,83 @@ uint64_t Source::getMax(EntityType entity) const
 
 uint64_t Source::getCurrentTimestamp(EntityType entity) const
 {
+    uint64_t timestamp = 0;
     switch (entity)
     {
     case ET_GLOBAL_CPU_LOAD:
-        return (this->currentGlobalCPULoadData->getCurrentTimestamp());
+        timestamp = this->currentGlobalCPULoadData != nullptr ? this->currentGlobalCPULoadData->getCurrentTimestamp() : 0;
         break;
     case ET_USED_MEMORY:
-        return (this->currentUsedMemoryData->getCurrentTimestamp());
+        timestamp = this->currentUsedMemoryData->getCurrentTimestamp();
         break;
     case ET_GLOBAL_CPU_TEMPERATURE:
-        return (this->currentGlobalCPUTemperatureData->getCurrentTimestamp());
+        timestamp = this->currentGlobalCPUTemperatureData->getCurrentTimestamp();
         break;
     case ET_NETWORK_BANDWITH_DOWNLOAD_SPEED:
-        return (this->currentNetworkDownloadUsedBandwithData->getCurrentTimestamp());
+        timestamp = this->currentNetworkDownloadUsedBandwithData->getCurrentTimestamp();
         break;
     case ET_NETWORK_BANDWITH_UPLOAD_SPEED:
-        return (this->currentNetworkUploadUsedBandwithData->getCurrentTimestamp());
+        timestamp = this->currentNetworkUploadUsedBandwithData->getCurrentTimestamp();
         break;
     default:
-        return (false);
+        timestamp = 0;
         break;
     }
+    return (timestamp);
 }
 
 uint64_t Source::getPreviousValue(EntityType entity) const
 {
+    uint64_t previousValue = 0;
     switch (entity)
     {
     case ET_GLOBAL_CPU_LOAD:
-        return (this->currentGlobalCPULoadData->getPreviousValue());
+        previousValue = this->currentGlobalCPULoadData->getPreviousValue();
         break;
     case ET_USED_MEMORY:
-        return (this->currentUsedMemoryData->getPreviousValue());
+        previousValue = this->currentUsedMemoryData->getPreviousValue();
         break;
     case ET_GLOBAL_CPU_TEMPERATURE:
-        return (this->currentGlobalCPUTemperatureData->getPreviousValue());
+        previousValue = this->currentGlobalCPUTemperatureData->getPreviousValue();
         break;
     case ET_NETWORK_BANDWITH_DOWNLOAD_SPEED:
-        return (this->currentNetworkDownloadUsedBandwithData->getPreviousValue());
+        previousValue = this->currentNetworkDownloadUsedBandwithData->getPreviousValue();
         break;
     case ET_NETWORK_BANDWITH_UPLOAD_SPEED:
-        return (this->currentNetworkUploadUsedBandwithData->getPreviousValue());
+        previousValue = this->currentNetworkUploadUsedBandwithData->getPreviousValue();
         break;
     default:
-        return (false);
+        previousValue = 0;
         break;
     }
+    return (previousValue);
 }
 
 uint64_t Source::getCurrentValue(EntityType entity) const
 {
+    uint64_t currentValue = 0;
     switch (entity)
     {
     case ET_GLOBAL_CPU_LOAD:
-        return (this->currentGlobalCPULoadData->getCurrentValue());
+        currentValue = this->currentGlobalCPULoadData->getCurrentValue();
         break;
     case ET_USED_MEMORY:
-        return (this->currentUsedMemoryData->getCurrentValue());
+        currentValue = this->currentUsedMemoryData->getCurrentValue();
         break;
     case ET_GLOBAL_CPU_TEMPERATURE:
-        return (this->currentGlobalCPUTemperatureData->getCurrentValue());
+        currentValue = this->currentGlobalCPUTemperatureData->getCurrentValue();
         break;
     case ET_NETWORK_BANDWITH_DOWNLOAD_SPEED:
-        return (this->currentNetworkDownloadUsedBandwithData->getCurrentValue());
+        currentValue = this->currentNetworkDownloadUsedBandwithData->getCurrentValue();
         break;
     case ET_NETWORK_BANDWITH_UPLOAD_SPEED:
-        return (this->currentNetworkUploadUsedBandwithData->getCurrentValue());
+        currentValue = this->currentNetworkUploadUsedBandwithData->getCurrentValue();
         break;
     default:
-        return (false);
+        currentValue = 0;
         break;
     }
+    return (currentValue);
 }
 
 uint64_t Source::getCurrentGlobalCPULoad(void) const
