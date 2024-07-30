@@ -16,14 +16,13 @@ uint64_t Settings::getBigUnsignedIntegerValue(const char *key, uint64_t defaultV
 {
     if (Settings::preferences.begin(NAMESPACE, false))
     {
+        uint64_t value = defaultValue;
         if (Settings::preferences.isKey(key))
         {
-            return (Settings::preferences.getULong64(key, defaultValue));
+            value = Settings::preferences.getULong64(key, defaultValue);
         }
-        else
-        {
-            return (defaultValue);
-        }
+        Settings::preferences.end();
+        return (value);
     }
     else
     {
@@ -31,24 +30,17 @@ uint64_t Settings::getBigUnsignedIntegerValue(const char *key, uint64_t defaultV
     }
 }
 
-void Settings::setBigIntegerValue(const char *key, uint64_t value)
+bool Settings::setBigIntegerValue(const char *key, uint64_t value)
 {
     if (Settings::preferences.begin(NAMESPACE, false))
     {
-        Serial.println("SI");
-        if (Settings::preferences.putULong64(key, value))
-        {
-            Serial.println("PutYlong ok");
-        }
-        else
-        {
-            Serial.println("PutYlong error");
-        }
+        bool saved = Settings::preferences.putULong64(key, value) == sizeof(value);
         Settings::preferences.end();
+        return (saved);
     }
     else
     {
-        Serial.println("NO");
+        return (false);
     }
 }
 
@@ -71,34 +63,50 @@ void Settings::getValue(const char *key, char *value, size_t count)
     }
 }
 
-void Settings::setValue(const char *key, const char *value)
+bool Settings::setValue(const char *key, const char *value)
 {
     if (Settings::preferences.begin(NAMESPACE, false))
     {
-        if (Settings::preferences.putString(key, value))
-        {
-        }
-        else
-        {
-        }
+        bool saved = Settings::preferences.putString(key, value) == strlen(value);
         Settings::preferences.end();
+        return (saved);
+    }
+    else
+    {
+        return (false);
     }
 }
 
-void Settings::deleteKey(const char *key)
+bool Settings::deleteKey(const char *key)
 {
     if (Settings::preferences.begin(NAMESPACE, false))
     {
-        Settings::preferences.remove(key);
+        bool removed = false;
+        if (Settings::preferences.isKey(key))
+        {
+            Settings::preferences.remove(key);
+            removed = true;
+        }
+        Settings::preferences.end();
+        return (removed);
+    }
+    else
+    {
+        return (false);
     }
 }
 
-void Settings::clear(void)
+bool Settings::clear(void)
 {
     if (Settings::preferences.begin(NAMESPACE, false))
     {
-        Settings::preferences.clear();
+        bool cleared = Settings::preferences.clear();
         Settings::preferences.end();
+        return (cleared);
+    }
+    else
+    {
+        return (false);
     }
 }
 
@@ -107,15 +115,15 @@ void Settings::getWIFISSID(char *ssid, size_t count)
     Settings::getValue(KEY_WIFI_SSID, ssid, count);
 }
 
-void Settings::setWIFISSID(const char *ssid)
+bool Settings::setWIFISSID(const char *ssid)
 {
     if (strlen(ssid) > 0)
     {
-        Settings::setValue(KEY_WIFI_SSID, ssid);
+        return (Settings::setValue(KEY_WIFI_SSID, ssid));
     }
     else
     {
-        Settings::deleteKey(KEY_WIFI_SSID);
+        return (Settings::deleteKey(KEY_WIFI_SSID));
     }
 }
 
@@ -124,15 +132,15 @@ void Settings::getWIFIPassword(char *password, size_t count)
     Settings::getValue(KEY_WIFI_PASSWORD, password, count);
 }
 
-void Settings::setWIFIPassword(const char *password)
+bool Settings::setWIFIPassword(const char *password)
 {
     if (strlen(password) > 0)
     {
-        Settings::setValue(KEY_WIFI_PASSWORD, password);
+        return (Settings::setValue(KEY_WIFI_PASSWORD, password));
     }
     else
     {
-        Settings::deleteKey(KEY_WIFI_PASSWORD);
+        return (Settings::deleteKey(KEY_WIFI_PASSWORD));
     }
 }
 
@@ -141,15 +149,15 @@ void Settings::getMQTTTelegrafURI(char *uri, size_t count)
     Settings::getValue(KEY_MQTT_TELEGRAF_URI, uri, count);
 }
 
-void Settings::setMQTTTelegrafURI(const char *uri)
+bool Settings::setMQTTTelegrafURI(const char *uri)
 {
     if (strlen(uri) > 0)
     {
-        Settings::setValue(KEY_MQTT_TELEGRAF_URI, uri);
+        return (Settings::setValue(KEY_MQTT_TELEGRAF_URI, uri));
     }
     else
     {
-        Settings::deleteKey(KEY_MQTT_TELEGRAF_URI);
+        return (Settings::deleteKey(KEY_MQTT_TELEGRAF_URI));
     }
 }
 
@@ -158,15 +166,15 @@ void Settings::getMQTTTelegrafGlobalTopic(char *topic, size_t count)
     Settings::getValue(KEY_MQTT_TELEGRAF_GLOBAL_TOPIC, topic, count);
 }
 
-void Settings::setMQTTTelegrafGlobalTopic(const char *topic)
+bool Settings::setMQTTTelegrafGlobalTopic(const char *topic)
 {
     if (strlen(topic) > 0)
     {
-        Settings::setValue(KEY_MQTT_TELEGRAF_GLOBAL_TOPIC, topic);
+        return (Settings::setValue(KEY_MQTT_TELEGRAF_GLOBAL_TOPIC, topic));
     }
     else
     {
-        Settings::deleteKey(KEY_MQTT_TELEGRAF_GLOBAL_TOPIC);
+        return (Settings::deleteKey(KEY_MQTT_TELEGRAF_GLOBAL_TOPIC));
     }
 }
 
@@ -175,12 +183,11 @@ uint64_t Settings::getTotalMemoryBytes()
     return (Settings::getBigUnsignedIntegerValue(KEY_TOTAL_MEMORY_BYTES, 6));
 }
 
-void Settings::setTotalMemoryBytes(uint64_t totalBytes)
+bool Settings::setTotalMemoryBytes(uint64_t totalBytes)
 {
     if (totalBytes > 0)
     {
-        Serial.printf("Settings::setTotalMemoryBytes total: %" PRIu64 "\n", totalBytes);
-        Settings::setBigIntegerValue(KEY_TOTAL_MEMORY_BYTES, totalBytes);
+        return (Settings::setBigIntegerValue(KEY_TOTAL_MEMORY_BYTES, totalBytes));
     }
     else
     {
