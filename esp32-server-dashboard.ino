@@ -44,13 +44,11 @@ LGFX *screen = nullptr;
 #include "src/sources/dummy/DummySource.hpp"
 #include "src/sources/mqtt/MQTTTelegrafSource.hpp"
 #include "src/display/ScreenType.hpp"
-#include <Preferences.h>
+
+#include <cstdint>
 
 DummySource *dummySRC = nullptr;
 MQTTTelegrafSource *mqttTelegrafSRC = nullptr;
-Settings *settings = nullptr;
-
-Preferences preferences;
 
 void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
 {
@@ -63,32 +61,32 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
         break;
     case SERIAL_CMDT_CLEAR_SETTINGS:
         Serial.println("Serial command received: reset settings");
-        settings->clear();
+        Settings::clear();
         Serial.println("Settings cleared. Reboot REQUIRED");
         break;
     case SERIAL_CMDT_EXPORT_SETTINGS:
         Serial.println("Serial command received: export settings");
         Serial.println("# EXPORTED SETTINGS BEGIN");
         Serial.println(SerialCommandStr[SERIAL_CMDT_CLEAR_SETTINGS]);
-        settings->getWIFISSID(str, sizeof(str));
+        Settings::getWIFISSID(str, sizeof(str));
         if (strlen(str) > 0)
         {
             Serial.print(SerialCommandStr[SERIAL_CMDT_SET_WIFI_SSID]);
             Serial.println(str);
         }
-        settings->getWIFIPassword(str, sizeof(str));
+        Settings::getWIFIPassword(str, sizeof(str));
         if (strlen(str) > 0)
         {
             Serial.print(SerialCommandStr[SERIAL_CMDT_SET_WIFI_PASSWORD]);
             Serial.println(str);
         }
-        settings->getMQTTTelegrafURI(str, sizeof(str));
+        Settings::getMQTTTelegrafURI(str, sizeof(str));
         if (strlen(str) > 0)
         {
             Serial.print(SerialCommandStr[SERIAL_CMDT_SET_MQTT_TELEGRAF_URI]);
             Serial.println(str);
         }
-        settings->getMQTTTelegrafGlobalTopic(str, sizeof(str));
+        Settings::getMQTTTelegrafGlobalTopic(str, sizeof(str));
         if (strlen(str) > 0)
         {
             Serial.print(SerialCommandStr[SERIAL_CMDT_SET_MQTT_TELEGRAF_TOPIC]);
@@ -109,13 +107,13 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
         if (value && strlen(value))
         {
             Serial.printf("Serial command received: set WiFi SSID (%s)\n", value);
-            settings->setWIFISSID(value);
+            Settings::setWIFISSID(value);
             Serial.println("WiFi SSID saved. Reboot REQUIRED");
         }
         else
         {
             Serial.println("Serial command received: unset WiFi SSID");
-            settings->setWIFISSID("");
+            Settings::setWIFISSID("");
             Serial.println("WiFi SSID removed. Reboot REQUIRED");
         }
         break;
@@ -123,13 +121,13 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
         if (value && strlen(value))
         {
             Serial.printf("Serial command received: set WiFi password (%s)\n", value);
-            settings->setWIFIPassword(value);
+            Settings::setWIFIPassword(value);
             Serial.println("WiFi password saved. Reboot REQUIRED");
         }
         else
         {
             Serial.println("Serial command received: unset WiFi password");
-            settings->setWIFIPassword("");
+            Settings::setWIFIPassword("");
             Serial.println("WiFi SSID removed. Reboot REQUIRED");
         }
         break;
@@ -137,13 +135,13 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
         if (value && strlen(value))
         {
             Serial.printf("Serial command received: set MQTT Telegraf URI (%s)\n", value);
-            settings->setMQTTTelegrafURI(value);
+            Settings::setMQTTTelegrafURI(value);
             Serial.println("MQTT Telegraf URI saved. Reboot REQUIRED");
         }
         else
         {
             Serial.println("Serial command received: unset MQTT Telegraf URI");
-            settings->setMQTTTelegrafURI("");
+            Settings::setMQTTTelegrafURI("");
             Serial.println("MQTT Telegraf URI removed. Reboot REQUIRED");
         }
         break;
@@ -151,13 +149,13 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
         if (value && strlen(value))
         {
             Serial.printf("Serial command received: set MQTT Telegraf global topic (%s)\n", value);
-            settings->setMQTTTelegrafGlobalTopic(value);
+            Settings::setMQTTTelegrafGlobalTopic(value);
             Serial.println("MQTT Telegraf global topic saved. Reboot REQUIRED");
         }
         else
         {
             Serial.println("Serial command received: unset MQTT Telegraf global topic");
-            settings->setMQTTTelegrafGlobalTopic("");
+            Settings::setMQTTTelegrafGlobalTopic("");
             Serial.println("MQTT Telegraf global topic removed. Reboot REQUIRED");
         }
         break;
@@ -197,13 +195,13 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
         if (value && strlen(value))
         {
             Serial.printf("Serial command received: set total memory bytes (%s)\n", value);
-            settings->setTotalMemoryBytes(strtoull(value, nullptr, 10));
+            Settings::setTotalMemoryBytes(strtoull(value, nullptr, 10));
             Serial.println("Total memory bytes saved. Reboot REQUIRED");
         }
         else
         {
             Serial.println("Serial command received: unset total memory bytes");
-            settings->setTotalMemoryBytes(0);
+            Settings::setTotalMemoryBytes(0);
             Serial.println("Total memory bytes removed. Reboot REQUIRED");
         }
         break;
@@ -225,13 +223,11 @@ void setup()
     SerialManager::init(SerialManager::DEFAULT_SPEED, onReceivedSerialCommand);
     Serial.println("Starting esp32-server-dashboard");
 
-    settings = new Settings();
-
     char WiFiSSID[WIFI_SSID_CHAR_ARR_LENGTH];
-    settings->getWIFISSID(WiFiSSID, WIFI_SSID_CHAR_ARR_LENGTH);
+    Settings::getWIFISSID(WiFiSSID, WIFI_SSID_CHAR_ARR_LENGTH);
 
     char WiFiPassword[WIFI_PASSWORD_CHAR_ARR_LENGTH];
-    settings->getWIFIPassword(WiFiPassword, WIFI_PASSWORD_CHAR_ARR_LENGTH);
+    Settings::getWIFIPassword(WiFiPassword, WIFI_PASSWORD_CHAR_ARR_LENGTH);
 
     WifiManager::setCredentials(WiFiSSID, WiFiPassword);
     WifiManager::connect(true);
@@ -239,9 +235,9 @@ void setup()
     dummySRC = new DummySource();
 
     char mqttTelegrafURI[64] = {'\0'};
-    settings->getMQTTTelegrafURI(mqttTelegrafURI, sizeof(mqttTelegrafURI));
+    Settings::getMQTTTelegrafURI(mqttTelegrafURI, sizeof(mqttTelegrafURI));
     char mqttTelegrafGlobalTopic[512] = {'\0'};
-    settings->getMQTTTelegrafGlobalTopic(mqttTelegrafGlobalTopic, sizeof(mqttTelegrafGlobalTopic));
+    Settings::getMQTTTelegrafGlobalTopic(mqttTelegrafGlobalTopic, sizeof(mqttTelegrafGlobalTopic));
     if (strlen(mqttTelegrafURI) > 0 && strlen(mqttTelegrafGlobalTopic) > 0)
     {
         char WiFiMacAddress[32] = {'\0'};
@@ -249,11 +245,12 @@ void setup()
         mqttTelegrafSRC = new MQTTTelegrafSource(mqttTelegrafURI, WiFiMacAddress, mqttTelegrafGlobalTopic);
     }
 
+    Serial.printf("main total memory bytes: %" PRIu64 "\n", Settings::getTotalMemoryBytes());
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     screen = new LGFX(PIN_SDA, PIN_SCL, PIN_CS, PIN_DC, PIN_RST, DISPLAY_DRIVER_LOVYANN_ST7789_WIDTH, DISPLAY_DRIVER_LOVYANN_ST7789_HEIGHT, DISPLAY_DRIVER_LOVYANN_ST7789_ROTATION);
     screen->setSource(mqttTelegrafSRC);
-    // screen->initScreen(ST_INFO);
-    screen->initScreen(ST_DATA_RESUME);
+    screen->initScreen(ST_INFO);
+    // screen->initScreen(ST_DATA_RESUME);
 #endif // DISPLAY_DRIVER_LOVYANN_ST7789
 }
 
