@@ -1,22 +1,39 @@
 #include "SerialManager.hpp"
 #include "WifiManager.hpp"
 #include <Arduino.h>
-#include "Settings.hpp"
 
-#define CMD_SET_WIFI_SSID "SET_WIFI_SSID "
-#define CMD_SET_WIFI_PASSWORD "SET_WIFI_PASSWORD "
-#define CMD_SET_MQTT_TELEGRAF_URI "SET_MQTT_TELEGRAF_URI "
-#define CMD_SET_MQTT_TELEGRAF_GLOBAL_TOPIC "SET_MQTT_TELEGRAF_GLOBAL_TOPIC "
+const char *SerialCommandStr[]{
+    "NONE",
+    "UNKNOWN",
+    "REBOOT",
+    "CLEAR_SETTINGS",
+    "EXPORT_SETTINGS",
+    "CONNECT_WIFI",
+    "DISCONNECT_WIFI",
+    "SET_WIFI_SSID ",
+    "SET_WIFI_PASSWORD ",
+    "SET_MQTT_TELEGRAF_URI ",
+    "SET_MQTT_TELEGRAF_GLOBAL_TOPIC ",
+};
 
-// Settings SerialManager::settings = nullptr;
+SerialCommandCallback SerialManager::remoteCallback = nullptr;
 
-void SerialManager::init(uint32_t speed)
+void SerialManager::init(uint32_t speed, SerialCommandCallback callback)
 {
     Serial.begin(speed);
     while (!Serial)
     {
         yield();
         delay(10);
+    }
+    SerialManager::setCallback(callback);
+}
+
+void SerialManager::setCallback(SerialCommandCallback callback)
+{
+    if (callback != nullptr)
+    {
+        SerialManager::remoteCallback = callback;
     }
 }
 
@@ -25,151 +42,123 @@ void SerialManager::loop(void)
     while (Serial.available() > 0)
     {
         String rx = Serial.readStringUntil('\n');
-        if (rx == "REBOOT")
+        if (rx == SerialCommandStr[SERIAL_CMDT_REBOOT])
         {
-            Serial.println("Rebooting");
-            ESP.restart();
-        }
-        else if (rx == "CLEAR_SETTINGS")
-        {
-            Serial.println("Reseting settings");
-            Settings *s = new Settings();
-            s->clear();
-            delete (s);
-            Serial.println("Settings cleared. Reboot REQUIRED");
-        }
-        else if (rx == "EXPORT_SETTINGS")
-        {
-            Serial.println("Exporting settings:");
-            Serial.println("# EXPORTED SETTINGS BEGIN");
-            Serial.println("CLEAR_SETTINGS");
-            Settings *s = new Settings();
-            char str[512] = {'\0'};
-            s->getWIFISSID(str, sizeof(str));
-            if (strlen(str) > 0)
+            if (SerialManager::remoteCallback != nullptr)
             {
-                Serial.print(CMD_SET_WIFI_SSID);
-                Serial.println(str);
+                SerialManager::remoteCallback(SERIAL_CMDT_REBOOT, nullptr);
             }
-            s->getWIFIPassword(str, sizeof(str));
-            if (strlen(str) > 0)
-            {
-                Serial.print(CMD_SET_WIFI_PASSWORD);
-                Serial.println(str);
-            }
-            s->getMQTTTelegrafURI(str, sizeof(str));
-            if (strlen(str) > 0)
-            {
-                Serial.print(CMD_SET_MQTT_TELEGRAF_URI);
-                Serial.println(str);
-            }
-            s->getMQTTTelegrafGlobalTopic(str, sizeof(str));
-            if (strlen(str) > 0)
-            {
-                Serial.print(CMD_SET_MQTT_TELEGRAF_GLOBAL_TOPIC);
-                Serial.println(str);
-            }
-            delete (s);
-            Serial.println("REBOOT");
-            Serial.println("# EXPORTED SETTINGS END");
         }
-        else if (rx == "CONNECT_WIFI")
+        else if (rx == SerialCommandStr[SERIAL_CMDT_CLEAR_SETTINGS])
         {
-            Serial.println("Connecting WIFI");
-            WifiManager::connect(false);
-        }
-        else if (rx == "DISCONNECT_WIFI")
-        {
-            Serial.println("Disconnecting WIFI");
-            WifiManager::disconnect();
-        }
-        else if (rx.startsWith(CMD_SET_WIFI_SSID))
-        {
-            if (rx.length() > strlen(CMD_SET_WIFI_SSID))
+            if (SerialManager::remoteCallback != nullptr)
             {
-                String WiFiSSID = rx.substring(strlen(CMD_SET_WIFI_SSID));
-                Serial.println("Received new WiFi SSID");
-                Serial.println(WiFiSSID);
-                Settings *s = new Settings();
-                s->setWIFISSID(WiFiSSID.c_str());
-                delete (s);
-                Serial.println("WiFi SSID saved. Reboot REQUIRED");
+                SerialManager::remoteCallback(SERIAL_CMDT_CLEAR_SETTINGS, nullptr);
+            }
+        }
+        else if (rx == SerialCommandStr[SERIAL_CMDT_EXPORT_SETTINGS])
+        {
+            if (SerialManager::remoteCallback != nullptr)
+            {
+                SerialManager::remoteCallback(SERIAL_CMDT_EXPORT_SETTINGS, nullptr);
+            }
+        }
+        else if (rx == SerialCommandStr[SERIAL_CMDT_CONNECT_WIFI])
+        {
+            if (SerialManager::remoteCallback != nullptr)
+            {
+                SerialManager::remoteCallback(SERIAL_CMDT_CONNECT_WIFI, nullptr);
+            }
+        }
+        else if (rx == SerialCommandStr[SERIAL_CMDT_DISCONNECT_WIFI])
+        {
+            if (SerialManager::remoteCallback != nullptr)
+            {
+                SerialManager::remoteCallback(SERIAL_CMDT_DISCONNECT_WIFI, nullptr);
+            }
+        }
+        else if (rx.startsWith(SerialCommandStr[SERIAL_CMDT_SET_WIFI_SSID]))
+        {
+            uint16_t length = strlen(SerialCommandStr[SERIAL_CMDT_SET_WIFI_SSID]);
+            if (rx.length() > length)
+            {
+                String WiFiSSID = rx.substring(length);
+                if (SerialManager::remoteCallback != nullptr)
+                {
+                    SerialManager::remoteCallback(SERIAL_CMDT_SET_WIFI_SSID, WiFiSSID.c_str());
+                }
             }
             else
             {
-                Serial.println("Received empty WiFi SSID");
-                Settings *s = new Settings();
-                s->setWIFISSID("");
-                delete (s);
-                Serial.println("WiFi SSID removed. Reboot REQUIRED");
+                if (SerialManager::remoteCallback != nullptr)
+                {
+                    SerialManager::remoteCallback(SERIAL_CMDT_SET_WIFI_SSID, nullptr);
+                }
             }
         }
-        else if (rx.startsWith(CMD_SET_WIFI_PASSWORD))
+        else if (rx.startsWith(SerialCommandStr[SERIAL_CMDT_SET_WIFI_PASSWORD]))
         {
-            if (rx.length() > strlen(CMD_SET_WIFI_PASSWORD))
+            uint16_t length = strlen(SerialCommandStr[SERIAL_CMDT_SET_WIFI_PASSWORD]);
+            if (rx.length() > length)
             {
-                String WiFiPassword = rx.substring(strlen(CMD_SET_WIFI_PASSWORD));
-                Serial.println("Received new WiFi password");
-                Serial.println(WiFiPassword);
-                Settings *s = new Settings();
-                s->setWIFIPassword(WiFiPassword.c_str());
-                delete (s);
-                Serial.println("WiFi password saved. Reboot REQUIRED");
+                String WiFiPassword = rx.substring(length);
+                if (SerialManager::remoteCallback != nullptr)
+                {
+                    SerialManager::remoteCallback(SERIAL_CMDT_SET_WIFI_PASSWORD, WiFiPassword.c_str());
+                }
             }
             else
             {
-                Serial.println("Received empty WiFi password");
-                Settings *s = new Settings();
-                s->setWIFIPassword("");
-                delete (s);
-                Serial.println("WiFi password removed. Reboot REQUIRED");
+                if (SerialManager::remoteCallback != nullptr)
+                {
+                    SerialManager::remoteCallback(SERIAL_CMDT_SET_WIFI_PASSWORD, nullptr);
+                }
             }
         }
-        else if (rx.startsWith(CMD_SET_MQTT_TELEGRAF_URI))
+        else if (rx.startsWith(SerialCommandStr[SERIAL_CMDT_SET_MQTT_TELEGRAF_URI]))
         {
-            if (rx.length() > strlen(CMD_SET_MQTT_TELEGRAF_URI))
+            uint16_t length = strlen(SerialCommandStr[SERIAL_CMDT_SET_MQTT_TELEGRAF_URI]);
+            if (rx.length() > length)
             {
-                String MQTTTelegrafURI = rx.substring(strlen(CMD_SET_MQTT_TELEGRAF_URI));
-                Serial.println("Received new MQTT Telegraf URI");
-                Serial.println(MQTTTelegrafURI);
-                Settings *s = new Settings();
-                s->setMQTTTelegrafURI(MQTTTelegrafURI.c_str());
-                delete (s);
-                Serial.println("MQTT Telegraf URI saved. Reboot REQUIRED");
+                String MQTTTelegrafURI = rx.substring(length);
+                if (SerialManager::remoteCallback != nullptr)
+                {
+                    SerialManager::remoteCallback(SERIAL_CMDT_SET_MQTT_TELEGRAF_URI, MQTTTelegrafURI.c_str());
+                }
             }
             else
             {
-                Serial.println("Received empty MQTT Telegraf URI");
-                Settings *s = new Settings();
-                s->setMQTTTelegrafURI("");
-                delete (s);
-                Serial.println("MQTT Telegraf URI removed. Reboot REQUIRED");
+                if (SerialManager::remoteCallback != nullptr)
+                {
+                    SerialManager::remoteCallback(SERIAL_CMDT_SET_MQTT_TELEGRAF_URI, nullptr);
+                }
             }
         }
-        else if (rx.startsWith(CMD_SET_MQTT_TELEGRAF_GLOBAL_TOPIC))
+        else if (rx.startsWith(SerialCommandStr[SERIAL_CMDT_SET_MQTT_TELEGRAF_TOPIC]))
         {
-            if (rx.length() > strlen(CMD_SET_MQTT_TELEGRAF_GLOBAL_TOPIC))
+            uint16_t length = strlen(SerialCommandStr[SERIAL_CMDT_SET_MQTT_TELEGRAF_TOPIC]);
+            if (rx.length() > length)
             {
-                String topic = rx.substring(strlen(CMD_SET_MQTT_TELEGRAF_GLOBAL_TOPIC));
-                Serial.println("Received new MQTT Telegraf global topic");
-                Serial.println(topic);
-                Settings *s = new Settings();
-                s->setMQTTTelegrafGlobalTopic(topic.c_str());
-                delete (s);
-                Serial.println("MQTT Telegraf global topic saved. Reboot REQUIRED");
+                String MQTTTelegrafTopic = rx.substring(length);
+                if (SerialManager::remoteCallback != nullptr)
+                {
+                    SerialManager::remoteCallback(SERIAL_CMDT_SET_MQTT_TELEGRAF_TOPIC, MQTTTelegrafTopic.c_str());
+                }
             }
             else
             {
-                Serial.println("Received empty MQTT Telegraf global topic");
-                Settings *s = new Settings();
-                s->setMQTTTelegrafURI("");
-                delete (s);
-                Serial.println("MQTT Telegraf global topic removed. Reboot REQUIRED");
+                if (SerialManager::remoteCallback != nullptr)
+                {
+                    SerialManager::remoteCallback(SERIAL_CMDT_SET_MQTT_TELEGRAF_TOPIC, nullptr);
+                }
             }
         }
         else
         {
-            Serial.printf("Unknown command %s\n", rx.c_str());
+            if (SerialManager::remoteCallback != nullptr)
+            {
+                SerialManager::remoteCallback(SERIAL_CMDT_UNKNOWN, rx.c_str());
+            }
         }
     }
 }

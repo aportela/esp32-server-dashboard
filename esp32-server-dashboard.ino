@@ -51,12 +51,134 @@ MQTTTelegrafSource *mqttTelegrafSRC = nullptr;
 Settings *settings = nullptr;
 
 Preferences preferences;
+
+void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
+{
+    switch (cmd)
+    {
+    case SERIAL_CMDT_REBOOT:
+        Serial.println("Serial command received: rebooting");
+        ESP.restart();
+        break;
+    case SERIAL_CMDT_CLEAR_SETTINGS:
+        Serial.println("Serial command received: reset settings");
+        settings->clear();
+        Serial.println("Settings cleared. Reboot REQUIRED");
+        break;
+    case SERIAL_CMDT_EXPORT_SETTINGS:
+        Serial.println("Serial command received: export settings");
+        Serial.println("# EXPORTED SETTINGS BEGIN");
+        Serial.println(SerialCommandStr[SERIAL_CMDT_CLEAR_SETTINGS]);
+        /*
+        char str[512] = {'\0'};
+        s->getWIFISSID(str, sizeof(str));
+        if (strlen(str) > 0)
+        {
+            Serial.print(CMD_SET_WIFI_SSID);
+            Serial.println(str);
+        }
+        s->getWIFIPassword(str, sizeof(str));
+        if (strlen(str) > 0)
+        {
+            Serial.print(CMD_SET_WIFI_PASSWORD);
+            Serial.println(str);
+        }
+        s->getMQTTTelegrafURI(str, sizeof(str));
+        if (strlen(str) > 0)
+        {
+            Serial.print(CMD_SET_MQTT_TELEGRAF_URI);
+            Serial.println(str);
+        }
+        s->getMQTTTelegrafGlobalTopic(str, sizeof(str));
+        if (strlen(str) > 0)
+        {
+            Serial.print(CMD_SET_MQTT_TELEGRAF_GLOBAL_TOPIC);
+            Serial.println(str);
+        }
+        Serial.println("REBOOT");
+        */
+        Serial.println("# EXPORTED SETTINGS END");
+        break;
+    case SERIAL_CMDT_CONNECT_WIFI:
+        Serial.println("Serial command received: connect WiFi");
+        WifiManager::connect(false);
+        break;
+    case SERIAL_CMDT_DISCONNECT_WIFI:
+        Serial.println("Serial command received: disconnect WiFi");
+        WifiManager::disconnect();
+        break;
+    case SERIAL_CMDT_SET_WIFI_SSID:
+        if (value && strlen(value))
+        {
+            Serial.printf("Serial command received: set WiFi SSID (%s)\n", value);
+            settings->setWIFISSID(value);
+            Serial.println("WiFi SSID saved. Reboot REQUIRED");
+        }
+        else
+        {
+            Serial.println("Serial command received: unset WiFi SSID");
+            settings->setWIFISSID("");
+            Serial.println("WiFi SSID removed. Reboot REQUIRED");
+        }
+        break;
+    case SERIAL_CMDT_SET_WIFI_PASSWORD:
+        if (value && strlen(value))
+        {
+            Serial.printf("Serial command received: set WiFi password (%s)\n", value);
+            settings->setWIFIPassword(value);
+            Serial.println("WiFi password saved. Reboot REQUIRED");
+        }
+        else
+        {
+            Serial.println("Serial command received: unset WiFi password");
+            settings->setWIFIPassword("");
+            Serial.println("WiFi SSID removed. Reboot REQUIRED");
+        }
+        break;
+    case SERIAL_CMDT_SET_MQTT_TELEGRAF_URI:
+        if (value && strlen(value))
+        {
+            Serial.printf("Serial command received: set MQTT Telegraf URI (%s)\n", value);
+            settings->setMQTTTelegrafURI(value);
+            Serial.println("MQTT Telegraf URI saved. Reboot REQUIRED");
+        }
+        else
+        {
+            Serial.println("Serial command received: unset MQTT Telegraf URI");
+            settings->setMQTTTelegrafURI("");
+            Serial.println("MQTT Telegraf URI removed. Reboot REQUIRED");
+        }
+        break;
+    case SERIAL_CMDT_SET_MQTT_TELEGRAF_TOPIC:
+        if (value && strlen(value))
+        {
+            Serial.printf("Serial command received: set MQTT Telegraf global topic (%s)\n", value);
+            settings->setMQTTTelegrafGlobalTopic(value);
+            Serial.println("MQTT Telegraf global topic saved. Reboot REQUIRED");
+        }
+        else
+        {
+            Serial.println("Serial command received: unset MQTT Telegraf global topic");
+            settings->setMQTTTelegrafGlobalTopic("");
+            Serial.println("MQTT Telegraf global topic removed. Reboot REQUIRED");
+        }
+        break;
+    default:
+        Serial.println("Serial command received: UNKNOWN");
+        if (value)
+        {
+            Serial.println(value);
+        }
+        break;
+    }
+}
+
 void setup()
 {
     //  TODO: default info screen if no valid settings found
     //  TODO: rotary encoder controller, button pressed at boot = enter settings mode, movement = toggle between screens
 
-    SerialManager::init(SerialManager::DEFAULT_SPEED);
+    SerialManager::init(SerialManager::DEFAULT_SPEED, onReceivedSerialCommand);
     Serial.println("Starting esp32-server-dashboard");
 
     settings = new Settings();
