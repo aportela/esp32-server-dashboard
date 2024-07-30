@@ -3,12 +3,12 @@
 // WARNING: namespaces with length > 15 WILL NOT OPEN NVS CORRECTLY
 #define NAMESPACE "esp32_srv_dashb"
 
-// WARNING: ALSO keys with length > 15 WILL NOT WORK TOO
-
+// WARNING: ALSO keys with length > 15 DO NOT WORK
 #define KEY_WIFI_SSID "WIFI_SSID"
 #define KEY_WIFI_PASSWORD "WIFI_PASSWORD"
 #define KEY_MQTT_TELEGRAF_URI "SRC_MQTT_URI"
 #define KEY_MQTT_TELEGRAF_GLOBAL_TOPIC "SRC_MQTT_TOPIC"
+#define KEY_TOTAL_MEMORY_BYTES "T_MEM_BYTES"
 
 Settings::Settings(void)
 {
@@ -19,6 +19,39 @@ Settings::~Settings()
 {
     delete this->preferences;
     this->preferences = nullptr;
+}
+
+uint64_t Settings::getBigUnsignedIntegerValue(const char *key, uint64_t defaultValue)
+{
+    if (this->preferences->begin(NAMESPACE, false))
+    {
+        if (this->preferences->isKey(key))
+        {
+            return (this->preferences->getULong64(key, defaultValue));
+        }
+        else
+        {
+            return (defaultValue);
+        }
+    }
+    else
+    {
+        return (defaultValue);
+    }
+}
+
+void Settings::setBigIntegerValue(const char *key, uint64_t value)
+{
+    if (this->preferences->begin(NAMESPACE, false))
+    {
+        if (this->preferences->putULong64(key, value))
+        {
+        }
+        else
+        {
+        }
+        this->preferences->end();
+    }
 }
 
 void Settings::getValue(const char *key, char *value, size_t count)
@@ -136,5 +169,22 @@ void Settings::setMQTTTelegrafGlobalTopic(const char *topic)
     else
     {
         this->deleteKey(KEY_MQTT_TELEGRAF_GLOBAL_TOPIC);
+    }
+}
+
+uint64_t Settings::getTotalMemoryBytes()
+{
+    return (this->getBigUnsignedIntegerValue(KEY_TOTAL_MEMORY_BYTES, 0));
+}
+
+void Settings::setTotalMemoryBytes(uint64_t totalBytes)
+{
+    if (totalBytes > 0)
+    {
+        this->setBigIntegerValue(KEY_TOTAL_MEMORY_BYTES, totalBytes);
+    }
+    else
+    {
+        this->deleteKey(KEY_TOTAL_MEMORY_BYTES);
     }
 }
