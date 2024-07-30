@@ -161,8 +161,40 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
             Serial.println("MQTT Telegraf global topic removed. Reboot REQUIRED");
         }
         break;
+    case SERIAL_CMDT_SET_SCREEN:
+        if (value && strlen(value))
+        {
+            Serial.printf("Serial command received: change screen to (%s)\n", value);
+            if (strcmp(value, "INFO") == 0)
+            {
+                if (screen->flipToScreen(ST_INFO))
+                {
+                    Serial.println("Screen changed");
+                }
+                else
+                {
+                    Serial.println("Screen unchanged");
+                }
+            }
+            else if (strcmp(value, "DATA_RESUME") == 0)
+            {
+                if (screen->flipToScreen(ST_DATA_RESUME))
+                {
+                    Serial.println("Screen changed");
+                }
+                else
+                {
+                    Serial.println("Screen unchanged");
+                }
+            }
+            else
+            {
+                Serial.println("Invalid screen");
+            }
+        }
+        break;
     default:
-        Serial.println("Serial command received: UNKNOWN");
+        Serial.println("Serial command received (UNKNOWN):");
         if (value)
         {
             Serial.println(value);
@@ -200,7 +232,7 @@ void setup()
     {
         char WiFiMacAddress[32] = {'\0'};
         WifiManager::getMacAddress(WiFiMacAddress, sizeof(WiFiMacAddress));
-        mqttTelegrafSRC = new MQTTTelegrafSource(mqttTelegrafURI, WiFiMacAddress, mqttTelegrafGlobalTopic);
+        // mqttTelegrafSRC = new MQTTTelegrafSource(mqttTelegrafURI, WiFiMacAddress, mqttTelegrafGlobalTopic);
     }
 
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
