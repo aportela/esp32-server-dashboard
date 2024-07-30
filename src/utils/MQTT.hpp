@@ -15,6 +15,7 @@ private:
 
 public:
     static void init(const char *id, const char *uri, const char *topic);
+    static void destroy(void);
     static void setCallback(void (*callback)(const char *topic, const char *payload));
 };
 

@@ -1,4 +1,5 @@
 #include "MQTT.hpp"
+#include <cstring>
 #include <Arduino.h>
 
 char MQTT::topic[256] = {'\0'};
@@ -11,11 +12,22 @@ void MQTT::init(const char *id, const char *uri, const char *topic)
     esp_mqtt_client_config_t mqtt_cfg = {};
     mqtt_cfg.credentials.client_id = id;
     mqtt_cfg.broker.address.uri = uri;
-    client = esp_mqtt_client_init(&mqtt_cfg);
-    esp_mqtt_client_register_event(client, (esp_mqtt_event_id_t)ESP_EVENT_ANY_ID, MQTT::event_handler, NULL);
-    esp_mqtt_client_start(client);
+    MQTT::client = esp_mqtt_client_init(&mqtt_cfg);
+    esp_mqtt_client_register_event(MQTT::client, (esp_mqtt_event_id_t)ESP_EVENT_ANY_ID, MQTT::event_handler, NULL);
+    esp_mqtt_client_start(MQTT::client);
     memcpy(MQTT::topic, topic, strlen(topic));
     MQTT::topic[strlen(topic)] = '\0';
+}
+
+void MQTT::destroy(void)
+{
+    if (client != nullptr)
+    {
+        esp_mqtt_client_stop(MQTT::client);
+        esp_mqtt_client_destroy(MQTT::client);
+        MQTT::client = nullptr;
+    }
+    messageCallback = nullptr;
 }
 
 void MQTT::setCallback(void (*callback)(const char *topic, const char *payload))
