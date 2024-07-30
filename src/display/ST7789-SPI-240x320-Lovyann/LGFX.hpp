@@ -26,7 +26,7 @@ public:
     ~LGFX();
     void setSource(Source *src);
     void initScreen(ScreenType scr);
-    void flipToScreen(ScreenType scr);
+    bool flipToScreen(ScreenType scr);
     void refresh(void);
 };
 
