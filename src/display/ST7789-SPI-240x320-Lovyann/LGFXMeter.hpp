@@ -32,7 +32,7 @@ private:
     void displayDefaultValues(void);
 
 public:
-    LGFXMeter(LovyanGFX *display, EntityType entity, int32_t width, int32_t height, uint16_t xOffset, uint16_t yOffset, int32_t backgroundColor, char *label);
+    LGFXMeter(LovyanGFX *display, EntityType entity, int32_t width, int32_t height, uint16_t xOffset, uint16_t yOffset, int32_t backgroundColor, char *label, uint64_t minValue = 0, uint64_t maxValue = 0);
     ~LGFXMeter();
     void setMin(uint64_t value);
     void setMax(uint64_t value);
