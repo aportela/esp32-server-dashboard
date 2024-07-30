@@ -92,9 +92,28 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
 {
     // Serial.print("Topic: ");
     // Serial.println(topic);
-    // Serial.print("Message: ");
-    // Serial.println(payload);
-    // TODO: read real timestamps
+    //  Serial.print("Message: ");
+    //  Serial.println(payload);
+
+    uint64_t currentMessageTimestamp = millis(); // by default use current esp32 timestamp (failover for payload timestamp parse errors)
+
+    // parse timestamp
+    size_t payloadLength = strlen(payload);
+    const char *lastSpaceSubStr = strrchr(payload, ' ');
+    if (lastSpaceSubStr == NULL || lastSpaceSubStr == payload + payloadLength - 1)
+    {
+    }
+    else
+    {
+        const char *subStr = lastSpaceSubStr + 1;
+        uint64_t num = strtoull(subStr, nullptr, 10);
+        if (num > 0)
+        {
+            // set real payload timestamp
+            currentMessageTimestamp = num / 1000000;
+        }
+    }
+
     if (strcmp(topic, "telegraf/HOST_NAME/cpu") == 0 && strncmp(payload, "cpu,cpu=cpu-total", 17) == 0)
     {
 
@@ -112,7 +131,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
                 float cpu_usage = 100.0 - usage_idle; // Porcentaje de uso total de la CPU
                 // Serial.printf("Total CPU Usage: %.2f%%\n", cpu_usage);
                 // Serial.printf("Total CPU Usage: %d%%\n", (uint8_t)cpu_usage);
-                MQTTTelegrafSource::instance->currentGlobalCPULoadData->setCurrentValue((uint8_t)cpu_usage, millis());
+                MQTTTelegrafSource::instance->currentGlobalCPULoadData->setCurrentValue((uint8_t)cpu_usage, currentMessageTimestamp);
             }
             else
             {
@@ -134,7 +153,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
 
             if (sscanf(subPayload, format, &used) == 1)
             {
-                MQTTTelegrafSource::instance->currentUsedMemoryData->setCurrentValue(used, millis());
+                MQTTTelegrafSource::instance->currentUsedMemoryData->setCurrentValue(used, currentMessageTimestamp);
             }
             else
             {
@@ -143,11 +162,10 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
             // TODO SET TOTAL ?
         }
     }
-    else if (false && strcmp(topic, "telegraf/HOST_NAME/net") == 0 && strncmp(payload, "net,host=HOST_NAME,interface=Ethernet\ 10G\ (SFP+)", 20) == 0)
+    else if (strcmp(topic, "telegraf/HOST_NAME/net") == 0 && strncmp(payload, "net,host=HOST_NAME,interface=Wi-Fi", 20) == 0)
     {
         if (strstr(payload, "interface=Wi-Fi"))
         {
-            Serial.println(payload);
             uint64_t recv = 0;
             const char *searchRX = "bytes_recv=";
             const char *startRX = strstr(payload, searchRX);
@@ -157,28 +175,14 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
                 strncpy(subPayload, startRX, sizeof(subPayload) - 1);
                 subPayload[sizeof(subPayload) - 1] = '\0'; // Asegurar la terminación nula
                 const char *format = "bytes_recv=%" PRIu64 "i";
-
                 if (sscanf(subPayload, format, &recv) == 1)
                 {
-                    Serial.print("RECV: ");
-                    Serial.println(recv);
-                    uint64_t lastTimestamp = MQTTTelegrafSource::instance->currentNetworkDownloadUsedBandwithData->getCurrentTimestamp();
-                    uint64_t currentTimestamp = millis();
-                    uint64_t diff = recv - MQTTTelegrafSource::instance->currentNetworkDownloadUsedBandwithData->getCurrentValue();
-                    Serial.print("DIFF: ");
-                    Serial.println(diff);
-                    Serial.print("DIFF / ellapsed: ");
-                    uint64_t elapsedMillis = (currentTimestamp - lastTimestamp);
-                    Serial.println(diff / elapsedMillis);
-                    Serial.print("Ellapsed millis: ");
-                    Serial.println(elapsedMillis);
-                    MQTTTelegrafSource::instance->currentNetworkDownloadUsedBandwithData->setCurrentValue(diff / elapsedMillis, currentTimestamp);
+                    MQTTTelegrafSource::instance->currentNetworkDownloadUsedBandwithData->setCurrentValue(recv, currentMessageTimestamp);
                 }
                 else
                 {
                     Serial.println("Failed to parse RX payload");
                 }
-                // TODO SET TOTAL ?
             }
             uint64_t sent = 0;
             const char *searchTX = "bytes_sent=";
@@ -189,28 +193,14 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
                 strncpy(subPayload, startTX, sizeof(subPayload) - 1);
                 subPayload[sizeof(subPayload) - 1] = '\0'; // Asegurar la terminación nula
                 const char *format = "bytes_sent=%" PRIu64 "i";
-
                 if (sscanf(subPayload, format, &sent) == 1)
                 {
-                    Serial.print("SENT: ");
-                    Serial.println(sent);
-                    uint64_t lastTimestamp = MQTTTelegrafSource::instance->currentNetworkUploadUsedBandwithData->getCurrentTimestamp();
-                    uint64_t currentTimestamp = millis();
-                    uint64_t diff = sent - MQTTTelegrafSource::instance->currentNetworkUploadUsedBandwithData->getCurrentValue();
-                    Serial.print("DIFF: ");
-                    Serial.println(diff);
-                    Serial.print("DIFF / ellapsed: ");
-                    uint64_t elapsedMillis = (currentTimestamp - lastTimestamp);
-                    Serial.println(diff / elapsedMillis);
-                    Serial.print("Ellapsed millis: ");
-                    Serial.println(elapsedMillis);
-                    MQTTTelegrafSource::instance->currentNetworkUploadUsedBandwithData->setCurrentValue(diff / elapsedMillis, currentTimestamp);
+                    MQTTTelegrafSource::instance->currentNetworkDownloadUsedBandwithData->setCurrentValue(sent, currentMessageTimestamp);
                 }
                 else
                 {
                     Serial.println("Failed to parse TX payload");
                 }
-                // TODO SET TOTAL ?
             }
         }
     }
