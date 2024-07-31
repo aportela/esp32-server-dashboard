@@ -238,7 +238,7 @@ int8_t Settings::getMinCPUTemperature()
 
 bool Settings::setMinCPUTemperature(int8_t celsius)
 {
-    if (celsius > 0)
+    if (celsius >= -128 && celsius <= 127)
     {
         return (Settings::setSmallSignedIntegerValue(KEY_MIN_CPU_TEMPERATURE, celsius));
     }
@@ -255,7 +255,7 @@ int8_t Settings::getMaxCPUTemperature()
 
 bool Settings::setMaxCPUTemperature(int8_t celsius)
 {
-    if (celsius > 0)
+    if (celsius >= -128 && celsius <= 127)
     {
         return (Settings::setSmallSignedIntegerValue(KEY_MAX_CPU_TEMPERATURE, celsius));
     }
