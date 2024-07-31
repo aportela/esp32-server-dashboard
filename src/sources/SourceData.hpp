@@ -67,6 +67,7 @@ public:
     bool setNetworkDownloadBandwidthLimit(uint64_t bytes);
     uint64_t getNetworkDownloadSpeed(void) const;
     uint64_t getNetworkDownloadSpeedTimestamp(void) const;
+    uint64_t getCurrentTotalNetworkDownloaded(void);
     bool changedNetworkDownloadSpeed(uint64_t fromTimestamp) const;
     bool setCurrentTotalNetworkDownloaded(uint64_t value, uint64_t timestamp);
     // NET UPLOAD BANDWIDTH
@@ -74,6 +75,7 @@ public:
     bool setNetworkUploadBandwidthLimit(uint64_t bytes);
     uint64_t getNetworkUploadSpeed(void) const;
     uint64_t getNetworkUploadSpeedTimestamp(void) const;
+    uint64_t getCurrentTotalNetworkUploaded(void);
     bool changedNetworkUploadSpeed(uint64_t fromTimestamp) const;
     bool setCurrentTotalNetworkUploaded(uint64_t value, uint64_t timestamp);
 };

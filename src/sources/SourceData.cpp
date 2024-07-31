@@ -205,6 +205,11 @@ uint64_t SourceData::getNetworkDownloadSpeedTimestamp(void) const
     return (this->currentTotalNetworkDownloadedTimestamp);
 }
 
+uint64_t SourceData::getCurrentTotalNetworkDownloaded(void)
+{
+    return (this->currentTotalNetworkUploaded);
+}
+
 bool SourceData::changedNetworkDownloadSpeed(uint64_t fromTimestamp) const
 {
     return (fromTimestamp != this->currentTotalNetworkDownloadedTimestamp);
@@ -253,6 +258,11 @@ uint64_t SourceData::getNetworkUploadSpeed(void) const
 uint64_t SourceData::getNetworkUploadSpeedTimestamp(void) const
 {
     return (this->currentTotalNetworkUploadedTimestamp);
+}
+
+uint64_t SourceData::getCurrentTotalNetworkUploaded(void)
+{
+    return (this->currentTotalNetworkUploaded);
 }
 
 bool SourceData::changedNetworkUploadSpeed(uint64_t fromTimestamp) const
