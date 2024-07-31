@@ -19,6 +19,7 @@ private:
     long previousSignalStrength;
     WIFISignalQuality previousSignalQuality;
     char previousRuntimeStr[16] = {'\0'};
+    uint16_t previousFPS = 0;
 
     char WIFISSID[WIFI_SSID_CHAR_ARR_LENGTH] = {'\0'};
     char WIFIMacAddress[MAC_ADDRESS_CHAR_ARR_LENGTH] = {'\0'};

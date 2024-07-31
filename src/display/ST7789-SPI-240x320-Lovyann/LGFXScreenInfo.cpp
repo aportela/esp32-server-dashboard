@@ -218,23 +218,25 @@ void LGFXScreenInfo::refreshCommonData(bool forceDrawAll)
         this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_X_OFFSET, 180);
         this->parentDisplay->printf(" SPD %u bauds", SerialManager::DEFAULT_SPEED);
     }
-
     if (forceDrawAll)
     {
         this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_X_OFFSET, 200);
         this->parentDisplay->print(" FPS ");
     }
-    this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_VALUE_X_OFFSET, 200);
-    this->parentDisplay->printf("%04u", FPS::getFPS());
-
+    uint16_t currentFPS = FPS::getFPS();
+    if (this->previousFPS != currentFPS)
+    {
+        this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_VALUE_X_OFFSET, 200);
+        this->parentDisplay->printf("%04u", currentFPS);
+    }
     if (forceDrawAll)
     {
         this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_X_OFFSET, 220);
         this->parentDisplay->print(" RUN ");
     }
-    char str[sizeof(previousRuntimeStr)];
-    Format::millisToHumanStr(millis(), str, sizeof(previousRuntimeStr));
-    if (strcmp(str, previousRuntimeStr) != 0)
+    char str[sizeof(this->previousRuntimeStr)];
+    Format::millisToHumanStr(millis(), str, sizeof(this->previousRuntimeStr));
+    if (strcmp(str, this->previousRuntimeStr) != 0)
     {
         this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_VALUE_X_OFFSET, 220);
         this->parentDisplay->printf("%s    ", str);
