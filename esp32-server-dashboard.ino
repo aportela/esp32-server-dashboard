@@ -56,6 +56,7 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
 {
     char str[1024] = {'\0'};
     uint64_t tmpUint64 = 0;
+    int8_t tmpInt8 = 0;
     switch (cmd)
     {
     case SERIAL_CMDT_REBOOT:
@@ -101,6 +102,12 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
             Serial.print(SerialCommandStr[SERIAL_CMDT_SET_TOTAL_MEMORY_BYTES]);
             Serial.println(tmpUint64);
         }
+        tmpInt8 = Settings::getMinCPUTemperature();
+        Serial.print(SerialCommandStr[SERIAL_CMDT_SET_MIN_CPU_TEMPERATURE]);
+        Serial.println(tmpInt8);
+        tmpInt8 = Settings::getMaxCPUTemperature();
+        Serial.print(SerialCommandStr[SERIAL_CMDT_SET_MAX_CPU_TEMPERATURE]);
+        Serial.println(tmpInt8);
         tmpUint64 = Settings::getMaxDownloadBandwidthBytes();
         if (tmpUint64 > 0)
         {
