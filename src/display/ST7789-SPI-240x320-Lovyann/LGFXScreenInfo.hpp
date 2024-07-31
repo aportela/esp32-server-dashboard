@@ -16,8 +16,8 @@ private:
     bool WIFIDataChanged;
 
     // properties for tracking changes
-    long previousSignalStrength;
-    WIFISignalQuality previousSignalQuality;
+    long previousWiFiSignalStrength;
+    WIFISignalQuality previousWiFiSignalQuality;
     char previousRuntimeStr[16] = {'\0'};
     uint16_t previousFPS = 0;
 

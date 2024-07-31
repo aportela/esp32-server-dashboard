@@ -271,19 +271,19 @@ void LGFXScreenInfo::refresh(bool force)
                 this->WIFIDataChanged = true;
             }
         }
-        long currentSignalStrength = WifiManager::getSignalStrength();
-        if (this->previousSignalStrength != currentSignalStrength)
+        long currentWiFiSignalStrength = WifiManager::getSignalStrength();
+        if (this->previousWiFiSignalStrength != currentWiFiSignalStrength)
         {
             this->WIFISignalStrengthChanged = true;
         }
-        WIFISignalQuality currentSignalQuality = WifiManager::getSignalQuality(currentSignalStrength);
-        if (this->previousSignalQuality != currentSignalQuality)
+        WIFISignalQuality currentWiFiSignalQuality = WifiManager::getSignalQuality(currentWiFiSignalStrength);
+        if (this->previousWiFiSignalQuality != currentWiFiSignalQuality)
         {
             this->WIFISignalLevelBarsChanged = true;
         }
         this->wasConnected = isConnected;
-        this->previousSignalStrength = currentSignalStrength;
-        this->previousSignalQuality = currentSignalQuality;
+        this->previousWiFiSignalStrength = currentWiFiSignalStrength;
+        this->previousWiFiSignalQuality = currentWiFiSignalQuality;
 
         if (force || this->WIFILogoChanged)
         {
