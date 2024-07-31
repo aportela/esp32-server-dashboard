@@ -75,7 +75,7 @@ LGFXScreenDashboardResume::~LGFXScreenDashboardResume()
 
 void LGFXScreenDashboardResume::refreshBottomCommonData(bool forceDrawAll)
 {
-    FPS::loop();
+    FPS::loop(999);
     if (forceDrawAll)
     {
         this->parentDisplay->setFont(SCREEN_BOTTOM_COMMON_TEXTDATA_FONT);

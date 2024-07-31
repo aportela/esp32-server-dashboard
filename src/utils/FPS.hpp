@@ -9,7 +9,7 @@
 class FPS
 {
 public:
-  static void loop(void);
+  static void loop(uint16_t limit = 0);
   static uint16_t getFPS(void);
 
 private:

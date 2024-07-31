@@ -10,7 +10,7 @@ uint16_t FPS::getFPS(void)
   return (FPS::fps);
 }
 
-void FPS::loop(void)
+void FPS::loop(uint16_t limit)
 {
   uint64_t currentTime = millis();
   uint64_t elapsedTime = currentTime - FPS::lastTime;
@@ -20,5 +20,8 @@ void FPS::loop(void)
     FPS::frameCount = 0;
     FPS::lastTime = currentTime;
   }
-  FPS::frameCount++;
+  if (limit == 0 || FPS::frameCount < limit)
+  {
+    FPS::frameCount++;
+  }
 }
