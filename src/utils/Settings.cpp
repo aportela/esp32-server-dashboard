@@ -182,7 +182,7 @@ bool Settings::setMQTTTelegrafGlobalTopic(const char *topic)
 
 uint64_t Settings::getTotalMemoryBytes()
 {
-    return (Settings::getBigUnsignedIntegerValue(KEY_TOTAL_MEMORY_BYTES, 6));
+    return (Settings::getBigUnsignedIntegerValue(KEY_TOTAL_MEMORY_BYTES, 0));
 }
 
 bool Settings::setTotalMemoryBytes(uint64_t totalBytes)
@@ -199,7 +199,7 @@ bool Settings::setTotalMemoryBytes(uint64_t totalBytes)
 
 uint64_t Settings::getMaxDownloadBandwidthBytes()
 {
-    return (Settings::getBigUnsignedIntegerValue(KEY_TOTAL_DOWNLOAD_BANDWIDTH_BYTES, 6));
+    return (Settings::getBigUnsignedIntegerValue(KEY_TOTAL_DOWNLOAD_BANDWIDTH_BYTES, 0));
 }
 
 bool Settings::setMaxDownloadBandwidthBytes(uint64_t totalBytes)
@@ -216,7 +216,7 @@ bool Settings::setMaxDownloadBandwidthBytes(uint64_t totalBytes)
 
 uint64_t Settings::getMaxUploadBandwidthBytes()
 {
-    return (Settings::getBigUnsignedIntegerValue(KEY_TOTAL_UPLOAD_BANDWIDTH_BYTES, 6));
+    return (Settings::getBigUnsignedIntegerValue(KEY_TOTAL_UPLOAD_BANDWIDTH_BYTES, 0));
 }
 
 bool Settings::setMaxUploadBandwidthBytes(uint64_t totalBytes)
