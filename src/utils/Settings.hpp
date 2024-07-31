@@ -9,8 +9,10 @@ class Settings
 private:
     static Preferences preferences;
 
+    static int8_t getSmallSignedIntegerValue(const char *key, int8_t defaultValue = 0);
+    static bool setSmallSignedIntegerValue(const char *key, int8_t value = 0);
     static uint64_t getBigUnsignedIntegerValue(const char *key, uint64_t defaultValue = 0);
-    static bool setBigIntegerValue(const char *key, uint64_t value);
+    static bool setBigUnsigedIntegerValue(const char *key, uint64_t value = 0);
     static void getValue(const char *key, char *value, size_t count);
     static bool setValue(const char *key, const char *value);
     static bool deleteKey(const char *key);
@@ -31,6 +33,12 @@ public:
 
     static uint64_t getTotalMemoryBytes();
     static bool setTotalMemoryBytes(uint64_t totalBytes = 0);
+
+    static int8_t getMinCPUTemperature();
+    static bool setMinCPUTemperature(int8_t celsius = 0);
+
+    static int8_t getMaxCPUTemperature();
+    static bool setMaxCPUTemperature(int8_t celsius = 0);
 
     static uint64_t getMaxDownloadBandwidthBytes();
     static bool setMaxDownloadBandwidthBytes(uint64_t totalBytes = 0);

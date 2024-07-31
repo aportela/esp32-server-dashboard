@@ -9,10 +9,44 @@
 #define KEY_MQTT_TELEGRAF_URI "SRC_MQTT_URI"
 #define KEY_MQTT_TELEGRAF_GLOBAL_TOPIC "SRC_MQTT_TOPIC"
 #define KEY_TOTAL_MEMORY_BYTES "T_MEM_BYTES"
+#define KEY_MIN_CPU_TEMPERATURE "MIN_CPU_TEMP"
+#define KEY_MAX_CPU_TEMPERATURE "MAX_CPU_TEMP"
 #define KEY_TOTAL_DOWNLOAD_BANDWIDTH_BYTES "T_D_BW_BYTES"
 #define KEY_TOTAL_UPLOAD_BANDWIDTH_BYTES "T_U_BW_BYTES"
 
 Preferences Settings::preferences;
+
+int8_t Settings::getSmallSignedIntegerValue(const char *key, int8_t defaultValue)
+{
+    if (Settings::preferences.begin(NAMESPACE, false))
+    {
+        uint64_t value = defaultValue;
+        if (Settings::preferences.isKey(key))
+        {
+            value = Settings::preferences.getChar(key, defaultValue);
+        }
+        Settings::preferences.end();
+        return (value);
+    }
+    else
+    {
+        return (defaultValue);
+    }
+}
+
+bool Settings::setSmallSignedIntegerValue(const char *key, int8_t value)
+{
+    if (Settings::preferences.begin(NAMESPACE, false))
+    {
+        bool saved = Settings::preferences.putChar(key, value) == sizeof(value);
+        Settings::preferences.end();
+        return (saved);
+    }
+    else
+    {
+        return (false);
+    }
+}
 
 uint64_t Settings::getBigUnsignedIntegerValue(const char *key, uint64_t defaultValue)
 {
@@ -32,7 +66,7 @@ uint64_t Settings::getBigUnsignedIntegerValue(const char *key, uint64_t defaultV
     }
 }
 
-bool Settings::setBigIntegerValue(const char *key, uint64_t value)
+bool Settings::setBigUnsigedIntegerValue(const char *key, uint64_t value)
 {
     if (Settings::preferences.begin(NAMESPACE, false))
     {
@@ -189,11 +223,45 @@ bool Settings::setTotalMemoryBytes(uint64_t totalBytes)
 {
     if (totalBytes > 0)
     {
-        return (Settings::setBigIntegerValue(KEY_TOTAL_MEMORY_BYTES, totalBytes));
+        return (Settings::setBigUnsigedIntegerValue(KEY_TOTAL_MEMORY_BYTES, totalBytes));
     }
     else
     {
-        Settings::deleteKey(KEY_TOTAL_MEMORY_BYTES);
+        return (Settings::deleteKey(KEY_TOTAL_MEMORY_BYTES));
+    }
+}
+
+int8_t Settings::getMinCPUTemperature()
+{
+    return (Settings::getSmallSignedIntegerValue(KEY_MIN_CPU_TEMPERATURE, 0));
+}
+
+bool Settings::setMinCPUTemperature(int8_t celsius)
+{
+    if (celsius > 0)
+    {
+        return (Settings::setSmallSignedIntegerValue(KEY_MIN_CPU_TEMPERATURE, celsius));
+    }
+    else
+    {
+        return (Settings::deleteKey(KEY_MIN_CPU_TEMPERATURE));
+    }
+}
+
+int8_t Settings::getMaxCPUTemperature()
+{
+    return (Settings::getSmallSignedIntegerValue(KEY_MAX_CPU_TEMPERATURE, 0));
+}
+
+bool Settings::setMaxCPUTemperature(int8_t celsius)
+{
+    if (celsius > 0)
+    {
+        return (Settings::setSmallSignedIntegerValue(KEY_MAX_CPU_TEMPERATURE, celsius));
+    }
+    else
+    {
+        return (Settings::deleteKey(KEY_MAX_CPU_TEMPERATURE));
     }
 }
 
@@ -206,11 +274,11 @@ bool Settings::setMaxDownloadBandwidthBytes(uint64_t totalBytes)
 {
     if (totalBytes > 0)
     {
-        return (Settings::setBigIntegerValue(KEY_TOTAL_DOWNLOAD_BANDWIDTH_BYTES, totalBytes));
+        return (Settings::setBigUnsigedIntegerValue(KEY_TOTAL_DOWNLOAD_BANDWIDTH_BYTES, totalBytes));
     }
     else
     {
-        Settings::deleteKey(KEY_TOTAL_DOWNLOAD_BANDWIDTH_BYTES);
+        return (Settings::deleteKey(KEY_TOTAL_DOWNLOAD_BANDWIDTH_BYTES));
     }
 }
 
@@ -223,10 +291,10 @@ bool Settings::setMaxUploadBandwidthBytes(uint64_t totalBytes)
 {
     if (totalBytes > 0)
     {
-        return (Settings::setBigIntegerValue(KEY_TOTAL_UPLOAD_BANDWIDTH_BYTES, totalBytes));
+        return (Settings::setBigUnsigedIntegerValue(KEY_TOTAL_UPLOAD_BANDWIDTH_BYTES, totalBytes));
     }
     else
     {
-        Settings::deleteKey(KEY_TOTAL_UPLOAD_BANDWIDTH_BYTES);
+        return (Settings::deleteKey(KEY_TOTAL_UPLOAD_BANDWIDTH_BYTES));
     }
 }

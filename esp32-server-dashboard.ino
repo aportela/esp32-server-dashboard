@@ -286,6 +286,58 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
             }
         }
         break;
+    case SERIAL_CMDT_SET_MIN_CPU_TEMPERATURE:
+        if (value && strlen(value))
+        {
+            Serial.printf("Serial command received: set min cpu temperature (%s)\n", value);
+            if (Settings::setMinCPUTemperature(strtol(value, nullptr, 10)))
+            {
+                Serial.println("Min CPU temperature saved. Reboot REQUIRED");
+            }
+            else
+            {
+                Serial.println("Error saving min CPU temperature");
+            }
+        }
+        else
+        {
+            Serial.println("Serial command received: unset min CPU temperature");
+            if (Settings::setMinCPUTemperature(0))
+            {
+                Serial.println("Min CPU temperature removed. Reboot REQUIRED");
+            }
+            else
+            {
+                Serial.println("Error removing min CPU temperature");
+            }
+        }
+        break;
+    case SERIAL_CMDT_SET_MAX_CPU_TEMPERATURE:
+        if (value && strlen(value))
+        {
+            Serial.printf("Serial command received: set max cpu temperature (%s)\n", value);
+            if (Settings::setMaxCPUTemperature(strtol(value, nullptr, 10)))
+            {
+                Serial.println("Max CPU temperature saved. Reboot REQUIRED");
+            }
+            else
+            {
+                Serial.println("Error saving max CPU temperature");
+            }
+        }
+        else
+        {
+            Serial.println("Serial command received: unset max CPU temperature");
+            if (Settings::setMaxCPUTemperature(0))
+            {
+                Serial.println("Max CPU temperature removed. Reboot REQUIRED");
+            }
+            else
+            {
+                Serial.println("Error removing max CPU temperature");
+            }
+        }
+        break;
     case SERIAL_CMDT_SET_MAX_DOWNLOAD_BYTES_BANDWIDTH:
         if (value && strlen(value))
         {
