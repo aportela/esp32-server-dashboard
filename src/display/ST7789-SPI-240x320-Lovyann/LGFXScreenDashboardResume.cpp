@@ -17,6 +17,7 @@
 #define SCREEN_BOTTOM_COMMON_TEXTDATA_BG_COLOR TFT_BLACK
 #define SCREEN_BOTTOM_COMMON_TEXTDATA_X_OFFSET 0
 #define SCREEN_BOTTOM_COMMON_TEXTDATA_FIELD_FPS_X_OFFSET 33
+#define SCREEN_BOTTOM_COMMON_TEXTDATA_FIELD_RUNTIME_X_OFFSET 130
 #define SCREEN_BOTTOM_COMMON_TEXTDATA_Y_OFFSET 226
 
 LGFXScreenDashboardResume::LGFXScreenDashboardResume(LovyanGFX *display, Source *source, SourceData *sourceData) : LGFXScreen(display)
@@ -80,11 +81,15 @@ LGFXScreenDashboardResume::~LGFXScreenDashboardResume()
 void LGFXScreenDashboardResume::refreshBottomCommonData(bool forceDrawAll)
 {
     FPS::loop();
-    this->parentDisplay->setFont(SCREEN_BOTTOM_COMMON_TEXTDATA_FONT);
-    this->parentDisplay->setTextSize(SCREEN_BOTTOM_COMMON_TEXTDATA_FONT_SIZE);
-    this->parentDisplay->setTextColor(SCREEN_BOTTOM_COMMON_TEXTDATA_COLOR, SCREEN_BOTTOM_COMMON_TEXTDATA_BG_COLOR);
-    this->parentDisplay->setCursor(SCREEN_BOTTOM_COMMON_TEXTDATA_X_OFFSET, SCREEN_BOTTOM_COMMON_TEXTDATA_Y_OFFSET);
-    this->parentDisplay->print("FPS: ");
+    if (forceDrawAll)
+    {
+        this->parentDisplay->setFont(SCREEN_BOTTOM_COMMON_TEXTDATA_FONT);
+        this->parentDisplay->setTextSize(SCREEN_BOTTOM_COMMON_TEXTDATA_FONT_SIZE);
+        this->parentDisplay->setTextColor(SCREEN_BOTTOM_COMMON_TEXTDATA_COLOR, SCREEN_BOTTOM_COMMON_TEXTDATA_BG_COLOR);
+        this->parentDisplay->setCursor(SCREEN_BOTTOM_COMMON_TEXTDATA_X_OFFSET, SCREEN_BOTTOM_COMMON_TEXTDATA_Y_OFFSET);
+        // this->parentDisplay->print("FPS: ");
+        this->parentDisplay->print("FPS:      - Runtime: ");
+    }
     uint16_t currentFPS = FPS::getFPS();
     if (forceDrawAll || currentFPS != this->previousFPS)
     {
@@ -94,6 +99,17 @@ void LGFXScreenDashboardResume::refreshBottomCommonData(bool forceDrawAll)
         this->parentDisplay->setCursor(SCREEN_BOTTOM_COMMON_TEXTDATA_FIELD_FPS_X_OFFSET, SCREEN_BOTTOM_COMMON_TEXTDATA_Y_OFFSET);
         this->parentDisplay->printf("%03u", currentFPS);
         this->previousFPS = currentFPS;
+    }
+    char str[sizeof(this->previousRuntimeStr)];
+    Format::millisToHumanStr(millis(), str, sizeof(this->previousRuntimeStr));
+    if (forceDrawAll || strcmp(str, this->previousRuntimeStr) != 0)
+    {
+        this->parentDisplay->setFont(SCREEN_BOTTOM_COMMON_TEXTDATA_FONT);
+        this->parentDisplay->setTextSize(SCREEN_BOTTOM_COMMON_TEXTDATA_FONT_SIZE);
+        this->parentDisplay->setTextColor(SCREEN_BOTTOM_COMMON_TEXTDATA_COLOR, SCREEN_BOTTOM_COMMON_TEXTDATA_BG_COLOR);
+        this->parentDisplay->setCursor(SCREEN_BOTTOM_COMMON_TEXTDATA_FIELD_RUNTIME_X_OFFSET, SCREEN_BOTTOM_COMMON_TEXTDATA_Y_OFFSET);
+        this->parentDisplay->printf("%s    ", str);
+        strncpy(this->previousRuntimeStr, str, sizeof(this->previousRuntimeStr));
     }
     // TODO: current uptime & other data
 }

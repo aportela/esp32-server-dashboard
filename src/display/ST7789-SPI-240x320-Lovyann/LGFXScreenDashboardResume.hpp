@@ -26,6 +26,7 @@ private:
     SourceData *currentSourceData;
 
     uint16_t previousFPS = 0;
+    char previousRuntimeStr[16] = {'\0'};
 
     void refreshBottomCommonData(bool forceDrawAll);
 
