@@ -224,7 +224,7 @@ void LGFXScreenInfo::refreshCommonData(bool forceDrawAll)
         this->parentDisplay->print(" FPS ");
     }
     uint16_t currentFPS = FPS::getFPS();
-    if (this->previousFPS != currentFPS)
+    if (forceDrawAll || this->previousFPS != currentFPS)
     {
         this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_VALUE_X_OFFSET, 200);
         this->parentDisplay->printf("%04u", currentFPS);
@@ -236,7 +236,7 @@ void LGFXScreenInfo::refreshCommonData(bool forceDrawAll)
     }
     char str[sizeof(this->previousRuntimeStr)];
     Format::millisToHumanStr(millis(), str, sizeof(this->previousRuntimeStr));
-    if (strcmp(str, this->previousRuntimeStr) != 0)
+    if (forceDrawAll || strcmp(str, this->previousRuntimeStr) != 0)
     {
         this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_VALUE_X_OFFSET, 220);
         this->parentDisplay->printf("%s    ", str);
