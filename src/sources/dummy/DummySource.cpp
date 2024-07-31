@@ -51,40 +51,18 @@ void DummySource::refresh(void)
     uint64_t change = 0;
     uint64_t currentMillis = millis();
 
-    // cpu load
-    current = this->currentGlobalCPULoadData->getCurrentValue();
-    if (random(0, 20) % 2 == 0)
+    uint8_t rnd = random(0, 100);
+    if (rnd > 90)
     {
-        if (current < MAX_CPU_LOAD)
-        {
-            current++;
-        }
+        current = random(MIN_CPU_LOAD, MAX_CPU_LOAD);
     }
-    else if (current > MIN_CPU_LOAD)
+    else if (rnd > 50)
     {
-        current--;
-    }
-    if (this->inc)
-    {
-        if (current < MAX_CPU_LOAD)
-        {
-            current++;
-        }
-        else
-        {
-            this->inc = !this->inc;
-        }
+        current = random(MIN_CPU_LOAD, MAX_CPU_LOAD / 5);
     }
     else
     {
-        if (current > MIN_CPU_LOAD)
-        {
-            current--;
-        }
-        else
-        {
-            this->inc = !this->inc;
-        }
+        current = random(MIN_CPU_LOAD, MAX_CPU_LOAD / 10);
     }
     this->currentGlobalCPULoadData->setCurrentValue(current, currentMillis);
 

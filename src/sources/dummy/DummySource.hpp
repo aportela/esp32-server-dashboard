@@ -6,9 +6,6 @@
 
 class DummySource : public Source
 {
-private:
-    bool inc = false;
-
 public:
     DummySource();
     ~DummySource();
