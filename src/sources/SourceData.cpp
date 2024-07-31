@@ -3,7 +3,10 @@
 #include <Arduino.h>
 #include <cstdio>
 
-SourceData::SourceData(uint8_t min, uint8_t max) : minCPULoad(min), maxCPULoad(max)
+#define MIN_CPU_LOAD 0
+#define MAX_CPU_LOAD 100
+
+SourceData::SourceData(uint8_t min, uint8_t max)
 {
     // init random seed
     randomSeed(analogRead(0) ^ (micros() * esp_random()));
@@ -15,22 +18,12 @@ SourceData::~SourceData()
 
 uint8_t SourceData::getMinCPULoad(void)
 {
-    return (this->minCPULoad);
+    return (MIN_CPU_LOAD);
 }
 
 uint8_t SourceData::getMaxCPULoad(void)
 {
-    return (this->maxCPULoad);
-}
-
-void SourceData::setMinCPULoad(uint8_t value)
-{
-    this->minCPULoad = value;
-}
-
-void SourceData::setMaxCPULoad(uint8_t value)
-{
-    this->maxCPULoad = value;
+    return (MAX_CPU_LOAD);
 }
 
 float SourceData::getCurrentCPULoad(void)
@@ -38,18 +31,13 @@ float SourceData::getCurrentCPULoad(void)
     return (this->currentCPULoad);
 }
 
-void SourceData::getCurrentCPULoad(char *buffer, size_t buffer_size, uint8_t decimals)
+void SourceData::parseCurrentCPULoad(char *buffer, size_t buffer_size, uint8_t decimals)
 {
     char format[decimals + 3] = {'\0'};
     std::snprintf(format, sizeof(format), "%%0%dd", decimals);
     Serial.println(format);
     std::snprintf(buffer, buffer_size, format, this->getCurrentCPULoad());
     Serial.println(buffer);
-}
-
-float SourceData::getPreviousCPULoad(void)
-{
-    return (this->previousCPULoad);
 }
 
 uint64_t SourceData::getCurrentCPULoadTimestamp(void)
@@ -66,9 +54,8 @@ bool SourceData::setCurrentCPULoad(float value, uint64_t timestamp)
 {
     if (value != this->currentCPULoad)
     {
-        if (value >= this->minCPULoad && value <= this->maxCPULoad)
+        if (value >= MIN_CPU_LOAD && value <= MAX_CPU_LOAD)
         {
-            this->previousCPULoad = this->currentCPULoad;
             this->currentCPULoad = value;
             this->currentCPULoadTimestamp = timestamp;
             return (true);
@@ -80,12 +67,6 @@ bool SourceData::setCurrentCPULoad(float value, uint64_t timestamp)
     }
     else
     {
-        this->previousCPULoad = this->currentCPULoad;
         this->currentCPULoadTimestamp = timestamp;
     }
-}
-
-void SourceData::refresh(void)
-{
-    this->setCurrentCPULoad((float)random(this->getMinCPULoad(), this->getMaxCPULoad()), millis());
 }

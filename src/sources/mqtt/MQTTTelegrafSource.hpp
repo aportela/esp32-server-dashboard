@@ -15,7 +15,7 @@ private:
     static void onMessageReceived(const char *topic, const char *payload);
 
 public:
-    MQTTTelegrafSource(const char *uri, const char *clientId, const char *topic);
+    MQTTTelegrafSource(SourceData *sourceData, const char *uri, const char *clientId, const char *topic);
     ~MQTTTelegrafSource();
     // static void setCPUTopic(const char *topic);
     // static void setMemoryTopic(const char *topic);

@@ -6,20 +6,18 @@
 #include <cstddef>
 #include "../EntityType.hpp"
 
-// TODO: allow data with decimals
 class SourceData
 {
 private:
     // CPU LOAD
-    uint64_t minCPULoad = 0;
-    uint64_t maxCPULoad = 0;
-    float previousCPULoad = 0.0f;
     float currentCPULoad = 0.0f;
     uint64_t currentCPULoadTimestamp = 0;
     // MEMORY
+
     // CPU TEMPERATURE
     // DOWNLOAD BANDWIDTH
     // UPLOAD BANDWIDTH
+    uint8_t minMemory = 0;
 
 public:
     SourceData(uint8_t min, uint8_t max);
@@ -27,11 +25,8 @@ public:
     // CPU LOAD
     uint8_t getMinCPULoad(void);
     uint8_t getMaxCPULoad(void);
-    void setMinCPULoad(uint8_t value);
-    void setMaxCPULoad(uint8_t value);
     float getCurrentCPULoad(void);
-    void getCurrentCPULoad(char *buffer, size_t buffer_size, uint8_t decimals = 1);
-    float getPreviousCPULoad(void);
+    void parseCurrentCPULoad(char *buffer, size_t buffer_size, uint8_t decimals = 1);
     uint64_t getCurrentCPULoadTimestamp(void);
     bool changedCPULoad(uint64_t fromTimestamp);
     bool setCurrentCPULoad(float value, uint64_t timestamp);

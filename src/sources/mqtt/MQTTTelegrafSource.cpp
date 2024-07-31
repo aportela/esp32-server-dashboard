@@ -26,7 +26,7 @@
 
 MQTTTelegrafSource *MQTTTelegrafSource::instance = nullptr;
 
-MQTTTelegrafSource::MQTTTelegrafSource(const char *uri, const char *clientId, const char *topic) : Source()
+MQTTTelegrafSource::MQTTTelegrafSource(SourceData *sourceData, const char *uri, const char *clientId, const char *topic) : Source(sourceData)
 {
 
     MQTT::setCallback(MQTTTelegrafSource::onMessageReceived);

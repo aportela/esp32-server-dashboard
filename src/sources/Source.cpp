@@ -1,12 +1,16 @@
 #include "Source.hpp"
 
-Source::Source()
+Source::Source(SourceData *sourceData)
 {
     this->currentGlobalCPULoadData = new EntityData();
     this->currentUsedMemoryData = new EntityData();
     this->currentGlobalCPUTemperatureData = new EntityData();
     this->currentNetworkDownloadUsedBandwithData = new EntityData();
     this->currentNetworkUploadUsedBandwithData = new EntityData();
+    if (sourceData != nullptr)
+    {
+        this->sourceData = sourceData;
+    }
 }
 
 Source::~Source()
@@ -35,6 +39,10 @@ Source::~Source()
     {
         delete this->currentNetworkUploadUsedBandwithData;
         this->currentNetworkUploadUsedBandwithData = nullptr;
+    }
+    if (this->sourceData != nullptr)
+    {
+        this->sourceData = nullptr;
     }
 }
 

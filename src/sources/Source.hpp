@@ -3,12 +3,14 @@
 
 #include <stdint.h>
 #include "ISource.hpp"
+#include "SourceData.hpp"
 #include "EntityData.hpp"
 #include "../EntityType.hpp"
 
 class Source : public ISource
 {
 protected:
+    SourceData *sourceData = nullptr;
     EntityData *currentGlobalCPULoadData = nullptr;
     EntityData *currentUsedMemoryData = nullptr;
     EntityData *currentGlobalCPUTemperatureData = nullptr;
@@ -16,7 +18,7 @@ protected:
     EntityData *currentNetworkUploadUsedBandwithData = nullptr;
 
 public:
-    Source();
+    Source(SourceData *sourceData);
     virtual ~Source();
     bool changed(EntityType entity, uint64_t fromTimestamp) const override;
     void setMin(EntityType entityType, uint64_t min) override;

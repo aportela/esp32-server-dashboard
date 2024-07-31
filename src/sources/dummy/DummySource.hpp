@@ -7,7 +7,7 @@
 class DummySource : public Source
 {
 public:
-    DummySource();
+    DummySource(SourceData *sourceData);
     ~DummySource();
 
     void refresh(void);

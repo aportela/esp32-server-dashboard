@@ -16,7 +16,7 @@
 #define MIN_NETWORK_UPLOAD_BANDWITH 0
 #define MAX_NETWORK_UPLOAD_BANDWITH 512000000 // Mbytes
 
-DummySource::DummySource(void) : Source()
+DummySource::DummySource(SourceData *sourceData) : Source(sourceData)
 {
     this->currentGlobalCPULoadData->setMin(MIN_CPU_LOAD);
     this->currentGlobalCPULoadData->setMax(MAX_CPU_LOAD);
@@ -47,6 +47,9 @@ DummySource::~DummySource()
 
 void DummySource::refresh(void)
 {
+
+    // this->sourceData->setCurrentCPULoad((float)random(MIN_CPU_LOAD, MAX_CPU_LOAD), millis());
+
     uint64_t current = 0;
     uint64_t change = 0;
     uint64_t currentMillis = millis();
