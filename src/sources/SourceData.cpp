@@ -6,7 +6,7 @@
 #define MIN_CPU_LOAD 0
 #define MAX_CPU_LOAD 100
 
-SourceData::SourceData(uint64_t totalMemoryBytes)
+SourceData::SourceData(uint64_t totalMemoryBytes, float minCPUTemperature, float maxCPUTemperature)
 {
     this->totalMemoryBytes = totalMemoryBytes;
 }
@@ -67,6 +67,7 @@ bool SourceData::setCurrentCPULoad(float value, uint64_t timestamp)
     else
     {
         this->currentCPULoadTimestamp = timestamp;
+        return (true);
     }
 }
 
@@ -78,6 +79,11 @@ uint64_t SourceData::getTotalMemoryBytes(void) const
 uint64_t SourceData::getUsedMemoryBytes(void) const
 {
     return (this->usedMemoryBytes);
+}
+
+uint64_t SourceData::getCurrentUsedMemoryTimestamp(void) const
+{
+    return (this->currentUsedMemoryTimestamp);
 }
 
 bool SourceData::changedUsedMemoryBytes(uint64_t fromTimestamp) const
@@ -103,5 +109,65 @@ bool SourceData::setUsedMemoryBytes(uint64_t bytes, uint64_t timestamp)
     else
     {
         this->currentUsedMemoryTimestamp = timestamp;
+        return (true);
+    }
+}
+
+float SourceData::getMinCPUTemperature(void) const
+{
+    return (this->minCPUTemperature);
+}
+
+bool SourceData::setMinCPUTemperature(float celsious)
+{
+    this->minCPUTemperature = celsious;
+    return (true);
+}
+
+float SourceData::getMaxCPUTemperature(void) const
+{
+    return (this->maxCPUTemperature);
+}
+
+bool SourceData::setMaxCPUTemperature(float celsious)
+{
+    this->maxCPUTemperature = celsious;
+    return (true);
+}
+
+float SourceData::getCurrentCPUTemperature(void) const
+{
+    return (this->currentCPUTemperature);
+}
+
+uint64_t SourceData::getCurrentCPUTemperatureTimestamp(void) const
+{
+    return (this->currentCPUTemperatureTimestamp);
+}
+
+bool SourceData::changedCPUTemperature(uint64_t fromTimestamp) const
+{
+    return (fromTimestamp != this->currentCPUTemperatureTimestamp);
+}
+
+bool SourceData::setCurrentCPUTemperature(float value, uint64_t timestamp)
+{
+    if (value != this->currentCPUTemperature)
+    {
+        if (value >= this->minCPUTemperature && value <= this->maxCPUTemperature)
+        {
+            this->currentCPUTemperature = value;
+            this->currentCPUTemperatureTimestamp = timestamp;
+            return (true);
+        }
+        else
+        {
+            return (false);
+        }
+    }
+    else
+    {
+        this->currentCPUTemperatureTimestamp = timestamp;
+        return (true);
     }
 }

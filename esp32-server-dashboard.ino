@@ -424,7 +424,7 @@ void setup()
     WifiManager::setCredentials(WiFiSSID, WiFiPassword);
     WifiManager::connect(true);
 
-    sourceData = new SourceData(Settings::getTotalMemoryBytes());
+    sourceData = new SourceData(Settings::getTotalMemoryBytes(), 0, 100);
     dummySRC = new DummySource(sourceData);
 
     char mqttTelegrafURI[64] = {'\0'};
