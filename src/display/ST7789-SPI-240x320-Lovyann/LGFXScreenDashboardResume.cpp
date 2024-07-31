@@ -33,7 +33,7 @@ LGFXScreenDashboardResume::LGFXScreenDashboardResume(LovyanGFX *display, Source 
     {
         this->cpuLoadMeter = new LGFXMeter(this->parentDisplay, ET_GLOBAL_CPU_LOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 0, METER_GRAPH_BG_COLOR, "CPU LOAD", 0, 100);
         this->memoryLoadMeter = new LGFXMeter(this->parentDisplay, ET_USED_MEMORY, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 42, METER_GRAPH_BG_COLOR, "MEMORY", 0, Settings::getTotalMemoryBytes());
-        this->cpuTemperatureLoadMeter = new LGFXMeter(this->parentDisplay, ET_GLOBAL_CPU_TEMPERATURE, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 84, METER_GRAPH_BG_COLOR, "CPU TEMP", 0, 100);
+        this->cpuTemperatureLoadMeter = new LGFXMeter(this->parentDisplay, ET_GLOBAL_CPU_TEMPERATURE, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 84, METER_GRAPH_BG_COLOR, "CPU TEMP", Settings::getMinCPUTemperature(), Settings::getMaxCPUTemperature());
         this->networkDownloadBandwithLoadMeter = new LGFXMeter(this->parentDisplay, ET_NETWORK_BANDWITH_DOWNLOAD_SPEED, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 126, METER_GRAPH_BG_COLOR, "WAN DOWNLOAD", 0, Settings::getMaxDownloadBandwidthBytes());
         this->networkUploadBandwithLoadMeter = new LGFXMeter(this->parentDisplay, ET_NETWORK_BANDWITH_UPLOAD_SPEED, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 168, METER_GRAPH_BG_COLOR, "WAN UPLOAD", 0, Settings::getMaxUploadBandwidthBytes());
         this->refresh(true);
