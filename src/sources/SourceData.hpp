@@ -29,8 +29,15 @@ private:
     uint64_t previousTotalNetworkDownloadedTimestamp = 0;
     uint64_t currentNetworkDownloadSpeed = 0;
     // UPLOAD BANDWIDTH
+    uint64_t totalNetworkUploadBandwidthLimit = 0;
+    uint64_t currentTotalNetworkUploaded = 0;
+    uint64_t previousTotalNetworkUploaded = 0;
+    uint64_t currentTotalNetworkUploadedTimestamp = 0;
+    uint64_t previousTotalNetworkUploadedTimestamp = 0;
+    uint64_t currentNetworkUploadSpeed = 0;
+
 public:
-    SourceData(uint64_t totalMemory, float minCPUTemperature, float maxCPUTemperature, uint64_t totalNetworkDownloadBandwidthLimit);
+    SourceData(uint64_t totalMemory, float minCPUTemperature, float maxCPUTemperature, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit);
     ~SourceData();
     // CPU LOAD
     uint8_t getMinCPULoad(void) const;
@@ -63,6 +70,12 @@ public:
     bool changedNetworkDownloadSpeed(uint64_t fromTimestamp) const;
     bool setCurrentTotalNetworkDownloaded(uint64_t value, uint64_t timestamp);
     // NET UPLOAD BANDWIDTH
+    uint64_t getNetworkUploadBandwidthLimit(void) const;
+    bool setNetworkUploadBandwidthLimit(uint64_t bytes);
+    uint64_t getNetworkUploadSpeed(void) const;
+    uint64_t getNetworkUploadSpeedTimestamp(void) const;
+    bool changedNetworkUploadSpeed(uint64_t fromTimestamp) const;
+    bool setCurrentTotalNetworkUploaded(uint64_t value, uint64_t timestamp);
 };
 
 #endif
