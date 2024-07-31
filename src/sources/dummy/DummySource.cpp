@@ -48,8 +48,6 @@ DummySource::~DummySource()
 void DummySource::refresh(void)
 {
 
-    // this->sourceData->setCurrentCPULoad((float)random(MIN_CPU_LOAD, MAX_CPU_LOAD), millis());
-
     uint64_t current = 0;
     uint64_t change = 0;
     uint64_t currentMillis = millis();
@@ -69,6 +67,8 @@ void DummySource::refresh(void)
     }
     this->currentGlobalCPULoadData->setCurrentValue(current, currentMillis);
 
+    this->sourceData->setCurrentCPULoad(current, millis());
+
     current = this->currentUsedMemoryData->getCurrentValue();
     change = this->currentUsedMemoryData->getMax() / 100;
     if (random(0, 20) % 2 == 0)
@@ -84,6 +84,8 @@ void DummySource::refresh(void)
     }
     this->currentUsedMemoryData->setCurrentValue(current, currentMillis);
 
+    this->sourceData->setUsedMemory(current, millis());
+
     current = this->currentGlobalCPUTemperatureData->getCurrentValue();
     if (random(0, 20) % 2 == 0)
     {
@@ -97,6 +99,8 @@ void DummySource::refresh(void)
         current--;
     }
     this->currentGlobalCPUTemperatureData->setCurrentValue(current, currentMillis);
+
+    this->sourceData->setCurrentCPUTemperature(current, millis());
 
     current = this->currentNetworkDownloadUsedBandwithData->getCurrentValue();
     change = random(1000, 5000000);
@@ -113,6 +117,8 @@ void DummySource::refresh(void)
     }
     this->currentNetworkDownloadUsedBandwithData->setCurrentValue(current, currentMillis);
 
+    this->sourceData->setCurrentTotalNetworkDownloaded(random(1000000, 5000000000), millis());
+
     current = this->currentNetworkUploadUsedBandwithData->getCurrentValue();
     change = random(500000, 10000000);
     if (random(0, 20) % 2 == 0)
@@ -127,4 +133,6 @@ void DummySource::refresh(void)
         current -= change;
     }
     this->currentNetworkUploadUsedBandwithData->setCurrentValue(current, currentMillis);
+
+    this->sourceData->setCurrentTotalNetworkUploaded(random(1000000, 5000000000), millis());
 }
