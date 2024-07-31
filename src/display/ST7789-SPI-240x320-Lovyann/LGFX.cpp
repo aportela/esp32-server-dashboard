@@ -65,6 +65,11 @@ void LGFX::setSource(Source *src)
     this->source = src;
 }
 
+void LGFX::setSourceData(SourceData *src)
+{
+    this->sourceData = src;
+}
+
 void LGFX::initScreen(ScreenType screenType)
 {
     switch (screenType)
@@ -79,7 +84,7 @@ void LGFX::initScreen(ScreenType screenType)
     case ST_DATA_RESUME:
         if (this->currentScreen == nullptr)
         {
-            this->currentScreen = new LGFXScreenDashboardResume(this, this->source);
+            this->currentScreen = new LGFXScreenDashboardResume(this, this->source, this->sourceData);
         }
         this->currentScreenType = screenType;
         break;

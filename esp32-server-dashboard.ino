@@ -42,6 +42,7 @@ LGFX *screen = nullptr;
 #include "src/utils/WifiManager.hpp"
 #include "src/utils/SerialManager.hpp"
 #include "src/sources/dummy/DummySource.hpp"
+#include "src/sources/SourceData.hpp"
 #include "src/sources/mqtt/MQTTTelegrafSource.hpp"
 #include "src/display/ScreenType.hpp"
 
@@ -49,6 +50,7 @@ LGFX *screen = nullptr;
 
 DummySource *dummySRC = nullptr;
 MQTTTelegrafSource *mqttTelegrafSRC = nullptr;
+SourceData *sourceData = nullptr;
 
 void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
 {
@@ -364,6 +366,7 @@ void setup()
     WifiManager::connect(true);
 
     dummySRC = new DummySource();
+    sourceData = new SourceData(0, 100);
 
     char mqttTelegrafURI[64] = {'\0'};
     Settings::getMQTTTelegrafURI(mqttTelegrafURI, sizeof(mqttTelegrafURI));
@@ -378,7 +381,8 @@ void setup()
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     screen = new LGFX(PIN_SDA, PIN_SCL, PIN_CS, PIN_DC, PIN_RST, DISPLAY_DRIVER_LOVYANN_ST7789_WIDTH, DISPLAY_DRIVER_LOVYANN_ST7789_HEIGHT, DISPLAY_DRIVER_LOVYANN_ST7789_ROTATION);
     screen->setSource(dummySRC);
-    // screen->initScreen(ST_INFO);
+    screen->setSourceData(sourceData);
+    //  screen->initScreen(ST_INFO);
     screen->initScreen(ST_DATA_RESUME);
 #endif // DISPLAY_DRIVER_LOVYANN_ST7789
 }
@@ -387,7 +391,8 @@ void loop()
 {
     SerialManager::loop();
     WifiManager::loop();
-    // dummySRC->refresh();
+    dummySRC->refresh();
+    sourceData->refresh();
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     screen->refresh();
 #endif // DISPLAY_DRIVER_LOVYANN_ST7789
