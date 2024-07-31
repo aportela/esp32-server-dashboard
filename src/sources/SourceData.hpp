@@ -13,8 +13,8 @@ private:
     float currentCPULoad = 0.0f;
     uint64_t currentCPULoadTimestamp = 0;
     // MEMORY
-    uint64_t totalMemoryBytes = 0;
-    uint64_t usedMemoryBytes = 0;
+    uint64_t totalMemory = 0;
+    uint64_t usedMemory = 0;
     uint64_t currentUsedMemoryTimestamp = 0;
     // CPU TEMPERATURE
     float minCPUTemperature = 0.0f;
@@ -22,11 +22,15 @@ private:
     float currentCPUTemperature = 0.0f;
     uint64_t currentCPUTemperatureTimestamp = 0;
     // DOWNLOAD BANDWIDTH
+    uint64_t totalNetworkDownloadBandwidthLimit = 0;
+    uint64_t currentTotalNetworkDownloaded = 0;
+    uint64_t previousTotalNetworkDownloaded = 0;
+    uint64_t currentTotalNetworkDownloadedTimestamp = 0;
+    uint64_t previousTotalNetworkDownloadedTimestamp = 0;
+    uint64_t currentNetworkDownloadSpeed = 0;
     // UPLOAD BANDWIDTH
-    uint8_t minMemory = 0;
-
 public:
-    SourceData(uint64_t totalMemoryBytes, float minCPUTemperature, float maxCPUTemperature);
+    SourceData(uint64_t totalMemory, float minCPUTemperature, float maxCPUTemperature, uint64_t totalNetworkDownloadBandwidthLimit);
     ~SourceData();
     // CPU LOAD
     uint8_t getMinCPULoad(void) const;
@@ -37,11 +41,11 @@ public:
     bool changedCPULoad(uint64_t fromTimestamp) const;
     bool setCurrentCPULoad(float value, uint64_t timestamp);
     // MEMORY
-    uint64_t getTotalMemoryBytes(void) const;
-    uint64_t getUsedMemoryBytes(void) const;
+    uint64_t getTotalMemory(void) const;
+    uint64_t getUsedMemory(void) const;
     uint64_t getCurrentUsedMemoryTimestamp(void) const;
-    bool changedUsedMemoryBytes(uint64_t fromTimestamp) const;
-    bool setUsedMemoryBytes(uint64_t bytes, uint64_t timestamp);
+    bool changedUsedMemory(uint64_t fromTimestamp) const;
+    bool setUsedMemory(uint64_t bytes, uint64_t timestamp);
     // CPU TEMPERATURE
     float getMinCPUTemperature(void) const;
     bool setMinCPUTemperature(float celsious);
@@ -51,10 +55,14 @@ public:
     uint64_t getCurrentCPUTemperatureTimestamp(void) const;
     bool changedCPUTemperature(uint64_t fromTimestamp) const;
     bool setCurrentCPUTemperature(float value, uint64_t timestamp);
-    // DOWNLOAD BANDWIDTH
-    // UPLOAD BANDWIDTH
-
-    void refresh(void);
+    // NET DOWNLOAD BANDWIDTH
+    uint64_t getNetworkDownloadBandwidthLimit(void) const;
+    bool setNetworkDownloadBandwidthLimit(uint64_t bytes);
+    uint64_t getNetworkDownloadSpeed(void) const;
+    uint64_t getNetworkDownloadSpeedTimestamp(void) const;
+    bool changedNetworkDownloadSpeed(uint64_t fromTimestamp) const;
+    bool setCurrentTotalNetworkDownloaded(uint64_t value, uint64_t timestamp);
+    // NET UPLOAD BANDWIDTH
 };
 
 #endif

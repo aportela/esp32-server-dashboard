@@ -6,9 +6,12 @@
 #define MIN_CPU_LOAD 0
 #define MAX_CPU_LOAD 100
 
-SourceData::SourceData(uint64_t totalMemoryBytes, float minCPUTemperature, float maxCPUTemperature)
+SourceData::SourceData(uint64_t totalMemory, float minCPUTemperature, float maxCPUTemperature, uint64_t totalNetworkDownloadBandwidthLimit)
 {
-    this->totalMemoryBytes = totalMemoryBytes;
+    this->totalMemory = totalMemory;
+    this->minCPUTemperature = minCPUTemperature;
+    this->maxCPUTemperature = maxCPUTemperature;
+    this->totalNetworkDownloadBandwidthLimit = totalNetworkDownloadBandwidthLimit;
 }
 
 SourceData::~SourceData()
@@ -71,14 +74,14 @@ bool SourceData::setCurrentCPULoad(float value, uint64_t timestamp)
     }
 }
 
-uint64_t SourceData::getTotalMemoryBytes(void) const
+uint64_t SourceData::getTotalMemory(void) const
 {
-    return (this->totalMemoryBytes);
+    return (this->totalMemory);
 }
 
-uint64_t SourceData::getUsedMemoryBytes(void) const
+uint64_t SourceData::getUsedMemory(void) const
 {
-    return (this->usedMemoryBytes);
+    return (this->usedMemory);
 }
 
 uint64_t SourceData::getCurrentUsedMemoryTimestamp(void) const
@@ -86,18 +89,18 @@ uint64_t SourceData::getCurrentUsedMemoryTimestamp(void) const
     return (this->currentUsedMemoryTimestamp);
 }
 
-bool SourceData::changedUsedMemoryBytes(uint64_t fromTimestamp) const
+bool SourceData::changedUsedMemory(uint64_t fromTimestamp) const
 {
     return (fromTimestamp != this->currentUsedMemoryTimestamp);
 }
 
-bool SourceData::setUsedMemoryBytes(uint64_t bytes, uint64_t timestamp)
+bool SourceData::setUsedMemory(uint64_t bytes, uint64_t timestamp)
 {
-    if (bytes != this->usedMemoryBytes)
+    if (bytes != this->usedMemory)
     {
-        if (bytes >= 0 && bytes <= this->totalMemoryBytes)
+        if (bytes >= 0 && bytes <= this->totalMemory)
         {
-            this->usedMemoryBytes = bytes;
+            this->usedMemory = bytes;
             this->currentUsedMemoryTimestamp = timestamp;
             return (true);
         }
@@ -168,6 +171,54 @@ bool SourceData::setCurrentCPUTemperature(float value, uint64_t timestamp)
     else
     {
         this->currentCPUTemperatureTimestamp = timestamp;
+        return (true);
+    }
+}
+
+uint64_t SourceData::getNetworkDownloadBandwidthLimit(void) const
+{
+    return (this->totalNetworkDownloadBandwidthLimit);
+}
+
+bool SourceData::setNetworkDownloadBandwidthLimit(uint64_t bytes)
+{
+    this->totalNetworkDownloadBandwidthLimit = bytes;
+    return (true);
+}
+
+uint64_t SourceData::getNetworkDownloadSpeed(void) const
+{
+    return (this->currentNetworkDownloadSpeed);
+}
+
+uint64_t SourceData::getNetworkDownloadSpeedTimestamp(void) const
+{
+    return (this->currentTotalNetworkDownloadedTimestamp);
+}
+
+bool SourceData::changedNetworkDownloadSpeed(uint64_t fromTimestamp) const
+{
+    return (fromTimestamp != this->currentTotalNetworkDownloadedTimestamp);
+}
+
+bool SourceData::setCurrentTotalNetworkDownloaded(uint64_t value, uint64_t timestamp)
+{
+    if (value != this->currentTotalNetworkDownloaded)
+    {
+        this->previousTotalNetworkDownloaded = this->currentTotalNetworkDownloaded;
+        this->currentTotalNetworkDownloaded = value;
+        this->currentCPUTemperatureTimestamp = timestamp;
+        uint64_t diffBytes = this->currentTotalNetworkDownloaded - this->previousTotalNetworkDownloaded;
+        uint16_t diffSeconds = (this->currentTotalNetworkDownloadedTimestamp - this->previousTotalNetworkDownloadedTimestamp) / 1000;
+        this->currentNetworkDownloadSpeed = diffBytes / diffSeconds;
+        return (true);
+    }
+    else
+    {
+        this->currentCPUTemperatureTimestamp = timestamp;
+        uint64_t diffBytes = this->currentTotalNetworkDownloaded - this->previousTotalNetworkDownloaded;
+        uint16_t diffSeconds = (this->currentTotalNetworkDownloadedTimestamp - this->previousTotalNetworkDownloadedTimestamp) / 1000;
+        this->currentNetworkDownloadSpeed = diffBytes / diffSeconds;
         return (true);
     }
 }
