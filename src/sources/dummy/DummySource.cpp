@@ -67,15 +67,15 @@ void DummySource::refresh(void)
     this->currentGlobalCPULoadData->setCurrentValue(current, currentMillis);
 
     current = this->currentUsedMemoryData->getCurrentValue();
-    change = 1000000000;
+    change = this->currentUsedMemoryData->getMax() / 100;
     if (random(0, 20) % 2 == 0)
     {
-        if (current < MAX_MEMORY - change)
+        if (current < this->currentUsedMemoryData->getMax() - change)
         {
             current += change;
         }
     }
-    else if (current > MIN_MEMORY + change)
+    else if (current > this->currentUsedMemoryData->getMin() + change)
     {
         current -= change;
     }
@@ -84,27 +84,27 @@ void DummySource::refresh(void)
     current = this->currentGlobalCPUTemperatureData->getCurrentValue();
     if (random(0, 20) % 2 == 0)
     {
-        if (current < MAX_CPU_TEMPERATURE)
+        if (current < this->currentGlobalCPUTemperatureData->getMax())
         {
             current++;
         }
     }
-    else if (current > (MAX_CPU_TEMPERATURE / 5))
+    else if (current > (this->currentGlobalCPUTemperatureData->getMax() / 5))
     {
         current--;
     }
     this->currentGlobalCPUTemperatureData->setCurrentValue(current, currentMillis);
 
     current = this->currentNetworkDownloadUsedBandwithData->getCurrentValue();
-    change = random(10000, 5000000);
+    change = random(1000, 5000000);
     if (random(0, 20) % 2 == 0)
     {
-        if (current < MAX_NETWORK_DOWNLOAD_BANDWITH - change)
+        if (current < this->currentNetworkDownloadUsedBandwithData->getMax() - change)
         {
             current += change;
         }
     }
-    else if (current > MIN_NETWORK_DOWNLOAD_BANDWITH + change)
+    else if (current > this->currentNetworkDownloadUsedBandwithData->getMin() + change)
     {
         current -= change;
     }
@@ -114,12 +114,12 @@ void DummySource::refresh(void)
     change = random(500000, 10000000);
     if (random(0, 20) % 2 == 0)
     {
-        if (current < MAX_NETWORK_UPLOAD_BANDWITH - change)
+        if (current < this->currentNetworkUploadUsedBandwithData->getMax() - change)
         {
             current += change;
         }
     }
-    else if (current > MIN_NETWORK_UPLOAD_BANDWITH + change)
+    else if (current > this->currentNetworkUploadUsedBandwithData->getMin() + change)
     {
         current -= change;
     }
