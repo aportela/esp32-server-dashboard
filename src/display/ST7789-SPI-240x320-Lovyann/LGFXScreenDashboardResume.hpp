@@ -15,11 +15,11 @@ private:
     LGFXMeter *networkDownloadBandwithLoadMeter = nullptr;
     LGFXMeter *networkUploadBandwithLoadMeter = nullptr;
 
-    lgfx::LGFX_Sprite *debugSprite = nullptr;
-
     Source *currentSource;
 
-    void refreshDebug(uint16_t xOffset, uint16_t yOffset, int32_t wifiSignalStrength);
+    uint16_t previousFPS = 0;
+
+    void refreshBottomCommonData(bool forceDrawAll);
 
 public:
     LGFXScreenDashboardResume(LovyanGFX *display, Source *source);
