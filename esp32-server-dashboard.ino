@@ -439,7 +439,6 @@ void setup()
     }
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     screen = new LGFX(PIN_SDA, PIN_SCL, PIN_CS, PIN_DC, PIN_RST, DISPLAY_DRIVER_LOVYANN_ST7789_WIDTH, DISPLAY_DRIVER_LOVYANN_ST7789_HEIGHT, DISPLAY_DRIVER_LOVYANN_ST7789_ROTATION);
-    screen->setSource(dummySRC);
     screen->setSourceData(sourceData);
     //  screen->initScreen(ST_INFO);
     screen->initScreen(ST_DATA_RESUME);

@@ -4,23 +4,6 @@
 #include <inttypes.h>
 #include <Arduino.h>
 
-#define MIN_CPU_LOAD 0
-#define MAX_CPU_LOAD 100
-
-#define MIN_MEMORY 0
-#define MAX_MEMORY 34231410688 // 32 GB
-
-#define MIN_CPU_TEMPERATURE 0
-#define MAX_CPU_TEMPERATURE 100 // Celsious
-
-#define MIN_NETWORK_DOWNLOAD_BANDWITH 0
-// #define MAX_NETWORK_DOWNLOAD_BANDWITH 536870912 // Mbytes
-#define MAX_NETWORK_DOWNLOAD_BANDWITH 10737418240 // Mbytes
-
-#define MIN_NETWORK_UPLOAD_BANDWITH 0
-// #define MAX_NETWORK_UPLOAD_BANDWITH 536870912 // Mbytes
-#define MAX_NETWORK_UPLOAD_BANDWITH 10737418240 // Mbytes
-
 // char MQTTTelegrafSource::cpuTopic[MAX_TOPIC_LENGTH] = {'\0'};
 // char MQTTTelegrafSource::memTopic[MAX_TOPIC_LENGTH] = {'\0'};
 
@@ -28,31 +11,10 @@ MQTTTelegrafSource *MQTTTelegrafSource::instance = nullptr;
 
 MQTTTelegrafSource::MQTTTelegrafSource(SourceData *sourceData, const char *uri, const char *clientId, const char *topic) : Source(sourceData)
 {
-
     MQTT::setCallback(MQTTTelegrafSource::onMessageReceived);
     MQTT::init(clientId, uri, topic);
 
-    this->currentGlobalCPULoadData->setMin(MIN_CPU_LOAD);
-    this->currentGlobalCPULoadData->setMax(MAX_CPU_LOAD);
-    this->currentGlobalCPULoadData->setCurrentValue(MIN_CPU_LOAD, millis());
-
-    this->currentUsedMemoryData->setMin(MIN_MEMORY);
-    this->currentUsedMemoryData->setMax(MAX_MEMORY);
-    this->currentUsedMemoryData->setCurrentValue(MIN_MEMORY, millis());
-
-    this->currentGlobalCPUTemperatureData->setMin(MIN_CPU_TEMPERATURE);
-    this->currentGlobalCPUTemperatureData->setMax(MAX_CPU_TEMPERATURE);
-    this->currentGlobalCPUTemperatureData->setCurrentValue(MIN_CPU_TEMPERATURE, millis());
-
-    this->currentNetworkDownloadUsedBandwithData->setMin(MIN_NETWORK_DOWNLOAD_BANDWITH);
-    this->currentNetworkDownloadUsedBandwithData->setMax(MAX_NETWORK_DOWNLOAD_BANDWITH);
-    this->currentNetworkDownloadUsedBandwithData->setCurrentValue(MIN_NETWORK_DOWNLOAD_BANDWITH, millis());
-
-    this->currentNetworkUploadUsedBandwithData->setMin(MIN_NETWORK_UPLOAD_BANDWITH);
-    this->currentNetworkUploadUsedBandwithData->setMax(MAX_NETWORK_UPLOAD_BANDWITH);
-    this->currentNetworkUploadUsedBandwithData->setCurrentValue(MIN_NETWORK_UPLOAD_BANDWITH, millis());
-
-    if (instance == nullptr)
+    if (MQTTTelegrafSource::instance == nullptr)
     {
         MQTTTelegrafSource::instance = this;
     }
@@ -60,6 +22,10 @@ MQTTTelegrafSource::MQTTTelegrafSource(SourceData *sourceData, const char *uri, 
 
 MQTTTelegrafSource::~MQTTTelegrafSource()
 {
+    if (MQTTTelegrafSource::instance != nullptr)
+    {
+        MQTTTelegrafSource::instance = nullptr;
+    }
 }
 
 /*
@@ -91,6 +57,7 @@ void MQTTTelegrafSource::setMemoryTopic(const char *topic)
     }
 }
 */
+
 void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payload)
 {
     // Serial.print("Topic: ");
@@ -127,14 +94,12 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
         {
             char subPayload[strlen(payload)];
             strncpy(subPayload, start, sizeof(subPayload) - 1);
-            subPayload[sizeof(subPayload) - 1] = '\0'; // Asegurar la terminación nula
+            subPayload[sizeof(subPayload) - 1] = '\0';
             const char *format = "usage_idle=%f";
             if (sscanf(subPayload, format, &usage_idle) == 1)
             {
-                float cpu_usage = 100.0 - usage_idle; // Porcentaje de uso total de la CPU
-                // Serial.printf("Total CPU Usage: %.2f%%\n", cpu_usage);
-                // Serial.printf("Total CPU Usage: %d%%\n", (uint8_t)cpu_usage);
-                MQTTTelegrafSource::instance->currentGlobalCPULoadData->setCurrentValue((uint8_t)cpu_usage, currentMessageTimestamp);
+                float cpu_usage = 100.0 - usage_idle;
+                MQTTTelegrafSource::instance->sourceData->setCurrentCPULoad(cpu_usage, currentMessageTimestamp);
             }
             else
             {
@@ -151,18 +116,39 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
         {
             char subPayload[strlen(payload)];
             strncpy(subPayload, start, sizeof(subPayload) - 1);
-            subPayload[sizeof(subPayload) - 1] = '\0'; // Asegurar la terminación nula
+            subPayload[sizeof(subPayload) - 1] = '\0';
             const char *format = "used=%" PRIu64 "i";
 
             if (sscanf(subPayload, format, &used) == 1)
             {
-                MQTTTelegrafSource::instance->currentUsedMemoryData->setCurrentValue(used, currentMessageTimestamp);
+                MQTTTelegrafSource::instance->sourceData->setUsedMemory(used, currentMessageTimestamp);
             }
             else
             {
                 Serial.println("Failed to parse payload");
             }
-            // TODO SET TOTAL ?
+        }
+    }
+    else if (strcmp(topic, "telegraf/HOST_NAME/temp") == 0)
+    {
+        uint64_t celsious = 0;
+        const char *search = "temp=";
+        const char *start = strstr(payload, search);
+        if (start)
+        {
+            char subPayload[strlen(payload)];
+            strncpy(subPayload, start, sizeof(subPayload) - 1);
+            subPayload[sizeof(subPayload) - 1] = '\0';
+            const char *format = "temp=%f";
+
+            if (sscanf(subPayload, format, &celsious) == 1)
+            {
+                MQTTTelegrafSource::instance->sourceData->setCurrentCPUTemperature(celsious, currentMessageTimestamp);
+            }
+            else
+            {
+                Serial.println("Failed to parse payload");
+            }
         }
     }
     else if (strcmp(topic, "telegraf/HOST_NAME/net") == 0 && strncmp(payload, "net,host=HOST_NAME,interface=Wi-Fi", 20) == 0)
@@ -180,7 +166,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
                 const char *format = "bytes_recv=%" PRIu64 "i";
                 if (sscanf(subPayload, format, &recv) == 1)
                 {
-                    MQTTTelegrafSource::instance->currentNetworkDownloadUsedBandwithData->setCurrentValue(recv, currentMessageTimestamp);
+                    MQTTTelegrafSource::instance->sourceData->setCurrentTotalNetworkDownloaded(recv, currentMessageTimestamp);
                 }
                 else
                 {
@@ -198,7 +184,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
                 const char *format = "bytes_sent=%" PRIu64 "i";
                 if (sscanf(subPayload, format, &sent) == 1)
                 {
-                    MQTTTelegrafSource::instance->currentNetworkUploadUsedBandwithData->setCurrentValue(sent, currentMessageTimestamp);
+                    MQTTTelegrafSource::instance->sourceData->setCurrentTotalNetworkUploaded(sent, currentMessageTimestamp);
                 }
                 else
                 {

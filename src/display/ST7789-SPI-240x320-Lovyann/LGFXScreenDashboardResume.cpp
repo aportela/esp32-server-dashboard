@@ -5,7 +5,6 @@
 #include "../../utils/FPS.hpp"
 #include "../../EntityType.hpp"
 #include "../../utils/Format.hpp"
-#include "../../utils/Settings.hpp"
 
 #define METER_GRAPH_WIDTH 195
 #define METER_GRAPH_HEIGHT 30
@@ -20,24 +19,20 @@
 #define SCREEN_BOTTOM_COMMON_TEXTDATA_FIELD_RUNTIME_X_OFFSET 130
 #define SCREEN_BOTTOM_COMMON_TEXTDATA_Y_OFFSET 226
 
-LGFXScreenDashboardResume::LGFXScreenDashboardResume(LovyanGFX *display, Source *source, SourceData *sourceData) : LGFXScreen(display)
+LGFXScreenDashboardResume::LGFXScreenDashboardResume(LovyanGFX *display, SourceData *sourceData) : LGFXScreen(display)
 {
-    if (source != nullptr)
-    {
-        this->currentSource = source;
-    }
     if (sourceData != nullptr)
     {
         this->currentSourceData = sourceData;
-    }
-    if (display != nullptr)
-    {
-        this->cpuLoadMeter = new LGFXMeter(this->parentDisplay, ET_GLOBAL_CPU_LOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 0, METER_GRAPH_BG_COLOR, "CPU LOAD", 0, 100);
-        this->memoryLoadMeter = new LGFXMeter(this->parentDisplay, ET_USED_MEMORY, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 42, METER_GRAPH_BG_COLOR, "MEMORY", 0, Settings::getTotalMemoryBytes());
-        this->cpuTemperatureLoadMeter = new LGFXMeter(this->parentDisplay, ET_GLOBAL_CPU_TEMPERATURE, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 84, METER_GRAPH_BG_COLOR, "CPU TEMP", Settings::getMinCPUTemperature(), Settings::getMaxCPUTemperature());
-        this->networkDownloadBandwithLoadMeter = new LGFXMeter(this->parentDisplay, ET_NETWORK_BANDWITH_DOWNLOAD_SPEED, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 126, METER_GRAPH_BG_COLOR, "WAN DOWNLOAD", 0, Settings::getMaxDownloadBandwidthBytes());
-        this->networkUploadBandwithLoadMeter = new LGFXMeter(this->parentDisplay, ET_NETWORK_BANDWITH_UPLOAD_SPEED, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 168, METER_GRAPH_BG_COLOR, "WAN UPLOAD", 0, Settings::getMaxUploadBandwidthBytes());
-        this->refresh(true);
+        if (display != nullptr)
+        {
+            this->cpuLoadMeter = new LGFXMeter(this->parentDisplay, ET_GLOBAL_CPU_LOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 0, METER_GRAPH_BG_COLOR, "CPU LOAD", this->currentSourceData->getMinCPULoad(), this->currentSourceData->getMaxCPULoad());
+            this->memoryLoadMeter = new LGFXMeter(this->parentDisplay, ET_USED_MEMORY, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 42, METER_GRAPH_BG_COLOR, "MEMORY", 0, this->currentSourceData->getTotalMemory());
+            this->cpuTemperatureLoadMeter = new LGFXMeter(this->parentDisplay, ET_GLOBAL_CPU_TEMPERATURE, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 84, METER_GRAPH_BG_COLOR, "CPU TEMP", this->currentSourceData->getMinCPUTemperature(), this->currentSourceData->getMaxCPUTemperature());
+            this->networkDownloadBandwithLoadMeter = new LGFXMeter(this->parentDisplay, ET_NETWORK_BANDWITH_DOWNLOAD_SPEED, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 126, METER_GRAPH_BG_COLOR, "WAN DOWNLOAD", 0, this->currentSourceData->getNetworkDownloadBandwidthLimit());
+            this->networkUploadBandwithLoadMeter = new LGFXMeter(this->parentDisplay, ET_NETWORK_BANDWITH_UPLOAD_SPEED, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 168, METER_GRAPH_BG_COLOR, "WAN UPLOAD", 0, this->currentSourceData->getNetworkUploadBandwidthLimit());
+            this->refresh(true);
+        }
     }
 }
 
@@ -72,9 +67,9 @@ LGFXScreenDashboardResume::~LGFXScreenDashboardResume()
     {
         this->parentDisplay = nullptr;
     }
-    if (this->currentSource != nullptr)
+    if (this->currentSourceData != nullptr)
     {
-        this->currentSource = nullptr;
+        this->currentSourceData = nullptr;
     }
 }
 
@@ -118,45 +113,36 @@ void LGFXScreenDashboardResume::refresh(bool force)
 {
     if (this->parentDisplay != nullptr)
     {
-        if (this->currentSource != nullptr)
+        if (this->currentSourceData != nullptr)
         {
-            /*
             uint64_t currentCPUMillis = this->currentSourceData->getCurrentCPULoadTimestamp();
             if (force || currentCPUMillis > this->lastCPUTimestamp)
             {
-                float currentCPULoad = this->currentSourceData->getCurrentCPULoad();
-                this->cpuLoadMeter->refresh((uint64_t)currentCPULoad);
+                this->cpuLoadMeter->refresh(this->currentSourceData->getCurrentCPULoad());
                 this->lastCPUTimestamp = currentCPUMillis;
             }
-            */
-            uint64_t currentCPUMillis = this->currentSource->getCurrentTimestamp(ET_GLOBAL_CPU_LOAD);
-            if (force || currentCPUMillis > this->lastCPUTimestamp)
-            {
-                this->cpuLoadMeter->refresh(this->currentSource->getCurrentGlobalCPULoad());
-                this->lastCPUTimestamp = currentCPUMillis;
-            }
-            uint64_t currentMemoryMillis = this->currentSource->getCurrentTimestamp(ET_USED_MEMORY);
+            uint64_t currentMemoryMillis = this->currentSourceData->getCurrentUsedMemoryTimestamp();
             if (force || currentMemoryMillis > this->lastMemoryTimestamp)
             {
-                this->memoryLoadMeter->refresh(this->currentSource->getUsedMemory());
+                this->memoryLoadMeter->refresh(this->currentSourceData->getUsedMemory());
                 this->lastMemoryTimestamp = currentMemoryMillis;
             }
-            uint64_t currentCPUTemperatureMillis = this->currentSource->getCurrentTimestamp(ET_GLOBAL_CPU_TEMPERATURE);
+            uint64_t currentCPUTemperatureMillis = this->currentSourceData->getCurrentCPUTemperatureTimestamp();
             if (force || currentCPUTemperatureMillis > this->lastCPUTemperatureTimestamp)
             {
-                this->cpuTemperatureLoadMeter->refresh(this->currentSource->getCurrentGlobalCPUTemperature());
+                this->cpuTemperatureLoadMeter->refresh(this->currentSourceData->getCurrentCPUTemperature());
                 this->lastCPUTemperatureTimestamp = currentCPUTemperatureMillis;
             }
-            uint64_t currentDownloadMillis = this->currentSource->getCurrentTimestamp(ET_NETWORK_BANDWITH_DOWNLOAD_SPEED);
+            uint64_t currentDownloadMillis = this->currentSourceData->getNetworkDownloadSpeedTimestamp();
             if (force || currentDownloadMillis > this->lastDownloadTimestamp)
             {
-                this->networkDownloadBandwithLoadMeter->refresh(this->currentSource->getCurrentNetworkDownloadUsedBandwidth());
+                this->networkDownloadBandwithLoadMeter->refresh(this->currentSourceData->getNetworkDownloadSpeed());
                 this->lastDownloadTimestamp = currentDownloadMillis;
             }
-            uint64_t currentUploadMillis = this->currentSource->getCurrentTimestamp(ET_NETWORK_BANDWITH_UPLOAD_SPEED);
+            uint64_t currentUploadMillis = this->currentSourceData->getNetworkUploadSpeedTimestamp();
             if (force || currentUploadMillis > this->lastUploadTimestamp)
             {
-                this->networkUploadBandwithLoadMeter->refresh(this->currentSource->getCurrentNetworkUploadUsedBandwidth());
+                this->networkUploadBandwithLoadMeter->refresh(this->currentSourceData->getNetworkUploadSpeed());
                 this->lastUploadTimestamp = currentUploadMillis;
             }
         }

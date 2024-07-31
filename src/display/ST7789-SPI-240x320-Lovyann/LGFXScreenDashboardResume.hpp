@@ -4,7 +4,6 @@
 #include "LGFXScreen.hpp"
 #include "LGFXMeter.hpp"
 
-#include "../../sources/Source.hpp"
 #include "../../sources/SourceData.hpp"
 
 class LGFXScreenDashboardResume : public LGFXScreen
@@ -22,7 +21,6 @@ private:
     uint64_t lastDownloadTimestamp = 0;
     uint64_t lastUploadTimestamp = 0;
 
-    Source *currentSource;
     SourceData *currentSourceData;
 
     uint16_t previousFPS = 0;
@@ -31,7 +29,7 @@ private:
     void refreshBottomCommonData(bool forceDrawAll);
 
 public:
-    LGFXScreenDashboardResume(LovyanGFX *display, Source *source, SourceData *sourceData);
+    LGFXScreenDashboardResume(LovyanGFX *display, SourceData *sourceData);
     ~LGFXScreenDashboardResume();
     void refresh(bool force = false) override;
 };

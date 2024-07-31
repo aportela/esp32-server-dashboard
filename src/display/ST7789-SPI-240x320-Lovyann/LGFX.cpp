@@ -58,11 +58,10 @@ LGFX::~LGFX()
         delete this->currentScreen;
         this->currentScreen = nullptr;
     }
-}
-
-void LGFX::setSource(Source *src)
-{
-    this->source = src;
+    if (this->sourceData != nullptr)
+    {
+        this->sourceData = nullptr;
+    }
 }
 
 void LGFX::setSourceData(SourceData *src)
@@ -84,7 +83,7 @@ void LGFX::initScreen(ScreenType screenType)
     case ST_DATA_RESUME:
         if (this->currentScreen == nullptr)
         {
-            this->currentScreen = new LGFXScreenDashboardResume(this, this->source, this->sourceData);
+            this->currentScreen = new LGFXScreenDashboardResume(this, this->sourceData);
         }
         this->currentScreenType = screenType;
         break;
