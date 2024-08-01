@@ -1,5 +1,9 @@
 #include "Format.hpp"
 #include <string.h>
+#include <Arduino.h>
+#include <inttypes.h>
+
+#define BYTE_UNIT_DIVISOR 1024
 
 void Format::bytesToHumanStr(uint64_t bytes, char *buffer, size_t buffer_size)
 {
@@ -14,6 +18,40 @@ void Format::bytesToHumanStr(uint64_t bytes, char *buffer, size_t buffer_size)
     }
     std::sprintf(buffer, "%03d", (int)decValue);
     strcat(buffer, units[currentUnitIndex]);
+}
+
+/// @brief 4 digits + 1 decimal
+/// @param bytes
+/// @param buffer
+/// @param buffer_size
+void Format::_bytesToHumanStr(uint64_t bytes, char *buffer, size_t buffer_size)
+{
+    if (bytes > 0)
+    {
+        static const char *units[] = {"B", "KB", "MB", "GB", "TB", "PB", "EB"};
+        static const uint8_t numUnits = sizeof(units) / sizeof(units[0]) - 1;
+        uint8_t currentUnitIndex = 0;
+
+        uint16_t mod = bytes > BYTE_UNIT_DIVISOR ? bytes % BYTE_UNIT_DIVISOR : 0;
+        uint64_t tmpBytes = bytes - mod;
+
+        while (tmpBytes >= BYTE_UNIT_DIVISOR && currentUnitIndex < numUnits)
+        {
+            tmpBytes /= BYTE_UNIT_DIVISOR;
+            currentUnitIndex++;
+        }
+        // TODO: better round to nearest decimal
+        while (mod > 10)
+        {
+            mod /= 10;
+        }
+        std::sprintf(buffer, "%04" PRIu64 ".%01u", tmpBytes, mod);
+        strcat(buffer, units[currentUnitIndex]);
+    }
+    else
+    {
+        snprintf(buffer, buffer_size, "0000.0B");
+    }
 }
 
 void Format::millisToHumanStr(uint64_t millis_diff, char *buffer, size_t buffer_size)
