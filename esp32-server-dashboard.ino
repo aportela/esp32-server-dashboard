@@ -56,7 +56,7 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
 {
     char str[1024] = {'\0'};
     uint64_t tmpUint64 = 0;
-    int8_t tmpInt8 = 0;
+    float tmpFloat = 0.0f;
     switch (cmd)
     {
     case SERIAL_CMDT_REBOOT:
@@ -102,12 +102,12 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
             Serial.print(SerialCommandStr[SERIAL_CMDT_SET_TOTAL_MEMORY_BYTES]);
             Serial.println(tmpUint64);
         }
-        tmpInt8 = Settings::getMinCPUTemperature();
+        tmpFloat = Settings::getMinCPUTemperature();
         Serial.print(SerialCommandStr[SERIAL_CMDT_SET_MIN_CPU_TEMPERATURE]);
-        Serial.println(tmpInt8);
-        tmpInt8 = Settings::getMaxCPUTemperature();
+        Serial.println(tmpFloat);
+        tmpFloat = Settings::getMaxCPUTemperature();
         Serial.print(SerialCommandStr[SERIAL_CMDT_SET_MAX_CPU_TEMPERATURE]);
-        Serial.println(tmpInt8);
+        Serial.println(tmpFloat);
         tmpUint64 = Settings::getMaxDownloadBandwidthBytes();
         if (tmpUint64 > 0)
         {
@@ -297,7 +297,7 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
         if (value && strlen(value))
         {
             Serial.printf("Serial command received: set min cpu temperature (%s)\n", value);
-            if (Settings::setMinCPUTemperature(strtol(value, nullptr, 10)))
+            if (Settings::setMinCPUTemperature(strtof(value, nullptr)))
             {
                 Serial.println("Min CPU temperature saved. Reboot REQUIRED");
             }
@@ -309,7 +309,7 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
         else
         {
             Serial.println("Serial command received: unset min CPU temperature");
-            if (Settings::setMinCPUTemperature(0))
+            if (Settings::setMinCPUTemperature(0.0f))
             {
                 Serial.println("Min CPU temperature removed. Reboot REQUIRED");
             }
@@ -323,7 +323,7 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
         if (value && strlen(value))
         {
             Serial.printf("Serial command received: set max cpu temperature (%s)\n", value);
-            if (Settings::setMaxCPUTemperature(strtol(value, nullptr, 10)))
+            if (Settings::setMaxCPUTemperature(strtof(value, nullptr)))
             {
                 Serial.println("Max CPU temperature saved. Reboot REQUIRED");
             }
@@ -335,7 +335,7 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
         else
         {
             Serial.println("Serial command received: unset max CPU temperature");
-            if (Settings::setMaxCPUTemperature(0))
+            if (Settings::setMaxCPUTemperature(0.0f))
             {
                 Serial.println("Max CPU temperature removed. Reboot REQUIRED");
             }
@@ -425,13 +425,13 @@ void setup()
     WifiManager::connect(true);
 
     sourceData = new SourceData(Settings::getTotalMemoryBytes(), 0, 100, Settings::getMaxDownloadBandwidthBytes(), Settings::getMaxUploadBandwidthBytes());
-    dummySRC = new DummySource(sourceData);
+    // dummySRC = new DummySource(sourceData);
 
     char mqttTelegrafURI[64] = {'\0'};
     Settings::getMQTTTelegrafURI(mqttTelegrafURI, sizeof(mqttTelegrafURI));
     char mqttTelegrafGlobalTopic[512] = {'\0'};
     Settings::getMQTTTelegrafGlobalTopic(mqttTelegrafGlobalTopic, sizeof(mqttTelegrafGlobalTopic));
-    if (false && strlen(mqttTelegrafURI) > 0 && strlen(mqttTelegrafGlobalTopic) > 0)
+    if (strlen(mqttTelegrafURI) > 0 && strlen(mqttTelegrafGlobalTopic) > 0)
     {
         char WiFiMacAddress[32] = {'\0'};
         WifiManager::getMacAddress(WiFiMacAddress, sizeof(WiFiMacAddress));
@@ -449,7 +449,7 @@ void loop()
 {
     SerialManager::loop();
     WifiManager::loop();
-    dummySRC->refresh();
+    // dummySRC->refresh();
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     screen->refresh();
 #endif // DISPLAY_DRIVER_LOVYANN_ST7789
