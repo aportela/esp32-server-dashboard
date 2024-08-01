@@ -118,7 +118,6 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
             strncpy(subPayload, start, sizeof(subPayload) - 1);
             subPayload[sizeof(subPayload) - 1] = '\0';
             const char *format = "used=%" PRIu64 "i";
-
             if (sscanf(subPayload, format, &used) == 1)
             {
                 MQTTTelegrafSource::instance->sourceData->setUsedMemory(used, currentMessageTimestamp);
@@ -131,7 +130,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
     }
     else if (strcmp(topic, "telegraf/HOST_NAME/temp") == 0)
     {
-        uint64_t celsious = 0;
+        float celsious = 0;
         const char *search = "temp=";
         const char *start = strstr(payload, search);
         if (start)
@@ -140,7 +139,6 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
             strncpy(subPayload, start, sizeof(subPayload) - 1);
             subPayload[sizeof(subPayload) - 1] = '\0';
             const char *format = "temp=%f";
-
             if (sscanf(subPayload, format, &celsious) == 1)
             {
                 MQTTTelegrafSource::instance->sourceData->setCurrentCPUTemperature(celsious, currentMessageTimestamp);
