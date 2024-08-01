@@ -509,22 +509,6 @@ void setup()
     //  screen->initScreen(ST_INFO);
     screen->initScreen(ST_DATA_RESUME);
 #endif // DISPLAY_DRIVER_LOVYANN_ST7789
-
-    char v[100] = {'\0'};
-    Format::_bytesToHumanStr(256, v, sizeof(v)); // 256MB
-    Serial.println(v);
-    Format::_bytesToHumanStr(256000, v, sizeof(v)); // 256MB
-    Serial.println(v);
-    Format::_bytesToHumanStr(262144, v, sizeof(v)); // 256MB
-    Serial.println(v);
-    Format::_bytesToHumanStr(256123456, v, sizeof(v)); // 256GB
-    Serial.println(v);
-    Format::_bytesToHumanStr(256123456789, v, sizeof(v)); // 256TB
-    Serial.println(v);
-    Format::_bytesToHumanStr(256123456789123, v, sizeof(v)); // 256PB
-    Serial.println(v);
-    Format::_bytesToHumanStr(256123456789123456, v, sizeof(v)); // 256PB
-    Serial.println(v);
 }
 
 void loop()
