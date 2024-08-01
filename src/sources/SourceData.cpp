@@ -37,15 +37,6 @@ float SourceData::getCurrentCPULoad(void) const
     return (this->currentCPULoad);
 }
 
-void SourceData::parseCurrentCPULoad(char *buffer, size_t buffer_size, uint8_t decimals) const
-{
-    char format[decimals + 3] = {'\0'};
-    std::snprintf(format, sizeof(format), "%%0%dd", decimals);
-    Serial.println(format);
-    std::snprintf(buffer, buffer_size, format, this->getCurrentCPULoad());
-    Serial.println(buffer);
-}
-
 uint64_t SourceData::getCurrentCPULoadTimestamp(void) const
 {
     return (this->currentCPULoadTimestamp);

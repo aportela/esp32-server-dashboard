@@ -43,7 +43,6 @@ public:
     uint8_t getMinCPULoad(void) const;
     uint8_t getMaxCPULoad(void) const;
     float getCurrentCPULoad(void) const;
-    void parseCurrentCPULoad(char *buffer, size_t buffer_size, uint8_t decimals = 1) const;
     uint64_t getCurrentCPULoadTimestamp(void) const;
     bool changedCPULoad(uint64_t fromTimestamp) const;
     bool setCurrentCPULoad(float value, uint64_t timestamp);
