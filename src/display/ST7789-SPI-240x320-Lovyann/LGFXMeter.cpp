@@ -110,18 +110,6 @@ void LGFXMeter::displayDefaultValues(void)
     }
 }
 
-void LGFXMeter::setMin(uint64_t value)
-{
-    this->min = value;
-    this->displayDefaultValues();
-}
-
-void LGFXMeter::setMax(uint64_t value)
-{
-    this->max = value;
-    this->displayDefaultValues();
-}
-
 uint32_t LGFXMeter::getGradientColorFrom0To100(uint8_t value)
 {
     value = constrain(value, 0, 100);
