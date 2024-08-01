@@ -1,11 +1,12 @@
 #include "MQTTTelegrafSource.hpp"
-#include "../../utils/MQTT.hpp"
 #include <cstring>
 #include <inttypes.h>
 #include <Arduino.h>
 
-// char MQTTTelegrafSource::cpuTopic[MAX_TOPIC_LENGTH] = {'\0'};
-// char MQTTTelegrafSource::memTopic[MAX_TOPIC_LENGTH] = {'\0'};
+char MQTTTelegrafSource::cpuTopic[MAX_MQTT_TOPIC_LENGTH] = {'\0'};
+char MQTTTelegrafSource::memoryTopic[MAX_MQTT_TOPIC_LENGTH] = {'\0'};
+char MQTTTelegrafSource::temperatureTopic[MAX_MQTT_TOPIC_LENGTH] = {'\0'};
+char MQTTTelegrafSource::networkTopic[MAX_MQTT_TOPIC_LENGTH] = {'\0'};
 
 MQTTTelegrafSource *MQTTTelegrafSource::instance = nullptr;
 
@@ -13,6 +14,11 @@ MQTTTelegrafSource::MQTTTelegrafSource(SourceData *sourceData, const char *uri, 
 {
     MQTT::setCallback(MQTTTelegrafSource::onMessageReceived);
     MQTT::init(clientId, uri, topic);
+
+    MQTTTelegrafSource::generateTopic(topic, MQTTTelegrafSource::cpuTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/cpu");
+    MQTTTelegrafSource::generateTopic(topic, MQTTTelegrafSource::memoryTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/mem");
+    MQTTTelegrafSource::generateTopic(topic, MQTTTelegrafSource::temperatureTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/temp");
+    MQTTTelegrafSource::generateTopic(topic, MQTTTelegrafSource::networkTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/net");
 
     if (MQTTTelegrafSource::instance == nullptr)
     {
@@ -28,35 +34,30 @@ MQTTTelegrafSource::~MQTTTelegrafSource()
     }
 }
 
-/*
-void MQTTTelegrafSource::setCPUTopic(const char *topic)
+bool MQTTTelegrafSource::generateTopic(const char *baseTopic, char *buffer, size_t buffer_size, const char *suffix)
 {
-    if (strlen(topic) <= MAX_TOPIC_LENGTH)
-    {
-        strncpy(MQTTTelegrafSource::cpuTopic, topic, sizeof(topic) - 1);
-        MQTTTelegrafSource::cpuTopic[sizeof(topic) - 1] = '\0';
-    }
-    else
-    {
-        // TODO: ERROR
-        MQTTTelegrafSource::cpuTopic[0] = '\0';
-    }
-}
+    size_t baseTopicLength = strlen(baseTopic);
+    size_t suffixLength = strlen(suffix);
 
-void MQTTTelegrafSource::setMemoryTopic(const char *topic)
-{
-    if (strlen(topic) <= MAX_TOPIC_LENGTH)
+    if (baseTopicLength > 2 && baseTopic[baseTopicLength - 2] == '/' && baseTopic[baseTopicLength - 1] == '#')
     {
-        strncpy(MQTTTelegrafSource::memTopic, topic, sizeof(topic) - 1);
-        MQTTTelegrafSource::memTopic[sizeof(topic) - 1] = '\0';
+        if (buffer_size > baseTopicLength - 2 + suffixLength + 1)
+        {
+            strncpy(buffer, baseTopic, baseTopicLength - 2);
+            buffer[baseTopicLength - 2] = '\0';
+            strcat(buffer, suffix);
+            return (true);
+        }
+        else
+        {
+            return (false);
+        }
     }
     else
     {
-        // TODO: ERROR
-        MQTTTelegrafSource::memTopic[0] = '\0';
+        return (false);
     }
 }
-*/
 
 void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payload)
 {
@@ -84,7 +85,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
         }
     }
 
-    if (strcmp(topic, "telegraf/HOST_NAME/cpu") == 0 && strncmp(payload, "cpu,cpu=cpu-total", 17) == 0)
+    if (strcmp(topic, MQTTTelegrafSource::cpuTopic) == 0 && strncmp(payload, "cpu,cpu=cpu-total", 17) == 0)
     {
 
         float usage_idle = 0.0;
@@ -107,7 +108,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
             }
         }
     }
-    else if (strcmp(topic, "telegraf/HOST_NAME/mem") == 0)
+    else if (strcmp(topic, MQTTTelegrafSource::memoryTopic) == 0)
     {
         uint64_t used = 0;
         const char *search = "used=";
@@ -128,7 +129,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
             }
         }
     }
-    else if (strcmp(topic, "telegraf/HOST_NAME/temp") == 0)
+    else if (strcmp(topic, MQTTTelegrafSource::temperatureTopic) == 0)
     {
         float celsious = 0;
         const char *search = "temp=";
@@ -149,7 +150,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
             }
         }
     }
-    else if (strcmp(topic, "telegraf/HOST_NAME/net") == 0 && strncmp(payload, "net,host=HOST_NAME,interface=Wi-Fi", 20) == 0)
+    else if (strcmp(topic, MQTTTelegrafSource::networkTopic) == 0)
     {
         if (strstr(payload, "interface=Wi-Fi"))
         {
