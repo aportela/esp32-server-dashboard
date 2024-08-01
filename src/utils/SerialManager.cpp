@@ -20,6 +20,8 @@ const char *SerialCommandStr[]{
     "SET_MAX_CPU_TEMPERATURE ",
     "SET_MAX_DOWNLOAD_BYTES_BANDWITH ",
     "SET_MAX_UPLOAD_BYTES_BANDWITH ",
+    "SET_NETWORK_INTERFACE_ID ",
+    "SET_NETWORK_INTERFACE_NAME ",
 };
 
 SerialCommandCallback SerialManager::remoteCallback = nullptr;
@@ -270,6 +272,44 @@ void SerialManager::loop(void)
                 if (SerialManager::remoteCallback != nullptr)
                 {
                     SerialManager::remoteCallback(SERIAL_CMDT_SET_MAX_UPLOAD_BYTES_BANDWIDTH, nullptr);
+                }
+            }
+        }
+        else if (rx.startsWith(SerialCommandStr[SERIAL_CMDT_SET_NETWORK_INTERFACE_ID]))
+        {
+            uint16_t length = strlen(SerialCommandStr[SERIAL_CMDT_SET_NETWORK_INTERFACE_ID]);
+            if (rx.length() > length)
+            {
+                String Id = rx.substring(length);
+                if (SerialManager::remoteCallback != nullptr)
+                {
+                    SerialManager::remoteCallback(SERIAL_CMDT_SET_NETWORK_INTERFACE_ID, Id.c_str());
+                }
+            }
+            else
+            {
+                if (SerialManager::remoteCallback != nullptr)
+                {
+                    SerialManager::remoteCallback(SERIAL_CMDT_SET_NETWORK_INTERFACE_ID, nullptr);
+                }
+            }
+        }
+        else if (rx.startsWith(SerialCommandStr[SERIAL_CMDT_SET_NETWORK_INTERFACE_NAME]))
+        {
+            uint16_t length = strlen(SerialCommandStr[SERIAL_CMDT_SET_NETWORK_INTERFACE_NAME]);
+            if (rx.length() > length)
+            {
+                String Name = rx.substring(length);
+                if (SerialManager::remoteCallback != nullptr)
+                {
+                    SerialManager::remoteCallback(SERIAL_CMDT_SET_NETWORK_INTERFACE_NAME, Name.c_str());
+                }
+            }
+            else
+            {
+                if (SerialManager::remoteCallback != nullptr)
+                {
+                    SerialManager::remoteCallback(SERIAL_CMDT_SET_NETWORK_INTERFACE_NAME, nullptr);
                 }
             }
         }
