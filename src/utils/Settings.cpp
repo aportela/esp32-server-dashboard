@@ -80,6 +80,38 @@ bool Settings::setBigUnsigedIntegerValue(const char *key, uint64_t value)
     }
 }
 
+float Settings::getFloatValue(const char *key, float defaultValue)
+{
+    if (Settings::preferences.begin(NAMESPACE, false))
+    {
+        float value = defaultValue;
+        if (Settings::preferences.isKey(key))
+        {
+            value = Settings::preferences.getFloat(key, defaultValue);
+        }
+        Settings::preferences.end();
+        return (value);
+    }
+    else
+    {
+        return (defaultValue);
+    }
+}
+
+bool Settings::setFloatValue(const char *key, float value)
+{
+    if (Settings::preferences.begin(NAMESPACE, false))
+    {
+        bool saved = Settings::preferences.putFloat(key, value) == sizeof(value);
+        Settings::preferences.end();
+        return (saved);
+    }
+    else
+    {
+        return (false);
+    }
+}
+
 void Settings::getValue(const char *key, char *value, size_t count)
 {
     if (Settings::preferences.begin(NAMESPACE, false))
@@ -231,16 +263,16 @@ bool Settings::setTotalMemoryBytes(uint64_t totalBytes)
     }
 }
 
-int8_t Settings::getMinCPUTemperature()
+float Settings::getMinCPUTemperature()
 {
-    return (Settings::getSmallSignedIntegerValue(KEY_MIN_CPU_TEMPERATURE, 0));
+    return (Settings::getFloatValue(KEY_MIN_CPU_TEMPERATURE, 0.0f));
 }
 
-bool Settings::setMinCPUTemperature(int8_t celsius)
+bool Settings::setMinCPUTemperature(float celsius)
 {
     if (celsius >= -128 && celsius <= 127)
     {
-        return (Settings::setSmallSignedIntegerValue(KEY_MIN_CPU_TEMPERATURE, celsius));
+        return (Settings::setFloatValue(KEY_MIN_CPU_TEMPERATURE, celsius));
     }
     else
     {
@@ -248,16 +280,16 @@ bool Settings::setMinCPUTemperature(int8_t celsius)
     }
 }
 
-int8_t Settings::getMaxCPUTemperature()
+float Settings::getMaxCPUTemperature()
 {
-    return (Settings::getSmallSignedIntegerValue(KEY_MAX_CPU_TEMPERATURE, 0));
+    return (Settings::getFloatValue(KEY_MAX_CPU_TEMPERATURE, 0.0f));
 }
 
-bool Settings::setMaxCPUTemperature(int8_t celsius)
+bool Settings::setMaxCPUTemperature(float celsius)
 {
     if (celsius >= -128 && celsius <= 127)
     {
-        return (Settings::setSmallSignedIntegerValue(KEY_MAX_CPU_TEMPERATURE, celsius));
+        return (Settings::setFloatValue(KEY_MAX_CPU_TEMPERATURE, celsius));
     }
     else
     {
