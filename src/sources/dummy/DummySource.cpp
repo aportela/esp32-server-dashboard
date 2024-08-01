@@ -65,12 +65,10 @@ void DummySource::refresh(uint8_t seconds)
         this->sourceData->setCurrentCPUTemperature(current, currentMillis);
 
         current = this->sourceData->getCurrentTotalNetworkDownloaded();
-        // this->sourceData->setCurrentTotalNetworkDownloaded(current + random(1000000, 5000000000), currentMillis);
-        this->sourceData->setCurrentTotalNetworkDownloaded(current + (1024 * 1024), currentMillis);
+        this->sourceData->setCurrentTotalNetworkDownloaded(current + random(1000000, 5000000000), currentMillis);
 
         current = this->sourceData->getCurrentTotalNetworkUploaded();
-        // this->sourceData->setCurrentTotalNetworkUploaded(current + random(1000000, 5000000000), currentMillis);
-        this->sourceData->setCurrentTotalNetworkUploaded(current + (1024 * 1024), currentMillis);
+        this->sourceData->setCurrentTotalNetworkUploaded(current + random(1000000, 5000000000), currentMillis);
 
         this->lastEllapsedMillis = currentMillis;
     }
