@@ -6,11 +6,14 @@
 
 class DummySource : public Source
 {
+private:
+    uint64_t lastEllapsedMillis = 0;
+
 public:
     DummySource(SourceData *sourceData);
     ~DummySource();
 
-    void refresh(void);
+    void refresh(uint8_t seconds = 0);
 };
 
 #endif
