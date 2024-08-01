@@ -31,21 +31,13 @@ void Format::_bytesToHumanStr(uint64_t bytes, char *buffer, size_t buffer_size)
         static const char *units[] = {"B", "KB", "MB", "GB", "TB", "PB", "EB"};
         static const uint8_t numUnits = sizeof(units) / sizeof(units[0]) - 1;
         uint8_t currentUnitIndex = 0;
-
-        uint16_t mod = bytes > BYTE_UNIT_DIVISOR ? bytes % BYTE_UNIT_DIVISOR : 0;
-        uint64_t tmpBytes = bytes - mod;
-
+        uint64_t tmpBytes = bytes - (bytes > BYTE_UNIT_DIVISOR ? bytes % BYTE_UNIT_DIVISOR : 0);
         while (tmpBytes >= BYTE_UNIT_DIVISOR && currentUnitIndex < numUnits)
         {
             tmpBytes /= BYTE_UNIT_DIVISOR;
             currentUnitIndex++;
         }
-        // TODO: better round to nearest decimal
-        while (mod > 10)
-        {
-            mod /= 10;
-        }
-        std::sprintf(buffer, "%04" PRIu64 ".%01u", tmpBytes, mod);
+        std::sprintf(buffer, "%04" PRIu64 ".%01u", tmpBytes, ((bytes % BYTE_UNIT_DIVISOR) * 10 / BYTE_UNIT_DIVISOR));
         strcat(buffer, units[currentUnitIndex]);
     }
     else
