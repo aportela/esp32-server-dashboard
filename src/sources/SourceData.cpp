@@ -2,6 +2,7 @@
 #include "SourceData.hpp"
 #include <Arduino.h>
 #include <cstdio>
+#include "../utils/Format.hpp"
 
 #define MIN_CPU_LOAD 0
 #define MAX_CPU_LOAD 100
@@ -207,7 +208,7 @@ uint64_t SourceData::getNetworkDownloadSpeedTimestamp(void) const
 
 uint64_t SourceData::getCurrentTotalNetworkDownloaded(void)
 {
-    return (this->currentTotalNetworkUploaded);
+    return (this->currentTotalNetworkDownloaded);
 }
 
 bool SourceData::changedNetworkDownloadSpeed(uint64_t fromTimestamp) const
@@ -221,20 +222,17 @@ bool SourceData::setCurrentTotalNetworkDownloaded(uint64_t value, uint64_t times
     {
         this->previousTotalNetworkDownloaded = this->currentTotalNetworkDownloaded;
         this->currentTotalNetworkDownloaded = value;
-        this->currentCPUTemperatureTimestamp = timestamp;
-        uint64_t diffBytes = this->currentTotalNetworkDownloaded - this->previousTotalNetworkDownloaded;
-        uint16_t diffSeconds = (this->currentTotalNetworkDownloadedTimestamp - this->previousTotalNetworkDownloadedTimestamp) / 1000;
-        this->currentNetworkDownloadSpeed = diffBytes / diffSeconds;
-        return (true);
     }
     else
     {
-        this->currentCPUTemperatureTimestamp = timestamp;
-        uint64_t diffBytes = this->currentTotalNetworkDownloaded - this->previousTotalNetworkDownloaded;
-        uint16_t diffSeconds = (this->currentTotalNetworkDownloadedTimestamp - this->previousTotalNetworkDownloadedTimestamp) / 1000;
-        this->currentNetworkDownloadSpeed = diffBytes / diffSeconds;
-        return (true);
+        this->previousTotalNetworkDownloaded = this->currentTotalNetworkDownloaded;
     }
+    uint64_t diffBytes = this->currentTotalNetworkDownloaded - this->previousTotalNetworkDownloaded;
+    this->previousTotalNetworkDownloadedTimestamp = this->currentTotalNetworkDownloadedTimestamp;
+    this->currentTotalNetworkDownloadedTimestamp = timestamp;
+    float diffSeconds = (this->currentTotalNetworkDownloadedTimestamp - this->previousTotalNetworkDownloadedTimestamp) / 1000.0;
+    this->currentNetworkDownloadSpeed = diffSeconds > 0 ? diffBytes / diffSeconds : 0;
+    return (true);
 }
 
 // NET UPLOAD BANDWIDTH
@@ -276,18 +274,15 @@ bool SourceData::setCurrentTotalNetworkUploaded(uint64_t value, uint64_t timesta
     {
         this->previousTotalNetworkUploaded = this->currentTotalNetworkUploaded;
         this->currentTotalNetworkUploaded = value;
-        this->currentCPUTemperatureTimestamp = timestamp;
-        uint64_t diffBytes = this->currentTotalNetworkUploaded - this->previousTotalNetworkUploaded;
-        uint16_t diffSeconds = (this->currentTotalNetworkUploadedTimestamp - this->previousTotalNetworkUploadedTimestamp) / 1000;
-        this->currentNetworkUploadSpeed = diffBytes / diffSeconds;
-        return (true);
     }
     else
     {
-        this->currentCPUTemperatureTimestamp = timestamp;
-        uint64_t diffBytes = this->currentTotalNetworkUploaded - this->previousTotalNetworkUploaded;
-        uint16_t diffSeconds = (this->currentTotalNetworkUploadedTimestamp - this->previousTotalNetworkUploadedTimestamp) / 1000;
-        this->currentNetworkUploadSpeed = diffBytes / diffSeconds;
-        return (true);
+        this->previousTotalNetworkDownloaded = this->currentTotalNetworkUploaded;
     }
+    uint64_t diffBytes = this->currentTotalNetworkUploaded - this->previousTotalNetworkUploaded;
+    this->previousTotalNetworkUploadedTimestamp = this->currentTotalNetworkUploadedTimestamp;
+    this->currentTotalNetworkUploadedTimestamp = timestamp;
+    float diffSeconds = (this->currentTotalNetworkUploadedTimestamp - this->previousTotalNetworkUploadedTimestamp) / 1000.0;
+    this->currentNetworkUploadSpeed = diffSeconds > 0 ? diffBytes / diffSeconds : 0;
+    return (true);
 }
