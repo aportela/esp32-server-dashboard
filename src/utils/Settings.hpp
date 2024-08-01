@@ -47,6 +47,12 @@ public:
 
     static uint64_t getMaxUploadBandwidthBytes();
     static bool setMaxUploadBandwidthBytes(uint64_t totalBytes = 0);
+
+    static void getNetworkInterfaceId(char *id, size_t count);
+    static bool setNetworkInterfaceId(const char *id);
+
+    static void getNetworkInterfaceName(char *name, size_t count);
+    static bool setNetworkInterfaceName(const char *name);
 };
 
 #endif
