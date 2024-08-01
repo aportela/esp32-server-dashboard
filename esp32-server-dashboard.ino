@@ -41,10 +41,12 @@ LGFX *screen = nullptr;
 #include "src/utils/Settings.hpp"
 #include "src/utils/WifiManager.hpp"
 #include "src/utils/SerialManager.hpp"
+#include "src/utils/Format.hpp"
 #include "src/sources/dummy/DummySource.hpp"
 #include "src/sources/SourceData.hpp"
 #include "src/sources/mqtt/MQTTTelegrafSource.hpp"
 #include "src/display/ScreenType.hpp"
+#include <Arduino.h>
 
 #include <cstdint>
 
@@ -119,6 +121,18 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
         {
             Serial.print(SerialCommandStr[SERIAL_CMDT_SET_MAX_UPLOAD_BYTES_BANDWIDTH]);
             Serial.println(tmpUint64);
+        }
+        Settings::getNetworkInterfaceId(str, sizeof(str));
+        if (strlen(str) > 0)
+        {
+            Serial.print(SerialCommandStr[SERIAL_CMDT_SET_NETWORK_INTERFACE_ID]);
+            Serial.println(str);
+        }
+        Settings::getNetworkInterfaceName(str, sizeof(str));
+        if (strlen(str) > 0)
+        {
+            Serial.print(SerialCommandStr[SERIAL_CMDT_SET_NETWORK_INTERFACE_NAME]);
+            Serial.println(str);
         }
         Serial.println("REBOOT");
         Serial.println("# EXPORTED SETTINGS END");
@@ -397,6 +411,58 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
             }
         }
         break;
+    case SERIAL_CMDT_SET_NETWORK_INTERFACE_ID:
+        if (value && strlen(value))
+        {
+            Serial.printf("Serial command received: set network interface id (%s)\n", value);
+            if (Settings::setNetworkInterfaceId(value))
+            {
+                Serial.println("Network interface id saved. Reboot REQUIRED");
+            }
+            else
+            {
+                Serial.println("Error saving network interface id");
+            }
+        }
+        else
+        {
+            Serial.println("Serial command received: unset network interface id");
+            if (Settings::setNetworkInterfaceId(""))
+            {
+                Serial.println("Network interface id removed. Reboot REQUIRED");
+            }
+            else
+            {
+                Serial.println("Error removing network interface id");
+            }
+        }
+        break;
+    case SERIAL_CMDT_SET_NETWORK_INTERFACE_NAME:
+        if (value && strlen(value))
+        {
+            Serial.printf("Serial command received: set network interface name (%s)\n", value);
+            if (Settings::setNetworkInterfaceName(value))
+            {
+                Serial.println("Network interface name saved. Reboot REQUIRED");
+            }
+            else
+            {
+                Serial.println("Error saving network interface name");
+            }
+        }
+        else
+        {
+            Serial.println("Serial command received: unset network interface name");
+            if (Settings::setNetworkInterfaceName(""))
+            {
+                Serial.println("Network interface name removed. Reboot REQUIRED");
+            }
+            else
+            {
+                Serial.println("Error removing network interface name");
+            }
+        }
+        break;
     default:
         Serial.println("Serial command received (UNKNOWN):");
         if (value)
@@ -443,13 +509,29 @@ void setup()
     //  screen->initScreen(ST_INFO);
     screen->initScreen(ST_DATA_RESUME);
 #endif // DISPLAY_DRIVER_LOVYANN_ST7789
+
+    char v[100] = {'\0'};
+    Format::_bytesToHumanStr(256, v, sizeof(v)); // 256MB
+    Serial.println(v);
+    Format::_bytesToHumanStr(256000, v, sizeof(v)); // 256MB
+    Serial.println(v);
+    Format::_bytesToHumanStr(262144, v, sizeof(v)); // 256MB
+    Serial.println(v);
+    Format::_bytesToHumanStr(256123456, v, sizeof(v)); // 256GB
+    Serial.println(v);
+    Format::_bytesToHumanStr(256123456789, v, sizeof(v)); // 256TB
+    Serial.println(v);
+    Format::_bytesToHumanStr(256123456789123, v, sizeof(v)); // 256PB
+    Serial.println(v);
+    Format::_bytesToHumanStr(256123456789123456, v, sizeof(v)); // 256PB
+    Serial.println(v);
 }
 
 void loop()
 {
     SerialManager::loop();
     WifiManager::loop();
-    dummySRC->refresh(5000);
+    dummySRC->refresh(0);
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     screen->refresh();
 #endif // DISPLAY_DRIVER_LOVYANN_ST7789
