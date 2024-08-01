@@ -13,7 +13,7 @@ public:
     DummySource(SourceData *sourceData);
     ~DummySource();
 
-    void refresh(uint8_t seconds = 0);
+    void refresh(uint16_t milliSeconds = 0);
 };
 
 #endif

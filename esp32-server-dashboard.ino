@@ -425,13 +425,13 @@ void setup()
     WifiManager::connect(true);
 
     sourceData = new SourceData(Settings::getTotalMemoryBytes(), 0, 100, Settings::getMaxDownloadBandwidthBytes(), Settings::getMaxUploadBandwidthBytes());
-    // dummySRC = new DummySource(sourceData);
+    dummySRC = new DummySource(sourceData);
 
     char mqttTelegrafURI[64] = {'\0'};
     Settings::getMQTTTelegrafURI(mqttTelegrafURI, sizeof(mqttTelegrafURI));
     char mqttTelegrafGlobalTopic[512] = {'\0'};
     Settings::getMQTTTelegrafGlobalTopic(mqttTelegrafGlobalTopic, sizeof(mqttTelegrafGlobalTopic));
-    if (strlen(mqttTelegrafURI) > 0 && strlen(mqttTelegrafGlobalTopic) > 0)
+    if (false && strlen(mqttTelegrafURI) > 0 && strlen(mqttTelegrafGlobalTopic) > 0)
     {
         char WiFiMacAddress[32] = {'\0'};
         WifiManager::getMacAddress(WiFiMacAddress, sizeof(WiFiMacAddress));
@@ -449,7 +449,7 @@ void loop()
 {
     SerialManager::loop();
     WifiManager::loop();
-    // dummySRC->refresh();
+    dummySRC->refresh(5000);
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     screen->refresh();
 #endif // DISPLAY_DRIVER_LOVYANN_ST7789

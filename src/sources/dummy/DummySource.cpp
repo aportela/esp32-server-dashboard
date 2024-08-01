@@ -1,5 +1,6 @@
 #include "DummySource.hpp"
 #include <Arduino.h>
+#include "../../utils/Format.hpp"
 
 DummySource::DummySource(SourceData *sourceData) : Source(sourceData)
 {
@@ -11,14 +12,14 @@ DummySource::~DummySource()
 {
 }
 
-void DummySource::refresh(uint8_t seconds)
+void DummySource::refresh(uint16_t milliSeconds)
 {
-    bool allowRefresh = seconds == 0 || (millis() - this->lastEllapsedMillis) > (seconds * 1000);
+    uint64_t currentMillis = millis();
+    bool allowRefresh = milliSeconds == 0 || ((currentMillis - this->lastEllapsedMillis) >= milliSeconds);
     if (allowRefresh)
     {
         uint64_t current = 0;
         uint64_t change = 0;
-        uint64_t currentMillis = millis();
 
         uint8_t rnd = random(0, 100);
         if (rnd > 90)
@@ -64,6 +65,7 @@ void DummySource::refresh(uint8_t seconds)
         }
         this->sourceData->setCurrentCPUTemperature(current, currentMillis);
 
+        // TODO: check limits
         current = this->sourceData->getCurrentTotalNetworkDownloaded();
         this->sourceData->setCurrentTotalNetworkDownloaded(current + random(1000000, 5000000000), currentMillis);
 
