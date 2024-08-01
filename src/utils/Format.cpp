@@ -5,26 +5,11 @@
 
 #define BYTE_UNIT_DIVISOR 1024
 
-void Format::bytesToHumanStr(uint64_t bytes, char *buffer, size_t buffer_size)
-{
-    static const char *units[] = {"B  ", "Kb ", "Mb ", "Gb ", "Tb ", "Pb "};
-    static const uint8_t numUnits = sizeof(units) / sizeof(units[0]) - 1;
-    uint8_t currentUnitIndex = 0;
-    double decValue = (double)bytes;
-    while (decValue >= 1024.0 && currentUnitIndex < numUnits)
-    {
-        decValue /= 1024;
-        currentUnitIndex++;
-    }
-    std::sprintf(buffer, "%03d", (int)decValue);
-    strcat(buffer, units[currentUnitIndex]);
-}
-
 /// @brief 4 digits + 1 decimal
 /// @param bytes
 /// @param buffer
 /// @param buffer_size
-void Format::_bytesToHumanStr(uint64_t bytes, char *buffer, size_t buffer_size)
+void Format::bytesToHumanStr(uint64_t bytes, char *buffer, size_t buffer_size)
 {
     if (bytes > 0)
     {

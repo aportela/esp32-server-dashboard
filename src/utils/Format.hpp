@@ -9,7 +9,6 @@ class Format
 private:
 public:
     static void bytesToHumanStr(uint64_t bytes, char *buffer, size_t buffer_size);
-    static void _bytesToHumanStr(uint64_t bytes, char *buffer, size_t buffer_size);
     static void millisToHumanStr(uint64_t millis_diff, char *buffer, size_t buffer_size);
 };
 
