@@ -68,6 +68,8 @@ void DummySource::refresh(uint16_t milliSeconds)
         }
         this->sourceData->setCurrentCPUTemperature(fCurrent, currentMillis);
 
+        this->sourceData->setCurrentUptimeSeconds(millis() / 1000, currentMillis);
+
         // TODO: check limits
         current = this->sourceData->getCurrentTotalNetworkDownloaded();
         this->sourceData->setCurrentTotalNetworkDownloaded(current + random(1000000, 5000000000), currentMillis);
