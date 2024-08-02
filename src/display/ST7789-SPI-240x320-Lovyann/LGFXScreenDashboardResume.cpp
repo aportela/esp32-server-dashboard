@@ -26,11 +26,19 @@ LGFXScreenDashboardResume::LGFXScreenDashboardResume(LovyanGFX *display, SourceD
         this->currentSourceData = sourceData;
         if (display != nullptr)
         {
+            this->dre = new LGFXScreenDashboardResumeEntityCPULoad(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 0, true);
+            this->dre2 = new LGFXScreenDashboardResumeEntityUsedMemory(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 42, true);
+            this->dre3 = new LGFXScreenDashboardResumeEntityCPUTemperature(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 84, true);
+            this->dre4 = new LGFXScreenDashboardResumeEntityNetUsedBandWidth(NBT_DOWNLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 126, true);
+            this->dre5 = new LGFXScreenDashboardResumeEntityNetUsedBandWidth(NBT_UPLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 168, true);
+            /*
             this->cpuLoadMeter = new LGFXMeter(this->parentDisplay, ET_GLOBAL_CPU_LOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 0, METER_GRAPH_BG_COLOR, "CPU LOAD", this->currentSourceData->getMinCPULoad(), this->currentSourceData->getMaxCPULoad());
             this->memoryLoadMeter = new LGFXMeter(this->parentDisplay, ET_USED_MEMORY, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 42, METER_GRAPH_BG_COLOR, "MEMORY", 0, this->currentSourceData->getTotalMemory());
             this->cpuTemperatureLoadMeter = new LGFXMeter(this->parentDisplay, ET_GLOBAL_CPU_TEMPERATURE, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 84, METER_GRAPH_BG_COLOR, "CPU TEMP", this->currentSourceData->getMinCPUTemperature(), this->currentSourceData->getMaxCPUTemperature());
             this->networkDownloadBandwithLoadMeter = new LGFXMeter(this->parentDisplay, ET_NETWORK_BANDWITH_DOWNLOAD_SPEED, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 126, METER_GRAPH_BG_COLOR, "WAN DOWNLOAD", 0, this->currentSourceData->getNetworkDownloadBandwidthLimit());
             this->networkUploadBandwithLoadMeter = new LGFXMeter(this->parentDisplay, ET_NETWORK_BANDWITH_UPLOAD_SPEED, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 168, METER_GRAPH_BG_COLOR, "WAN UPLOAD", 0, this->currentSourceData->getNetworkUploadBandwidthLimit());
+
+            */
             this->refresh(true);
         }
     }
@@ -38,6 +46,7 @@ LGFXScreenDashboardResume::LGFXScreenDashboardResume(LovyanGFX *display, SourceD
 
 LGFXScreenDashboardResume::~LGFXScreenDashboardResume()
 {
+    /*
     if (this->cpuLoadMeter != nullptr)
     {
         delete this->cpuLoadMeter;
@@ -63,9 +72,31 @@ LGFXScreenDashboardResume::~LGFXScreenDashboardResume()
         delete this->networkUploadBandwithLoadMeter;
         this->networkUploadBandwithLoadMeter = nullptr;
     }
-    if (this->parentDisplay != nullptr)
+    */
+    if (this->dre != nullptr)
     {
-        this->parentDisplay = nullptr;
+        delete this->dre;
+        this->dre = nullptr;
+    }
+    if (this->dre2 != nullptr)
+    {
+        delete this->dre2;
+        this->dre2 = nullptr;
+    }
+    if (this->dre3 != nullptr)
+    {
+        delete this->dre3;
+        this->dre3 = nullptr;
+    }
+    if (this->dre4 != nullptr)
+    {
+        delete this->dre4;
+        this->dre4 = nullptr;
+    }
+    if (this->dre5 != nullptr)
+    {
+        delete this->dre5;
+        this->dre5 = nullptr;
     }
     if (this->currentSourceData != nullptr)
     {
@@ -115,6 +146,7 @@ void LGFXScreenDashboardResume::refresh(bool force)
     {
         if (this->currentSourceData != nullptr)
         {
+            /*
             uint64_t currentCPUMillis = this->currentSourceData->getCurrentCPULoadTimestamp();
             if (force || currentCPUMillis > this->lastCPUTimestamp)
             {
@@ -145,6 +177,12 @@ void LGFXScreenDashboardResume::refresh(bool force)
                 this->networkUploadBandwithLoadMeter->refresh(this->currentSourceData->getNetworkUploadSpeed());
                 this->lastUploadTimestamp = currentUploadMillis;
             }
+            */
+            this->dre->refresh(false);
+            this->dre2->refresh(false);
+            this->dre3->refresh(false);
+            this->dre4->refresh(false);
+            this->dre5->refresh(false);
         }
         this->refreshBottomCommonData(force);
     }

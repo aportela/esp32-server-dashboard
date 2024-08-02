@@ -3,12 +3,20 @@
 
 #include "LGFXScreen.hpp"
 #include "LGFXMeter.hpp"
-
+#include "LGFXScreenDashboardResumeEntityCPULoad.hpp"
+#include "LGFXScreenDashboardResumeEntityUsedMemory.hpp"
+#include "LGFXScreenDashboardResumeEntityCPUTemperature.hpp"
+#include "LGFXScreenDashboardResumeEntityNetUsedBandWidth.hpp"
 #include "../../sources/SourceData.hpp"
 
 class LGFXScreenDashboardResume : public LGFXScreen
 {
 private:
+    LGFXScreenDashboardResumeEntityCPULoad *dre = nullptr;
+    LGFXScreenDashboardResumeEntityUsedMemory *dre2 = nullptr;
+    LGFXScreenDashboardResumeEntityCPUTemperature *dre3 = nullptr;
+    LGFXScreenDashboardResumeEntityNetUsedBandWidth *dre4 = nullptr;
+    LGFXScreenDashboardResumeEntityNetUsedBandWidth *dre5 = nullptr;
     LGFXMeter *cpuLoadMeter = nullptr;
     LGFXMeter *memoryLoadMeter = nullptr;
     LGFXMeter *cpuTemperatureLoadMeter = nullptr;
