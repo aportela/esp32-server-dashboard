@@ -11,11 +11,11 @@
 class LGFXScreenDashboardResume : public LGFXScreen
 {
 private:
-    LGFXScreenDashboardResumeEntityCPULoad *dre = nullptr;
-    LGFXScreenDashboardResumeEntityUsedMemory *dre2 = nullptr;
-    LGFXScreenDashboardResumeEntityCPUTemperature *dre3 = nullptr;
-    LGFXScreenDashboardResumeEntityNetUsedBandWidth *dre4 = nullptr;
-    LGFXScreenDashboardResumeEntityNetUsedBandWidth *dre5 = nullptr;
+    LGFXScreenDashboardResumeEntityCPULoad *cpuLoadBlock = nullptr;
+    LGFXScreenDashboardResumeEntityUsedMemory *usedMemoryBlock = nullptr;
+    LGFXScreenDashboardResumeEntityCPUTemperature *cpuTemperatureBlock = nullptr;
+    LGFXScreenDashboardResumeEntityNetUsedBandWidth *networkDownloadBandwidthBlock = nullptr;
+    LGFXScreenDashboardResumeEntityNetUsedBandWidth *networkUploadBandwidthBlock = nullptr;
 
     uint64_t lastCPUTimestamp = 0;
     uint64_t lastMemoryTimestamp = 0;

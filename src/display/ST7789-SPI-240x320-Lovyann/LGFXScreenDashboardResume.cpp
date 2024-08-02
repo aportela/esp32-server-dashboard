@@ -26,11 +26,11 @@ LGFXScreenDashboardResume::LGFXScreenDashboardResume(LovyanGFX *display, SourceD
         this->currentSourceData = sourceData;
         if (display != nullptr)
         {
-            this->dre = new LGFXScreenDashboardResumeEntityCPULoad(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 0, true);
-            this->dre2 = new LGFXScreenDashboardResumeEntityUsedMemory(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 42, true);
-            this->dre3 = new LGFXScreenDashboardResumeEntityCPUTemperature(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 84, true);
-            this->dre4 = new LGFXScreenDashboardResumeEntityNetUsedBandWidth(NBT_DOWNLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 126, true);
-            this->dre5 = new LGFXScreenDashboardResumeEntityNetUsedBandWidth(NBT_UPLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 168, true);
+            this->cpuLoadBlock = new LGFXScreenDashboardResumeEntityCPULoad(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 0, true);
+            this->usedMemoryBlock = new LGFXScreenDashboardResumeEntityUsedMemory(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 42, true);
+            this->cpuTemperatureBlock = new LGFXScreenDashboardResumeEntityCPUTemperature(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 84, true);
+            this->networkDownloadBandwidthBlock = new LGFXScreenDashboardResumeEntityNetUsedBandWidth(NBT_DOWNLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 126, true);
+            this->networkUploadBandwidthBlock = new LGFXScreenDashboardResumeEntityNetUsedBandWidth(NBT_UPLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 168, true);
             this->refresh(true);
         }
     }
@@ -38,30 +38,30 @@ LGFXScreenDashboardResume::LGFXScreenDashboardResume(LovyanGFX *display, SourceD
 
 LGFXScreenDashboardResume::~LGFXScreenDashboardResume()
 {
-    if (this->dre != nullptr)
+    if (this->cpuLoadBlock != nullptr)
     {
-        delete this->dre;
-        this->dre = nullptr;
+        delete this->cpuLoadBlock;
+        this->cpuLoadBlock = nullptr;
     }
-    if (this->dre2 != nullptr)
+    if (this->usedMemoryBlock != nullptr)
     {
-        delete this->dre2;
-        this->dre2 = nullptr;
+        delete this->usedMemoryBlock;
+        this->usedMemoryBlock = nullptr;
     }
-    if (this->dre3 != nullptr)
+    if (this->cpuTemperatureBlock != nullptr)
     {
-        delete this->dre3;
-        this->dre3 = nullptr;
+        delete this->cpuTemperatureBlock;
+        this->cpuTemperatureBlock = nullptr;
     }
-    if (this->dre4 != nullptr)
+    if (this->networkDownloadBandwidthBlock != nullptr)
     {
-        delete this->dre4;
-        this->dre4 = nullptr;
+        delete this->networkDownloadBandwidthBlock;
+        this->networkDownloadBandwidthBlock = nullptr;
     }
-    if (this->dre5 != nullptr)
+    if (this->networkUploadBandwidthBlock != nullptr)
     {
-        delete this->dre5;
-        this->dre5 = nullptr;
+        delete this->networkUploadBandwidthBlock;
+        this->networkUploadBandwidthBlock = nullptr;
     }
     if (this->currentSourceData != nullptr)
     {
@@ -79,7 +79,6 @@ void LGFXScreenDashboardResume::refreshBottomCommonData(bool forceDrawAll)
         this->parentDisplay->setTextColor(SCREEN_BOTTOM_COMMON_TEXTDATA_COLOR, SCREEN_BOTTOM_COMMON_TEXTDATA_BG_COLOR);
         this->parentDisplay->setCursor(SCREEN_BOTTOM_COMMON_TEXTDATA_X_OFFSET, SCREEN_BOTTOM_COMMON_TEXTDATA_Y_OFFSET);
         this->parentDisplay->print("FPS:      - Uptime: NO DATA");
-        Serial.println(this->parentDisplay->getCursorX());
     }
     uint16_t currentFPS = FPS::getFPS();
     if (forceDrawAll || currentFPS != this->previousFPS)
@@ -113,43 +112,11 @@ void LGFXScreenDashboardResume::refresh(bool force)
     {
         if (this->currentSourceData != nullptr)
         {
-            /*
-            uint64_t currentCPUMillis = this->currentSourceData->getCurrentCPULoadTimestamp();
-            if (force || currentCPUMillis > this->lastCPUTimestamp)
-            {
-                this->cpuLoadMeter->refresh(this->currentSourceData->getCurrentCPULoad());
-                this->lastCPUTimestamp = currentCPUMillis;
-            }
-            uint64_t currentMemoryMillis = this->currentSourceData->getCurrentUsedMemoryTimestamp();
-            if (force || currentMemoryMillis > this->lastMemoryTimestamp)
-            {
-                this->memoryLoadMeter->refresh(this->currentSourceData->getUsedMemory());
-                this->lastMemoryTimestamp = currentMemoryMillis;
-            }
-            uint64_t currentCPUTemperatureMillis = this->currentSourceData->getCurrentCPUTemperatureTimestamp();
-            if (force || currentCPUTemperatureMillis > this->lastCPUTemperatureTimestamp)
-            {
-                this->cpuTemperatureLoadMeter->refresh(this->currentSourceData->getCurrentCPUTemperature());
-                this->lastCPUTemperatureTimestamp = currentCPUTemperatureMillis;
-            }
-            uint64_t currentDownloadMillis = this->currentSourceData->getNetworkDownloadSpeedTimestamp();
-            if (force || currentDownloadMillis > this->lastDownloadTimestamp)
-            {
-                this->networkDownloadBandwithLoadMeter->refresh(this->currentSourceData->getNetworkDownloadSpeed());
-                this->lastDownloadTimestamp = currentDownloadMillis;
-            }
-            uint64_t currentUploadMillis = this->currentSourceData->getNetworkUploadSpeedTimestamp();
-            if (force || currentUploadMillis > this->lastUploadTimestamp)
-            {
-                this->networkUploadBandwithLoadMeter->refresh(this->currentSourceData->getNetworkUploadSpeed());
-                this->lastUploadTimestamp = currentUploadMillis;
-            }
-            */
-            this->dre->refresh(false);
-            this->dre2->refresh(false);
-            this->dre3->refresh(false);
-            this->dre4->refresh(false);
-            this->dre5->refresh(false);
+            this->cpuLoadBlock->refresh(false);
+            this->usedMemoryBlock->refresh(false);
+            this->cpuTemperatureBlock->refresh(false);
+            this->networkDownloadBandwidthBlock->refresh(false);
+            this->networkUploadBandwidthBlock->refresh(false);
         }
         this->refreshBottomCommonData(force);
     }
