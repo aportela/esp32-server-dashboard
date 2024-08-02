@@ -34,7 +34,7 @@ protected:
     void refreshSprite(uint8_t mapped100Value, int32_t color);
     void refreshStrValue(const char *strValue, int32_t color = LGFX_SCR_DRE_FONT_COLOR, int32_t background = LGFX_SCR_DRE_FONT_BG_COLOR);
     uint8_t mapFloatValueFrom0To100(float value, float minValue, float maxValue);
-    uint8_t mapUint32ValueFrom0To100(uint32_t value, uint32_t minValue, uint32_t maxValue);
+    uint8_t mapUint64ValueFrom0To100(uint64_t value, uint64_t minValue, uint64_t maxValue);
     uint16_t getGradientColorFrom0To100(uint8_t value);
 
 public:

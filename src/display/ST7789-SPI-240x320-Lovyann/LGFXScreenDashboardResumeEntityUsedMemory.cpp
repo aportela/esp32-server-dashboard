@@ -33,7 +33,7 @@ bool LGFXScreenDashboardResumeEntityUsedMemory::refresh(bool force)
             if (currentValue != this->value || force)
             {
                 this->value = currentValue;
-                uint8_t mapped100 = this->mapUint32ValueFrom0To100(this->value, 0, this->sourceData->getTotalMemory());
+                uint8_t mapped100 = this->mapUint64ValueFrom0To100(this->value, 0, this->sourceData->getTotalMemory());
                 uint16_t currentGradientColor = (mapped100 != this->previousMappedValue) ? this->getGradientColorFrom0To100(mapped100) : this->previousGradientcolor;
                 this->previousGradientcolor = currentGradientColor;
                 this->refreshSprite(mapped100, currentGradientColor);

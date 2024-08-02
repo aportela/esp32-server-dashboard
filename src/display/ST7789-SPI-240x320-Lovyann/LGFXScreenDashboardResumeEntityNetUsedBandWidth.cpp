@@ -55,11 +55,11 @@ bool LGFXScreenDashboardResumeEntityNetUsedBandWidth::refresh(bool force)
                 uint8_t mapped100 = 0;
                 if (this->type == NBT_DOWNLOAD)
                 {
-                    mapped100 = this->mapUint32ValueFrom0To100(this->value, 0, this->sourceData->getNetworkDownloadBandwidthLimit());
+                    mapped100 = this->mapUint64ValueFrom0To100(this->value, 0, this->sourceData->getNetworkDownloadBandwidthLimit());
                 }
                 else
                 {
-                    mapped100 = this->mapUint32ValueFrom0To100(this->value, 0, this->sourceData->getNetworkUploadBandwidthLimit());
+                    mapped100 = this->mapUint64ValueFrom0To100(this->value, 0, this->sourceData->getNetworkUploadBandwidthLimit());
                 }
                 uint16_t currentGradientColor = (mapped100 != this->previousMappedValue) ? this->getGradientColorFrom0To100(mapped100) : this->previousGradientcolor;
                 this->previousGradientcolor = currentGradientColor;

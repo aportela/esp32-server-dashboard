@@ -85,7 +85,7 @@ uint8_t LGFXScreenDashboardResumeEntity::mapFloatValueFrom0To100(float value, fl
     return (map((int32_t)value, (int32_t)minValue, (int32_t)maxValue, 0, 100));
 }
 
-uint8_t LGFXScreenDashboardResumeEntity::mapUint32ValueFrom0To100(uint32_t value, uint32_t minValue, uint32_t maxValue)
+uint8_t LGFXScreenDashboardResumeEntity::mapUint64ValueFrom0To100(uint64_t value, uint64_t minValue, uint64_t maxValue)
 {
     if (minValue == maxValue)
     {
