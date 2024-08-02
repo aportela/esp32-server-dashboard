@@ -23,7 +23,7 @@ void Format::bytesToHumanStr(uint64_t bytes, char *buffer, size_t buffer_size)
 {
     if (bytes > 0)
     {
-        static const char *units[] = {" B ", " KB", " MB", " GB", " TB", " PB", " EB"};
+        static const char *units[] = {" B  ", " KB  ", " MB  ", " GB  ", " TB  ", " PB  ", " EB  "};
         static const uint8_t numUnits = sizeof(units) / sizeof(units[0]) - 1;
         uint8_t currentUnitIndex = 0;
         uint64_t tmpBytes = bytes - (bytes > BYTE_UNIT_DIVISOR ? bytes % BYTE_UNIT_DIVISOR : 0);
@@ -38,7 +38,7 @@ void Format::bytesToHumanStr(uint64_t bytes, char *buffer, size_t buffer_size)
     }
     else
     {
-        snprintf(buffer, buffer_size, "0000 B ");
+        snprintf(buffer, buffer_size, "0000 B  ");
     }
 }
 
