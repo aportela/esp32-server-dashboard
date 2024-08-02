@@ -10,7 +10,7 @@ private:
     float value = 0;
 
 public:
-    LGFXScreenDashboardResumeEntityCPULoad(LovyanGFX *display, SourceData *sourceData, uint16_t xOffset, uint16_t yOffset, bool enabled = false);
+    LGFXScreenDashboardResumeEntityCPULoad(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset, bool enabled = false);
     ~LGFXScreenDashboardResumeEntityCPULoad();
     bool refresh(bool force = false) override;
 };

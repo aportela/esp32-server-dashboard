@@ -1,14 +1,14 @@
-#include "LGFXScreenDashboardResumeEntityCPULoad.hpp"
+#include "LGFXScreenDashboardResumeEntityCPUTemperature.hpp"
 #include "../../utils/Format.hpp"
 
-LGFXScreenDashboardResumeEntityCPULoad::LGFXScreenDashboardResumeEntityCPULoad(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset, bool enabled) : LGFXScreenDashboardResumeEntity(display, sourceData, width, height, xOffset, yOffset, "CPU LOAD", enabled)
+LGFXScreenDashboardResumeEntityCPUTemperature::LGFXScreenDashboardResumeEntityCPUTemperature(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset, bool enabled) : LGFXScreenDashboardResumeEntity(display, sourceData, width, height, xOffset, yOffset, "CPU TEMP", enabled)
 {
     if (this->parentDisplay != nullptr)
     {
         if (this->enabled)
         {
             // this is used for init default value and printing the char "%" (on refresh only print value without char "%" to speed up things)
-            this->refreshStrValue("000.00 %", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
+            this->refreshStrValue("000.00 C", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
         }
         else
         {
@@ -17,23 +17,23 @@ LGFXScreenDashboardResumeEntityCPULoad::LGFXScreenDashboardResumeEntityCPULoad(L
     }
 }
 
-LGFXScreenDashboardResumeEntityCPULoad::~LGFXScreenDashboardResumeEntityCPULoad()
+LGFXScreenDashboardResumeEntityCPUTemperature::~LGFXScreenDashboardResumeEntityCPUTemperature()
 {
 }
 
-bool LGFXScreenDashboardResumeEntityCPULoad::refresh(bool force)
+bool LGFXScreenDashboardResumeEntityCPUTemperature::refresh(bool force)
 {
     if (this->enabled)
     {
-        uint64_t currentTimestamp = this->sourceData->getCurrentCPULoadTimestamp();
-        if (this->sourceData->changedCPULoad(this->timestamp) || force)
+        uint64_t currentTimestamp = this->sourceData->getCurrentCPUTemperatureTimestamp();
+        if (this->sourceData->changedCPUTemperature(this->timestamp) || force)
         {
-            float currentValue = this->sourceData->getCurrentCPULoad();
+            float currentValue = this->sourceData->getCurrentCPUTemperature();
             this->timestamp = currentTimestamp;
             if (currentValue != this->value || force)
             {
                 this->value = currentValue;
-                uint8_t mapped100 = this->mapFloatValueFrom0To100(this->value, this->sourceData->getMinCPULoad(), this->sourceData->getMaxCPULoad());
+                uint8_t mapped100 = this->mapFloatValueFrom0To100(this->value, this->sourceData->getMinCPUTemperature(), this->sourceData->getMaxCPUTemperature());
                 uint16_t currentGradientColor = (mapped100 != this->previousMappedValue) ? this->getGradientColorFrom0To100(mapped100) : this->previousGradientcolor;
                 this->previousGradientcolor = currentGradientColor;
                 this->refreshSprite(mapped100, currentGradientColor);
