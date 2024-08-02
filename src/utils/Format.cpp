@@ -5,6 +5,16 @@
 
 #define BYTE_UNIT_DIVISOR 1024
 
+void Format::parseFloatIntoCharArray(float value, uint8_t decimalCount, uint8_t leftZeroPaddingCount, char *buffer, size_t buffer_size)
+{
+    // TODO: fails (ex: with currentValue = 3.09, do not print 0)
+    char strDecimalValue[32] = {'\0'};
+    std::snprintf(strDecimalValue, sizeof(strDecimalValue), "%.2f", value); // set 2 decimals
+    char format[8] = {'\0'};
+    std::snprintf(format, sizeof(format), "%%0%us", leftZeroPaddingCount); // set dynamic format left zero padding
+    std::snprintf(buffer, buffer_size, format, strDecimalValue);           // set left zero padding
+}
+
 /// @brief 4 digits + 1 decimal
 /// @param bytes
 /// @param buffer
@@ -13,7 +23,7 @@ void Format::bytesToHumanStr(uint64_t bytes, char *buffer, size_t buffer_size)
 {
     if (bytes > 0)
     {
-        static const char *units[] = {"B", "KB", "MB", "GB", "TB", "PB", "EB"};
+        static const char *units[] = {"B  ", "KB ", "MB ", "GB ", "TB ", "PB ", "EB "};
         static const uint8_t numUnits = sizeof(units) / sizeof(units[0]) - 1;
         uint8_t currentUnitIndex = 0;
         uint64_t tmpBytes = bytes - (bytes > BYTE_UNIT_DIVISOR ? bytes % BYTE_UNIT_DIVISOR : 0);
@@ -22,12 +32,13 @@ void Format::bytesToHumanStr(uint64_t bytes, char *buffer, size_t buffer_size)
             tmpBytes /= BYTE_UNIT_DIVISOR;
             currentUnitIndex++;
         }
-        std::sprintf(buffer, "%04" PRIu64 ".%01u", tmpBytes, ((bytes % BYTE_UNIT_DIVISOR) * 10 / BYTE_UNIT_DIVISOR));
+        // TODO: n decimal places
+        std::sprintf(buffer, "%04" PRIu64, tmpBytes);
         strcat(buffer, units[currentUnitIndex]);
     }
     else
     {
-        snprintf(buffer, buffer_size, "0000.0B");
+        snprintf(buffer, buffer_size, "0000B  ");
     }
 }
 
