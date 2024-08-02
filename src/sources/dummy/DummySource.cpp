@@ -53,19 +53,20 @@ void DummySource::refresh(uint16_t milliSeconds)
         }
         this->sourceData->setUsedMemory(current, currentMillis);
 
-        current = this->sourceData->getCurrentCPUTemperature();
+        fCurrent = this->sourceData->getCurrentCPUTemperature();
         if (random(0, 20) % 2 == 0)
+
         {
-            if (current < this->sourceData->getMaxCPUTemperature())
+            if (fCurrent < this->sourceData->getMaxCPUTemperature())
             {
-                current++;
+                fCurrent++;
             }
         }
-        else if (current > (this->sourceData->getMaxCPUTemperature() / 5))
+        else if (fCurrent > (this->sourceData->getMaxCPUTemperature() / 5))
         {
-            current--;
+            fCurrent--;
         }
-        this->sourceData->setCurrentCPUTemperature(current, currentMillis);
+        this->sourceData->setCurrentCPUTemperature(fCurrent, currentMillis);
 
         // TODO: check limits
         current = this->sourceData->getCurrentTotalNetworkDownloaded();
