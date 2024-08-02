@@ -30,19 +30,20 @@ bool LGFXScreenDashboardResumeEntityCPUTemperature::refresh(bool force)
         {
             float currentValue = this->sourceData->getCurrentCPUTemperature();
             this->timestamp = currentTimestamp;
+            uint8_t mapped100 = this->mapFloatValueFrom0To100(currentValue, this->sourceData->getMinCPUTemperature(), this->sourceData->getMaxCPUTemperature());
+            uint16_t currentGradientColor = (mapped100 != this->previousMappedValue) ? this->getGradientColorFrom0To100(mapped100) : this->previousGradientcolor;
+            this->previousMappedValue = mapped100;
+            this->previousGradientcolor = currentGradientColor;
             if (currentValue != this->value || force)
             {
-                this->value = currentValue;
-                uint8_t mapped100 = this->mapFloatValueFrom0To100(this->value, this->sourceData->getMinCPUTemperature(), this->sourceData->getMaxCPUTemperature());
-                uint16_t currentGradientColor = (mapped100 != this->previousMappedValue) ? this->getGradientColorFrom0To100(mapped100) : this->previousGradientcolor;
-                this->previousGradientcolor = currentGradientColor;
-                this->refreshSprite(mapped100, currentGradientColor);
                 char strValue[8] = {'\0'};
                 // 4 chars for integer part (left zero padded) + 1 char for decimal point + 2 chars for decimals
-                Format::parseFloatIntoCharArray(this->value, 2, 6, strValue, sizeof(strValue));
+                Format::parseFloatIntoCharArray(currentValue, 2, 6, strValue, sizeof(strValue));
                 this->refreshStrValue(strValue, currentGradientColor, LGFX_SCR_DRE_FONT_BG_COLOR);
-                return (true);
+                this->value = currentValue;
             }
+            this->refreshSprite(mapped100, currentGradientColor);
+            return (true);
         }
     }
     return (false);

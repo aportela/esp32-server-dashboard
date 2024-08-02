@@ -8,7 +8,7 @@ LGFXScreenDashboardResumeEntityUsedMemory::LGFXScreenDashboardResumeEntityUsedMe
         if (this->enabled)
         {
             // this is used for init default value and printing the char "%" (on refresh only print value without char "%" to speed up things)
-            this->refreshStrValue("0000 B ", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
+            this->refreshStrValue("0000 B", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
         }
         else
         {
@@ -30,18 +30,19 @@ bool LGFXScreenDashboardResumeEntityUsedMemory::refresh(bool force)
         {
             uint64_t currentValue = this->sourceData->getUsedMemory();
             this->timestamp = currentTimestamp;
+            uint8_t mapped100 = this->mapUint64ValueFrom0To100(currentValue, 0, this->sourceData->getTotalMemory());
+            uint16_t currentGradientColor = (mapped100 != this->previousMappedValue) ? this->getGradientColorFrom0To100(mapped100) : this->previousGradientcolor;
+            this->previousMappedValue = mapped100;
+            this->previousGradientcolor = currentGradientColor;
             if (currentValue != this->value || force)
             {
-                this->value = currentValue;
-                uint8_t mapped100 = this->mapUint64ValueFrom0To100(this->value, 0, this->sourceData->getTotalMemory());
-                uint16_t currentGradientColor = (mapped100 != this->previousMappedValue) ? this->getGradientColorFrom0To100(mapped100) : this->previousGradientcolor;
-                this->previousGradientcolor = currentGradientColor;
-                this->refreshSprite(mapped100, currentGradientColor);
                 char strValue[16] = {'\0'};
-                Format::bytesToHumanStr(this->value, strValue, sizeof(strValue));
+                Format::bytesToHumanStr(currentValue, strValue, sizeof(strValue));
                 this->refreshStrValue(strValue, currentGradientColor, LGFX_SCR_DRE_FONT_BG_COLOR);
-                return (true);
+                this->value = currentValue;
             }
+            this->refreshSprite(mapped100, currentGradientColor);
+            return (true);
         }
     }
     return (false);
