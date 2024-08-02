@@ -18,23 +18,25 @@ void DummySource::refresh(uint16_t milliSeconds)
     bool allowRefresh = milliSeconds == 0 || ((currentMillis - this->lastEllapsedMillis) >= milliSeconds);
     if (allowRefresh)
     {
+        float fCurrent = 0.0f;
         uint64_t current = 0;
         uint64_t change = 0;
 
         uint8_t rnd = random(0, 100);
         if (rnd > 90)
         {
-            current = random(MIN_CPU_LOAD, MAX_CPU_LOAD);
+            fCurrent = random(MIN_CPU_LOAD, MAX_CPU_LOAD * 100);
         }
         else if (rnd > 50)
         {
-            current = random(MIN_CPU_LOAD, MAX_CPU_LOAD / 5);
+            fCurrent = random(MIN_CPU_LOAD, (MAX_CPU_LOAD / 5) * 100);
         }
         else
         {
-            current = random(MIN_CPU_LOAD, MAX_CPU_LOAD / 10);
+            fCurrent = random(MIN_CPU_LOAD, (MAX_CPU_LOAD / 10) * 100);
         }
-        this->sourceData->setCurrentCPULoad(current, currentMillis);
+        fCurrent /= 100.0f;
+        this->sourceData->setCurrentCPULoad(fCurrent, currentMillis);
 
         current = this->sourceData->getUsedMemory();
         change = this->sourceData->getTotalMemory() / 100;
