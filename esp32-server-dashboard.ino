@@ -497,11 +497,13 @@ void setup()
     Settings::getMQTTTelegrafURI(mqttTelegrafURI, sizeof(mqttTelegrafURI));
     char mqttTelegrafGlobalTopic[512] = {'\0'};
     Settings::getMQTTTelegrafGlobalTopic(mqttTelegrafGlobalTopic, sizeof(mqttTelegrafGlobalTopic));
-    if (strlen(mqttTelegrafURI) > 0 && strlen(mqttTelegrafGlobalTopic) > 0)
+    char networkInterfaceId[TELEGRAF_MAX_NETWORK_INTERFACE_ID];
+    Settings::getNetworkInterfaceId(networkInterfaceId, sizeof(networkInterfaceId));
+    if (strlen(mqttTelegrafURI) > 0 && strlen(mqttTelegrafGlobalTopic) > 0 && strlen(networkInterfaceId) > 0)
     {
         char WiFiMacAddress[32] = {'\0'};
         WifiManager::getMacAddress(WiFiMacAddress, sizeof(WiFiMacAddress));
-        mqttTelegrafSRC = new MQTTTelegrafSource(sourceData, mqttTelegrafURI, WiFiMacAddress, mqttTelegrafGlobalTopic);
+        mqttTelegrafSRC = new MQTTTelegrafSource(sourceData, mqttTelegrafURI, WiFiMacAddress, mqttTelegrafGlobalTopic, networkInterfaceId);
     }
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     screen = new LGFX(PIN_SDA, PIN_SCL, PIN_CS, PIN_DC, PIN_RST, DISPLAY_DRIVER_LOVYANN_ST7789_WIDTH, DISPLAY_DRIVER_LOVYANN_ST7789_HEIGHT, DISPLAY_DRIVER_LOVYANN_ST7789_ROTATION);

@@ -7,10 +7,11 @@ char MQTTTelegrafSource::cpuTopic[MAX_MQTT_TOPIC_LENGTH] = {'\0'};
 char MQTTTelegrafSource::memoryTopic[MAX_MQTT_TOPIC_LENGTH] = {'\0'};
 char MQTTTelegrafSource::temperatureTopic[MAX_MQTT_TOPIC_LENGTH] = {'\0'};
 char MQTTTelegrafSource::networkTopic[MAX_MQTT_TOPIC_LENGTH] = {'\0'};
+char MQTTTelegrafSource::networkInterfaceId[TELEGRAF_MAX_NETWORK_INTERFACE_ID] = {'\0'};
 
 MQTTTelegrafSource *MQTTTelegrafSource::instance = nullptr;
 
-MQTTTelegrafSource::MQTTTelegrafSource(SourceData *sourceData, const char *uri, const char *clientId, const char *topic) : Source(sourceData)
+MQTTTelegrafSource::MQTTTelegrafSource(SourceData *sourceData, const char *uri, const char *clientId, const char *topic, const char *networkInterfaceId) : Source(sourceData)
 {
     MQTT::setCallback(MQTTTelegrafSource::onMessageReceived);
     MQTT::init(clientId, uri, topic);
@@ -19,6 +20,10 @@ MQTTTelegrafSource::MQTTTelegrafSource(SourceData *sourceData, const char *uri, 
     MQTTTelegrafSource::generateTopic(topic, MQTTTelegrafSource::memoryTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/mem");
     MQTTTelegrafSource::generateTopic(topic, MQTTTelegrafSource::temperatureTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/temp");
     MQTTTelegrafSource::generateTopic(topic, MQTTTelegrafSource::networkTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/net");
+    if (networkInterfaceId != NULL && strlen(networkInterfaceId) > 0)
+    {
+        strncpy(MQTTTelegrafSource::networkInterfaceId, networkInterfaceId, sizeof(MQTTTelegrafSource::networkInterfaceId));
+    }
 
     if (MQTTTelegrafSource::instance == nullptr)
     {
@@ -65,9 +70,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
     // Serial.println(topic);
     // Serial.print("Message: ");
     // Serial.println(payload);
-
     uint64_t currentMessageTimestamp = millis(); // by default use current esp32 timestamp (failover for payload timestamp parse errors)
-
     // parse timestamp
     size_t payloadLength = strlen(payload);
     const char *lastSpaceSubStr = strrchr(payload, ' ');
@@ -99,8 +102,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
             const char *format = "usage_idle=%f";
             if (sscanf(subPayload, format, &usage_idle) == 1)
             {
-                // TODO: values greater than 100 ?
-                float cpu_usage = 100.0f - usage_idle;
+                float cpu_usage = usage_idle < 100 ? 100.0f - usage_idle : 100;
                 MQTTTelegrafSource::instance->sourceData->setCurrentCPULoad(cpu_usage, currentMessageTimestamp);
             }
             else
@@ -151,9 +153,12 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
             }
         }
     }
-    else if (strcmp(topic, MQTTTelegrafSource::networkTopic) == 0)
+    else if (strcmp(topic, MQTTTelegrafSource::networkTopic) == 0 && MQTTTelegrafSource::networkInterfaceId != NULL && strlen(MQTTTelegrafSource::networkInterfaceId) > 0)
     {
-        if (strstr(payload, "interface=Wi-Fi"))
+        // search for interface id (telegraf can send data for multiple network interfaces)
+        char payloadSearchStr[10 + TELEGRAF_MAX_NETWORK_INTERFACE_ID] = {'\0'};
+        snprintf(payloadSearchStr, sizeof(payloadSearchStr), "interface=%s", MQTTTelegrafSource::networkInterfaceId);
+        if (strstr(payload, payloadSearchStr))
         {
             uint64_t recv = 0;
             const char *searchRX = "bytes_recv=";
