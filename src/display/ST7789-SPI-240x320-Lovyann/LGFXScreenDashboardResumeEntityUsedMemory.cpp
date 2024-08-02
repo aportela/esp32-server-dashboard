@@ -28,7 +28,7 @@ bool LGFXScreenDashboardResumeEntityUsedMemory::refresh(bool force)
         uint64_t currentTimestamp = this->sourceData->getCurrentUsedMemoryTimestamp();
         if (this->sourceData->changedUsedMemory(this->timestamp) || force)
         {
-            uint32_t currentValue = this->sourceData->getUsedMemory();
+            uint64_t currentValue = this->sourceData->getUsedMemory();
             this->timestamp = currentTimestamp;
             if (currentValue != this->value || force)
             {

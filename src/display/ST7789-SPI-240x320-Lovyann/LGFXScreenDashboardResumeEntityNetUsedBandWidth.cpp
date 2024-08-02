@@ -39,7 +39,7 @@ bool LGFXScreenDashboardResumeEntityNetUsedBandWidth::refresh(bool force)
         }
         if (changed || force)
         {
-            uint32_t currentValue = 0;
+            uint64_t currentValue = 0;
             if (this->type == NBT_DOWNLOAD)
             {
                 currentValue = this->sourceData->getNetworkDownloadSpeed();

@@ -13,7 +13,7 @@ class LGFXScreenDashboardResumeEntityNetUsedBandWidth : public LGFXScreenDashboa
 {
 private:
     uint64_t timestamp = 0;
-    uint32_t value = 0;
+    uint64_t value = 0;
     NetBandwidthType type;
 
 public:
