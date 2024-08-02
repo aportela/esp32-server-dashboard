@@ -99,7 +99,8 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
             const char *format = "usage_idle=%f";
             if (sscanf(subPayload, format, &usage_idle) == 1)
             {
-                float cpu_usage = 100.0 - usage_idle;
+                // TODO: values greater than 100 ?
+                float cpu_usage = 100.0f - usage_idle;
                 MQTTTelegrafSource::instance->sourceData->setCurrentCPULoad(cpu_usage, currentMessageTimestamp);
             }
             else
