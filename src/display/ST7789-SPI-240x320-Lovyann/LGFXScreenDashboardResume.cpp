@@ -114,7 +114,7 @@ void LGFXScreenDashboardResume::refreshBottomCommonData(bool forceDrawAll)
         this->parentDisplay->setTextColor(SCREEN_BOTTOM_COMMON_TEXTDATA_COLOR, SCREEN_BOTTOM_COMMON_TEXTDATA_BG_COLOR);
         this->parentDisplay->setCursor(SCREEN_BOTTOM_COMMON_TEXTDATA_X_OFFSET, SCREEN_BOTTOM_COMMON_TEXTDATA_Y_OFFSET);
         // this->parentDisplay->print("FPS: ");
-        this->parentDisplay->print("FPS:      - Runtime: ");
+        this->parentDisplay->print("FPS:      - Uptime: NO DATA");
     }
     uint16_t currentFPS = FPS::getFPS();
     if (forceDrawAll || currentFPS != this->previousFPS)
@@ -126,18 +126,20 @@ void LGFXScreenDashboardResume::refreshBottomCommonData(bool forceDrawAll)
         this->parentDisplay->printf("%03u", currentFPS);
         this->previousFPS = currentFPS;
     }
-    char str[sizeof(this->previousRuntimeStr)];
-    Format::millisToHumanStr(millis(), str, sizeof(this->previousRuntimeStr));
-    if (forceDrawAll || strcmp(str, this->previousRuntimeStr) != 0)
+    if (this->currentSourceData->getCurrentUptimeSeconds() > 0)
     {
-        this->parentDisplay->setFont(SCREEN_BOTTOM_COMMON_TEXTDATA_FONT);
-        this->parentDisplay->setTextSize(SCREEN_BOTTOM_COMMON_TEXTDATA_FONT_SIZE);
-        this->parentDisplay->setTextColor(SCREEN_BOTTOM_COMMON_TEXTDATA_COLOR, SCREEN_BOTTOM_COMMON_TEXTDATA_BG_COLOR);
-        this->parentDisplay->setCursor(SCREEN_BOTTOM_COMMON_TEXTDATA_FIELD_RUNTIME_X_OFFSET, SCREEN_BOTTOM_COMMON_TEXTDATA_Y_OFFSET);
-        this->parentDisplay->printf("%s    ", str);
-        strncpy(this->previousRuntimeStr, str, sizeof(this->previousRuntimeStr));
+        char str[sizeof(this->previousUptimeStr)];
+        Format::millisToHumanStr(this->currentSourceData->getCurrentUptimeSeconds() * 1000, str, sizeof(this->previousUptimeStr));
+        if (forceDrawAll || strcmp(str, this->previousUptimeStr) != 0)
+        {
+            this->parentDisplay->setFont(SCREEN_BOTTOM_COMMON_TEXTDATA_FONT);
+            this->parentDisplay->setTextSize(SCREEN_BOTTOM_COMMON_TEXTDATA_FONT_SIZE);
+            this->parentDisplay->setTextColor(SCREEN_BOTTOM_COMMON_TEXTDATA_COLOR, SCREEN_BOTTOM_COMMON_TEXTDATA_BG_COLOR);
+            this->parentDisplay->setCursor(SCREEN_BOTTOM_COMMON_TEXTDATA_FIELD_RUNTIME_X_OFFSET, SCREEN_BOTTOM_COMMON_TEXTDATA_Y_OFFSET);
+            this->parentDisplay->printf("%s    ", str);
+            strncpy(this->previousUptimeStr, str, sizeof(this->previousUptimeStr));
+        }
     }
-    // TODO: current uptime & other data
 }
 
 void LGFXScreenDashboardResume::refresh(bool force)

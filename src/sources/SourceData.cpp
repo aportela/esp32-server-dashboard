@@ -152,13 +152,13 @@ bool SourceData::changedCPUTemperature(uint64_t fromTimestamp) const
     return (fromTimestamp != this->currentCPUTemperatureTimestamp);
 }
 
-bool SourceData::setCurrentCPUTemperature(float value, uint64_t timestamp)
+bool SourceData::setCurrentCPUTemperature(float celsious, uint64_t timestamp)
 {
-    if (value != this->currentCPUTemperature)
+    if (celsious != this->currentCPUTemperature)
     {
-        if (value >= this->minCPUTemperature && value <= this->maxCPUTemperature)
+        if (celsious >= this->minCPUTemperature && celsious <= this->maxCPUTemperature)
         {
-            this->currentCPUTemperature = value;
+            this->currentCPUTemperature = celsious;
             this->currentCPUTemperatureTimestamp = timestamp;
             return (true);
         }
@@ -172,6 +172,33 @@ bool SourceData::setCurrentCPUTemperature(float value, uint64_t timestamp)
         this->currentCPUTemperatureTimestamp = timestamp;
         return (true);
     }
+}
+
+// SYSTEM
+
+uint64_t SourceData::getCurrentUptimeSeconds(void) const
+{
+    return (this->currentUptimeSeconds);
+}
+
+uint64_t SourceData::getCurrentUptimeSecondsTimestamp(void) const
+{
+    return (this->currentUptimeSecondsTimestamp);
+}
+
+bool SourceData::changedUptimeSeconds(uint64_t fromTimestamp) const
+{
+    return (fromTimestamp != this->currentUptimeSecondsTimestamp);
+}
+
+bool SourceData::setCurrentUptimeSeconds(uint64_t seconds, uint64_t timestamp)
+{
+    if (seconds != this->currentUptimeSeconds)
+    {
+        this->currentUptimeSeconds = seconds;
+    }
+    this->currentUptimeSecondsTimestamp = timestamp;
+    return (true);
 }
 
 // NET DOWNLOAD BANDWIDTH
@@ -207,12 +234,12 @@ bool SourceData::changedNetworkDownloadSpeed(uint64_t fromTimestamp) const
     return (fromTimestamp != this->currentTotalNetworkDownloadedTimestamp);
 }
 
-bool SourceData::setCurrentTotalNetworkDownloaded(uint64_t value, uint64_t timestamp)
+bool SourceData::setCurrentTotalNetworkDownloaded(uint64_t bytes, uint64_t timestamp)
 {
-    if (value != this->currentTotalNetworkDownloaded)
+    if (bytes != this->currentTotalNetworkDownloaded)
     {
         this->previousTotalNetworkDownloaded = this->currentTotalNetworkDownloaded;
-        this->currentTotalNetworkDownloaded = value;
+        this->currentTotalNetworkDownloaded = bytes;
     }
     else
     {
@@ -259,12 +286,12 @@ bool SourceData::changedNetworkUploadSpeed(uint64_t fromTimestamp) const
     return (fromTimestamp != this->currentTotalNetworkUploadedTimestamp);
 }
 
-bool SourceData::setCurrentTotalNetworkUploaded(uint64_t value, uint64_t timestamp)
+bool SourceData::setCurrentTotalNetworkUploaded(uint64_t bytes, uint64_t timestamp)
 {
-    if (value != this->currentTotalNetworkUploaded)
+    if (bytes != this->currentTotalNetworkUploaded)
     {
         this->previousTotalNetworkUploaded = this->currentTotalNetworkUploaded;
-        this->currentTotalNetworkUploaded = value;
+        this->currentTotalNetworkUploaded = bytes;
     }
     else
     {

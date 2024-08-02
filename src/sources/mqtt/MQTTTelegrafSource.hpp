@@ -13,6 +13,7 @@ private:
     static char cpuTopic[MAX_MQTT_TOPIC_LENGTH];
     static char memoryTopic[MAX_MQTT_TOPIC_LENGTH];
     static char temperatureTopic[MAX_MQTT_TOPIC_LENGTH];
+    static char systemTopic[MAX_MQTT_TOPIC_LENGTH];
     static char networkTopic[MAX_MQTT_TOPIC_LENGTH];
     static char networkInterfaceId[TELEGRAF_MAX_NETWORK_INTERFACE_ID];
     static MQTTTelegrafSource *instance;

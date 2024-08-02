@@ -6,6 +6,7 @@
 char MQTTTelegrafSource::cpuTopic[MAX_MQTT_TOPIC_LENGTH] = {'\0'};
 char MQTTTelegrafSource::memoryTopic[MAX_MQTT_TOPIC_LENGTH] = {'\0'};
 char MQTTTelegrafSource::temperatureTopic[MAX_MQTT_TOPIC_LENGTH] = {'\0'};
+char MQTTTelegrafSource::systemTopic[MAX_MQTT_TOPIC_LENGTH] = {'\0'};
 char MQTTTelegrafSource::networkTopic[MAX_MQTT_TOPIC_LENGTH] = {'\0'};
 char MQTTTelegrafSource::networkInterfaceId[TELEGRAF_MAX_NETWORK_INTERFACE_ID] = {'\0'};
 
@@ -19,6 +20,7 @@ MQTTTelegrafSource::MQTTTelegrafSource(SourceData *sourceData, const char *uri, 
     MQTTTelegrafSource::generateTopic(topic, MQTTTelegrafSource::cpuTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/cpu");
     MQTTTelegrafSource::generateTopic(topic, MQTTTelegrafSource::memoryTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/mem");
     MQTTTelegrafSource::generateTopic(topic, MQTTTelegrafSource::temperatureTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/temp");
+    MQTTTelegrafSource::generateTopic(topic, MQTTTelegrafSource::systemTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/system");
     MQTTTelegrafSource::generateTopic(topic, MQTTTelegrafSource::networkTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/net");
     if (networkInterfaceId != NULL && strlen(networkInterfaceId) > 0)
     {
@@ -146,6 +148,27 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
             if (sscanf(subPayload, format, &celsious) == 1)
             {
                 MQTTTelegrafSource::instance->sourceData->setCurrentCPUTemperature(celsious, currentMessageTimestamp);
+            }
+            else
+            {
+                Serial.println("Failed to parse payload");
+            }
+        }
+    }
+    else if (strcmp(topic, MQTTTelegrafSource::systemTopic) == 0)
+    {
+        uint64_t uptimeSeconds = 0;
+        const char *search = "uptime=";
+        const char *start = strstr(payload, search);
+        if (start)
+        {
+            char subPayload[strlen(payload)];
+            strncpy(subPayload, start, sizeof(subPayload) - 1);
+            subPayload[sizeof(subPayload) - 1] = '\0';
+            const char *format = "uptime=%" PRIu64 "i";
+            if (sscanf(subPayload, format, &uptimeSeconds) == 1)
+            {
+                MQTTTelegrafSource::instance->sourceData->setCurrentUptimeSeconds(uptimeSeconds, currentMessageTimestamp);
             }
             else
             {
