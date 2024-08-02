@@ -16,7 +16,7 @@
 #define SCREEN_BOTTOM_COMMON_TEXTDATA_BG_COLOR TFT_BLACK
 #define SCREEN_BOTTOM_COMMON_TEXTDATA_X_OFFSET 0
 #define SCREEN_BOTTOM_COMMON_TEXTDATA_FIELD_FPS_X_OFFSET 33
-#define SCREEN_BOTTOM_COMMON_TEXTDATA_FIELD_RUNTIME_X_OFFSET 130
+#define SCREEN_BOTTOM_COMMON_TEXTDATA_FIELD_UPTIME_X_OFFSET 123
 #define SCREEN_BOTTOM_COMMON_TEXTDATA_Y_OFFSET 226
 
 LGFXScreenDashboardResume::LGFXScreenDashboardResume(LovyanGFX *display, SourceData *sourceData) : LGFXScreen(display)
@@ -31,14 +31,6 @@ LGFXScreenDashboardResume::LGFXScreenDashboardResume(LovyanGFX *display, SourceD
             this->dre3 = new LGFXScreenDashboardResumeEntityCPUTemperature(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 84, true);
             this->dre4 = new LGFXScreenDashboardResumeEntityNetUsedBandWidth(NBT_DOWNLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 126, true);
             this->dre5 = new LGFXScreenDashboardResumeEntityNetUsedBandWidth(NBT_UPLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 168, true);
-            /*
-            this->cpuLoadMeter = new LGFXMeter(this->parentDisplay, ET_GLOBAL_CPU_LOAD, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 0, METER_GRAPH_BG_COLOR, "CPU LOAD", this->currentSourceData->getMinCPULoad(), this->currentSourceData->getMaxCPULoad());
-            this->memoryLoadMeter = new LGFXMeter(this->parentDisplay, ET_USED_MEMORY, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 42, METER_GRAPH_BG_COLOR, "MEMORY", 0, this->currentSourceData->getTotalMemory());
-            this->cpuTemperatureLoadMeter = new LGFXMeter(this->parentDisplay, ET_GLOBAL_CPU_TEMPERATURE, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 84, METER_GRAPH_BG_COLOR, "CPU TEMP", this->currentSourceData->getMinCPUTemperature(), this->currentSourceData->getMaxCPUTemperature());
-            this->networkDownloadBandwithLoadMeter = new LGFXMeter(this->parentDisplay, ET_NETWORK_BANDWITH_DOWNLOAD_SPEED, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 126, METER_GRAPH_BG_COLOR, "WAN DOWNLOAD", 0, this->currentSourceData->getNetworkDownloadBandwidthLimit());
-            this->networkUploadBandwithLoadMeter = new LGFXMeter(this->parentDisplay, ET_NETWORK_BANDWITH_UPLOAD_SPEED, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 168, METER_GRAPH_BG_COLOR, "WAN UPLOAD", 0, this->currentSourceData->getNetworkUploadBandwidthLimit());
-
-            */
             this->refresh(true);
         }
     }
@@ -46,33 +38,6 @@ LGFXScreenDashboardResume::LGFXScreenDashboardResume(LovyanGFX *display, SourceD
 
 LGFXScreenDashboardResume::~LGFXScreenDashboardResume()
 {
-    /*
-    if (this->cpuLoadMeter != nullptr)
-    {
-        delete this->cpuLoadMeter;
-        this->cpuLoadMeter = nullptr;
-    }
-    if (this->memoryLoadMeter != nullptr)
-    {
-        delete this->memoryLoadMeter;
-        this->memoryLoadMeter = nullptr;
-    }
-    if (this->cpuTemperatureLoadMeter != nullptr)
-    {
-        delete this->cpuTemperatureLoadMeter;
-        this->cpuTemperatureLoadMeter = nullptr;
-    }
-    if (this->networkDownloadBandwithLoadMeter != nullptr)
-    {
-        delete this->networkDownloadBandwithLoadMeter;
-        this->networkDownloadBandwithLoadMeter = nullptr;
-    }
-    if (this->networkUploadBandwithLoadMeter != nullptr)
-    {
-        delete this->networkUploadBandwithLoadMeter;
-        this->networkUploadBandwithLoadMeter = nullptr;
-    }
-    */
     if (this->dre != nullptr)
     {
         delete this->dre;
@@ -113,8 +78,8 @@ void LGFXScreenDashboardResume::refreshBottomCommonData(bool forceDrawAll)
         this->parentDisplay->setTextSize(SCREEN_BOTTOM_COMMON_TEXTDATA_FONT_SIZE);
         this->parentDisplay->setTextColor(SCREEN_BOTTOM_COMMON_TEXTDATA_COLOR, SCREEN_BOTTOM_COMMON_TEXTDATA_BG_COLOR);
         this->parentDisplay->setCursor(SCREEN_BOTTOM_COMMON_TEXTDATA_X_OFFSET, SCREEN_BOTTOM_COMMON_TEXTDATA_Y_OFFSET);
-        // this->parentDisplay->print("FPS: ");
         this->parentDisplay->print("FPS:      - Uptime: NO DATA");
+        Serial.println(this->parentDisplay->getCursorX());
     }
     uint16_t currentFPS = FPS::getFPS();
     if (forceDrawAll || currentFPS != this->previousFPS)
@@ -135,7 +100,7 @@ void LGFXScreenDashboardResume::refreshBottomCommonData(bool forceDrawAll)
             this->parentDisplay->setFont(SCREEN_BOTTOM_COMMON_TEXTDATA_FONT);
             this->parentDisplay->setTextSize(SCREEN_BOTTOM_COMMON_TEXTDATA_FONT_SIZE);
             this->parentDisplay->setTextColor(SCREEN_BOTTOM_COMMON_TEXTDATA_COLOR, SCREEN_BOTTOM_COMMON_TEXTDATA_BG_COLOR);
-            this->parentDisplay->setCursor(SCREEN_BOTTOM_COMMON_TEXTDATA_FIELD_RUNTIME_X_OFFSET, SCREEN_BOTTOM_COMMON_TEXTDATA_Y_OFFSET);
+            this->parentDisplay->setCursor(SCREEN_BOTTOM_COMMON_TEXTDATA_FIELD_UPTIME_X_OFFSET, SCREEN_BOTTOM_COMMON_TEXTDATA_Y_OFFSET);
             this->parentDisplay->printf("%s    ", str);
             strncpy(this->previousUptimeStr, str, sizeof(this->previousUptimeStr));
         }

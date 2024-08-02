@@ -2,7 +2,6 @@
 #define ESP32_SERVER_DASHBOARD_LGFX_SCREEN_DASHBOARD_RESUME_ENTITY_H
 
 #include <LovyanGFX.hpp>
-#include "LGFXMeter.hpp"
 #include "../../sources/SourceData.hpp"
 
 #define LGFX_SCR_DRE_FONT &fonts::Font2
@@ -19,7 +18,6 @@ private:
     void printTitle(const char *title);
 
 protected:
-    LGFXMeter *graph = nullptr;
     LovyanGFX *parentDisplay = nullptr;
     lgfx::LGFX_Sprite *graphSprite = nullptr;
     SourceData *sourceData = nullptr;
