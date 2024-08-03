@@ -5,9 +5,14 @@
 #include <cstdint>
 #include <cstddef>
 
+#define MAX_NETWORK_INTERFACE_ID_LENGTH 65
+#define MAX_NETWORK_INTERFACE_NAME_LENGTH 4
+
 class SourceData
 {
 private:
+    char networkInterfaceId[MAX_NETWORK_INTERFACE_ID_LENGTH] = {'\0'};
+    char networkInterfaceName[MAX_NETWORK_INTERFACE_NAME_LENGTH] = {'\0'};
     // CPU LOAD
     float currentCPULoad = 0.0f;
     uint64_t currentCPULoadTimestamp = 0;
@@ -39,8 +44,11 @@ private:
     uint64_t currentNetworkUploadSpeed = 0;
 
 public:
-    SourceData(uint64_t totalMemory, float minCPUTemperature, float maxCPUTemperature, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit);
+    SourceData(uint64_t totalMemory, float minCPUTemperature, float maxCPUTemperature, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit, const char *networkInterfaceId, const char *networkInterfaceName);
     ~SourceData();
+    // NET IFACE
+    void getNetworkInterfaceId(char *buffer, size_t buffer_count);
+    void getNetworkInterfaceName(char *buffer, size_t buffer_count);
     // CPU LOAD
     uint8_t getMinCPULoad(void) const;
     uint8_t getMaxCPULoad(void) const;

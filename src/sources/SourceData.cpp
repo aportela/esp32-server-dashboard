@@ -7,17 +7,37 @@
 #define MIN_CPU_LOAD 0
 #define MAX_CPU_LOAD 100
 
-SourceData::SourceData(uint64_t totalMemory, float minCPUTemperature, float maxCPUTemperature, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit)
+SourceData::SourceData(uint64_t totalMemory, float minCPUTemperature, float maxCPUTemperature, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit, const char *networkInterfaceId, const char *networkInterfaceName)
 {
     this->totalMemory = totalMemory;
     this->minCPUTemperature = minCPUTemperature;
     this->maxCPUTemperature = maxCPUTemperature;
     this->totalNetworkDownloadBandwidthLimit = totalNetworkDownloadBandwidthLimit;
     this->totalNetworkUploadBandwidthLimit = totalNetworkUploadBandwidthLimit;
+    if (networkInterfaceId != NULL && strlen(networkInterfaceId) > 0)
+    {
+        strncpy(this->networkInterfaceId, networkInterfaceId, sizeof(this->networkInterfaceId));
+    }
+    if (networkInterfaceName != NULL && strlen(networkInterfaceName) > 0)
+    {
+        strncpy(this->networkInterfaceName, networkInterfaceName, sizeof(this->networkInterfaceName));
+    }
 }
 
 SourceData::~SourceData()
 {
+}
+
+// NET IFACE
+
+void SourceData::getNetworkInterfaceId(char *buffer, size_t buffer_count)
+{
+    strncpy(buffer, this->networkInterfaceId, buffer_count);
+}
+
+void SourceData::getNetworkInterfaceName(char *buffer, size_t buffer_count)
+{
+    strncpy(buffer, this->networkInterfaceName, buffer_count);
 }
 
 // CPU LOAD
