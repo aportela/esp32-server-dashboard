@@ -4,7 +4,6 @@
 
 #include <cstdint>
 #include <cstddef>
-#include "../EntityType.hpp"
 
 class SourceData
 {

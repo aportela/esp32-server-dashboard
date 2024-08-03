@@ -3,7 +3,6 @@
 #include "../SizesAndOffsets-320x240.hpp"
 #include "../../utils/WifiManager.hpp"
 #include "../../utils/FPS.hpp"
-#include "../../EntityType.hpp"
 #include "../../utils/Format.hpp"
 
 #define METER_GRAPH_WIDTH 195
