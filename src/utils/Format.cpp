@@ -7,7 +7,6 @@
 
 void Format::parseFloatIntoCharArray(float value, uint8_t decimalCount, uint8_t leftZeroPaddingCount, char *buffer, size_t buffer_size)
 {
-    // TODO: fails (ex: with currentValue = 3.09, do not print 0)
     char strDecimalValue[32] = {'\0'};
     std::snprintf(strDecimalValue, sizeof(strDecimalValue), "%.2f", value); // set 2 decimals
     char format[8] = {'\0'};
