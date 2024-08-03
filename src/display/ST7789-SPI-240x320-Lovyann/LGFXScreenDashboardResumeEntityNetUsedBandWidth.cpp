@@ -8,7 +8,7 @@ LGFXScreenDashboardResumeEntityNetUsedBandWidth::LGFXScreenDashboardResumeEntity
         if (this->enabled)
         {
             // this is used for init default value and printing the char "%" (on refresh only print value without char "%" to speed up things)
-            this->refreshStrValue("0000  Bytes/seg", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
+            this->refreshStrValue("0000 Bytes/seg", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
         }
         else
         {
@@ -66,6 +66,10 @@ bool LGFXScreenDashboardResumeEntityNetUsedBandWidth::refresh(bool force)
             {
                 char strValue[24] = {'\0'};
                 Format::bytesToHumanStr(this->value, strValue, sizeof(strValue), true);
+                if (strlen(strValue) == 14) // when unit is bytes/seg we need to append some whitespaces at end to clear possible long previous units > byte (Byte vs KByte|MByte|GByte...)
+                {
+                    strcat(strValue, "  ");
+                }
                 this->refreshStrValue(strValue, currentGradientColor, LGFX_SCR_DRE_FONT_BG_COLOR);
                 this->value = currentValue;
             }
