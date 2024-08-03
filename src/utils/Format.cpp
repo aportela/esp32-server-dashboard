@@ -19,11 +19,12 @@ void Format::parseFloatIntoCharArray(float value, uint8_t decimalCount, uint8_t 
 /// @param bytes
 /// @param buffer
 /// @param buffer_size
-void Format::bytesToHumanStr(uint64_t bytes, char *buffer, size_t buffer_size)
+void Format::bytesToHumanStr(uint64_t bytes, char *buffer, size_t buffer_size, bool useBandWithUnits)
 {
     if (bytes > 0)
     {
-        static const char *units[] = {" B  ", " KB  ", " MB  ", " GB  ", " TB  ", " PB  ", " EB  "};
+        static const char *units[] = {"  Bytes ", " KBytes ", " MBytes ", " GBytes ", " TBytes ", " PBytes ", " EBytes "};
+        static const char *bandWithUnits[] = {"  Bytes/seg ", " KBytes/seg ", " MBytes/seg ", " GBytes/seg ", " TBytes/seg ", " PBytes/seg ", " EBytes/seg "};
         static const uint8_t numUnits = sizeof(units) / sizeof(units[0]) - 1;
         uint8_t currentUnitIndex = 0;
         uint64_t tmpBytes = bytes - (bytes > BYTE_UNIT_DIVISOR ? bytes % BYTE_UNIT_DIVISOR : 0);
@@ -33,12 +34,12 @@ void Format::bytesToHumanStr(uint64_t bytes, char *buffer, size_t buffer_size)
             currentUnitIndex++;
         }
         // TODO: n decimal places
-        std::sprintf(buffer, "%04" PRIu64, tmpBytes);
-        strcat(buffer, units[currentUnitIndex]);
+        std::snprintf(buffer, buffer_size, "%04" PRIu64, tmpBytes);
+        strcat(buffer, useBandWithUnits ? bandWithUnits[currentUnitIndex] : units[currentUnitIndex]);
     }
     else
     {
-        snprintf(buffer, buffer_size, "0000 B  ");
+        std::snprintf(buffer, buffer_size, useBandWithUnits ? "0000  Bytes/seg " : "0000  Bytes ");
     }
 }
 

@@ -8,7 +8,7 @@ LGFXScreenDashboardResumeEntityUsedMemory::LGFXScreenDashboardResumeEntityUsedMe
         if (this->enabled)
         {
             // this is used for init default value and printing the char "%" (on refresh only print value without char "%" to speed up things)
-            this->refreshStrValue("0000 B", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
+            this->refreshStrValue("0000 Bytes", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
         }
         else
         {
@@ -36,8 +36,8 @@ bool LGFXScreenDashboardResumeEntityUsedMemory::refresh(bool force)
             this->previousGradientcolor = currentGradientColor;
             if (currentValue != this->value || force)
             {
-                char strValue[16] = {'\0'};
-                Format::bytesToHumanStr(currentValue, strValue, sizeof(strValue));
+                char strValue[24] = {'\0'};
+                Format::bytesToHumanStr(currentValue, strValue, sizeof(strValue), false);
                 this->refreshStrValue(strValue, currentGradientColor, LGFX_SCR_DRE_FONT_BG_COLOR);
                 this->value = currentValue;
             }
