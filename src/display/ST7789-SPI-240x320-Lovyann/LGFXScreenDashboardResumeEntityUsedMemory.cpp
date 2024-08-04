@@ -28,6 +28,7 @@ bool LGFXScreenDashboardResumeEntityUsedMemory::refresh(bool force)
         {
             char strValue[24] = {'\0'};
             Format::bytesToHumanStr(currentValue, strValue, sizeof(strValue), false);
+            strcat(strValue, "  ");
             this->refreshStrValue(strValue, currentGradientColor, LGFX_SCR_DRE_FONT_BG_COLOR);
             this->value = currentValue;
         }
