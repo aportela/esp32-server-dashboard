@@ -27,8 +27,8 @@ bool LGFXScreenDashboardResumeEntityCPUTemperature::refresh(bool force)
         this->previousGradientcolor = currentGradientColor;
         if (currentValue != this->value || force)
         {
-            char strValue[8] = {'\0'};
-            // 4 chars for integer part (left zero padded) + 1 char for decimal point + 2 chars for decimals
+            char strValue[7] = {'\0'};
+            // 3 chars for integer part (left zero padded) + 1 char for decimal point + 2 chars for decimals
             Format::parseFloatIntoCharArray(currentValue, 2, 6, strValue, sizeof(strValue));
             this->refreshStrValue(strValue, currentGradientColor, LGFX_SCR_DRE_FONT_BG_COLOR);
             this->value = currentValue;
