@@ -8,6 +8,7 @@ class LGFXScreenDashboardResumeEntityUsedMemory : public LGFXScreenDashboardResu
 private:
     uint64_t timestamp = 0;
     uint64_t value = 0;
+    char oldStrValue[24] = {'\0'};
 
 public:
     LGFXScreenDashboardResumeEntityUsedMemory(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset);

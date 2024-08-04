@@ -26,10 +26,14 @@ bool LGFXScreenDashboardResumeEntityUsedMemory::refresh(bool force)
         this->previousGradientcolor = currentGradientColor;
         if (currentValue != this->value || force)
         {
-            char strValue[24] = {'\0'};
+            char strValue[sizeof(this->oldStrValue)] = {'\0'};
             Format::bytesToHumanStr(currentValue, strValue, sizeof(strValue), false);
             strcat(strValue, "  ");
-            this->refreshStrValue(strValue, currentGradientColor, LGFX_SCR_DRE_FONT_BG_COLOR);
+            if (strcmp(strValue, this->oldStrValue) != 0 || force)
+            {
+                this->refreshStrValue(strValue, currentGradientColor, LGFX_SCR_DRE_FONT_BG_COLOR);
+                strncpy(this->oldStrValue, strValue, sizeof(this->oldStrValue));
+            }
             this->value = currentValue;
         }
         this->refreshSprite(mapped100, currentGradientColor);
