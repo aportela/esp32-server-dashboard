@@ -5,7 +5,7 @@
 
 #define INIT_GRADIENT_COLOR 0x001F
 
-LGFXScreenDashboardResumeEntity::LGFXScreenDashboardResumeEntity(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset, const char *title, bool enabled) : width(width), height(height), xOffset(xOffset), yOffset(yOffset), enabled(enabled)
+LGFXScreenDashboardResumeEntity::LGFXScreenDashboardResumeEntity(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset, const char *title) : width(width), height(height), xOffset(xOffset), yOffset(yOffset)
 {
     if (display != nullptr)
     {

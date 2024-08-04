@@ -27,7 +27,6 @@ protected:
     uint16_t height;
     uint16_t xOffset = 0;
     uint16_t yOffset = 0;
-    bool enabled = false;
 
     void refreshSprite(uint8_t mapped100Value, int32_t color);
     void refreshStrValue(const char *strValue, int32_t color = LGFX_SCR_DRE_FONT_COLOR, int32_t background = LGFX_SCR_DRE_FONT_BG_COLOR);
@@ -36,7 +35,7 @@ protected:
     uint16_t getGradientColorFrom0To100(uint8_t value);
 
 public:
-    LGFXScreenDashboardResumeEntity(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset, const char *title, bool enabled = false);
+    LGFXScreenDashboardResumeEntity(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset, const char *title);
     ~LGFXScreenDashboardResumeEntity();
     virtual bool refresh(bool force = false) = 0;
 };
