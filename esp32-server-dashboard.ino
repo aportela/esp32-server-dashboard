@@ -98,12 +98,6 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
             Serial.print(SerialCommandStr[SERIAL_CMDT_SET_MQTT_TELEGRAF_TOPIC]);
             Serial.println(str);
         }
-        tmpUint64 = Settings::getTotalMemoryBytes();
-        if (tmpUint64 > 0)
-        {
-            Serial.print(SerialCommandStr[SERIAL_CMDT_SET_TOTAL_MEMORY_BYTES]);
-            Serial.println(tmpUint64);
-        }
         tmpFloat = Settings::getMinCPUTemperature();
         Serial.print(SerialCommandStr[SERIAL_CMDT_SET_MIN_CPU_TEMPERATURE]);
         Serial.println(tmpFloat);
@@ -278,32 +272,6 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
             else
             {
                 Serial.println("Invalid screen");
-            }
-        }
-        break;
-    case SERIAL_CMDT_SET_TOTAL_MEMORY_BYTES:
-        if (value && strlen(value))
-        {
-            Serial.printf("Serial command received: set total memory bytes (%s)\n", value);
-            if (Settings::setTotalMemoryBytes(strtoull(value, nullptr, 10)))
-            {
-                Serial.println("Total memory bytes saved. Reboot REQUIRED");
-            }
-            else
-            {
-                Serial.println("Error saving Total memory bytes");
-            }
-        }
-        else
-        {
-            Serial.println("Serial command received: unset total memory bytes");
-            if (Settings::setTotalMemoryBytes(0))
-            {
-                Serial.println("Total memory bytes removed. Reboot REQUIRED");
-            }
-            else
-            {
-                Serial.println("Error removing total memory bytes");
             }
         }
         break;
@@ -495,7 +463,7 @@ void setup()
     char networkInterfaceName[MAX_NETWORK_INTERFACE_NAME_LENGTH];
     Settings::getNetworkInterfaceId(networkInterfaceName, sizeof(networkInterfaceName));
 
-    sourceData = new SourceData(Settings::getTotalMemoryBytes(), 0, 100, Settings::getMaxDownloadBandwidthBytes(), Settings::getMaxUploadBandwidthBytes(), networkInterfaceId, networkInterfaceName);
+    sourceData = new SourceData(0, 100, Settings::getMaxDownloadBandwidthBytes(), Settings::getMaxUploadBandwidthBytes(), networkInterfaceId, networkInterfaceName);
     // dummySRC = new DummySource(sourceData);
 
     char mqttTelegrafURI[64] = {'\0'};

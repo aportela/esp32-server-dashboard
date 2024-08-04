@@ -7,7 +7,7 @@
 #define MIN_CPU_LOAD 0
 #define MAX_CPU_LOAD 100
 
-SourceData::SourceData(uint64_t totalMemory, float minCPUTemperature, float maxCPUTemperature, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit, const char *networkInterfaceId, const char *networkInterfaceName)
+SourceData::SourceData(float minCPUTemperature, float maxCPUTemperature, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit, const char *networkInterfaceId, const char *networkInterfaceName)
 {
     this->totalMemory = totalMemory;
     this->minCPUTemperature = minCPUTemperature;
@@ -111,6 +111,11 @@ bool SourceData::changedUsedMemory(uint64_t fromTimestamp) const
     return (fromTimestamp != this->currentUsedMemoryTimestamp);
 }
 
+bool SourceData::setTotalMemory(uint64_t bytes)
+{
+    this->totalMemory = bytes;
+}
+
 bool SourceData::setUsedMemory(uint64_t bytes, uint64_t timestamp)
 {
     if (bytes != this->usedMemory)
@@ -118,6 +123,32 @@ bool SourceData::setUsedMemory(uint64_t bytes, uint64_t timestamp)
         if (bytes >= 0 && bytes <= this->totalMemory)
         {
             this->usedMemory = bytes;
+            this->currentUsedMemoryTimestamp = timestamp;
+            return (true);
+        }
+        else
+        {
+            return (false);
+        }
+    }
+    else
+    {
+        this->currentUsedMemoryTimestamp = timestamp;
+        return (true);
+    }
+}
+
+bool SourceData::setUsedAndTotalMemory(uint64_t usedBytes, uint64_t totalBytes, uint64_t timestamp)
+{
+    if (totalBytes != this->totalMemory)
+    {
+        this->totalMemory = totalBytes;
+    }
+    if (usedBytes != this->usedMemory)
+    {
+        if (usedBytes >= 0 && usedBytes <= this->totalMemory)
+        {
+            this->usedMemory = usedBytes;
             this->currentUsedMemoryTimestamp = timestamp;
             return (true);
         }

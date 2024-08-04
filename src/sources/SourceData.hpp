@@ -44,7 +44,7 @@ private:
     uint64_t currentNetworkUploadSpeed = 0;
 
 public:
-    SourceData(uint64_t totalMemory, float minCPUTemperature, float maxCPUTemperature, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit, const char *networkInterfaceId, const char *networkInterfaceName);
+    SourceData(float minCPUTemperature, float maxCPUTemperature, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit, const char *networkInterfaceId, const char *networkInterfaceName);
     ~SourceData();
     // NET IFACE
     void getNetworkInterfaceId(char *buffer, size_t buffer_count);
@@ -61,7 +61,9 @@ public:
     uint64_t getUsedMemory(void) const;
     uint64_t getCurrentUsedMemoryTimestamp(void) const;
     bool changedUsedMemory(uint64_t fromTimestamp) const;
+    bool setTotalMemory(uint64_t bytes);
     bool setUsedMemory(uint64_t bytes, uint64_t timestamp);
+    bool setUsedAndTotalMemory(uint64_t usedBytes, uint64_t totalBytes, uint64_t timestamp);
     // CPU TEMPERATURE
     float getMinCPUTemperature(void) const;
     bool setMinCPUTemperature(float celsious);

@@ -1,11 +1,11 @@
 #include "DummySource.hpp"
 #include <Arduino.h>
-#include "../../utils/Format.hpp"
 
 DummySource::DummySource(SourceData *sourceData) : Source(sourceData)
 {
     randomSeed(analogRead(0) ^ (micros() * esp_random()));
     this->lastEllapsedMillis = millis();
+    this->sourceData->setTotalMemory(17044639744); // 16 Gbytes
 }
 
 DummySource::~DummySource()

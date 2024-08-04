@@ -15,7 +15,6 @@ const char *SerialCommandStr[]{
     "SET_MQTT_TELEGRAF_URI ",
     "SET_MQTT_TELEGRAF_GLOBAL_TOPIC ",
     "SET_SCREEN ",
-    "SET_TOTAL_MEMORY_BYTES ",
     "SET_MIN_CPU_TEMPERATURE ",
     "SET_MAX_CPU_TEMPERATURE ",
     "SET_MAX_DOWNLOAD_BYTES_BANDWITH ",
@@ -177,25 +176,6 @@ void SerialManager::loop(void)
                 if (SerialManager::remoteCallback != nullptr)
                 {
                     SerialManager::remoteCallback(SERIAL_CMDT_SET_SCREEN, nullptr);
-                }
-            }
-        }
-        else if (rx.startsWith(SerialCommandStr[SERIAL_CMDT_SET_TOTAL_MEMORY_BYTES]))
-        {
-            uint16_t length = strlen(SerialCommandStr[SERIAL_CMDT_SET_TOTAL_MEMORY_BYTES]);
-            if (rx.length() > length)
-            {
-                String MemoryBytes = rx.substring(length);
-                if (SerialManager::remoteCallback != nullptr)
-                {
-                    SerialManager::remoteCallback(SERIAL_CMDT_SET_TOTAL_MEMORY_BYTES, MemoryBytes.c_str());
-                }
-            }
-            else
-            {
-                if (SerialManager::remoteCallback != nullptr)
-                {
-                    SerialManager::remoteCallback(SERIAL_CMDT_SET_TOTAL_MEMORY_BYTES, nullptr);
                 }
             }
         }

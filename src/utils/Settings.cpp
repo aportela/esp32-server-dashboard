@@ -8,7 +8,6 @@
 #define KEY_WIFI_PASSWORD "WIFI_PASSWORD"
 #define KEY_MQTT_TELEGRAF_URI "SRC_MQTT_URI"
 #define KEY_MQTT_TELEGRAF_GLOBAL_TOPIC "SRC_MQTT_TOPIC"
-#define KEY_TOTAL_MEMORY_BYTES "T_MEM_BYTES"
 #define KEY_MIN_CPU_TEMPERATURE "MIN_CPU_TEMP"
 #define KEY_MAX_CPU_TEMPERATURE "MAX_CPU_TEMP"
 #define KEY_TOTAL_DOWNLOAD_BANDWIDTH_BYTES "T_D_BW_BYTES"
@@ -245,23 +244,6 @@ bool Settings::setMQTTTelegrafGlobalTopic(const char *topic)
     else
     {
         return (Settings::deleteKey(KEY_MQTT_TELEGRAF_GLOBAL_TOPIC));
-    }
-}
-
-uint64_t Settings::getTotalMemoryBytes()
-{
-    return (Settings::getBigUnsignedIntegerValue(KEY_TOTAL_MEMORY_BYTES, 0));
-}
-
-bool Settings::setTotalMemoryBytes(uint64_t totalBytes)
-{
-    if (totalBytes > 0)
-    {
-        return (Settings::setBigUnsigedIntegerValue(KEY_TOTAL_MEMORY_BYTES, totalBytes));
-    }
-    else
-    {
-        return (Settings::deleteKey(KEY_TOTAL_MEMORY_BYTES));
     }
 }
 

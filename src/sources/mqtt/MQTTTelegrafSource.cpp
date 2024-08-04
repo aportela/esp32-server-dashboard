@@ -107,28 +107,32 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
             }
             else
             {
-                Serial.println("Failed to parse payload");
+                Serial.println("Failed to parse cpu payload");
             }
         }
     }
     else if (strcmp(topic, MQTTTelegrafSource::memoryTopic) == 0)
     {
-        uint64_t used = 0;
-        const char *search = "used=";
-        const char *start = strstr(payload, search);
-        if (start)
+        const char *usedSubStrStart = strstr(payload, "used=");
+        if (usedSubStrStart)
         {
-            char subPayload[strlen(payload)];
-            strncpy(subPayload, start, sizeof(subPayload) - 1);
-            subPayload[sizeof(subPayload) - 1] = '\0';
-            const char *format = "used=%" PRIu64 "i";
-            if (sscanf(subPayload, format, &used) == 1)
+            uint64_t usedBytes = 0;
+            if (sscanf(usedSubStrStart, "used=%" PRIu64 "i", &usedBytes) == 1)
             {
-                MQTTTelegrafSource::instance->sourceData->setUsedMemory(used, currentMessageTimestamp);
+                uint64_t totalBytes = 0;
+                const char *totalSubStrStart = strstr(payload, "total=");
+                if (sscanf(totalSubStrStart, "total=%" PRIu64 "i", &totalBytes) == 1)
+                {
+                    MQTTTelegrafSource::instance->sourceData->setUsedAndTotalMemory(usedBytes, totalBytes, currentMessageTimestamp);
+                }
+                else
+                {
+                    MQTTTelegrafSource::instance->sourceData->setUsedMemory(usedBytes, currentMessageTimestamp);
+                }
             }
             else
             {
-                Serial.println("Failed to parse payload");
+                Serial.println("Failed to parse mem payload");
             }
         }
     }
@@ -149,7 +153,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
             }
             else
             {
-                Serial.println("Failed to parse payload");
+                Serial.println("Failed to parse temp payload");
             }
         }
     }
@@ -170,7 +174,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
             }
             else
             {
-                Serial.println("Failed to parse payload");
+                Serial.println("Failed to parse system payload");
             }
         }
     }
@@ -196,7 +200,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
                 }
                 else
                 {
-                    Serial.println("Failed to parse RX payload");
+                    Serial.println("Failed to parse net RX payload");
                 }
             }
             uint64_t sent = 0;
@@ -214,7 +218,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
                 }
                 else
                 {
-                    Serial.println("Failed to parse TX payload");
+                    Serial.println("Failed to parse net TX payload");
                 }
             }
         }
