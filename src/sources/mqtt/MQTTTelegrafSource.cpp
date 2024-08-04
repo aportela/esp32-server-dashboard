@@ -167,6 +167,8 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
             char subPayload[strlen(payload)];
             strncpy(subPayload, start, sizeof(subPayload) - 1);
             subPayload[sizeof(subPayload) - 1] = '\0';
+            // WARNING: (BEFORE REPORTING BUG) WINDOWS REPORTS "INVALID" UPTIME IF YOU ARE USING "FAST STARTUP" SO IF YOUR SERVER UPTIME SEEMS TO BE WRONG CHECK IF YOU HAVE THIS FEATURE ENABLED
+            // https://answers.microsoft.com/en-us/windows/forum/all/fast-startup-doesnt-break-power-cycle/07bd6bf8-dd24-4c77-b911-17df89c74eb3
             const char *format = "uptime=%" PRIu64 "i";
             if (sscanf(subPayload, format, &uptimeSeconds) == 1)
             {
