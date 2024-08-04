@@ -14,9 +14,17 @@ MQTTTelegrafSource *MQTTTelegrafSource::instance = nullptr;
 
 MQTTTelegrafSource::MQTTTelegrafSource(SourceData *sourceData, const char *uri, const char *clientId, const char *topic) : Source(sourceData)
 {
+#ifdef DEBUG_MQTT_TELEGRAF
+    Serial.println("MQTTTelegrafSource");
+    Serial.print("clientId: ");
+    Serial.println(clientId);
+    Serial.print("uri: ");
+    Serial.println(uri);
+    Serial.println("topic: ");
+    Serial.println(topic);
+#endif
     MQTT::setCallback(MQTTTelegrafSource::onMessageReceived);
     MQTT::init(clientId, uri, topic);
-
     MQTTTelegrafSource::generateTopic(topic, MQTTTelegrafSource::cpuTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/cpu");
     MQTTTelegrafSource::generateTopic(topic, MQTTTelegrafSource::memoryTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/mem");
     MQTTTelegrafSource::generateTopic(topic, MQTTTelegrafSource::temperatureTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/temp");
@@ -25,6 +33,10 @@ MQTTTelegrafSource::MQTTTelegrafSource(SourceData *sourceData, const char *uri, 
 
     sourceData->getNetworkInterfaceId(MQTTTelegrafSource::networkInterfaceId, sizeof(MQTTTelegrafSource::networkInterfaceId));
 
+#ifdef DEBUG_MQTT_TELEGRAF
+    Serial.println("networkInterfaceId: ");
+    Serial.println(MQTTTelegrafSource::networkInterfaceId);
+#endif
     if (MQTTTelegrafSource::instance == nullptr)
     {
         MQTTTelegrafSource::instance = this;
@@ -39,6 +51,7 @@ MQTTTelegrafSource::~MQTTTelegrafSource()
     }
 }
 
+// generate "sub-topic" from base topic (replace end "/#"" on base topic with suffix)
 bool MQTTTelegrafSource::generateTopic(const char *baseTopic, char *buffer, size_t buffer_size, const char *suffix)
 {
     size_t baseTopicLength = strlen(baseTopic);
@@ -66,58 +79,66 @@ bool MQTTTelegrafSource::generateTopic(const char *baseTopic, char *buffer, size
 
 void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payload)
 {
-    // Serial.print("Topic: ");
-    // Serial.println(topic);
-    // Serial.print("Message: ");
-    // Serial.println(payload);
+#ifdef DEBUG_MQTT_TELEGRAF
+    Serial.print("Topic:");
+    Serial.println(topic);
+    Serial.print("Message:");
+    Serial.println(payload);
+#endif
     uint64_t currentMessageTimestamp = millis(); // by default use current esp32 timestamp (failover for payload timestamp parse errors)
     // parse timestamp
     size_t payloadLength = strlen(payload);
     const char *lastSpaceSubStr = strrchr(payload, ' ');
     if (lastSpaceSubStr == NULL || lastSpaceSubStr == payload + payloadLength - 1)
     {
+#ifdef DEBUG_MQTT_TELEGRAF
+        Serial.println("Error parsing payload timestamp")
+#endif
     }
     else
     {
         const char *subStr = lastSpaceSubStr + 1;
-        uint64_t num = strtoull(subStr, nullptr, 10);
-        if (num > 0)
+        uint64_t payloadTimestamp = strtoull(subStr, nullptr, 10);
+        if (payloadTimestamp > 0)
         {
             // set real payload timestamp
-            currentMessageTimestamp = num / 1000000;
+            currentMessageTimestamp = payloadTimestamp / 1000000;
+        }
+        else
+        {
+#ifdef DEBUG_MQTT_TELEGRAF
+            Serial.println("Error parsing payload timestamp");
+#endif
         }
     }
 
     if (strcmp(topic, MQTTTelegrafSource::cpuTopic) == 0 && strncmp(payload, "cpu,cpu=cpu-total", 17) == 0)
     {
 
-        float usage_idle = 0.0;
-        const char *search = "usage_idle=";
-        const char *start = strstr(payload, search);
-        if (start)
+        const char *payloadSubStr = strstr(payload, "usage_idle=");
+        if (payloadSubStr)
         {
-            char subPayload[strlen(payload)];
-            strncpy(subPayload, start, sizeof(subPayload) - 1);
-            subPayload[sizeof(subPayload) - 1] = '\0';
-            const char *format = "usage_idle=%f";
-            if (sscanf(subPayload, format, &usage_idle) == 1)
+            float usageIdle = 0.0;
+            if (sscanf(payloadSubStr, "usage_idle=%f", &usageIdle) == 1)
             {
-                float cpu_usage = usage_idle < 100 ? 100.0f - usage_idle : 100;
+                float cpu_usage = usageIdle < 100 ? 100.0f - usageIdle : 100;
                 MQTTTelegrafSource::instance->sourceData->setCurrentCPULoad(cpu_usage, currentMessageTimestamp);
             }
             else
             {
-                Serial.println("Failed to parse cpu payload");
+#ifdef DEBUG_MQTT_TELEGRAF
+                Serial.println("Error parsing CPU usage idle value");
+#endif
             }
         }
     }
     else if (strcmp(topic, MQTTTelegrafSource::memoryTopic) == 0)
     {
-        const char *usedSubStrStart = strstr(payload, "used=");
-        if (usedSubStrStart)
+        const char *payloadSubStr = strstr(payload, "used=");
+        if (payloadSubStr)
         {
             uint64_t usedBytes = 0;
-            if (sscanf(usedSubStrStart, "used=%" PRIu64 "i", &usedBytes) == 1)
+            if (sscanf(payloadSubStr, "used=%" PRIu64 "i", &usedBytes) == 1)
             {
                 uint64_t totalBytes = 0;
                 const char *totalSubStrStart = strstr(payload, "total=");
@@ -132,51 +153,47 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
             }
             else
             {
-                Serial.println("Failed to parse mem payload");
+#ifdef DEBUG_MQTT_TELEGRAF
+                Serial.println("Error parsing MEM used/total values");
+#endif
             }
         }
     }
     else if (strcmp(topic, MQTTTelegrafSource::temperatureTopic) == 0)
     {
-        float celsious = 0;
-        const char *search = "temp=";
-        const char *start = strstr(payload, search);
-        if (start)
+        const char *payloadSubStr = strstr(payload, "temp=");
+        if (payloadSubStr)
         {
-            char subPayload[strlen(payload)];
-            strncpy(subPayload, start, sizeof(subPayload) - 1);
-            subPayload[sizeof(subPayload) - 1] = '\0';
-            const char *format = "temp=%f";
-            if (sscanf(subPayload, format, &celsious) == 1)
+            float temp = 0;
+            if (sscanf(payloadSubStr, "temp=%f", &temp) == 1)
             {
-                MQTTTelegrafSource::instance->sourceData->setCurrentCPUTemperature(celsious, currentMessageTimestamp);
+                MQTTTelegrafSource::instance->sourceData->setCurrentCPUTemperature(temp, currentMessageTimestamp);
             }
             else
             {
-                Serial.println("Failed to parse temp payload");
+#ifdef DEBUG_MQTT_TELEGRAF
+                Serial.println("Error parsing temperature value");
+#endif
             }
         }
     }
     else if (strcmp(topic, MQTTTelegrafSource::systemTopic) == 0)
     {
-        uint64_t uptimeSeconds = 0;
-        const char *search = "uptime=";
-        const char *start = strstr(payload, search);
-        if (start)
+        const char *payloadSubStr = strstr(payload, "uptime=");
+        if (payloadSubStr)
         {
-            char subPayload[strlen(payload)];
-            strncpy(subPayload, start, sizeof(subPayload) - 1);
-            subPayload[sizeof(subPayload) - 1] = '\0';
+            uint64_t uptime = 0;
             // WARNING: (BEFORE REPORTING BUG) WINDOWS REPORTS "INVALID" UPTIME IF YOU ARE USING "FAST STARTUP" SO IF YOUR SERVER UPTIME SEEMS TO BE WRONG CHECK IF YOU HAVE THIS FEATURE ENABLED
             // https://answers.microsoft.com/en-us/windows/forum/all/fast-startup-doesnt-break-power-cycle/07bd6bf8-dd24-4c77-b911-17df89c74eb3
-            const char *format = "uptime=%" PRIu64 "i";
-            if (sscanf(subPayload, format, &uptimeSeconds) == 1)
+            if (sscanf(payloadSubStr, "uptime=%" PRIu64 "i", &uptime) == 1)
             {
-                MQTTTelegrafSource::instance->sourceData->setCurrentUptimeSeconds(uptimeSeconds, currentMessageTimestamp);
+                MQTTTelegrafSource::instance->sourceData->setCurrentUptimeSeconds(uptime, currentMessageTimestamp);
             }
             else
             {
-                Serial.println("Failed to parse system payload");
+#ifdef DEBUG_MQTT_TELEGRAF
+                Serial.println("Error parsing uptime value");
+#endif
             }
         }
     }
@@ -187,40 +204,34 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
         snprintf(payloadSearchStr, sizeof(payloadSearchStr), "interface=%s", MQTTTelegrafSource::networkInterfaceId);
         if (strstr(payload, payloadSearchStr))
         {
-            uint64_t recv = 0;
-            const char *searchRX = "bytes_recv=";
-            const char *startRX = strstr(payload, searchRX);
-            if (startRX)
+            const char *payloadBytesRecvSubStr = strstr(payload, "bytes_recv=");
+            if (payloadBytesRecvSubStr)
             {
-                char subPayload[strlen(payload)];
-                strncpy(subPayload, startRX, sizeof(subPayload) - 1);
-                subPayload[sizeof(subPayload) - 1] = '\0';
-                const char *format = "bytes_recv=%" PRIu64 "i";
-                if (sscanf(subPayload, format, &recv) == 1)
+                uint64_t bytesRecv = 0;
+                if (sscanf(payloadBytesRecvSubStr, "bytes_recv=%" PRIu64 "i", &bytesRecv) == 1)
                 {
-                    MQTTTelegrafSource::instance->sourceData->setCurrentTotalNetworkDownloaded(recv, currentMessageTimestamp);
+                    MQTTTelegrafSource::instance->sourceData->setCurrentTotalNetworkDownloaded(bytesRecv, currentMessageTimestamp);
                 }
                 else
                 {
-                    Serial.println("Failed to parse net RX payload");
+#ifdef DEBUG_MQTT_TELEGRAF
+                    Serial.println("Error parsing network received bytes value");
+#endif
                 }
             }
-            uint64_t sent = 0;
-            const char *searchTX = "bytes_sent=";
-            const char *startTX = strstr(payload, searchTX);
-            if (startTX)
+            const char *payloadBytesSentSubStr = strstr(payload, "bytes_sent=");
+            if (payloadBytesSentSubStr)
             {
-                char subPayload[strlen(payload)];
-                strncpy(subPayload, startTX, sizeof(subPayload) - 1);
-                subPayload[sizeof(subPayload) - 1] = '\0';
-                const char *format = "bytes_sent=%" PRIu64 "i";
-                if (sscanf(subPayload, format, &sent) == 1)
+                uint64_t bytesSent = 0;
+                if (sscanf(payloadBytesSentSubStr, "bytes_sent=%" PRIu64 "i", &bytesSent) == 1)
                 {
-                    MQTTTelegrafSource::instance->sourceData->setCurrentTotalNetworkUploaded(sent, currentMessageTimestamp);
+                    MQTTTelegrafSource::instance->sourceData->setCurrentTotalNetworkUploaded(bytesSent, currentMessageTimestamp);
                 }
                 else
                 {
-                    Serial.println("Failed to parse net TX payload");
+#ifdef DEBUG_MQTT_TELEGRAF
+                    Serial.println("Error parsing network sent bytes value");
+#endif
                 }
             }
         }
