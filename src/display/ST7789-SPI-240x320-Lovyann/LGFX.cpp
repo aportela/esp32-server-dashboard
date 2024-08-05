@@ -106,6 +106,11 @@ void LGFX::deleteCurrentScreen(void)
     }
 }
 
+ScreenType LGFX::getCurrentScreenType(void)
+{
+    return (this->currentScreenType);
+}
+
 bool LGFX::flipToScreen(ScreenType screenType)
 {
     if (screenType != this->currentScreenType)
