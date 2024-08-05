@@ -6,6 +6,9 @@ DummySource::DummySource(SourceData *sourceData) : Source(sourceData)
     randomSeed(analogRead(0) ^ (micros() * esp_random()));
     this->lastEllapsedMillis = millis();
     this->sourceData->setTotalMemory(17044639744); // 16 Gbytes
+    this->sourceData->setUsedMemory(4261159936, this->lastEllapsedMillis);
+    this->sourceData->setNetworkDownloadBandwidthLimit(73125000);
+    this->sourceData->setNetworkUploadBandwidthLimit(73125000);
 }
 
 DummySource::~DummySource()
@@ -39,7 +42,7 @@ void DummySource::refresh(uint16_t milliSeconds)
         this->sourceData->setCurrentCPULoad(fCurrent, currentMillis);
 
         current = this->sourceData->getUsedMemory();
-        change = this->sourceData->getTotalMemory() / 100;
+        change = random(10485760, this->sourceData->getTotalMemory() / 1024);
         if (random(0, 20) % 2 == 0)
         {
             if (current < this->sourceData->getTotalMemory() - change)
@@ -55,7 +58,6 @@ void DummySource::refresh(uint16_t milliSeconds)
 
         fCurrent = this->sourceData->getCurrentCPUTemperature();
         if (random(0, 20) % 2 == 0)
-
         {
             if (fCurrent < this->sourceData->getMaxCPUTemperature())
             {
@@ -70,12 +72,9 @@ void DummySource::refresh(uint16_t milliSeconds)
 
         this->sourceData->setCurrentUptimeSeconds(millis() / 1000, currentMillis);
 
-        // TODO: check limits
-        current = this->sourceData->getCurrentTotalNetworkDownloaded();
-        this->sourceData->setCurrentTotalNetworkDownloaded(current + random(1000000, 5000000000), currentMillis);
+        this->sourceData->setCurrentTotalNetworkDownloaded(this->sourceData->getCurrentTotalNetworkDownloaded() + random(1024, random(0, 100) > 90 ? 1048576 : 104857), currentMillis);
 
-        current = this->sourceData->getCurrentTotalNetworkUploaded();
-        this->sourceData->setCurrentTotalNetworkUploaded(current + random(1000000, 5000000000), currentMillis);
+        this->sourceData->setCurrentTotalNetworkUploaded(this->sourceData->getCurrentTotalNetworkUploaded() + random(1024, random(0, 100) > 90 ? 1048576 : 104857), currentMillis);
 
         this->lastEllapsedMillis = currentMillis;
     }
