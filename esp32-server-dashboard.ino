@@ -41,6 +41,7 @@ LGFX *screen = nullptr;
 #include "src/utils/Settings.hpp"
 #include "src/utils/WifiManager.hpp"
 #include "src/utils/SerialManager.hpp"
+#include "src/utils/RotaryControl.hpp"
 #include "src/utils/Format.hpp"
 #include "src/sources/dummy/DummySource.hpp"
 #include "src/sources/SourceData.hpp"
@@ -50,6 +51,10 @@ LGFX *screen = nullptr;
 
 #include <cstdint>
 
+#define ENC1_A 19
+#define ENC1_B 21
+
+RotaryControl *rotaryControl = nullptr;
 DummySource *dummySRC = nullptr;
 MQTTTelegrafSource *mqttTelegrafSRC = nullptr;
 SourceData *sourceData = nullptr;
@@ -441,6 +446,22 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
     }
 }
 
+void onEncoderIncrement(uint8_t acceleratedDelta = 1, uint64_t lastMillis = 0)
+{
+    if (screen->getCurrentScreenType() == ST_INFO)
+    {
+        screen->flipToScreen(ST_DATA_RESUME);
+    }
+}
+
+void onEncoderDecrement(uint8_t acceleratedDelta = 1, uint64_t lastMillis = 0)
+{
+    if (screen->getCurrentScreenType() == ST_DATA_RESUME)
+    {
+        screen->flipToScreen(ST_INFO);
+    }
+}
+
 void setup()
 {
     //  TODO: default info screen if no valid settings found
@@ -483,6 +504,8 @@ void setup()
     //  screen->initScreen(ST_INFO);
     screen->initScreen(ST_DATA_RESUME);
 #endif // DISPLAY_DRIVER_LOVYANN_ST7789
+
+    RotaryControl::init(ENC1_A, ENC1_B, onEncoderIncrement, onEncoderDecrement);
 }
 
 void loop()
