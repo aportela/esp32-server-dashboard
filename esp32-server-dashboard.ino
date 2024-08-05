@@ -484,7 +484,7 @@ void setup()
     char networkInterfaceName[MAX_NETWORK_INTERFACE_NAME_LENGTH];
     Settings::getNetworkInterfaceId(networkInterfaceName, sizeof(networkInterfaceName));
 
-    sourceData = new SourceData(0, 100, Settings::getMaxDownloadBandwidthBytes(), Settings::getMaxUploadBandwidthBytes(), networkInterfaceId, networkInterfaceName);
+    sourceData = new SourceData(Settings::getMinCPUTemperature(), Settings::getMaxCPUTemperature(), Settings::getMaxDownloadBandwidthBytes(), Settings::getMaxUploadBandwidthBytes(), networkInterfaceId, networkInterfaceName);
     // dummySRC = new DummySource(sourceData);
 
     char mqttTelegrafURI[64] = {'\0'};
