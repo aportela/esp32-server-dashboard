@@ -515,5 +515,4 @@ void loop()
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     screen->refresh();
 #endif // DISPLAY_DRIVER_LOVYANN_ST7789
-    delay(50);
 }
