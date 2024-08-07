@@ -33,7 +33,7 @@ bool LGFXScreenDashboardResumeEntityCPULoad::refresh(bool force)
             this->refreshStrValue(strValue, currentGradientColor, LGFX_SCR_DRE_FONT_BG_COLOR);
             this->value = currentValue;
         }
-        this->refreshSprite(mapped100, currentGradientColor);
+        this->refreshSprite(mapped100, currentGradientColor, true);
         return (true);
     }
     else

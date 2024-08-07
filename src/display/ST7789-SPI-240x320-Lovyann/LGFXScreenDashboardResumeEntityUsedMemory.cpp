@@ -36,7 +36,7 @@ bool LGFXScreenDashboardResumeEntityUsedMemory::refresh(bool force)
             }
             this->value = currentValue;
         }
-        this->refreshSprite(mapped100, currentGradientColor);
+        this->refreshSprite(mapped100, currentGradientColor, true);
         return (true);
     }
     else
