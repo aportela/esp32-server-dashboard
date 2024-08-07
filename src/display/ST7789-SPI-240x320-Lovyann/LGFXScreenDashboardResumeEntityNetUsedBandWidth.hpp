@@ -28,7 +28,7 @@ private:
         524288,      // 512 Kbytes
         1048576,     // 1 Mbyte
         2097152,     // 2 Mbytes
-        5242880,     // 5 Bytes
+        5242880,     // 5 MBytes
         10485760,    // 10 Mbytes
         20971520,    // 25 Mbytes
         52428800,    // 50 Mbytes
