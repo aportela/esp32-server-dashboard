@@ -18,6 +18,7 @@ public:
     Uint64TFIFO(size_t size);
     ~Uint64TFIFO();
     bool push(uint64_t value);
+    uint64_t getMaxValue(void);
 };
 
 #endif

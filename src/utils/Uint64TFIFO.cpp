@@ -57,3 +57,25 @@ bool Uint64TFIFO::push(uint64_t value)
         return (false);
     }
 }
+
+uint64_t Uint64TFIFO::getMaxValue(void)
+{
+    if (this->values != nullptr && this->count > 0)
+    {
+        uint64_t maxValue = this->values[this->head];
+        size_t index = this->head;
+        for (size_t i = 0; i < this->count; i++)
+        {
+            if (this->values[index] > maxValue)
+            {
+                maxValue = this->values[index];
+            }
+            index = (index + 1) % this->size;
+        }
+        return (maxValue);
+    }
+    else
+    {
+        return (0);
+    }
+}
