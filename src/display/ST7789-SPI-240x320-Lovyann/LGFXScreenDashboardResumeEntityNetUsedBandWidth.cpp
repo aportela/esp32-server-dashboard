@@ -9,42 +9,17 @@ LGFXScreenDashboardResumeEntityNetUsedBandWidth::LGFXScreenDashboardResumeEntity
     }
     if (dynamicScale)
     {
-        this->FIFOPreviousValues = (uint64_t *)calloc(width, sizeof(uint64_t));
-        if (this->FIFOPreviousValues == NULL)
-        {
-            Serial.println("Error allocating FIFO for dynamic scaling, switching to default scale");
-            this->dynamicScale = false;
-        }
-        else
-        {
-            this->FIFOFront = 0;
-            this->FIFORear = 0;
-            this->FIFOSize = 0;
-        }
+        this->dynamicScaleValuesFIFO = new Uint64TFIFO(width);
     }
 }
 
 LGFXScreenDashboardResumeEntityNetUsedBandWidth::~LGFXScreenDashboardResumeEntityNetUsedBandWidth()
 {
-    if (this->FIFOPreviousValues != nullptr)
+    if (this->dynamicScaleValuesFIFO != nullptr)
     {
-        free(this->FIFOPreviousValues);
-        this->FIFOPreviousValues = nullptr;
+        delete this->dynamicScaleValuesFIFO;
+        this->dynamicScaleValuesFIFO = nullptr;
     }
-}
-
-bool LGFXScreenDashboardResumeEntityNetUsedBandWidth::enqueueFIFO(uint64_t value)
-{
-    if (this->FIFOSize == this->width)
-    {
-        this->FIFOFront = (this->FIFOFront + 1) % this->width;
-    }
-    else
-    {
-        this->FIFOSize++;
-    }
-    this->FIFOPreviousValues[this->FIFORear] = value;
-    this->FIFORear = (this->FIFORear + 1) % this->width;
 }
 
 bool LGFXScreenDashboardResumeEntityNetUsedBandWidth::refresh(bool force)
@@ -73,16 +48,18 @@ bool LGFXScreenDashboardResumeEntityNetUsedBandWidth::refresh(bool force)
             currentValue = this->sourceData->getNetworkUploadSpeed();
         }
         this->timestamp = currentTimestamp;
-        bool growScaleRequired = false;
+
         if (this->dynamicScale)
         {
+            /*
+            bool growScaleRequired = false;
             const size_t byteScalesSize = sizeof(this->byteScales) / sizeof(this->byteScales[0]);
             while (this->byteScales[this->currentByteScale] < currentValue && this->currentByteScale < byteScalesSize)
             {
                 this->currentByteScale++;
                 growScaleRequired = true;
             }
-            this->enqueueFIFO(currentValue);
+            // this->dynamicScaleValuesFIFO->push(currentValue);
             if (growScaleRequired)
             {
                 if (this->type == NBT_DOWNLOAD)
@@ -94,43 +71,30 @@ bool LGFXScreenDashboardResumeEntityNetUsedBandWidth::refresh(bool force)
                     this->sourceData->setNetworkUploadBandwidthLimit(this->byteScales[this->currentByteScale]);
                 }
             }
-        }
-
-        uint8_t mapped100 = 0;
-
-        if (this->type == NBT_DOWNLOAD)
-        {
-            mapped100 = this->mapUint64ValueFrom0To100(currentValue, 0, this->sourceData->getNetworkDownloadBandwidthLimit());
+            */
         }
         else
         {
-            mapped100 = this->mapUint64ValueFrom0To100(currentValue, 0, this->sourceData->getNetworkUploadBandwidthLimit());
-        }
-        uint16_t currentGradientColor = (mapped100 != this->previousMappedValue) ? this->getGradientColorFrom0To100(mapped100) : this->previousGradientcolor;
-        this->previousMappedValue = mapped100;
-        this->previousGradientcolor = currentGradientColor;
-        if (currentValue != this->value || force)
-        {
-            char strValue[24] = {'\0'};
-            Format::bytesToHumanStr(this->value, strValue, sizeof(strValue), true);
-            strcat(strValue, "  ");
-            this->refreshStrValue(strValue, currentGradientColor, LGFX_SCR_DRE_FONT_BG_COLOR);
-            this->value = currentValue;
-        }
-        if (this->dynamicScale)
-        {
-            if (!growScaleRequired)
+            uint8_t mapped100 = 0;
+            if (this->type == NBT_DOWNLOAD)
             {
-                this->refreshSprite(mapped100, currentGradientColor);
-                // TODO: shrink required ?
+                mapped100 = this->mapUint64ValueFrom0To100(currentValue, 0, this->sourceData->getNetworkDownloadBandwidthLimit());
             }
             else
             {
-                // TODO: refresh ALL
+                mapped100 = this->mapUint64ValueFrom0To100(currentValue, 0, this->sourceData->getNetworkUploadBandwidthLimit());
             }
-        }
-        else
-        {
+            uint16_t currentGradientColor = (mapped100 != this->previousMappedValue) ? this->getGradientColorFrom0To100(mapped100) : this->previousGradientcolor;
+            this->previousMappedValue = mapped100;
+            this->previousGradientcolor = currentGradientColor;
+            if (currentValue != this->value || force)
+            {
+                char strValue[24] = {'\0'};
+                Format::bytesToHumanStr(this->value, strValue, sizeof(strValue), true);
+                strcat(strValue, "  ");
+                this->refreshStrValue(strValue, currentGradientColor, LGFX_SCR_DRE_FONT_BG_COLOR);
+                this->value = currentValue;
+            }
             this->refreshSprite(mapped100, currentGradientColor);
         }
         return (true);

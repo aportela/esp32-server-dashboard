@@ -2,6 +2,7 @@
 #define ESP32_SERVER_DASHBOARD_LGFX_SCREEN_DASHBOARD_RESUME_ENTITY_USED_NETWORK_BANDWIDTH_H
 
 #include "LGFXScreenDashboardResumeEntity.hpp"
+#include "../../utils/Uint64TFIFO.hpp"
 
 enum NetBandwidthType
 {
@@ -43,10 +44,7 @@ private:
         52428800000, // 50 Gbytes
     };
     uint8_t currentByteScale = 0;
-    uint64_t *FIFOPreviousValues = nullptr; // temporal FIFO store required for dynamic scaling
-    uint16_t FIFOFront = 0;
-    uint16_t FIFORear = 0;
-    uint16_t FIFOSize = 0;
+    Uint64TFIFO *dynamicScaleValuesFIFO = nullptr;
 
     NetBandwidthType type;
 
