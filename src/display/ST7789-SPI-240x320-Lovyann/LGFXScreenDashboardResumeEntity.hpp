@@ -28,7 +28,7 @@ protected:
     uint16_t xOffset = 0;
     uint16_t yOffset = 0;
 
-    void refreshSprite(uint8_t mapped100Value, int32_t color);
+    void refreshSprite(uint8_t mapped100Value, int32_t color, bool dump = true);
     void refreshStrValue(const char *strValue, int32_t color = LGFX_SCR_DRE_FONT_COLOR, int32_t background = LGFX_SCR_DRE_FONT_BG_COLOR);
     uint8_t mapFloatValueFrom0To100(float value, float minValue, float maxValue);
     uint8_t mapUint64ValueFrom0To100(uint64_t value, uint64_t minValue, uint64_t maxValue);

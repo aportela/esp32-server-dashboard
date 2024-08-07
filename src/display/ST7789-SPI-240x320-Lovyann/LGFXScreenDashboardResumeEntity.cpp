@@ -60,7 +60,7 @@ void LGFXScreenDashboardResumeEntity::printTitle(const char *title)
     this->parentDisplay->print(title);
 }
 
-void LGFXScreenDashboardResumeEntity::refreshSprite(uint8_t mapped100Value, int32_t color)
+void LGFXScreenDashboardResumeEntity::refreshSprite(uint8_t mapped100Value, int32_t color, bool dump)
 {
     uint8_t mappedGraphValue = map(mapped100Value, 0, 100, 0, this->height);
     // create graph animation moving sprite to left 1 pixel
@@ -68,7 +68,10 @@ void LGFXScreenDashboardResumeEntity::refreshSprite(uint8_t mapped100Value, int3
     // draw new value (on right)
     this->graphSprite->drawFastVLine(this->width - 1, this->height - mappedGraphValue + 1, mappedGraphValue, color);
     // dump sprite to screen
-    this->graphSprite->pushSprite(this->xOffset + 2, this->yOffset + 2);
+    if (dump)
+    {
+        this->graphSprite->pushSprite(this->xOffset + 2, this->yOffset + 2);
+    }
 }
 
 void LGFXScreenDashboardResumeEntity::refreshStrValue(const char *strValue, int32_t color, int32_t background)
