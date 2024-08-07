@@ -76,7 +76,8 @@ bool LGFXScreenDashboardResumeEntityNetUsedBandWidth::refresh(bool force)
         bool growScaleRequired = false;
         if (this->dynamicScale)
         {
-            while (this->byteScales[this->currentByteScale] < currentValue && this->currentByteScale < sizeof(this->byteScales))
+            const size_t byteScalesSize = sizeof(this->byteScales) / sizeof(this->byteScales[0]);
+            while (this->byteScales[this->currentByteScale] < currentValue && this->currentByteScale < byteScalesSize)
             {
                 this->currentByteScale++;
                 growScaleRequired = true;
