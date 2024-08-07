@@ -36,16 +36,24 @@ void Uint64TFIFO::shiftLeft(void)
     this->head = (this->head + 1) % this->size;
 }
 
-void Uint64TFIFO::push(uint64_t value)
+bool Uint64TFIFO::push(uint64_t value)
 {
-    if (this->count < this->size)
+    if (this->values != nullptr)
     {
-        this->values[(this->head + this->count) % this->size] = value;
-        this->count++;
+        if (this->count < this->size)
+        {
+            this->values[(this->head + this->count) % this->size] = value;
+            this->count++;
+        }
+        else
+        {
+            this->shiftLeft();
+            this->values[(this->head + this->size - 1) % this->size] = value;
+        }
+        return (true);
     }
     else
     {
-        this->shiftLeft();
-        this->values[(this->head + this->size - 1) % this->size] = value;
+        return (false);
     }
 }

@@ -17,7 +17,7 @@ private:
 public:
     Uint64TFIFO(size_t size);
     ~Uint64TFIFO();
-    void push(uint64_t value);
+    bool push(uint64_t value);
 };
 
 #endif
