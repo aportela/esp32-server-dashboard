@@ -486,7 +486,6 @@ void setup()
 
     sourceData = new SourceData(Settings::getMinCPUTemperature(), Settings::getMaxCPUTemperature(), Settings::getMaxDownloadBandwidthBytes(), Settings::getMaxUploadBandwidthBytes(), networkInterfaceId, networkInterfaceName);
     // dummySRC = new DummySource(sourceData);
-
     char mqttTelegrafURI[64] = {'\0'};
     Settings::getMQTTTelegrafURI(mqttTelegrafURI, sizeof(mqttTelegrafURI));
     char mqttTelegrafGlobalTopic[512] = {'\0'};
@@ -505,7 +504,7 @@ void setup()
     screen->initScreen(ST_DATA_RESUME);
 #endif // DISPLAY_DRIVER_LOVYANN_ST7789
 
-    RotaryControl::init(ENC1_A, ENC1_B, onEncoderIncrement, onEncoderDecrement);
+    // RotaryControl::init(ENC1_A, ENC1_B, onEncoderIncrement, onEncoderDecrement);
 }
 
 void loop()
@@ -516,4 +515,5 @@ void loop()
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     screen->refresh();
 #endif // DISPLAY_DRIVER_LOVYANN_ST7789
+    delay(50);
 }
