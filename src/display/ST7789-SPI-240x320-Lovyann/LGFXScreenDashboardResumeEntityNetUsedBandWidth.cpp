@@ -51,7 +51,7 @@ bool LGFXScreenDashboardResumeEntityNetUsedBandWidth::refresh(bool force)
 
         if (this->dynamicScale)
         {
-            /*
+            this->dynamicScaleValuesFIFO->push(currentValue);
             bool growScaleRequired = false;
             const size_t byteScalesSize = sizeof(this->byteScales) / sizeof(this->byteScales[0]);
             while (this->byteScales[this->currentByteScale] < currentValue && this->currentByteScale < byteScalesSize)
@@ -59,7 +59,6 @@ bool LGFXScreenDashboardResumeEntityNetUsedBandWidth::refresh(bool force)
                 this->currentByteScale++;
                 growScaleRequired = true;
             }
-            // this->dynamicScaleValuesFIFO->push(currentValue);
             if (growScaleRequired)
             {
                 if (this->type == NBT_DOWNLOAD)
@@ -70,8 +69,39 @@ bool LGFXScreenDashboardResumeEntityNetUsedBandWidth::refresh(bool force)
                 {
                     this->sourceData->setNetworkUploadBandwidthLimit(this->byteScales[this->currentByteScale]);
                 }
+                // TODO: rewrite all FIFO into sprite & dump
             }
-            */
+            else
+            {
+                // check for required shrink scale
+                bool shrinkScaleRequired = false;
+                // get FIFO max value
+                uint64_t maxFIFOValue = 0;
+                if (this->currentByteScale > 0 && this->currentByteScale < byteScalesSize)
+                {
+                    while (this->byteScales[this->currentByteScale - 1] > currentValue && this->currentByteScale > 0)
+                    {
+                        this->currentByteScale--;
+                        shrinkScaleRequired = true;
+                    }
+                }
+                if (shrinkScaleRequired)
+                {
+                    if (this->type == NBT_DOWNLOAD)
+                    {
+                        this->sourceData->setNetworkDownloadBandwidthLimit(this->byteScales[this->currentByteScale]);
+                    }
+                    else
+                    {
+                        this->sourceData->setNetworkUploadBandwidthLimit(this->byteScales[this->currentByteScale]);
+                    }
+                    // TODO: rewrite all FIFO into sprite & dump
+                }
+                else
+                {
+                    // write current value (with current scale)
+                }
+            }
         }
         else
         {
@@ -95,7 +125,7 @@ bool LGFXScreenDashboardResumeEntityNetUsedBandWidth::refresh(bool force)
                 this->refreshStrValue(strValue, currentGradientColor, LGFX_SCR_DRE_FONT_BG_COLOR);
                 this->value = currentValue;
             }
-            this->refreshSprite(mapped100, currentGradientColor);
+            this->refreshSprite(mapped100, currentGradientColor, true);
         }
         return (true);
     }
