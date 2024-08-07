@@ -10,6 +10,14 @@ LGFXScreenDashboardResumeEntityNetUsedBandWidth::LGFXScreenDashboardResumeEntity
     if (dynamicScale)
     {
         this->dynamicScaleValuesFIFO = new Uint64TFIFO(width);
+        if (this->type == NBT_DOWNLOAD)
+        {
+            this->originalBandwidth = sourceData->getNetworkDownloadBandwidthLimit();
+        }
+        else
+        {
+            this->originalBandwidth = sourceData->getNetworkUploadBandwidthLimit();
+        }
     }
 }
 

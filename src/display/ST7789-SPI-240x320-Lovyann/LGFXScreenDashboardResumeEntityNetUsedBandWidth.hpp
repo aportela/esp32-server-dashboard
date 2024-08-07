@@ -44,6 +44,7 @@ private:
         52428800000, // 50 Gbytes
     };
     uint8_t currentByteScale = 0;
+    uint64_t originalBandwidth = 0;
     Uint64TFIFO *dynamicScaleValuesFIFO = nullptr;
 
     NetBandwidthType type;
