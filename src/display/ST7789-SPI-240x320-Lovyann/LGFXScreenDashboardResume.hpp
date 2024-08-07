@@ -6,6 +6,7 @@
 #include "LGFXScreenDashboardResumeEntityUsedMemory.hpp"
 #include "LGFXScreenDashboardResumeEntityCPUTemperature.hpp"
 #include "LGFXScreenDashboardResumeEntityNetUsedBandWidth.hpp"
+#include "LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth.hpp"
 #include "../../sources/SourceData.hpp"
 
 class LGFXScreenDashboardResume : public LGFXScreen
