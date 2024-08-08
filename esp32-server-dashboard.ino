@@ -250,36 +250,10 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
             }
         }
         break;
-    case SERIAL_CMDT_SET_SCREEN:
-        if (value && strlen(value))
+    case SERIAL_CMDT_TOGGLE_SCREEN:
+        if (screen != nullptr)
         {
-            Serial.printf("Serial command received: change screen to (%s)\n", value);
-            if (strcmp(value, "INFO") == 0)
-            {
-                if (screen->flipToScreen(ST_INFO))
-                {
-                    Serial.println("Screen changed");
-                }
-                else
-                {
-                    Serial.println("Screen unchanged");
-                }
-            }
-            else if (strcmp(value, "DATA_RESUME") == 0)
-            {
-                if (screen->flipToScreen(ST_DATA_RESUME))
-                {
-                    Serial.println("Screen changed");
-                }
-                else
-                {
-                    Serial.println("Screen unchanged");
-                }
-            }
-            else
-            {
-                Serial.println("Invalid screen");
-            }
+            screen->toggleScreen();
         }
         break;
     case SERIAL_CMDT_SET_MIN_CPU_TEMPERATURE:
@@ -509,15 +483,7 @@ void loop()
     button->update();
     if (button->pressed())
     {
-        switch (screen->getCurrentScreenType())
-        {
-        case ST_INFO:
-            screen->flipToScreen(ST_DATA_RESUME);
-            break;
-        case ST_DATA_RESUME:
-            screen->flipToScreen(ST_INFO);
-            break;
-        }
+        screen->toggleScreen();
     }
 #endif // DISPLAY_DRIVER_LOVYANN_ST7789
 }
