@@ -5,9 +5,11 @@ uint64_t FPS::frameCount = 0;
 uint64_t FPS::lastTime = 0;
 uint16_t FPS::fps = 0;
 
-uint16_t FPS::getFPS(void)
+void FPS::init(void)
 {
-  return (FPS::fps);
+  FPS::frameCount = 0;
+  FPS::lastTime = 0;
+  FPS::fps = 0;
 }
 
 void FPS::loop(uint16_t limit)
@@ -24,4 +26,9 @@ void FPS::loop(uint16_t limit)
   {
     FPS::frameCount++;
   }
+}
+
+uint16_t FPS::getFPS(void)
+{
+  return (FPS::fps);
 }
