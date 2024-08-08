@@ -28,6 +28,7 @@ public:
     void initScreen(ScreenType scr);
     ScreenType getCurrentScreenType(void);
     bool flipToScreen(ScreenType scr);
+    bool toggleScreen(void);
     void refresh(void);
 };
 

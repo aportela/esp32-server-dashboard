@@ -125,6 +125,21 @@ bool LGFX::flipToScreen(ScreenType screenType)
     }
 }
 
+bool LGFX::toggleScreen(void)
+{
+    bool success = false;
+    switch (this->getCurrentScreenType())
+    {
+    case ST_INFO:
+        success = this->flipToScreen(ST_DATA_RESUME);
+        break;
+    case ST_DATA_RESUME:
+        success = this->flipToScreen(ST_INFO);
+        break;
+    }
+    return (success);
+}
+
 void LGFX::refresh(void)
 {
     if (this->currentScreenType != ST_NONE)
