@@ -20,9 +20,7 @@
 #define PIN_SDA 6
 #define PIN_SCL 4
 
-#define PIN_ENCODER_A 20
-#define PIN_ENCODER_B 21
-#define PIN_ENCODER_SW 10
+#define PIN_BUTTON_SW 10
 
 #else
 #ifdef ESP32_WROOM
@@ -494,7 +492,7 @@ void setup()
     screen->initScreen(ST_DATA_RESUME);
 #endif // DISPLAY_DRIVER_LOVYANN_ST7789
     button = new Bounce2::Button();
-    button->attach(PIN_ENCODER_SW, INPUT_PULLUP);
+    button->attach(PIN_BUTTON_SW, INPUT_PULLUP);
     button->interval(5);
     button->setPressedState(LOW);
 }
