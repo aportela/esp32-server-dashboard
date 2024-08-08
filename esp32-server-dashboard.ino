@@ -19,6 +19,11 @@
 #define PIN_DC 8
 #define PIN_SDA 6
 #define PIN_SCL 4
+
+#define PIN_ENCODER_A 20
+#define PIN_ENCODER_B 21
+#define PIN_ENCODER_SW 10
+
 #else
 #ifdef ESP32_WROOM
 // ESP32 WROOM custom pins
@@ -27,6 +32,9 @@
 #define PIN_DC 2
 #define PIN_SDA 23
 #define PIN_SCL 18
+
+#error TODO_ENCODER_PINS
+
 #else
 #error UNSUPPORTED_MODEL
 #endif // ESP32_WROOM
@@ -41,20 +49,16 @@ LGFX *screen = nullptr;
 #include "src/utils/Settings.hpp"
 #include "src/utils/WifiManager.hpp"
 #include "src/utils/SerialManager.hpp"
-#include "src/utils/RotaryControl.hpp"
 #include "src/utils/Format.hpp"
 #include "src/sources/dummy/DummySource.hpp"
 #include "src/sources/SourceData.hpp"
 #include "src/sources/mqtt/MQTTTelegrafSource.hpp"
 #include "src/display/ScreenType.hpp"
 #include <Arduino.h>
+#include <Bounce2.h>
 
 #include <cstdint>
 
-#define ENC1_A 19
-#define ENC1_B 21
-
-RotaryControl *rotaryControl = nullptr;
 DummySource *dummySRC = nullptr;
 MQTTTelegrafSource *mqttTelegrafSRC = nullptr;
 SourceData *sourceData = nullptr;
@@ -446,21 +450,7 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
     }
 }
 
-void onEncoderIncrement(uint8_t acceleratedDelta = 1, uint64_t lastMillis = 0)
-{
-    if (screen->getCurrentScreenType() == ST_INFO)
-    {
-        screen->flipToScreen(ST_DATA_RESUME);
-    }
-}
-
-void onEncoderDecrement(uint8_t acceleratedDelta = 1, uint64_t lastMillis = 0)
-{
-    if (screen->getCurrentScreenType() == ST_DATA_RESUME)
-    {
-        screen->flipToScreen(ST_INFO);
-    }
-}
+Bounce2::Button *button;
 
 void setup()
 {
@@ -503,9 +493,13 @@ void setup()
     //  screen->initScreen(ST_INFO);
     screen->initScreen(ST_DATA_RESUME);
 #endif // DISPLAY_DRIVER_LOVYANN_ST7789
-
-    // RotaryControl::init(ENC1_A, ENC1_B, onEncoderIncrement, onEncoderDecrement);
+    button = new Bounce2::Button();
+    button->attach(PIN_ENCODER_SW, INPUT_PULLUP);
+    button->interval(5);
+    button->setPressedState(LOW);
 }
+
+long oldPosition = -999;
 
 void loop()
 {
@@ -514,5 +508,18 @@ void loop()
     // dummySRC->refresh(0);
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     screen->refresh();
+    button->update();
+    if (button->pressed())
+    {
+        switch (screen->getCurrentScreenType())
+        {
+        case ST_INFO:
+            screen->flipToScreen(ST_DATA_RESUME);
+            break;
+        case ST_DATA_RESUME:
+            screen->flipToScreen(ST_INFO);
+            break;
+        }
+    }
 #endif // DISPLAY_DRIVER_LOVYANN_ST7789
 }
