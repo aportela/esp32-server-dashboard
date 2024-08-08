@@ -25,6 +25,7 @@ LGFXScreenDashboardResume::LGFXScreenDashboardResume(LovyanGFX *display, SourceD
         this->currentSourceData = sourceData;
         if (display != nullptr)
         {
+            FPS::init();
             this->cpuLoadBlock = new LGFXScreenDashboardResumeEntityCPULoad(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 0);
             this->usedMemoryBlock = new LGFXScreenDashboardResumeEntityUsedMemory(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 42);
             this->cpuTemperatureBlock = new LGFXScreenDashboardResumeEntityCPUTemperature(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 84);

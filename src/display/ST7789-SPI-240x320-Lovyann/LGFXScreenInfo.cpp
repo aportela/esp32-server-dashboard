@@ -52,6 +52,7 @@ LGFXScreenInfo::LGFXScreenInfo(LovyanGFX *display) : LGFXScreen(display)
 {
     if (display != nullptr)
     {
+        FPS::init();
         // top title
         this->parentDisplay->setFont(SCREEN_TITLE_FONT);
         this->parentDisplay->setTextSize(SCREEN_TITLE_FONT_SIZE);
