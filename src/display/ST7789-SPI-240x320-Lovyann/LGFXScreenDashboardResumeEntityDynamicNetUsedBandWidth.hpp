@@ -35,10 +35,7 @@ private:
         52428800000, // 50 Gbytes
     };
     uint8_t currentByteScale = 0;
-    uint64_t originalBandwidth = 0;
     Uint64TFIFO *dynamicScaleValuesFIFO = nullptr;
-
-    bool enqueueFIFO(uint64_t value);
 
 public:
     LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth(NetBandwidthType type, LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset);

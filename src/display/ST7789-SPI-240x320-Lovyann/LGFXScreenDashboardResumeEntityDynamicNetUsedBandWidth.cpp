@@ -7,15 +7,9 @@ LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth::LGFXScreenDashboardResum
     {
         this->refreshStrValue("0000 Bytes/seg", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
     }
+    this->sourceData->setNetworkDownloadBandwidthLimit(this->byteScales[this->currentByteScale]);
+    this->sourceData->setNetworkUploadBandwidthLimit(this->byteScales[this->currentByteScale]);
     this->dynamicScaleValuesFIFO = new Uint64TFIFO(width);
-    if (this->type == NBT_DOWNLOAD)
-    {
-        this->originalBandwidth = sourceData->getNetworkDownloadBandwidthLimit();
-    }
-    else
-    {
-        this->originalBandwidth = sourceData->getNetworkUploadBandwidthLimit();
-    }
 }
 
 LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth::~LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth()
@@ -72,7 +66,34 @@ bool LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth::refresh(bool force)
             {
                 this->sourceData->setNetworkUploadBandwidthLimit(this->byteScales[this->currentByteScale]);
             }
-            // TODO: rewrite all FIFO into sprite & dump
+
+            bool isLast = false;
+            size_t index = this->dynamicScaleValuesFIFO->getHead();
+            for (size_t i = 0; i < this->dynamicScaleValuesFIFO->getCount(); ++i)
+            {
+                uint8_t mapped100 = 0;
+                if (this->type == NBT_DOWNLOAD)
+                {
+                    mapped100 = this->mapUint64ValueFrom0To100(this->dynamicScaleValuesFIFO->getValueAt(index), 0, this->sourceData->getNetworkDownloadBandwidthLimit());
+                }
+                else
+                {
+                    mapped100 = this->mapUint64ValueFrom0To100(this->dynamicScaleValuesFIFO->getValueAt(index), 0, this->sourceData->getNetworkUploadBandwidthLimit());
+                }
+                uint16_t currentGradientColor = (mapped100 != this->previousMappedValue) ? this->getGradientColorFrom0To100(mapped100) : this->previousGradientcolor;
+                this->previousMappedValue = mapped100;
+                this->previousGradientcolor = currentGradientColor;
+                if (this->dynamicScaleValuesFIFO->getValueAt(index) != this->value || force)
+                {
+                    char strValue[24] = {'\0'};
+                    Format::bytesToHumanStr(this->value, strValue, sizeof(strValue), true);
+                    strcat(strValue, "  ");
+                    this->refreshStrValue(strValue, currentGradientColor, LGFX_SCR_DRE_FONT_BG_COLOR);
+                    this->value = this->dynamicScaleValuesFIFO->getValueAt(index);
+                }
+                this->refreshSprite(mapped100, currentGradientColor, isLast);
+                index = (index + 1) % this->dynamicScaleValuesFIFO->getSize();
+            }
         }
         else
         {
