@@ -29,32 +29,45 @@ Uint64TFIFO::~Uint64TFIFO()
 
 void Uint64TFIFO::shiftLeft(void)
 {
-    for (size_t i = 0; i < this->size - 1; i++)
-    {
-        this->values[i] = this->values[(this->head + i + 1) % this->size];
-    }
     this->head = (this->head + 1) % this->size;
 }
 
-bool Uint64TFIFO::push(uint64_t value)
+size_t Uint64TFIFO::getSize(void)
 {
-    if (this->values != nullptr)
+    return (this->size);
+}
+
+size_t Uint64TFIFO::getCount(void)
+{
+    return (this->count);
+}
+
+size_t Uint64TFIFO::getHead(void)
+{
+    return (this->head);
+}
+
+uint64_t Uint64TFIFO::getValueAt(size_t index)
+{
+    if (index >= this->count)
     {
-        if (this->count < this->size)
-        {
-            this->values[(this->head + this->count) % this->size] = value;
-            this->count++;
-        }
-        else
-        {
-            this->shiftLeft();
-            this->values[(this->head + this->size - 1) % this->size] = value;
-        }
-        return (true);
+        return (0);
     }
     else
     {
-        return (false);
+        return (values[(this->head + index) % this->size]);
+    }
+}
+
+uint64_t Uint64TFIFO::getLastValue(void)
+{
+    if (this->values != nullptr && this->count > 0)
+    {
+        return this->values[(this->head + this->count - 1) % this->size];
+    }
+    else
+    {
+        return (0);
     }
 }
 
@@ -77,5 +90,27 @@ uint64_t Uint64TFIFO::getMaxValue(void)
     else
     {
         return (0);
+    }
+}
+
+bool Uint64TFIFO::push(uint64_t value)
+{
+    if (this->values != nullptr)
+    {
+        if (this->count < this->size)
+        {
+            this->values[(this->head + this->count) % this->size] = value;
+            this->count++;
+        }
+        else
+        {
+            this->shiftLeft();
+            this->values[(this->head + this->size - 1) % this->size] = value;
+        }
+        return (true);
+    }
+    else
+    {
+        return (false);
     }
 }
