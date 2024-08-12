@@ -7,6 +7,7 @@
 class LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth : public LGFXScreenDashboardResumeEntityNetUsedBandWidth
 {
 private:
+    char oldStrValue[24] = {'\0'};
     const uint64_t byteScales[25] = {
         1024,        // 1 Kbyte
         2048,        // 2 Kbytes
