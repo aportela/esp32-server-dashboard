@@ -61,7 +61,7 @@ bool LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth::refresh(bool force)
         {
             // check for required shrink change
             uint64_t maxStoredValue = this->dynamicScaleValuesFIFO->getMaxValue();
-            while (this->currentByteScale > 0 && this->byteScales[this->currentByteScale - 1] > currentValue)
+            while (this->currentByteScale > 0 && this->byteScales[this->currentByteScale - 1] > maxStoredValue)
             {
                 this->currentByteScale--;
                 changeScaleRequired = true;
@@ -69,6 +69,17 @@ bool LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth::refresh(bool force)
         }
         if (changeScaleRequired)
         {
+            if (this->type == NBT_DOWNLOAD)
+            {
+                this->sourceData->setNetworkDownloadBandwidthLimit(this->byteScales[this->currentByteScale]);
+            }
+            else
+            {
+                this->sourceData->setNetworkUploadBandwidthLimit(this->byteScales[this->currentByteScale]);
+            }
+            char currentStrScale[sizeof(this->oldStrValue)] = {'\0'};
+            Format::bytesToHumanStr(this->byteScales[this->currentByteScale], currentStrScale, sizeof(currentStrScale), true);
+            Serial.printf("Scale %s changed to %u %s\n", this->type == NBT_DOWNLOAD ? "RX" : "TX", this->currentByteScale, currentStrScale);
             this->clearSprite();
             size_t index = this->dynamicScaleValuesFIFO->getHead();
             for (size_t i = 0; i < this->dynamicScaleValuesFIFO->getCount(); ++i)
@@ -76,17 +87,17 @@ bool LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth::refresh(bool force)
                 uint8_t mapped100 = 0;
                 if (this->type == NBT_DOWNLOAD)
                 {
-                    mapped100 = this->mapUint64ValueFrom0To100(this->dynamicScaleValuesFIFO->getValueAt(index), 0, this->sourceData->getNetworkDownloadBandwidthLimit());
+                    mapped100 = this->mapUint64ValueFrom0To100(this->dynamicScaleValuesFIFO->getValueAt(index), 0, this->byteScales[this->currentByteScale]);
                 }
                 else
                 {
-                    mapped100 = this->mapUint64ValueFrom0To100(this->dynamicScaleValuesFIFO->getValueAt(index), 0, this->sourceData->getNetworkUploadBandwidthLimit());
+                    mapped100 = this->mapUint64ValueFrom0To100(this->dynamicScaleValuesFIFO->getValueAt(index), 0, this->byteScales[this->currentByteScale]);
                 }
                 uint16_t currentGradientColor = (true || mapped100 != this->previousMappedValue) ? this->getGradientColorFrom0To100(mapped100) : this->previousGradientcolor;
                 this->previousMappedValue = mapped100;
                 this->previousGradientcolor = currentGradientColor;
                 // TODO: only on last index
-                if (this->dynamicScaleValuesFIFO->getValueAt(index) != this->value || force)
+                if (i == this->dynamicScaleValuesFIFO->getCount() - 1 && (this->dynamicScaleValuesFIFO->getValueAt(index) != this->value) || force)
                 {
                     char strValue[sizeof(this->oldStrValue)] = {'\0'};
                     Format::bytesToHumanStr(this->value, strValue, sizeof(strValue), true);
