@@ -60,6 +60,16 @@ void LGFXScreenDashboardResumeEntity::printTitle(const char *title)
     this->parentDisplay->print(title);
 }
 
+void LGFXScreenDashboardResumeEntity::clearSprite(void)
+{
+    this->graphSprite->fillSprite(GRAPH_BG_COLOR);
+}
+
+void LGFXScreenDashboardResumeEntity::dumpSprite(void)
+{
+    this->graphSprite->pushSprite(this->xOffset + 2, this->yOffset + 2);
+}
+
 void LGFXScreenDashboardResumeEntity::refreshSprite(uint8_t mapped100Value, int32_t color, bool dump)
 {
     uint8_t mappedGraphValue = map(mapped100Value, 0, 100, 0, this->height);
