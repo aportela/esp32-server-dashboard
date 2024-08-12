@@ -70,7 +70,6 @@ bool LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth::refresh(bool force)
         if (changeScaleRequired)
         {
             this->clearSprite();
-            bool isLast = false;
             size_t index = this->dynamicScaleValuesFIFO->getHead();
             for (size_t i = 0; i < this->dynamicScaleValuesFIFO->getCount(); ++i)
             {
