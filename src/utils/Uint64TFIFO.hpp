@@ -21,7 +21,7 @@ public:
     size_t getCount(void);
     size_t getHead(void);
     uint64_t getValueAt(size_t index);
-    uint64_t getLastvalue(void);
+    uint64_t getLastValue(void);
     uint64_t getMaxValue(void);
     bool push(uint64_t value);
 };
