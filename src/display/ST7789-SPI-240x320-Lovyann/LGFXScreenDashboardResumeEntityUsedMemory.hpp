@@ -8,6 +8,7 @@ class LGFXScreenDashboardResumeEntityUsedMemory : public LGFXScreenDashboardResu
 private:
     uint64_t timestamp = 0;
     uint64_t value = 0;
+    uint64_t realTotalMemory = 0;
     char oldStrValue[24] = {'\0'};
 
 public:

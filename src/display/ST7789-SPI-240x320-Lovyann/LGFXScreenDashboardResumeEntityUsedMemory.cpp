@@ -5,6 +5,7 @@ LGFXScreenDashboardResumeEntityUsedMemory::LGFXScreenDashboardResumeEntityUsedMe
 {
     if (this->parentDisplay != nullptr)
     {
+        this->printLimits("0B", "???"); // real total memory will be changed on first refresh
         this->refreshStrValue("0000 Bytes", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
     }
 }
@@ -20,6 +21,14 @@ bool LGFXScreenDashboardResumeEntityUsedMemory::refresh(bool force)
     {
         uint64_t currentValue = this->sourceData->getUsedMemory();
         this->timestamp = currentTimestamp;
+        if (this->realTotalMemory != this->sourceData->getTotalMemory())
+        {
+            this->realTotalMemory = this->sourceData->getTotalMemory();
+            // redraw limits
+            char maxStr[6] = {'\0'};
+            Format::bytesToHumanStr(this->realTotalMemory, maxStr, sizeof(maxStr), false, true, false);
+            this->printLimits("0B", maxStr);
+        }
         uint8_t mapped100 = this->mapUint64ValueFrom0To100(currentValue, 0, this->sourceData->getTotalMemory());
         uint16_t currentGradientColor = (mapped100 != this->previousMappedValue) ? this->getGradientColorFrom0To100(mapped100) : this->previousGradientcolor;
         this->previousMappedValue = mapped100;
@@ -27,7 +36,7 @@ bool LGFXScreenDashboardResumeEntityUsedMemory::refresh(bool force)
         if (currentValue != this->value || force)
         {
             char strValue[sizeof(this->oldStrValue)] = {'\0'};
-            Format::bytesToHumanStr(currentValue, strValue, sizeof(strValue), false);
+            Format::bytesToHumanStr(currentValue, strValue, sizeof(strValue), true, false, false);
             strcat(strValue, "  ");
             if (strcmp(strValue, this->oldStrValue) != 0 || force)
             {
