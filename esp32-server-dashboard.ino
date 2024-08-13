@@ -477,7 +477,7 @@ void loop()
 {
     SerialManager::loop();
     WifiManager::loop();
-    // dummySRC->refresh(0);
+    // dummySRC->refresh(1000);
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     screen->refresh();
     button->update();
