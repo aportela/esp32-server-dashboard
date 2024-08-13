@@ -4,6 +4,12 @@
 #include <inttypes.h>
 
 #define BYTE_UNIT_DIVISOR 1024
+#define BYTE_UNITS_SIZE 7 // next const arrays size
+
+const char *const ShortByteUnits[] = {"B", "KB", "MB", "GB", "TB", "PB", "EB"};
+const char *const LongByteUnits[] = {"Bytes", "KBytes", "MBytes", "GBytes", "TBytes", "PBytes", "EBytes"};
+const char *const ShortBandwidthByteUnits[] = {"B/s", "KB/s", "MB/s", "GB/s", "TB/s", "PB/s", "EB/s"};
+const char *const LongBandwidthByteUnits[] = {"Bytes/seg", "KBytes/seg", "MBytes/seg", "GBytes/seg", "TBytes/seg", "PBytes/seg", "EBytes/seg"};
 
 void Format::parseFloatIntoCharArray(float value, uint8_t decimalCount, uint8_t leftZeroPaddingCount, char *buffer, size_t buffer_size)
 {
@@ -14,25 +20,64 @@ void Format::parseFloatIntoCharArray(float value, uint8_t decimalCount, uint8_t 
     std::snprintf(buffer, buffer_size, format, strDecimalValue);           // set left zero padding
 }
 
-void Format::bytesToHumanStr(uint64_t bytes, char *buffer, size_t buffer_size, bool useBandWithUnits)
+void Format::bytesToHumanStr(uint64_t bytes, char *buffer, size_t buffer_size, bool zeroPadding, bool shortUnits, bool bandwidthUnits)
 {
     if (bytes > 0)
     {
-        static const char *units[] = {"Bytes", "KBytes", "MBytes", "GBytes", "TBytes", "PBytes", "EBytes"};
-        static const char *bandWithUnits[] = {"Bytes/seg", "KBytes/seg", "MBytes/seg", "GBytes/seg", "TBytes/seg", "PBytes/seg", "EBytes/seg"};
-        static const uint8_t numUnits = sizeof(units) / sizeof(units[0]) - 1;
         uint8_t currentUnitIndex = 0;
         uint64_t tmpBytes = bytes - (bytes > BYTE_UNIT_DIVISOR ? bytes % BYTE_UNIT_DIVISOR : 0);
-        while (tmpBytes >= BYTE_UNIT_DIVISOR && currentUnitIndex < numUnits)
+        while (tmpBytes >= BYTE_UNIT_DIVISOR && currentUnitIndex < BYTE_UNITS_SIZE)
         {
             tmpBytes /= BYTE_UNIT_DIVISOR;
             currentUnitIndex++;
         }
-        std::snprintf(buffer, buffer_size, "%04" PRIu64 " %s", tmpBytes, useBandWithUnits ? bandWithUnits[currentUnitIndex] : units[currentUnitIndex]);
+        if (shortUnits)
+        {
+            if (bandwidthUnits)
+            {
+                std::snprintf(buffer, buffer_size, zeroPadding ? "%04" PRIu64 "%s" : "%" PRIu64 "%s", tmpBytes, ShortBandwidthByteUnits[currentUnitIndex]);
+            }
+            else
+            {
+                std::snprintf(buffer, buffer_size, zeroPadding ? "%04" PRIu64 "%s" : "%" PRIu64 "%s", tmpBytes, ShortByteUnits[currentUnitIndex]);
+            }
+        }
+        else
+        {
+            if (bandwidthUnits)
+            {
+                std::snprintf(buffer, buffer_size, zeroPadding ? "%04" PRIu64 " %s" : "%" PRIu64 " %s", tmpBytes, LongBandwidthByteUnits[currentUnitIndex]);
+            }
+            else
+            {
+                std::snprintf(buffer, buffer_size, zeroPadding ? "%04" PRIu64 " %s" : "%" PRIu64 " %s", tmpBytes, LongByteUnits[currentUnitIndex]);
+            }
+        }
     }
     else
     {
-        std::snprintf(buffer, buffer_size, useBandWithUnits ? "0000 Bytes/seg" : "0000 Bytes");
+        if (shortUnits)
+        {
+            if (bandwidthUnits)
+            {
+                std::snprintf(buffer, buffer_size, zeroPadding ? "%04" PRIu64 "%s" : "%" PRIu64 "%s", 0, ShortBandwidthByteUnits[0]);
+            }
+            else
+            {
+                std::snprintf(buffer, buffer_size, zeroPadding ? "%04" PRIu64 "%s" : "%" PRIu64 "%s", 0, ShortByteUnits[0]);
+            }
+        }
+        else
+        {
+            if (bandwidthUnits)
+            {
+                std::snprintf(buffer, buffer_size, zeroPadding ? "%04" PRIu64 " %s" : "%" PRIu64 " %s", 0, LongBandwidthByteUnits[0]);
+            }
+            else
+            {
+                std::snprintf(buffer, buffer_size, zeroPadding ? "%04" PRIu64 " %s" : "%" PRIu64 " %s", 0, LongByteUnits[0]);
+            }
+        }
     }
 }
 
