@@ -11,7 +11,7 @@ LGFXScreenDashboardResumeEntityCPULoad::LGFXScreenDashboardResumeEntityCPULoad(L
         snprintf(maxStr, sizeof(maxStr), "%03u%%", sourceData->getMaxCPULoad());
         this->printLimits(minStr, maxStr);
         // this is used for init default value and printing the char "%" (on refresh only print value without char "%" to speed up things)
-        this->refreshStrValue("000.00 %", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
+        this->refreshStrValue("000.00%", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
     }
 }
 

@@ -5,7 +5,7 @@
 #include "../../utils/FPS.hpp"
 #include "../../utils/Format.hpp"
 
-#define METER_GRAPH_WIDTH 170
+#define METER_GRAPH_WIDTH 185
 #define METER_GRAPH_HEIGHT 34
 #define METER_GRAPH_BG_COLOR TFT_BLACK
 

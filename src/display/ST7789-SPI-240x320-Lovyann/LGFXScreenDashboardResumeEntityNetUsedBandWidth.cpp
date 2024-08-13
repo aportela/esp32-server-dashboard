@@ -1,7 +1,7 @@
 #include "LGFXScreenDashboardResumeEntityNetUsedBandWidth.hpp"
 #include "../../utils/Format.hpp"
 
-LGFXScreenDashboardResumeEntityNetUsedBandWidth::LGFXScreenDashboardResumeEntityNetUsedBandWidth(NetBandwidthType type, LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset) : LGFXScreenDashboardResumeEntity(display, sourceData, width, height, xOffset, yOffset, type == NBT_DOWNLOAD ? "NET DOWNLOAD" : "NET UPLOAD"), type(type)
+LGFXScreenDashboardResumeEntityNetUsedBandWidth::LGFXScreenDashboardResumeEntityNetUsedBandWidth(NetBandwidthType type, LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset) : LGFXScreenDashboardResumeEntity(display, sourceData, width, height, xOffset, yOffset, type == NBT_DOWNLOAD ? "NET DOWN" : "NET UPLD"), type(type)
 {
     if (this->parentDisplay != nullptr)
     {
@@ -15,7 +15,7 @@ LGFXScreenDashboardResumeEntityNetUsedBandWidth::LGFXScreenDashboardResumeEntity
             Format::bytesToHumanStr(sourceData->getNetworkUploadBandwidthLimit(), maxStr, sizeof(maxStr), false, true, false);
         }
         this->printLimits("0B", maxStr);
-        this->refreshStrValue("0000 Bytes/seg", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
+        this->refreshStrValue("0000 B/s", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
     }
 }
 
@@ -65,7 +65,7 @@ bool LGFXScreenDashboardResumeEntityNetUsedBandWidth::refresh(bool force)
         if (currentValue != this->value || force)
         {
             char strValue[24] = {'\0'};
-            Format::bytesToHumanStr(currentValue, strValue, sizeof(strValue), true, false, true);
+            Format::bytesToHumanStr(currentValue, strValue, sizeof(strValue), true, true, true);
             strcat(strValue, "  ");
             this->refreshStrValue(strValue, currentGradientColor, LGFX_SCR_DRE_FONT_BG_COLOR);
             this->value = currentValue;

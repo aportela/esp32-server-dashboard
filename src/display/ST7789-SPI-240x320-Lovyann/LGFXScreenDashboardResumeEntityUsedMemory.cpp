@@ -1,12 +1,12 @@
 #include "LGFXScreenDashboardResumeEntityUsedMemory.hpp"
 #include "../../utils/Format.hpp"
 
-LGFXScreenDashboardResumeEntityUsedMemory::LGFXScreenDashboardResumeEntityUsedMemory(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset) : LGFXScreenDashboardResumeEntity(display, sourceData, width, height, xOffset, yOffset, "USED MEMORY")
+LGFXScreenDashboardResumeEntityUsedMemory::LGFXScreenDashboardResumeEntityUsedMemory(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset) : LGFXScreenDashboardResumeEntity(display, sourceData, width, height, xOffset, yOffset, "USED MEM")
 {
     if (this->parentDisplay != nullptr)
     {
         this->printLimits("0B", "???"); // real total memory will be changed on first refresh
-        this->refreshStrValue("0000 Bytes", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
+        this->refreshStrValue("0000B", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
     }
 }
 
@@ -36,7 +36,7 @@ bool LGFXScreenDashboardResumeEntityUsedMemory::refresh(bool force)
         if (currentValue != this->value || force)
         {
             char strValue[sizeof(this->oldStrValue)] = {'\0'};
-            Format::bytesToHumanStr(currentValue, strValue, sizeof(strValue), true, false, false);
+            Format::bytesToHumanStr(currentValue, strValue, sizeof(strValue), true, true, false);
             strcat(strValue, "  ");
             if (strcmp(strValue, this->oldStrValue) != 0 || force)
             {

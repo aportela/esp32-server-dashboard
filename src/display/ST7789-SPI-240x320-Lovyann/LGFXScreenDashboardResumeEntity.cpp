@@ -56,7 +56,7 @@ void LGFXScreenDashboardResumeEntity::printTitle(const char *title)
     this->parentDisplay->setFont(LGFX_SCR_DRE_FONT);
     this->parentDisplay->setTextSize(LGFX_SCR_DRE_FONT_SIZE);
     this->parentDisplay->setTextColor(LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
-    this->parentDisplay->setCursor(this->xOffset + this->width + 44, this->yOffset - 1);
+    this->parentDisplay->setCursor(this->xOffset + this->width + 56, this->yOffset - 1);
     this->parentDisplay->print(title);
 }
 
@@ -100,7 +100,7 @@ void LGFXScreenDashboardResumeEntity::refreshStrValue(const char *strValue, int3
     this->parentDisplay->setFont(LGFX_SCR_DRE_FONT);
     this->parentDisplay->setTextSize(LGFX_SCR_DRE_FONT_SIZE);
     this->parentDisplay->setTextColor(color, background);
-    this->parentDisplay->setCursor(this->xOffset + this->width + 44, this->yOffset + this->height - 12);
+    this->parentDisplay->setCursor(this->xOffset + this->width + 56, this->yOffset + this->height - 12);
     this->parentDisplay->print(strValue);
 }
 

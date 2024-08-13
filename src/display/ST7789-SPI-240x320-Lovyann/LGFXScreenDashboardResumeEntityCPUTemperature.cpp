@@ -11,7 +11,7 @@ LGFXScreenDashboardResumeEntityCPUTemperature::LGFXScreenDashboardResumeEntityCP
         snprintf(maxStr, sizeof(maxStr), "%03dC", (int8_t)sourceData->getMaxCPUTemperature());
         this->printLimits(minStr, maxStr);
         // this is used for init default value and printing the char "C" (on refresh only print value without char "%" to speed up things)
-        this->refreshStrValue("000.00 C", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
+        this->refreshStrValue("000.00C", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
     }
 }
 
