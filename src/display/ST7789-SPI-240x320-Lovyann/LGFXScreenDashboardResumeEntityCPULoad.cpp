@@ -6,7 +6,7 @@ LGFXScreenDashboardResumeEntityCPULoad::LGFXScreenDashboardResumeEntityCPULoad(L
     if (this->parentDisplay != nullptr)
     {
         char minStr[5] = {'\0'};
-        snprintf(minStr, sizeof(minStr), "%03u%%", sourceData->getMinCPULoad());
+        snprintf(minStr, sizeof(minStr), "%u%%", sourceData->getMinCPULoad());
         char maxStr[5] = {'\0'};
         snprintf(maxStr, sizeof(maxStr), "%03u%%", sourceData->getMaxCPULoad());
         this->printLimits(minStr, maxStr);

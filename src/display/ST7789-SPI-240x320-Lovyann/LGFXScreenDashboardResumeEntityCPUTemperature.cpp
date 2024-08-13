@@ -6,7 +6,7 @@ LGFXScreenDashboardResumeEntityCPUTemperature::LGFXScreenDashboardResumeEntityCP
     if (this->parentDisplay != nullptr)
     {
         char minStr[5] = {'\0'};
-        snprintf(minStr, sizeof(minStr), "%03dC", (int8_t)sourceData->getMinCPUTemperature());
+        snprintf(minStr, sizeof(minStr), "%dC", (int8_t)sourceData->getMinCPUTemperature());
         char maxStr[5] = {'\0'};
         snprintf(maxStr, sizeof(maxStr), "%03dC", (int8_t)sourceData->getMaxCPUTemperature());
         this->printLimits(minStr, maxStr);
