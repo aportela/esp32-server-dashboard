@@ -55,7 +55,7 @@ bool LGFXScreenDashboardResumeEntityNetUsedBandWidth::refresh(bool force)
         if (currentValue != this->value || force)
         {
             char strValue[24] = {'\0'};
-            Format::bytesToHumanStr(this->value, strValue, sizeof(strValue), true);
+            Format::bytesToHumanStr(this->value, strValue, sizeof(strValue), true, false, true);
             strcat(strValue, "  ");
             this->refreshStrValue(strValue, currentGradientColor, LGFX_SCR_DRE_FONT_BG_COLOR);
             this->value = currentValue;

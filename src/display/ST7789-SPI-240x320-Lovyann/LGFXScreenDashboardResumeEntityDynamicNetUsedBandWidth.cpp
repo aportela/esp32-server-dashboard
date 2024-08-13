@@ -5,6 +5,7 @@ LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth::LGFXScreenDashboardResum
 {
     if (this->parentDisplay != nullptr)
     {
+        this->printLimits("0B", "???");
         this->refreshStrValue("0000 Bytes/seg", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
     }
     this->sourceData->setNetworkDownloadBandwidthLimit(this->byteScales[this->currentByteScale]);
@@ -78,8 +79,8 @@ bool LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth::refresh(bool force)
                 this->sourceData->setNetworkUploadBandwidthLimit(this->byteScales[this->currentByteScale]);
             }
             char currentStrScale[sizeof(this->oldStrValue)] = {'\0'};
-            Format::bytesToHumanStr(this->byteScales[this->currentByteScale], currentStrScale, sizeof(currentStrScale), true);
-            Serial.printf("Scale %s changed to %u %s\n", this->type == NBT_DOWNLOAD ? "RX" : "TX", this->currentByteScale, currentStrScale);
+            Format::bytesToHumanStr(this->byteScales[this->currentByteScale], currentStrScale, sizeof(currentStrScale), true, true, false);
+            this->printLimits("0B", currentStrScale);
             this->clearSprite();
             size_t index = this->dynamicScaleValuesFIFO->getHead();
             for (size_t i = 0; i < this->dynamicScaleValuesFIFO->getCount(); ++i)
@@ -100,7 +101,7 @@ bool LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth::refresh(bool force)
                 if (i == this->dynamicScaleValuesFIFO->getCount() - 1 && (this->dynamicScaleValuesFIFO->getValueAt(index) != this->value) || force)
                 {
                     char strValue[sizeof(this->oldStrValue)] = {'\0'};
-                    Format::bytesToHumanStr(this->value, strValue, sizeof(strValue), true);
+                    Format::bytesToHumanStr(this->value, strValue, sizeof(strValue), true, false, true);
                     strcat(strValue, "  ");
                     this->refreshStrValue(strValue, currentGradientColor, LGFX_SCR_DRE_FONT_BG_COLOR);
                     this->value = this->dynamicScaleValuesFIFO->getValueAt(index);
@@ -128,7 +129,7 @@ bool LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth::refresh(bool force)
             if (currentValue != this->value || force)
             {
                 char strValue[sizeof(this->oldStrValue)] = {'\0'};
-                Format::bytesToHumanStr(currentValue, strValue, sizeof(strValue), true);
+                Format::bytesToHumanStr(currentValue, strValue, sizeof(strValue), true, false, true);
                 strcat(strValue, "  ");
                 if (strcmp(strValue, this->oldStrValue) != 0 || force)
                 {
