@@ -15,8 +15,10 @@ private:
     LGFXScreenDashboardResumeEntityCPULoad *cpuLoadBlock = nullptr;
     LGFXScreenDashboardResumeEntityUsedMemory *usedMemoryBlock = nullptr;
     LGFXScreenDashboardResumeEntityCPUTemperature *cpuTemperatureBlock = nullptr;
-    LGFXScreenDashboardResumeEntityNetUsedBandWidth *networkDownloadBandwidthBlock = nullptr;
-    LGFXScreenDashboardResumeEntityNetUsedBandWidth *networkUploadBandwidthBlock = nullptr;
+    // LGFXScreenDashboardResumeEntityNetUsedBandWidth *networkDownloadBandwidthBlock = nullptr;
+    // LGFXScreenDashboardResumeEntityNetUsedBandWidth *networkUploadBandwidthBlock = nullptr;
+    LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth *networkDownloadBandwidthBlock = nullptr;
+    LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth *networkUploadBandwidthBlock = nullptr;
 
     uint64_t lastCPUTimestamp = 0;
     uint64_t lastMemoryTimestamp = 0;

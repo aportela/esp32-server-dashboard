@@ -5,8 +5,8 @@
 #include "../../utils/FPS.hpp"
 #include "../../utils/Format.hpp"
 
-#define METER_GRAPH_WIDTH 195
-#define METER_GRAPH_HEIGHT 30
+#define METER_GRAPH_WIDTH 170
+#define METER_GRAPH_HEIGHT 34
 #define METER_GRAPH_BG_COLOR TFT_BLACK
 
 #define SCREEN_BOTTOM_COMMON_TEXTDATA_FONT &fonts::Font2
@@ -26,11 +26,13 @@ LGFXScreenDashboardResume::LGFXScreenDashboardResume(LovyanGFX *display, SourceD
         if (display != nullptr)
         {
             FPS::init();
-            this->cpuLoadBlock = new LGFXScreenDashboardResumeEntityCPULoad(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 0);
-            this->usedMemoryBlock = new LGFXScreenDashboardResumeEntityUsedMemory(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 42);
-            this->cpuTemperatureBlock = new LGFXScreenDashboardResumeEntityCPUTemperature(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 84);
-            this->networkDownloadBandwidthBlock = new LGFXScreenDashboardResumeEntityNetUsedBandWidth(NBT_DOWNLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 126);
-            this->networkUploadBandwidthBlock = new LGFXScreenDashboardResumeEntityNetUsedBandWidth(NBT_UPLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 168);
+            this->cpuLoadBlock = new LGFXScreenDashboardResumeEntityCPULoad(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 0);
+            this->usedMemoryBlock = new LGFXScreenDashboardResumeEntityUsedMemory(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 1);
+            this->cpuTemperatureBlock = new LGFXScreenDashboardResumeEntityCPUTemperature(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 2);
+            // this->networkDownloadBandwidthBlock = new LGFXScreenDashboardResumeEntityNetUsedBandWidth(NBT_DOWNLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 126);
+            // this->networkUploadBandwidthBlock = new LGFXScreenDashboardResumeEntityNetUsedBandWidth(NBT_UPLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, 168);
+            this->networkDownloadBandwidthBlock = new LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth(NBT_DOWNLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 3);
+            this->networkUploadBandwidthBlock = new LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth(NBT_UPLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 4);
             this->refresh(true);
         }
     }
