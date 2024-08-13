@@ -5,6 +5,16 @@ LGFXScreenDashboardResumeEntityNetUsedBandWidth::LGFXScreenDashboardResumeEntity
 {
     if (this->parentDisplay != nullptr)
     {
+        char maxStr[7] = {'\0'};
+        if (this->type == NBT_DOWNLOAD)
+        {
+            Format::bytesToHumanStr(sourceData->getNetworkDownloadBandwidthLimit(), maxStr, sizeof(maxStr), true, true, false);
+        }
+        else
+        {
+            Format::bytesToHumanStr(sourceData->getNetworkUploadBandwidthLimit(), maxStr, sizeof(maxStr), true, true, false);
+        }
+        this->printLimits("0B", maxStr);
         this->refreshStrValue("0000 Bytes/seg", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
     }
 }
