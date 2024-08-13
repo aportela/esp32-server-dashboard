@@ -56,8 +56,19 @@ void LGFXScreenDashboardResumeEntity::printTitle(const char *title)
     this->parentDisplay->setFont(LGFX_SCR_DRE_FONT);
     this->parentDisplay->setTextSize(LGFX_SCR_DRE_FONT_SIZE);
     this->parentDisplay->setTextColor(LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
-    this->parentDisplay->setCursor(this->xOffset + this->width + 12, this->yOffset);
+    this->parentDisplay->setCursor(this->xOffset + this->width + 44, this->yOffset + 6);
     this->parentDisplay->print(title);
+}
+
+void LGFXScreenDashboardResumeEntity::printLimits(const char *low, const char *high)
+{
+    this->parentDisplay->setFont(LGFX_SCR_DRE_SMALL_FONT);
+    this->parentDisplay->setTextSize(LGFX_SCR_DRE_SMALL_FONT_SIZE);
+    this->parentDisplay->setTextColor(LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
+    this->parentDisplay->setCursor(this->xOffset + this->width + 6, this->yOffset + 2);
+    this->parentDisplay->print(high);
+    this->parentDisplay->setCursor(this->xOffset + this->width + 6, this->yOffset + this->height - 2);
+    this->parentDisplay->print(low);
 }
 
 void LGFXScreenDashboardResumeEntity::clearSprite(void)
@@ -89,7 +100,7 @@ void LGFXScreenDashboardResumeEntity::refreshStrValue(const char *strValue, int3
     this->parentDisplay->setFont(LGFX_SCR_DRE_FONT);
     this->parentDisplay->setTextSize(LGFX_SCR_DRE_FONT_SIZE);
     this->parentDisplay->setTextColor(color, background);
-    this->parentDisplay->setCursor(this->xOffset + 195 + 12, this->yOffset + 19);
+    this->parentDisplay->setCursor(this->xOffset + this->width + 44, this->yOffset + this->height - 14);
     this->parentDisplay->print(strValue);
 }
 

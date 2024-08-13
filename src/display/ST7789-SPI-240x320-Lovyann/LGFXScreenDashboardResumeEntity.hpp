@@ -4,6 +4,9 @@
 #include <LovyanGFX.hpp>
 #include "../../sources/SourceData.hpp"
 
+#define LGFX_SCR_DRE_SMALL_FONT &fonts::Font0
+#define LGFX_SCR_DRE_SMALL_FONT_SIZE 1
+
 #define LGFX_SCR_DRE_FONT &fonts::Font2
 #define LGFX_SCR_DRE_FONT_SIZE 1
 #define LGFX_SCR_DRE_FONT_COLOR TFT_WHITE
@@ -28,6 +31,7 @@ protected:
     uint16_t xOffset = 0;
     uint16_t yOffset = 0;
 
+    void printLimits(const char *low, const char *high);
     void clearSprite(void);
     void dumpSprite(void);
     void refreshSprite(uint8_t mapped100Value, int32_t color, bool dump = true);
