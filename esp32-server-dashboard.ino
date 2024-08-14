@@ -501,4 +501,5 @@ void loop()
         screen->toggleScreen();
     }
 #endif // DISPLAY_DRIVER_LOVYANN_ST7789
+    yield();
 }
