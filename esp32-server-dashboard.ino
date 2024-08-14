@@ -61,6 +61,31 @@ DummySource *dummySRC = nullptr;
 MQTTTelegrafSource *mqttTelegrafSRC = nullptr;
 SourceData *sourceData = nullptr;
 
+void onWifiConnectionChanged(bool connected)
+{
+    if (connected)
+    {
+        char mqttTelegrafURI[64] = {'\0'};
+        Settings::getMQTTTelegrafURI(mqttTelegrafURI, sizeof(mqttTelegrafURI));
+        char mqttTelegrafGlobalTopic[512] = {'\0'};
+        Settings::getMQTTTelegrafGlobalTopic(mqttTelegrafGlobalTopic, sizeof(mqttTelegrafGlobalTopic));
+        if (strlen(mqttTelegrafURI) > 0 && strlen(mqttTelegrafGlobalTopic) > 0)
+        {
+            char WiFiMacAddress[32] = {'\0'};
+            WifiManager::getMacAddress(WiFiMacAddress, sizeof(WiFiMacAddress));
+            mqttTelegrafSRC = new MQTTTelegrafSource(sourceData, mqttTelegrafURI, WiFiMacAddress, mqttTelegrafGlobalTopic);
+        }
+    }
+    else
+    {
+        if (mqttTelegrafSRC != nullptr)
+        {
+            delete mqttTelegrafSRC;
+            mqttTelegrafSRC = nullptr;
+        }
+    }
+}
+
 void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
 {
     char str[1024] = {'\0'};
@@ -438,6 +463,7 @@ void setup()
     char WiFiPassword[WIFI_PASSWORD_CHAR_ARR_LENGTH];
     Settings::getWIFIPassword(WiFiPassword, WIFI_PASSWORD_CHAR_ARR_LENGTH);
 
+    WifiManager::setConnectionCallbackHandler(onWifiConnectionChanged);
     WifiManager::setCredentials(WiFiSSID, WiFiPassword);
     WifiManager::connect(true);
 
@@ -448,17 +474,6 @@ void setup()
 
     sourceData = new SourceData(Settings::getMinCPUTemperature(), Settings::getMaxCPUTemperature(), Settings::getMaxDownloadBandwidthBytes(), Settings::getMaxUploadBandwidthBytes(), networkInterfaceId, networkInterfaceName);
     // dummySRC = new DummySource(sourceData);
-    char mqttTelegrafURI[64] = {'\0'};
-    Settings::getMQTTTelegrafURI(mqttTelegrafURI, sizeof(mqttTelegrafURI));
-    char mqttTelegrafGlobalTopic[512] = {'\0'};
-    Settings::getMQTTTelegrafGlobalTopic(mqttTelegrafGlobalTopic, sizeof(mqttTelegrafGlobalTopic));
-
-    if (strlen(mqttTelegrafURI) > 0 && strlen(mqttTelegrafGlobalTopic) > 0)
-    {
-        char WiFiMacAddress[32] = {'\0'};
-        WifiManager::getMacAddress(WiFiMacAddress, sizeof(WiFiMacAddress));
-        mqttTelegrafSRC = new MQTTTelegrafSource(sourceData, mqttTelegrafURI, WiFiMacAddress, mqttTelegrafGlobalTopic);
-    }
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     screen = new LGFX(PIN_SDA, PIN_SCL, PIN_CS, PIN_DC, PIN_RST, DISPLAY_DRIVER_LOVYANN_ST7789_WIDTH, DISPLAY_DRIVER_LOVYANN_ST7789_HEIGHT, DISPLAY_DRIVER_LOVYANN_ST7789_ROTATION);
     screen->setSourceData(sourceData);
