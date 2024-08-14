@@ -15,10 +15,10 @@ private:
     LGFXScreenDashboardResumeEntityCPULoad *cpuLoadBlock = nullptr;
     LGFXScreenDashboardResumeEntityUsedMemory *usedMemoryBlock = nullptr;
     LGFXScreenDashboardResumeEntityCPUTemperature *cpuTemperatureBlock = nullptr;
-    // LGFXScreenDashboardResumeEntityNetUsedBandWidth *networkDownloadBandwidthBlock = nullptr;
-    // LGFXScreenDashboardResumeEntityNetUsedBandWidth *networkUploadBandwidthBlock = nullptr;
-    LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth *networkDownloadBandwidthBlock = nullptr;
-    LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth *networkUploadBandwidthBlock = nullptr;
+    LGFXScreenDashboardResumeEntityNetUsedBandWidth *networkDownloadBandwidthBlock = nullptr;
+    LGFXScreenDashboardResumeEntityNetUsedBandWidth *networkUploadBandwidthBlock = nullptr;
+    // LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth *networkDownloadBandwidthBlock = nullptr;
+    // LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth *networkUploadBandwidthBlock = nullptr;
 
     uint64_t lastCPUTimestamp = 0;
     uint64_t lastMemoryTimestamp = 0;
@@ -31,12 +31,12 @@ private:
     uint16_t previousFPS = 0;
     char previousUptimeStr[16] = {'\0'};
 
-    void refreshBottomCommonData(bool forceDrawAll);
+    bool refreshBottomCommonData(bool forceDrawAll);
 
 public:
     LGFXScreenDashboardResume(LovyanGFX *display, SourceData *sourceData);
     ~LGFXScreenDashboardResume();
-    void refresh(bool force = false) override;
+    bool refresh(bool force = false) override;
 };
 
 #endif

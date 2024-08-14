@@ -12,7 +12,7 @@ protected:
 public:
     LGFXScreen(LovyanGFX *display);
     ~LGFXScreen();
-    virtual void refresh(bool force = false) = 0;
+    virtual bool refresh(bool force = false) = 0;
 };
 
 #endif

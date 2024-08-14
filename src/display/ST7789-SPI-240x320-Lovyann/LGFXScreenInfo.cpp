@@ -207,8 +207,9 @@ void LGFXScreenInfo::refreshWIFIData(bool forceDrawAll)
     this->parentDisplay->printf("%s", this->WIFIIPAddress);
 }
 
-void LGFXScreenInfo::refreshCommonData(bool forceDrawAll)
+bool LGFXScreenInfo::refreshCommonData(bool forceDrawAll)
 {
+    bool changed = forceDrawAll;
     this->parentDisplay->setFont(SCREEN_COMMON_TEXTDATA_FONT);
     this->parentDisplay->setTextSize(SCREEN_COMMON_TEXTDATA_FONT_SIZE);
     this->parentDisplay->setTextColor(SCREEN_COMMON_TEXTDATA_COLOR, SCREEN_COMMON_TEXTDATA_BG_COLOR);
@@ -229,6 +230,7 @@ void LGFXScreenInfo::refreshCommonData(bool forceDrawAll)
     {
         this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_VALUE_X_OFFSET, 200);
         this->parentDisplay->printf("%04u", currentFPS);
+        changed = true;
     }
     if (forceDrawAll)
     {
@@ -242,13 +244,16 @@ void LGFXScreenInfo::refreshCommonData(bool forceDrawAll)
         this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_VALUE_X_OFFSET, 220);
         this->parentDisplay->printf("%s    ", str);
         strncpy(this->previousRuntimeStr, str, sizeof(this->previousRuntimeStr));
+        changed = true;
     }
+    return (changed);
 }
 
-void LGFXScreenInfo::refresh(bool force)
+bool LGFXScreenInfo::refresh(bool force)
 {
     if (this->parentDisplay != nullptr)
     {
+        bool changed = force;
         FPS::loop();
         this->WIFILogoChanged = false;
         this->WIFISignalStrengthChanged = false;
@@ -270,17 +275,20 @@ void LGFXScreenInfo::refresh(bool force)
                 // UGLY: I think there is a "timming" bug that not assign ssid/address on some connected networks so every time that connected status found if no
                 // data is assigned try to refresh
                 this->WIFIDataChanged = true;
+                changed = true;
             }
         }
         long currentWiFiSignalStrength = WifiManager::getSignalStrength();
         if (this->previousWiFiSignalStrength != currentWiFiSignalStrength)
         {
             this->WIFISignalStrengthChanged = true;
+            changed = true;
         }
         WIFISignalQuality currentWiFiSignalQuality = WifiManager::getSignalQuality(currentWiFiSignalStrength);
         if (this->previousWiFiSignalQuality != currentWiFiSignalQuality)
         {
             this->WIFISignalLevelBarsChanged = true;
+            changed = true;
         }
         this->wasConnected = isConnected;
         this->previousWiFiSignalStrength = currentWiFiSignalStrength;
@@ -306,6 +314,10 @@ void LGFXScreenInfo::refresh(bool force)
             this->refreshWIFIData(force);
         }
 
-        this->refreshCommonData(force);
+        return (this->refreshCommonData(force) || changed);
+    }
+    else
+    {
+        return (false);
     }
 }

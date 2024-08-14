@@ -140,13 +140,21 @@ bool LGFX::toggleScreen(void)
     return (success);
 }
 
-void LGFX::refresh(void)
+bool LGFX::refresh(void)
 {
     if (this->currentScreenType != ST_NONE)
     {
         if (this->currentScreen != nullptr)
         {
-            this->currentScreen->refresh(false);
+            return (this->currentScreen->refresh(false));
         }
+        else
+        {
+            return (false);
+        }
+    }
+    else
+    {
+        return (false);
     }
 }

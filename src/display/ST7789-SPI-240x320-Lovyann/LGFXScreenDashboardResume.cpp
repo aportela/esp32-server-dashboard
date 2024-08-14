@@ -29,10 +29,10 @@ LGFXScreenDashboardResume::LGFXScreenDashboardResume(LovyanGFX *display, SourceD
             this->cpuLoadBlock = new LGFXScreenDashboardResumeEntityCPULoad(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 0);
             this->usedMemoryBlock = new LGFXScreenDashboardResumeEntityUsedMemory(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 1);
             this->cpuTemperatureBlock = new LGFXScreenDashboardResumeEntityCPUTemperature(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 2);
-            // this->networkDownloadBandwidthBlock = new LGFXScreenDashboardResumeEntityNetUsedBandWidth(NBT_DOWNLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 3);
-            // this->networkUploadBandwidthBlock = new LGFXScreenDashboardResumeEntityNetUsedBandWidth(NBT_UPLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 4);
-            this->networkDownloadBandwidthBlock = new LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth(NBT_DOWNLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 3);
-            this->networkUploadBandwidthBlock = new LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth(NBT_UPLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 4);
+            this->networkDownloadBandwidthBlock = new LGFXScreenDashboardResumeEntityNetUsedBandWidth(NBT_DOWNLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 3);
+            this->networkUploadBandwidthBlock = new LGFXScreenDashboardResumeEntityNetUsedBandWidth(NBT_UPLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 4);
+            // this->networkDownloadBandwidthBlock = new LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth(NBT_DOWNLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 3);
+            // this->networkUploadBandwidthBlock = new LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth(NBT_UPLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 4);
             this->refresh(true);
         }
     }
@@ -71,8 +71,9 @@ LGFXScreenDashboardResume::~LGFXScreenDashboardResume()
     }
 }
 
-void LGFXScreenDashboardResume::refreshBottomCommonData(bool forceDrawAll)
+bool LGFXScreenDashboardResume::refreshBottomCommonData(bool forceDrawAll)
 {
+    bool changed = forceDrawAll;
     FPS::loop(999);
     if (forceDrawAll)
     {
@@ -91,6 +92,7 @@ void LGFXScreenDashboardResume::refreshBottomCommonData(bool forceDrawAll)
         this->parentDisplay->setCursor(SCREEN_BOTTOM_COMMON_TEXTDATA_FIELD_FPS_X_OFFSET, SCREEN_BOTTOM_COMMON_TEXTDATA_Y_OFFSET);
         this->parentDisplay->printf("%03u", currentFPS);
         this->previousFPS = currentFPS;
+        changed = true;
     }
     if (this->currentSourceData->getCurrentUptimeSeconds() > 0)
     {
@@ -104,22 +106,30 @@ void LGFXScreenDashboardResume::refreshBottomCommonData(bool forceDrawAll)
             this->parentDisplay->setCursor(SCREEN_BOTTOM_COMMON_TEXTDATA_FIELD_UPTIME_X_OFFSET, SCREEN_BOTTOM_COMMON_TEXTDATA_Y_OFFSET);
             this->parentDisplay->printf("%s    ", str);
             strncpy(this->previousUptimeStr, str, sizeof(this->previousUptimeStr));
+            changed = true;
         }
     }
+    return (changed);
 }
 
-void LGFXScreenDashboardResume::refresh(bool force)
+bool LGFXScreenDashboardResume::refresh(bool force)
 {
     if (this->parentDisplay != nullptr)
     {
+        bool refreshed = false;
         if (this->currentSourceData != nullptr)
         {
-            this->cpuLoadBlock->refresh(false);
-            this->usedMemoryBlock->refresh(false);
-            this->cpuTemperatureBlock->refresh(false);
-            this->networkDownloadBandwidthBlock->refresh(false);
-            this->networkUploadBandwidthBlock->refresh(false);
+            bool r1 = this->cpuLoadBlock->refresh(false);
+            bool r2 = this->usedMemoryBlock->refresh(false);
+            bool r3 = this->cpuTemperatureBlock->refresh(false);
+            bool r4 = this->networkDownloadBandwidthBlock->refresh(false);
+            bool r5 = this->networkUploadBandwidthBlock->refresh(false);
+            refreshed = r1 || r2 || r3 || r4 || r5;
         }
-        this->refreshBottomCommonData(force);
+        return (this->refreshBottomCommonData(force) || refreshed);
+    }
+    else
+    {
+        return (false);
     }
 }

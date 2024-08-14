@@ -29,12 +29,12 @@ private:
     void refreshWIFISignalStrength(void);
     void refreshWIFISignalLevelBars(void);
     void refreshWIFIData(bool forceDrawAll);
-    void refreshCommonData(bool forceDrawAll);
+    bool refreshCommonData(bool forceDrawAll);
 
 public:
     LGFXScreenInfo(LovyanGFX *display);
     ~LGFXScreenInfo();
-    void refresh(bool force = false) override;
+    bool refresh(bool force = false) override;
 };
 
 #endif

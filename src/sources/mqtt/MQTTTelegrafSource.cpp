@@ -3,6 +3,8 @@
 #include <inttypes.h>
 #include <Arduino.h>
 
+#define DEBUG_MQTT_TELEGRAF
+
 char MQTTTelegrafSource::cpuTopic[MAX_MQTT_TOPIC_LENGTH] = {'\0'};
 char MQTTTelegrafSource::memoryTopic[MAX_MQTT_TOPIC_LENGTH] = {'\0'};
 char MQTTTelegrafSource::temperatureTopic[MAX_MQTT_TOPIC_LENGTH] = {'\0'};
@@ -92,7 +94,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
     if (lastSpaceSubStr == NULL || lastSpaceSubStr == payload + payloadLength - 1)
     {
 #ifdef DEBUG_MQTT_TELEGRAF
-        Serial.println("Error parsing payload timestamp")
+        Serial.println("Error parsing payload timestamp");
 #endif
     }
     else
