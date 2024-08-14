@@ -7,8 +7,9 @@
 #define MIN_CPU_LOAD 0
 #define MAX_CPU_LOAD 100
 
-SourceData::SourceData(float minCPUTemperature, float maxCPUTemperature, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit, const char *networkInterfaceId, const char *networkInterfaceName)
+SourceData::SourceData(bool truncateOverflows, float minCPUTemperature, float maxCPUTemperature, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit, const char *networkInterfaceId, const char *networkInterfaceName)
 {
+    this->truncateOverflows = truncateOverflows;
     this->totalMemory = totalMemory;
     this->minCPUTemperature = minCPUTemperature;
     this->maxCPUTemperature = maxCPUTemperature;
@@ -77,6 +78,21 @@ bool SourceData::setCurrentCPULoad(float value, uint64_t timestamp)
             this->currentCPULoadTimestamp = timestamp;
             return (true);
         }
+        else if (truncateOverflows)
+        {
+            if (value < MIN_CPU_LOAD)
+            {
+                this->currentCPULoad = MIN_CPU_LOAD;
+                this->currentCPULoadTimestamp = timestamp;
+                return (true);
+            }
+            else if (value > MAX_CPU_LOAD)
+            {
+                this->currentCPULoad = MAX_CPU_LOAD;
+                this->currentCPULoadTimestamp = timestamp;
+                return (true);
+            }
+        }
         else
         {
             return (false);
@@ -126,6 +142,21 @@ bool SourceData::setUsedMemory(uint64_t bytes, uint64_t timestamp)
             this->currentUsedMemoryTimestamp = timestamp;
             return (true);
         }
+        else if (truncateOverflows)
+        {
+            if (bytes < 0)
+            {
+                this->usedMemory = 0;
+                this->currentUsedMemoryTimestamp = timestamp;
+                return (true);
+            }
+            else if (bytes > this->totalMemory)
+            {
+                this->usedMemory = this->totalMemory;
+                this->currentUsedMemoryTimestamp = timestamp;
+                return (true);
+            }
+        }
         else
         {
             return (false);
@@ -151,6 +182,21 @@ bool SourceData::setUsedAndTotalMemory(uint64_t usedBytes, uint64_t totalBytes, 
             this->usedMemory = usedBytes;
             this->currentUsedMemoryTimestamp = timestamp;
             return (true);
+        }
+        else if (truncateOverflows)
+        {
+            if (usedBytes < 0)
+            {
+                this->usedMemory = 0;
+                this->currentUsedMemoryTimestamp = timestamp;
+                return (true);
+            }
+            else if (usedBytes > this->totalMemory)
+            {
+                this->usedMemory = this->totalMemory;
+                this->currentUsedMemoryTimestamp = timestamp;
+                return (true);
+            }
         }
         else
         {
@@ -212,6 +258,21 @@ bool SourceData::setCurrentCPUTemperature(float celsious, uint64_t timestamp)
             this->currentCPUTemperature = celsious;
             this->currentCPUTemperatureTimestamp = timestamp;
             return (true);
+        }
+        else if (truncateOverflows)
+        {
+            if (celsious < this->minCPUTemperature)
+            {
+                this->currentCPUTemperature = this->minCPUTemperature;
+                this->currentCPUTemperatureTimestamp = timestamp;
+                return (true);
+            }
+            else if (celsious > this->maxCPUTemperature)
+            {
+                this->currentCPUTemperature = this->maxCPUTemperature;
+                this->currentCPUTemperatureTimestamp = timestamp;
+                return (true);
+            }
         }
         else
         {

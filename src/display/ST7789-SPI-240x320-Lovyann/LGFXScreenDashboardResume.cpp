@@ -122,8 +122,8 @@ bool LGFXScreenDashboardResume::refresh(bool force)
             bool r1 = this->cpuLoadBlock->refresh(false);
             bool r2 = this->usedMemoryBlock->refresh(false);
             bool r3 = this->cpuTemperatureBlock->refresh(false);
-            bool r4 = this->networkDownloadBandwidthBlock->refresh(false);
-            bool r5 = this->networkUploadBandwidthBlock->refresh(false);
+            bool r4 = false; // this->networkDownloadBandwidthBlock->refresh(false);
+            bool r5 = false; // this->networkUploadBandwidthBlock->refresh(false);
             refreshed = r1 || r2 || r3 || r4 || r5;
         }
         return (this->refreshBottomCommonData(force) || refreshed);

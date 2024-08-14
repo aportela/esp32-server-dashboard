@@ -11,6 +11,7 @@
 class SourceData
 {
 private:
+    bool truncateOverflows = false;
     char networkInterfaceId[MAX_NETWORK_INTERFACE_ID_LENGTH] = {'\0'};
     char networkInterfaceName[MAX_NETWORK_INTERFACE_NAME_LENGTH] = {'\0'};
     // CPU LOAD
@@ -44,7 +45,7 @@ private:
     uint64_t currentNetworkUploadSpeed = 0;
 
 public:
-    SourceData(float minCPUTemperature, float maxCPUTemperature, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit, const char *networkInterfaceId, const char *networkInterfaceName);
+    SourceData(bool truncateOverflows, float minCPUTemperature, float maxCPUTemperature, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit, const char *networkInterfaceId, const char *networkInterfaceName);
     ~SourceData();
     // NET IFACE
     void getNetworkInterfaceId(char *buffer, size_t buffer_count);
