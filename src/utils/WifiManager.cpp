@@ -1,5 +1,6 @@
 #include "WifiManager.hpp"
 
+WifiManagerConnectionCallback WifiManager::connectionCallback = nullptr;
 char WifiManager::WiFiSSID[WIFI_SSID_CHAR_ARR_LENGTH] = {'\0'};
 char WifiManager::WiFiPassword[WIFI_PASSWORD_CHAR_ARR_LENGTH] = {'\0'};
 bool WifiManager::tryingConnection = false;
@@ -10,39 +11,51 @@ char WifiManager::ipAddress[IP_ADDRESS_CHAR_ARR_LENGTH] = {'\0'};
 long WifiManager::signalStrength = -91;
 WIFISignalQuality WifiManager::signalQuality = WIFISignalQuality_NONE;
 
+void WifiManager::setConnectionCallbackHandler(WifiManagerConnectionCallback callback)
+{
+    if (callback != nullptr)
+    {
+        WifiManager::connectionCallback = callback;
+    }
+}
+
 void WifiManager::setCredentials(const char *ssid, const char *password)
 {
-    validConnection = false;
-    strncpy(WiFiSSID, ssid, sizeof(WiFiSSID));
-    strncpy(WiFiPassword, password, sizeof(WiFiPassword));
+    WifiManager::validConnection = false;
+    strncpy(WifiManager::WiFiSSID, ssid, sizeof(WifiManager::WiFiSSID));
+    strncpy(WifiManager::WiFiPassword, password, sizeof(WifiManager::WiFiPassword));
 }
 
 void WifiManager::connect(bool reconnectIfLost)
 {
-    reconnect = reconnectIfLost;
-    if (!tryingConnection)
+    WifiManager::reconnect = reconnectIfLost;
+    if (!WifiManager::tryingConnection)
     {
-        if (strlen(WiFiSSID) > 0)
+        if (strlen(WifiManager::WiFiSSID) > 0)
         {
             WiFi.mode(WIFI_STA);
-            WiFi.begin(WiFiSSID, WiFiPassword);
-            tryingConnection = true;
+            WiFi.begin(WifiManager::WiFiSSID, WifiManager::WiFiPassword);
+            WifiManager::tryingConnection = true;
         }
     }
 }
 
 void WifiManager::disconnect(void)
 {
-    if (tryingConnection || WiFi.status() == WL_CONNECTED)
+    if (WifiManager::tryingConnection || WiFi.status() == WL_CONNECTED)
     {
         WiFi.disconnect();
     }
-    validConnection = false;
-    tryingConnection = false;
-    std::sprintf(macAddress, "");
-    std::sprintf(ipAddress, "");
-    signalStrength = -91;
-    signalQuality = WIFISignalQuality_NONE;
+    WifiManager::validConnection = false;
+    WifiManager::tryingConnection = false;
+    std::sprintf(WifiManager::macAddress, "");
+    std::sprintf(WifiManager::ipAddress, "");
+    WifiManager::signalStrength = -91;
+    WifiManager::signalQuality = WIFISignalQuality_NONE;
+    if (WifiManager::connectionCallback != nullptr)
+    {
+        WifiManager::connectionCallback(false);
+    }
 }
 
 bool WifiManager::isConnected(void)
@@ -52,7 +65,7 @@ bool WifiManager::isConnected(void)
 
 void WifiManager::loop(void)
 {
-    if (tryingConnection)
+    if (WifiManager::tryingConnection)
     {
         delay(50);
         // connection success
@@ -60,18 +73,23 @@ void WifiManager::loop(void)
         {
             uint8_t mac[6];
             WiFi.macAddress(mac);
-            std::sprintf(macAddress, "%02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+            std::sprintf(WifiManager::macAddress, "%02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
             IPAddress ip = WiFi.localIP();
-            std::sprintf(ipAddress, "%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
-            tryingConnection = false;
-            validConnection = true; // allow future re-connections to this network
+            std::sprintf(WifiManager::ipAddress, "%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
+            WifiManager::tryingConnection = false;
+            WifiManager::validConnection = true; // allow future re-connections to this network
+            if (WifiManager::connectionCallback != nullptr)
+            {
+                WifiManager::connectionCallback(true);
+            }
         }
     }
     else
     {
         // connection lost: re-connect if required
-        if (WiFi.status() != WL_CONNECTED && validConnection && reconnect)
+        if (WiFi.status() != WL_CONNECTED && WifiManager::validConnection && WifiManager::reconnect)
         {
+            WifiManager::tryingConnection = true;
             WiFi.reconnect();
         }
     }
@@ -79,17 +97,17 @@ void WifiManager::loop(void)
 
 void WifiManager::getSSID(char *buffer, size_t buffer_size)
 {
-    strncpy(buffer, WiFiSSID, buffer_size);
+    strncpy(buffer, WifiManager::WiFiSSID, buffer_size);
 }
 
 void WifiManager::getMacAddress(char *buffer, size_t buffer_size)
 {
-    strncpy(buffer, macAddress, buffer_size);
+    strncpy(buffer, WifiManager::macAddress, buffer_size);
 }
 
 void WifiManager::getIPAddress(char *buffer, size_t buffer_size)
 {
-    strncpy(buffer, ipAddress, buffer_size);
+    strncpy(buffer, WifiManager::ipAddress, buffer_size);
 }
 
 long WifiManager::getSignalStrength(void)

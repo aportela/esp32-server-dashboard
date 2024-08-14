@@ -23,9 +23,12 @@ enum WIFISignalQuality
 
 };
 
+typedef void (*WifiManagerConnectionCallback)(bool connected);
+
 class WifiManager
 {
 private:
+    static WifiManagerConnectionCallback connectionCallback;
     static char WiFiSSID[WIFI_SSID_CHAR_ARR_LENGTH];
     static char WiFiPassword[WIFI_PASSWORD_CHAR_ARR_LENGTH];
     static bool tryingConnection;
@@ -37,6 +40,7 @@ private:
     static WIFISignalQuality signalQuality;
 
 public:
+    static void setConnectionCallbackHandler(WifiManagerConnectionCallback callback);
     static void setCredentials(const char *ssid, const char *password);
     static void connect(bool reconnectIfLost = true);
     static void disconnect(void);
