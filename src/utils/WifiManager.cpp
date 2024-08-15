@@ -89,6 +89,7 @@ void WifiManager::loop(void)
         // connection lost: re-connect if required
         if (WiFi.status() != WL_CONNECTED && WifiManager::validConnection && WifiManager::reconnect)
         {
+            WifiManager.disconnect();
             WifiManager::tryingConnection = true;
             WiFi.reconnect();
         }
