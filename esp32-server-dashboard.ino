@@ -48,6 +48,7 @@ LGFX *screen = nullptr;
 #include "src/utils/WifiManager.hpp"
 #include "src/utils/SerialManager.hpp"
 #include "src/utils/Format.hpp"
+#include "src/utils/FPS.hpp"
 #include "src/sources/dummy/DummySource.hpp"
 #include "src/sources/SourceData.hpp"
 #include "src/sources/mqtt/MQTTTelegrafSource.hpp"
@@ -477,8 +478,8 @@ void setup()
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     screen = new LGFX(PIN_SDA, PIN_SCL, PIN_CS, PIN_DC, PIN_RST, DISPLAY_DRIVER_LOVYANN_ST7789_WIDTH, DISPLAY_DRIVER_LOVYANN_ST7789_HEIGHT, DISPLAY_DRIVER_LOVYANN_ST7789_ROTATION);
     screen->setSourceData(sourceData);
-    //  screen->initScreen(ST_INFO);
-    screen->initScreen(ST_DATA_RESUME);
+    screen->initScreen(ST_INFO);
+    // screen->initScreen(ST_DATA_RESUME);
 #endif // DISPLAY_DRIVER_LOVYANN_ST7789
     button = new Bounce2::Button();
     button->attach(PIN_BUTTON_SW, INPUT_PULLUP);
@@ -494,12 +495,13 @@ void loop()
     WifiManager::loop();
     // dummySRC->refresh(1000);
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
-    screen->refresh();
     button->update();
     if (button->pressed())
     {
         screen->toggleScreen();
     }
+    screen->refresh();
+    FPS::loop(999);
 #endif // DISPLAY_DRIVER_LOVYANN_ST7789
     yield();
 }
