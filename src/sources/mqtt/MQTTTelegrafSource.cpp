@@ -3,7 +3,7 @@
 #include <inttypes.h>
 #include <Arduino.h>
 
-#define DEBUG_MQTT_TELEGRAF
+// #define DEBUG_MQTT_TELEGRAF
 
 char MQTTTelegrafSource::cpuTopic[MAX_MQTT_TOPIC_LENGTH] = {'\0'};
 char MQTTTelegrafSource::memoryTopic[MAX_MQTT_TOPIC_LENGTH] = {'\0'};
