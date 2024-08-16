@@ -7,13 +7,17 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/semphr.h>
 
+// #define USE_MUTEX
+
 #define MAX_NETWORK_INTERFACE_ID_LENGTH 65
 #define MAX_NETWORK_INTERFACE_NAME_LENGTH 4
 
 class SourceData
 {
 private:
+#ifdef USE_MUTEX
     SemaphoreHandle_t mutex;
+#endif
 
     bool truncateOverflows = false;
     char networkInterfaceId[MAX_NETWORK_INTERFACE_ID_LENGTH] = {'\0'};

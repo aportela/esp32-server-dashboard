@@ -9,7 +9,9 @@
 
 SourceData::SourceData(bool truncateOverflows, float minCPUTemperature, float maxCPUTemperature, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit, const char *networkInterfaceId, const char *networkInterfaceName)
 {
+#ifdef USE_MUTEX
     this->mutex = xSemaphoreCreateMutex();
+#endif
     this->truncateOverflows = truncateOverflows;
     this->totalMemory = totalMemory;
     this->minCPUTemperature = minCPUTemperature;
@@ -28,10 +30,12 @@ SourceData::SourceData(bool truncateOverflows, float minCPUTemperature, float ma
 
 SourceData::~SourceData()
 {
+#ifdef USE_MUTEX
     if (this->mutex != NULL)
     {
         vSemaphoreDelete(this->mutex);
     }
+#endif
 }
 
 // NET IFACE
@@ -60,25 +64,37 @@ uint8_t SourceData::getMaxCPULoad(void) const
 
 float SourceData::getCurrentCPULoad(void) const
 {
+#ifdef USE_MUTEX
     xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
     float load = this->currentCPULoad;
+#ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
+#endif
     return (load);
 }
 
 uint64_t SourceData::getCurrentCPULoadTimestamp(void) const
 {
+#ifdef USE_MUTEX
     xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
     uint64_t timestamp = this->currentCPULoadTimestamp;
+#ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
+#endif
     return (timestamp);
 }
 
 bool SourceData::changedCPULoad(uint64_t fromTimestamp) const
 {
+#ifdef USE_MUTEX
     xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
     uint64_t timestamp = this->currentCPULoadTimestamp;
+#ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
+#endif
     return (fromTimestamp != timestamp);
 }
 
@@ -88,28 +104,40 @@ bool SourceData::setCurrentCPULoad(float value, uint64_t timestamp)
     {
         if (value >= MIN_CPU_LOAD && value <= MAX_CPU_LOAD)
         {
+#ifdef USE_MUTEX
             xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
             this->currentCPULoad = value;
             this->currentCPULoadTimestamp = timestamp;
+#ifdef USE_MUTEX
             xSemaphoreGive(this->mutex);
+#endif
             return (true);
         }
         else if (truncateOverflows)
         {
             if (value < MIN_CPU_LOAD)
             {
+#ifdef USE_MUTEX
                 xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
                 this->currentCPULoad = MIN_CPU_LOAD;
                 this->currentCPULoadTimestamp = timestamp;
+#ifdef USE_MUTEX
                 xSemaphoreGive(this->mutex);
+#endif
                 return (true);
             }
             else if (value > MAX_CPU_LOAD)
             {
+#ifdef USE_MUTEX
                 xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
                 this->currentCPULoad = MAX_CPU_LOAD;
                 this->currentCPULoadTimestamp = timestamp;
+#ifdef USE_MUTEX
                 xSemaphoreGive(this->mutex);
+#endif
                 return (true);
             }
         }
@@ -120,9 +148,13 @@ bool SourceData::setCurrentCPULoad(float value, uint64_t timestamp)
     }
     else
     {
+#ifdef USE_MUTEX
         xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
         this->currentCPULoadTimestamp = timestamp;
+#ifdef USE_MUTEX
         xSemaphoreGive(this->mutex);
+#endif
         return (true);
     }
 }
@@ -131,41 +163,61 @@ bool SourceData::setCurrentCPULoad(float value, uint64_t timestamp)
 
 uint64_t SourceData::getTotalMemory(void) const
 {
+#ifdef USE_MUTEX
     xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
     uint64_t memory = this->totalMemory;
+#ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
+#endif
     return (memory);
 }
 
 uint64_t SourceData::getUsedMemory(void) const
 {
+#ifdef USE_MUTEX
     xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
     uint64_t memory = this->usedMemory;
+#ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
+#endif
     return (memory);
 }
 
 uint64_t SourceData::getCurrentUsedMemoryTimestamp(void) const
 {
+#ifdef USE_MUTEX
     xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
     uint64_t timestamp = this->currentUsedMemoryTimestamp;
+#ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
+#endif
     return (timestamp);
 }
 
 bool SourceData::changedUsedMemory(uint64_t fromTimestamp) const
 {
+#ifdef USE_MUTEX
     xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
     uint64_t timestamp = this->currentUsedMemoryTimestamp;
+#ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
+#endif
     return (fromTimestamp != timestamp);
 }
 
 bool SourceData::setTotalMemory(uint64_t bytes)
 {
+#ifdef USE_MUTEX
     xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
     this->totalMemory = bytes;
+#ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
+#endif
 }
 
 bool SourceData::setUsedMemory(uint64_t bytes, uint64_t timestamp)
@@ -174,28 +226,40 @@ bool SourceData::setUsedMemory(uint64_t bytes, uint64_t timestamp)
     {
         if (bytes >= 0 && bytes <= this->totalMemory)
         {
+#ifdef USE_MUTEX
             xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
             this->usedMemory = bytes;
             this->currentUsedMemoryTimestamp = timestamp;
+#ifdef USE_MUTEX
             xSemaphoreGive(this->mutex);
+#endif
             return (true);
         }
         else if (truncateOverflows)
         {
             if (bytes < 0)
             {
+#ifdef USE_MUTEX
                 xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
                 this->usedMemory = 0;
                 this->currentUsedMemoryTimestamp = timestamp;
+#ifdef USE_MUTEX
                 xSemaphoreGive(this->mutex);
+#endif
                 return (true);
             }
             else if (bytes > this->totalMemory)
             {
+#ifdef USE_MUTEX
                 xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
                 this->usedMemory = this->totalMemory;
                 this->currentUsedMemoryTimestamp = timestamp;
+#ifdef USE_MUTEX
                 xSemaphoreGive(this->mutex);
+#endif
                 return (true);
             }
         }
@@ -206,9 +270,13 @@ bool SourceData::setUsedMemory(uint64_t bytes, uint64_t timestamp)
     }
     else
     {
+#ifdef USE_MUTEX
         xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
         this->currentUsedMemoryTimestamp = timestamp;
+#ifdef USE_MUTEX
         xSemaphoreGive(this->mutex);
+#endif
         return (true);
     }
 }
@@ -217,36 +285,52 @@ bool SourceData::setUsedAndTotalMemory(uint64_t usedBytes, uint64_t totalBytes, 
 {
     if (totalBytes != this->totalMemory)
     {
+#ifdef USE_MUTEX
         xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
         this->totalMemory = totalBytes;
+#ifdef USE_MUTEX
         xSemaphoreGive(this->mutex);
+#endif
     }
     if (usedBytes != this->usedMemory)
     {
         if (usedBytes >= 0 && usedBytes <= this->totalMemory)
         {
+#ifdef USE_MUTEX
             xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
             this->usedMemory = usedBytes;
             this->currentUsedMemoryTimestamp = timestamp;
+#ifdef USE_MUTEX
             xSemaphoreGive(this->mutex);
+#endif
             return (true);
         }
         else if (truncateOverflows)
         {
             if (usedBytes < 0)
             {
+#ifdef USE_MUTEX
                 xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
                 this->usedMemory = 0;
                 this->currentUsedMemoryTimestamp = timestamp;
+#ifdef USE_MUTEX
                 xSemaphoreGive(this->mutex);
+#endif
                 return (true);
             }
             else if (usedBytes > this->totalMemory)
             {
+#ifdef USE_MUTEX
                 xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
                 this->usedMemory = this->totalMemory;
                 this->currentUsedMemoryTimestamp = timestamp;
+#ifdef USE_MUTEX
                 xSemaphoreGive(this->mutex);
+#endif
                 return (true);
             }
         }
@@ -257,9 +341,13 @@ bool SourceData::setUsedAndTotalMemory(uint64_t usedBytes, uint64_t totalBytes, 
     }
     else
     {
+#ifdef USE_MUTEX
         xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
         this->currentUsedMemoryTimestamp = timestamp;
+#ifdef USE_MUTEX
         xSemaphoreGive(this->mutex);
+#endif
         return (true);
     }
 }
@@ -268,57 +356,85 @@ bool SourceData::setUsedAndTotalMemory(uint64_t usedBytes, uint64_t totalBytes, 
 
 float SourceData::getMinCPUTemperature(void) const
 {
+#ifdef USE_MUTEX
     xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
     float temperature = this->minCPUTemperature;
+#ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
+#endif
     return (temperature);
 }
 
 bool SourceData::setMinCPUTemperature(float celsious)
 {
+#ifdef USE_MUTEX
     xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
     this->minCPUTemperature = celsious;
+#ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
+#endif
     return (true);
 }
 
 float SourceData::getMaxCPUTemperature(void) const
 {
+#ifdef USE_MUTEX
     xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
     float temperature = this->maxCPUTemperature;
+#ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
+#endif
     return (temperature);
 }
 
 bool SourceData::setMaxCPUTemperature(float celsious)
 {
+#ifdef USE_MUTEX
     xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
     this->maxCPUTemperature = celsious;
+#ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
+#endif
     return (true);
 }
 
 float SourceData::getCurrentCPUTemperature(void) const
 {
+#ifdef USE_MUTEX
     xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
     float temperature = this->currentCPUTemperature;
+#ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
+#endif
     return (temperature);
 }
 
 uint64_t SourceData::getCurrentCPUTemperatureTimestamp(void) const
 {
+#ifdef USE_MUTEX
     xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
     uint64_t timestamp = this->currentCPUTemperatureTimestamp;
+#ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
+#endif
     return (timestamp);
 }
 
 bool SourceData::changedCPUTemperature(uint64_t fromTimestamp) const
 {
+#ifdef USE_MUTEX
     xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
     uint64_t timestamp = this->currentCPUTemperatureTimestamp;
+#ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
+#endif
     return (fromTimestamp != timestamp);
 }
 
@@ -328,28 +444,40 @@ bool SourceData::setCurrentCPUTemperature(float celsious, uint64_t timestamp)
     {
         if (celsious >= this->minCPUTemperature && celsious <= this->maxCPUTemperature)
         {
+#ifdef USE_MUTEX
             xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
             this->currentCPUTemperature = celsious;
             this->currentCPUTemperatureTimestamp = timestamp;
+#ifdef USE_MUTEX
             xSemaphoreGive(this->mutex);
+#endif
             return (true);
         }
         else if (truncateOverflows)
         {
             if (celsious < this->minCPUTemperature)
             {
+#ifdef USE_MUTEX
                 xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
                 this->currentCPUTemperature = this->minCPUTemperature;
                 this->currentCPUTemperatureTimestamp = timestamp;
+#ifdef USE_MUTEX
                 xSemaphoreGive(this->mutex);
+#endif
                 return (true);
             }
             else if (celsious > this->maxCPUTemperature)
             {
+#ifdef USE_MUTEX
                 xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
                 this->currentCPUTemperature = this->maxCPUTemperature;
                 this->currentCPUTemperatureTimestamp = timestamp;
+#ifdef USE_MUTEX
                 xSemaphoreGive(this->mutex);
+#endif
                 return (true);
             }
         }
@@ -360,9 +488,13 @@ bool SourceData::setCurrentCPUTemperature(float celsious, uint64_t timestamp)
     }
     else
     {
+#ifdef USE_MUTEX
         xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
         this->currentCPUTemperatureTimestamp = timestamp;
+#ifdef USE_MUTEX
         xSemaphoreGive(this->mutex);
+#endif
         return (true);
     }
 }
@@ -371,37 +503,53 @@ bool SourceData::setCurrentCPUTemperature(float celsious, uint64_t timestamp)
 
 uint64_t SourceData::getCurrentUptimeSeconds(void) const
 {
+#ifdef USE_MUTEX
     xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
     uint64_t seconds = this->currentUptimeSeconds;
+#ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
+#endif
     return (seconds);
 }
 
 uint64_t SourceData::getCurrentUptimeSecondsTimestamp(void) const
 {
+#ifdef USE_MUTEX
     xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
     uint64_t timestamp = this->currentUptimeSecondsTimestamp;
+#ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
+#endif
     return (timestamp);
 }
 
 bool SourceData::changedUptimeSeconds(uint64_t fromTimestamp) const
 {
+#ifdef USE_MUTEX
     xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
     uint64_t timestamp = this->currentUptimeSecondsTimestamp;
+#ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
+#endif
     return (fromTimestamp != timestamp);
 }
 
 bool SourceData::setCurrentUptimeSeconds(uint64_t seconds, uint64_t timestamp)
 {
+#ifdef USE_MUTEX
     xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
     if (seconds != this->currentUptimeSeconds)
     {
         this->currentUptimeSeconds = seconds;
     }
     this->currentUptimeSecondsTimestamp = timestamp;
+#ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
+#endif
     return (true);
 }
 
@@ -409,55 +557,81 @@ bool SourceData::setCurrentUptimeSeconds(uint64_t seconds, uint64_t timestamp)
 
 uint64_t SourceData::getNetworkDownloadBandwidthLimit(void) const
 {
+#ifdef USE_MUTEX
     xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
     uint64_t bytes = this->totalNetworkDownloadBandwidthLimit;
+#ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
+#endif
     return (bytes);
 }
 
 bool SourceData::setNetworkDownloadBandwidthLimit(uint64_t bytes)
 {
+#ifdef USE_MUTEX
     xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
     this->totalNetworkDownloadBandwidthLimit = bytes;
+#ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
+#endif
     return (true);
 }
 
 uint64_t SourceData::getNetworkDownloadSpeed(void) const
 {
+#ifdef USE_MUTEX
     xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
     uint64_t bytesPerSecond = this->currentNetworkDownloadSpeed;
+#ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
+#endif
     return (bytesPerSecond);
 }
 
 uint64_t SourceData::getNetworkDownloadSpeedTimestamp(void) const
 {
+#ifdef USE_MUTEX
     xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
     uint64_t timestamp = this->currentTotalNetworkDownloadedTimestamp;
+#ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
+#endif
     return (timestamp);
 }
 
 uint64_t SourceData::getCurrentTotalNetworkDownloaded(void)
 {
+#ifdef USE_MUTEX
     xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
     uint64_t bytesPerSecond = this->currentTotalNetworkDownloaded;
+#ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
+#endif
     return (bytesPerSecond);
 }
 
 bool SourceData::changedNetworkDownloadSpeed(uint64_t fromTimestamp) const
 {
+#ifdef USE_MUTEX
     xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
     uint64_t timestamp = this->currentTotalNetworkDownloadedTimestamp;
+#ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
+#endif
     return (fromTimestamp != timestamp);
 }
 
 bool SourceData::setCurrentTotalNetworkDownloaded(uint64_t bytes, uint64_t timestamp)
 {
+#ifdef USE_MUTEX
     xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
     if (bytes != this->currentTotalNetworkDownloaded)
     {
         this->previousTotalNetworkDownloaded = this->currentTotalNetworkDownloaded;
@@ -472,7 +646,9 @@ bool SourceData::setCurrentTotalNetworkDownloaded(uint64_t bytes, uint64_t times
     this->currentTotalNetworkDownloadedTimestamp = timestamp;
     float diffSeconds = (this->currentTotalNetworkDownloadedTimestamp - this->previousTotalNetworkDownloadedTimestamp) / 1000.0;
     this->currentNetworkDownloadSpeed = diffSeconds > 0 ? diffBytes / diffSeconds : 0;
+#ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
+#endif
     return (true);
 }
 
@@ -480,55 +656,81 @@ bool SourceData::setCurrentTotalNetworkDownloaded(uint64_t bytes, uint64_t times
 
 uint64_t SourceData::getNetworkUploadBandwidthLimit(void) const
 {
+#ifdef USE_MUTEX
     xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
     uint64_t bytes = this->totalNetworkUploadBandwidthLimit;
+#ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
+#endif
     return (bytes);
 }
 
 bool SourceData::setNetworkUploadBandwidthLimit(uint64_t bytes)
 {
+#ifdef USE_MUTEX
     xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
     this->totalNetworkUploadBandwidthLimit = bytes;
+#ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
+#endif
     return (true);
 }
 
 uint64_t SourceData::getNetworkUploadSpeed(void) const
 {
+#ifdef USE_MUTEX
     xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
     uint64_t bytesPerSecond = this->currentNetworkUploadSpeed;
+#ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
+#endif
     return (bytesPerSecond);
 }
 
 uint64_t SourceData::getNetworkUploadSpeedTimestamp(void) const
 {
+#ifdef USE_MUTEX
     xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
     uint64_t timestamp = this->currentTotalNetworkUploadedTimestamp;
+#ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
+#endif
     return (timestamp);
 }
 
 uint64_t SourceData::getCurrentTotalNetworkUploaded(void)
 {
+#ifdef USE_MUTEX
     xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
     uint64_t bytesPerSecond = this->currentTotalNetworkUploaded;
+#ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
+#endif
     return (bytesPerSecond);
 }
 
 bool SourceData::changedNetworkUploadSpeed(uint64_t fromTimestamp) const
 {
+#ifdef USE_MUTEX
     xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
     uint64_t timestamp = this->currentTotalNetworkUploadedTimestamp;
+#ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
+#endif
     return (fromTimestamp != timestamp);
 }
 
 bool SourceData::setCurrentTotalNetworkUploaded(uint64_t bytes, uint64_t timestamp)
 {
+#ifdef USE_MUTEX
     xSemaphoreTake(this->mutex, portMAX_DELAY);
+#endif
     if (bytes != this->currentTotalNetworkUploaded)
     {
         this->previousTotalNetworkUploaded = this->currentTotalNetworkUploaded;
@@ -543,6 +745,8 @@ bool SourceData::setCurrentTotalNetworkUploaded(uint64_t bytes, uint64_t timesta
     this->currentTotalNetworkUploadedTimestamp = timestamp;
     float diffSeconds = (this->currentTotalNetworkUploadedTimestamp - this->previousTotalNetworkUploadedTimestamp) / 1000.0;
     this->currentNetworkUploadSpeed = diffSeconds > 0 ? diffBytes / diffSeconds : 0;
+#ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
+#endif
     return (true);
 }
