@@ -4,6 +4,8 @@
 
 #include <cstdint>
 #include <cstddef>
+#include <freertos/FreeRTOS.h>
+#include <freertos/semphr.h>
 
 #define MAX_NETWORK_INTERFACE_ID_LENGTH 65
 #define MAX_NETWORK_INTERFACE_NAME_LENGTH 4
@@ -11,6 +13,8 @@
 class SourceData
 {
 private:
+    SemaphoreHandle_t mutex;
+
     bool truncateOverflows = false;
     char networkInterfaceId[MAX_NETWORK_INTERFACE_ID_LENGTH] = {'\0'};
     char networkInterfaceName[MAX_NETWORK_INTERFACE_NAME_LENGTH] = {'\0'};

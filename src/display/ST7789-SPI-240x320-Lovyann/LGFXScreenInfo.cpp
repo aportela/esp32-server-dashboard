@@ -254,7 +254,6 @@ bool LGFXScreenInfo::refresh(bool force)
     if (this->parentDisplay != nullptr)
     {
         bool changed = force;
-        FPS::loop();
         this->WIFILogoChanged = false;
         this->WIFISignalStrengthChanged = false;
         this->WIFISignalLevelBarsChanged = false;
