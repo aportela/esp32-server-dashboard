@@ -489,7 +489,6 @@ void setup()
     Settings::getNetworkInterfaceId(networkInterfaceId, sizeof(networkInterfaceId));
     char networkInterfaceName[MAX_NETWORK_INTERFACE_NAME_LENGTH];
     Settings::getNetworkInterfaceId(networkInterfaceName, sizeof(networkInterfaceName));
-
     sourceData = new SourceData(true, Settings::getMinCPUTemperature(), Settings::getMaxCPUTemperature(), Settings::getMaxDownloadBandwidthBytes(), Settings::getMaxUploadBandwidthBytes(), networkInterfaceId, networkInterfaceName);
 #ifdef SOURCE_DUMMY
     dummySRC = new DummySource(sourceData);
@@ -508,11 +507,10 @@ void setup()
 
 void loop()
 {
-
     SerialManager::loop();
     WifiManager::loop();
 #ifdef SOURCE_DUMMY
-    // dummySRC->refresh(SOURCE_DUMMY_UPDATES_EVERY_MS);
+    dummySRC->refresh(SOURCE_DUMMY_UPDATES_EVERY_MS);
 #endif // SOURCE_DUMMY
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     button->update();
@@ -524,5 +522,4 @@ void loop()
     FPS::loop(999);
 #endif // DISPLAY_DRIVER_LOVYANN_ST7789
     yield();
-    delay(500);
 }
