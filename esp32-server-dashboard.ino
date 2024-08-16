@@ -65,6 +65,7 @@ void onWifiConnectionChanged(bool connected)
 {
     if (connected)
     {
+        /*
         char mqttTelegrafURI[64] = {'\0'};
         Settings::getMQTTTelegrafURI(mqttTelegrafURI, sizeof(mqttTelegrafURI));
         char mqttTelegrafGlobalTopic[512] = {'\0'};
@@ -75,14 +76,17 @@ void onWifiConnectionChanged(bool connected)
             WifiManager::getMacAddress(WiFiMacAddress, sizeof(WiFiMacAddress));
             mqttTelegrafSRC = new MQTTTelegrafSource(sourceData, mqttTelegrafURI, WiFiMacAddress, mqttTelegrafGlobalTopic);
         }
+        */
     }
     else
     {
+        /*
         if (mqttTelegrafSRC != nullptr)
         {
             delete mqttTelegrafSRC;
             mqttTelegrafSRC = nullptr;
         }
+        */
     }
 }
 
@@ -473,7 +477,7 @@ void setup()
     Settings::getNetworkInterfaceId(networkInterfaceName, sizeof(networkInterfaceName));
 
     sourceData = new SourceData(true, Settings::getMinCPUTemperature(), Settings::getMaxCPUTemperature(), Settings::getMaxDownloadBandwidthBytes(), Settings::getMaxUploadBandwidthBytes(), networkInterfaceId, networkInterfaceName);
-    // dummySRC = new DummySource(sourceData);
+    dummySRC = new DummySource(sourceData);
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     screen = new LGFX(PIN_SDA, PIN_SCL, PIN_CS, PIN_DC, PIN_RST, DISPLAY_DRIVER_LOVYANN_ST7789_WIDTH, DISPLAY_DRIVER_LOVYANN_ST7789_HEIGHT, DISPLAY_DRIVER_LOVYANN_ST7789_ROTATION);
     screen->setSourceData(sourceData);
@@ -492,7 +496,7 @@ void loop()
 {
     SerialManager::loop();
     WifiManager::loop();
-    // dummySRC->refresh(1000);
+    dummySRC->refresh(0);
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     screen->refresh();
     button->update();
