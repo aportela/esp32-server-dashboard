@@ -1,4 +1,6 @@
-// #include <Preferences.h>
+#include <Arduino.h>
+#include <Bounce2.h>
+#include <cstdint>
 
 #define DISPLAY_DRIVER_LOVYANN_ST7789 // at this time, only LovyAnn ST7789 (320x240) driver is supported
 
@@ -6,6 +8,7 @@
 
 #include "src/display/SizesAndOffsets-320x240.hpp"
 #include "src/display/ST7789-SPI-240x320-Lovyann/LGFX.hpp"
+#include "src/display/ScreenType.hpp"
 
 // these are my custom/valid pin values for a ST7789 display on some esp32 models
 
@@ -44,29 +47,41 @@ LGFX *screen = nullptr;
 #error NO_DISPLAY_DRIVER
 #endif // DISPLAY_DRIVER_LOVYANN_ST7789
 
+#define SOURCE_DUMMY // this is for testing source with random values (debug)
+// #define SOURCE_MQTT_TELEGRAF // this is telegraf source via mqtt protocol (production)
+
 #include "src/utils/Settings.hpp"
 #include "src/utils/WifiManager.hpp"
 #include "src/utils/SerialManager.hpp"
 #include "src/utils/Format.hpp"
 #include "src/utils/FPS.hpp"
-#include "src/sources/dummy/DummySource.hpp"
 #include "src/sources/SourceData.hpp"
+#ifdef SOURCE_DUMMY
+#define SOURCE_DUMMY_UPDATES_EVERY_MS 0 // random data will be refreshed (on method refresh call) every nn milliseconds (0 = no delay)
+#include "src/sources/dummy/DummySource.hpp"
+#else
+#ifdef SOURCE_MQTT_TELEGRAF
 #include "src/sources/mqtt/MQTTTelegrafSource.hpp"
-#include "src/display/ScreenType.hpp"
-#include <Arduino.h>
-#include <Bounce2.h>
+#endif // SOURCE_MQTT_TELEGRAF
+#endif // SOURCE_DUMMY
 
-#include <cstdint>
-
+#ifdef SOURCE_DUMMY
 DummySource *dummySRC = nullptr;
+#else
+#ifdef SOURCE_MQTT_TELEGRAF
 MQTTTelegrafSource *mqttTelegrafSRC = nullptr;
-SourceData *sourceData = nullptr;
+#endif // SOURCE_MQTT_TELEGRAF
+#endif // SOURCE_DUMMY
 
+SourceData *sourceData = nullptr;
+Bounce2::Button *button;
+
+// create / delete telegraf/mqtt handler on wifi connect/disconnect events
 void onWifiConnectionChanged(bool connected)
 {
     if (connected)
     {
-        /*
+#ifdef SOURCE_MQTT_TELEGRAF
         char mqttTelegrafURI[64] = {'\0'};
         Settings::getMQTTTelegrafURI(mqttTelegrafURI, sizeof(mqttTelegrafURI));
         char mqttTelegrafGlobalTopic[512] = {'\0'};
@@ -77,17 +92,17 @@ void onWifiConnectionChanged(bool connected)
             WifiManager::getMacAddress(WiFiMacAddress, sizeof(WiFiMacAddress));
             mqttTelegrafSRC = new MQTTTelegrafSource(sourceData, mqttTelegrafURI, WiFiMacAddress, mqttTelegrafGlobalTopic);
         }
-        */
+#endif // SOURCE_MQTT_TELEGRAF
     }
     else
     {
-        /*
+#ifdef SOURCE_MQTT_TELEGRAF
         if (mqttTelegrafSRC != nullptr)
         {
             delete mqttTelegrafSRC;
             mqttTelegrafSRC = nullptr;
         }
-        */
+#endif // SOURCE_MQTT_TELEGRAF
     }
 }
 
@@ -452,8 +467,6 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
     }
 }
 
-Bounce2::Button *button;
-
 void setup()
 {
     //  TODO: default info screen if no valid settings found
@@ -478,7 +491,9 @@ void setup()
     Settings::getNetworkInterfaceId(networkInterfaceName, sizeof(networkInterfaceName));
 
     sourceData = new SourceData(true, Settings::getMinCPUTemperature(), Settings::getMaxCPUTemperature(), Settings::getMaxDownloadBandwidthBytes(), Settings::getMaxUploadBandwidthBytes(), networkInterfaceId, networkInterfaceName);
+#ifdef SOURCE_DUMMY
     dummySRC = new DummySource(sourceData);
+#endif // SOURCE_DUMMY
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     screen = new LGFX(PIN_SDA, PIN_SCL, PIN_CS, PIN_DC, PIN_RST, DISPLAY_DRIVER_LOVYANN_ST7789_WIDTH, DISPLAY_DRIVER_LOVYANN_ST7789_HEIGHT, DISPLAY_DRIVER_LOVYANN_ST7789_ROTATION);
     screen->setSourceData(sourceData);
@@ -491,13 +506,14 @@ void setup()
     button->setPressedState(LOW);
 }
 
-long oldPosition = -999;
-
 void loop()
 {
+
     SerialManager::loop();
     WifiManager::loop();
-    dummySRC->refresh(0);
+#ifdef SOURCE_DUMMY
+    // dummySRC->refresh(SOURCE_DUMMY_UPDATES_EVERY_MS);
+#endif // SOURCE_DUMMY
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     button->update();
     if (button->pressed())
@@ -508,4 +524,5 @@ void loop()
     FPS::loop(999);
 #endif // DISPLAY_DRIVER_LOVYANN_ST7789
     yield();
+    delay(500);
 }
