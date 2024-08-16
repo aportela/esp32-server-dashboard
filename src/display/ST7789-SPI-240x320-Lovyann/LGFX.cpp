@@ -1,10 +1,9 @@
 #include "LGFX.hpp"
-#include "../../sources/dummy/DummySource.hpp"
-#include "src/utils/Format.hpp"
-#include "../../utils/FPS.hpp"
 #include "LGFXScreenInfo.hpp"
 #include "LGFXScreenDashboardResume.hpp"
-#include <WiFi.h>
+#include "../../sources/dummy/DummySource.hpp"
+#include "../../utils/Format.hpp"
+#include "../../utils/FPS.hpp"
 
 #include "../SizesAndOffsets-320x240.hpp"
 
