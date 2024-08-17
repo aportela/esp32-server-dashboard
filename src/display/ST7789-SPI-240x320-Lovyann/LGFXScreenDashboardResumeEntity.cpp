@@ -28,14 +28,8 @@ LGFXScreenDashboardResumeEntity::~LGFXScreenDashboardResumeEntity()
         delete this->graphSprite;
         this->graphSprite = nullptr;
     }
-    if (this->sourceData != nullptr)
-    {
-        this->sourceData = nullptr;
-    }
-    if (this->parentDisplay != nullptr)
-    {
-        this->parentDisplay = nullptr;
-    }
+    this->sourceData = nullptr;
+    this->parentDisplay = nullptr;
 }
 
 void LGFXScreenDashboardResumeEntity::initGraph(void)

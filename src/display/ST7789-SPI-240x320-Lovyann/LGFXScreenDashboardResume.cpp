@@ -65,10 +65,7 @@ LGFXScreenDashboardResume::~LGFXScreenDashboardResume()
         delete this->networkUploadBandwidthBlock;
         this->networkUploadBandwidthBlock = nullptr;
     }
-    if (this->currentSourceData != nullptr)
-    {
-        this->currentSourceData = nullptr;
-    }
+    this->currentSourceData = nullptr;
 }
 
 bool LGFXScreenDashboardResume::refreshBottomCommonData(bool forceDrawAll)
