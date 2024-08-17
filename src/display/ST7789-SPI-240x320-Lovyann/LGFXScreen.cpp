@@ -17,8 +17,5 @@ LGFXScreen::LGFXScreen(LovyanGFX *display) : parentDisplay(display)
 
 LGFXScreen::~LGFXScreen()
 {
-    if (this->parentDisplay != nullptr)
-    {
-        this->parentDisplay = nullptr;
-    }
+    this->parentDisplay = nullptr;
 }
