@@ -218,6 +218,7 @@ bool SourceData::setTotalMemory(uint64_t bytes)
 #ifdef USE_MUTEX
     xSemaphoreGive(this->mutex);
 #endif
+    return (true);
 }
 
 bool SourceData::setUsedMemory(uint64_t bytes, uint64_t timestamp)
