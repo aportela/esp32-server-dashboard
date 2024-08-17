@@ -58,7 +58,6 @@ LGFX::~LGFX()
         this->currentScreen = nullptr;
     }
     this->sourceData = nullptr;
-    this->cpuLoadQueue = nullptr;
 }
 
 void LGFX::setSourceData(SourceData *src)
