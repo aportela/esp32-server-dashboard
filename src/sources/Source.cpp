@@ -1,10 +1,5 @@
 #include "Source.hpp"
 
-void (*Source::onCPULoadChangedCallback)(float value, uint64_t timestamp) = nullptr;
-void (*Source::onTotalMemoryChangedCallback)(uint64_t value, uint64_t timestamp) = nullptr;
-void (*Source::onUsedMemoryChangedCallback)(uint64_t value, uint64_t timestamp) = nullptr;
-void (*Source::onCPUTemperatureChangedCallback)(float value, uint64_t timestamp) = nullptr;
-
 Source::Source(SourceData *sourceData)
 {
     if (sourceData != nullptr)
@@ -22,22 +17,22 @@ Source::~Source()
     Source::onCPULoadChangedCallback = nullptr;
 }
 
-void Source::onCPULoadChanged(void (*callback)(float value, uint64_t timestamp))
+void Source::onCPULoadChanged(void (*callback)(float, uint64_t))
 {
-    Source::onCPULoadChangedCallback = callback;
+    this->onCPULoadChangedCallback = callback;
 }
 
-void Source::onTotalMemoryChanged(void (*callback)(uint64_t value, uint64_t timestamp))
+void Source::onTotalMemoryChanged(void (*callback)(uint64_t, uint64_t))
 {
-    Source::onTotalMemoryChangedCallback = callback;
+    this->onTotalMemoryChangedCallback = callback;
 }
 
-void Source::onUsedMemoryChanged(void (*callback)(uint64_t value, uint64_t timestamp))
+void Source::onUsedMemoryChanged(void (*callback)(uint64_t, uint64_t))
 {
-    Source::onUsedMemoryChangedCallback = callback;
+    this->onUsedMemoryChangedCallback = callback;
 }
 
-void Source::onCPUTemperatureChanged(void (*callback)(float value, uint64_t timestamp))
+void Source::onCPUTemperatureChanged(void (*callback)(float, uint64_t))
 {
-    Source::onCPUTemperatureChangedCallback = callback;
+    this->onCPUTemperatureChangedCallback = callback;
 }

@@ -12,19 +12,19 @@ class Source : public ISource
 {
 protected:
     SourceData *sourceData = nullptr;
-    static void (*onCPULoadChangedCallback)(float value, uint64_t timestamp);
-    static void (*onTotalMemoryChangedCallback)(uint64_t value, uint64_t timestamp);
-    static void (*onUsedMemoryChangedCallback)(uint64_t value, uint64_t timestamp);
-    static void (*onCPUTemperatureChangedCallback)(float value, uint64_t timestamp);
+    void (*onCPULoadChangedCallback)(float, uint64_t) = nullptr;
+    void (*onTotalMemoryChangedCallback)(uint64_t, uint64_t) = nullptr;
+    void (*onUsedMemoryChangedCallback)(uint64_t, uint64_t) = nullptr;
+    void (*onCPUTemperatureChangedCallback)(float, uint64_t) = nullptr;
 
 public:
     Source(SourceData *sourceData);
     virtual ~Source();
 
-    void onCPULoadChanged(void (*callback)(float value, uint64_t timestamp));
-    void onTotalMemoryChanged(void (*callback)(uint64_t value, uint64_t timestamp));
-    void onUsedMemoryChanged(void (*callback)(uint64_t value, uint64_t timestamp));
-    void onCPUTemperatureChanged(void (*callback)(float value, uint64_t timestamp));
+    void onCPULoadChanged(void (*callback)(float, uint64_t));
+    void onTotalMemoryChanged(void (*callback)(uint64_t, uint64_t));
+    void onUsedMemoryChanged(void (*callback)(uint64_t, uint64_t));
+    void onCPUTemperatureChanged(void (*callback)(float, uint64_t));
 };
 
 #endif
