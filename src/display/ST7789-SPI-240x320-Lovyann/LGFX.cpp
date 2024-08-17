@@ -57,10 +57,8 @@ LGFX::~LGFX()
         delete this->currentScreen;
         this->currentScreen = nullptr;
     }
-    if (this->sourceData != nullptr)
-    {
-        this->sourceData = nullptr;
-    }
+    this->sourceData = nullptr;
+    this->cpuLoadQueue = nullptr;
 }
 
 void LGFX::setSourceData(SourceData *src)
