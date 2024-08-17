@@ -2,12 +2,14 @@
 #ifndef ESP32_SERVER_DASHBOARD_SOURCE_DATA_H
 #define ESP32_SERVER_DASHBOARD_SOURCE_DATA_H
 
+// #define USE_MUTEX
+
 #include <cstdint>
 #include <cstddef>
+#ifdef USE_MUTEX
 #include <freertos/FreeRTOS.h>
 #include <freertos/semphr.h>
-
-// #define USE_MUTEX
+#endif
 
 #define MAX_NETWORK_INTERFACE_ID_LENGTH 65
 #define MAX_NETWORK_INTERFACE_NAME_LENGTH 4
