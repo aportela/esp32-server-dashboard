@@ -27,12 +27,12 @@ void MQTT::destroy(void)
         esp_mqtt_client_destroy(MQTT::client);
         MQTT::client = nullptr;
     }
-    messageCallback = nullptr;
+    MQTT::messageCallback = nullptr;
 }
 
 void MQTT::setCallback(void (*callback)(const char *topic, const char *payload))
 {
-    messageCallback = callback;
+    MQTT::messageCallback = callback;
 }
 
 void MQTT::event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data)
@@ -53,7 +53,7 @@ void MQTT::event_handler(void *handler_args, esp_event_base_t base, int32_t even
     case MQTT_EVENT_PUBLISHED:
         break;
     case MQTT_EVENT_DATA:
-        if (messageCallback)
+        if (MQTT::messageCallback)
         {
             char topic[event->topic_len + 1];
             char payload[event->data_len + 1];
@@ -61,7 +61,7 @@ void MQTT::event_handler(void *handler_args, esp_event_base_t base, int32_t even
             topic[event->topic_len] = '\0';
             memcpy(payload, event->data, event->data_len);
             payload[event->data_len] = '\0';
-            messageCallback(topic, payload);
+            MQTT::messageCallback(topic, payload);
         }
         break;
     case MQTT_EVENT_ERROR:
