@@ -50,6 +50,7 @@ void DummySource::refresh(uint16_t milliSeconds)
         {
             memoryData.usedBytes -= changedMemoryBytes;
         }
+        this->sourceData->setCurrentUsedMemory(memoryData.usedBytes, memoryData.totalBytes, currentMillis);
 
         SourceDataQueueCPUTemperatureValue cpuTemperatureData = this->sourceData->getCurrentCPUTemperature();
         if (random(0, 20) % 2 == 0)
@@ -68,11 +69,9 @@ void DummySource::refresh(uint16_t milliSeconds)
         this->sourceData->setCurrentUptime(currentMillis / 1000, currentMillis);
 
         SourceDataQueueNetworkingValue netDownData = this->sourceData->getCurrentNetworkDownload();
-
         this->sourceData->setCurrentNetworkDownload(netDownData.totalBytesTransfered + (random(1024, random(0, 100) > 90 ? 1048576 : 104857)), currentMillis);
 
         SourceDataQueueNetworkingValue netUpData = this->sourceData->getCurrentNetworkUpload();
-
         this->sourceData->setCurrentNetworkUpload(netUpData.totalBytesTransfered + (random(1024, random(0, 100) > 90 ? 1048576 : 104857)), currentMillis);
 
         this->lastEllapsedMillis = currentMillis;
