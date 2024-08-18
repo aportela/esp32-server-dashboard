@@ -46,7 +46,6 @@ typedef struct SourceDataQueueUptimeValue
 
 typedef struct SourceDataQueueNetworkingValue
 {
-    uint64_t totalBandwithBytesPerSecondLimit;
     uint64_t totalBytesTransfered;
     uint64_t currentBandwidthBytesPerSecond;
     uint64_t timestamp;
@@ -106,7 +105,7 @@ public:
 
     // NET DOWNLOAD BANDWIDTH
     SourceDataQueueNetworkingValue getCurrentNetworkDownload(void);
-    bool setCurrentNetworkDownload(uint64_t totalBytes, uint64_t limitBytes, uint64_t timestamp);
+    bool setCurrentNetworkDownload(uint64_t totalBytes, uint64_t timestamp);
 
     uint64_t getNetworkDownloadBandwidthLimit(void) const;
     bool setNetworkDownloadBandwidthLimit(uint64_t bytes);
@@ -118,7 +117,7 @@ public:
 
     // NET UPLOAD BANDWIDTH
     SourceDataQueueNetworkingValue getCurrentNetworkUpload(void);
-    bool setCurrentNetworkUpload(uint64_t totalBytes, uint64_t limitBytes, uint64_t timestamp);
+    bool setCurrentNetworkUpload(uint64_t totalBytes, uint64_t timestamp);
 
     uint64_t getNetworkUploadBandwidthLimit(void) const;
     bool setNetworkUploadBandwidthLimit(uint64_t bytes);

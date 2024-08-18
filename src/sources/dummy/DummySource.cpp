@@ -20,40 +20,36 @@ void DummySource::refresh(uint16_t milliSeconds)
     bool allowRefresh = milliSeconds == 0 || ((currentMillis - this->lastEllapsedMillis) >= milliSeconds);
     if (allowRefresh)
     {
-        float fCurrent = 0.0f;
-        uint64_t current = 0;
-        uint64_t change = 0;
-
+        float cpuLoadValue = 0.0f;
         uint8_t rnd = random(0, 100);
         if (rnd > 90)
         {
-            fCurrent = random(MIN_CPU_LOAD, MAX_CPU_LOAD * 100);
+            cpuLoadValue = random(MIN_CPU_LOAD, MAX_CPU_LOAD * 100);
         }
         else if (rnd > 50)
         {
-            fCurrent = random(MIN_CPU_LOAD, (MAX_CPU_LOAD / 5) * 100);
+            cpuLoadValue = random(MIN_CPU_LOAD, (MAX_CPU_LOAD / 5) * 100);
         }
         else
         {
-            fCurrent = random(MIN_CPU_LOAD, (MAX_CPU_LOAD / 10) * 100);
+            cpuLoadValue = random(MIN_CPU_LOAD, (MAX_CPU_LOAD / 10) * 100);
         }
-        fCurrent /= 100.0f;
-        this->sourceData->setCurrentCPULoad(fCurrent, currentMillis);
+        cpuLoadValue /= 100.0f;
+        this->sourceData->setCurrentCPULoad(cpuLoadValue, currentMillis);
 
         SourceDataQueueUsedMemoryValue memoryData = this->sourceData->getCurrentUsedMemory();
-        change = random(10485760, memoryData.totalBytes / 1024);
+        uint64_t changedMemoryBytes = random(10485760, memoryData.totalBytes / 1024);
         if (random(0, 20) % 2 == 0)
         {
-            if (memoryData.usedBytes < memoryData.totalBytes - change)
+            if (memoryData.usedBytes < memoryData.totalBytes - changedMemoryBytes)
             {
-                memoryData.usedBytes += change;
+                memoryData.usedBytes += changedMemoryBytes;
             }
         }
-        else if (memoryData.usedBytes > change)
+        else if (memoryData.usedBytes > changedMemoryBytes)
         {
-            memoryData.usedBytes -= change;
+            memoryData.usedBytes -= changedMemoryBytes;
         }
-        this->sourceData->setCurrentUsedMemory(memoryData.usedBytes, memoryData.totalBytes, currentMillis);
 
         SourceDataQueueCPUTemperatureValue cpuTemperatureData = this->sourceData->getCurrentCPUTemperature();
         if (random(0, 20) % 2 == 0)
@@ -73,17 +69,12 @@ void DummySource::refresh(uint16_t milliSeconds)
 
         SourceDataQueueNetworkingValue netDownData = this->sourceData->getCurrentNetworkDownload();
 
-        this->sourceData->setCurrentNetworkDownload(netDownData.totalBytesTransfered + (random(1024, random(0, 100) > 90 ? 1048576 : 104857)), netDownData.totalBandwithBytesPerSecondLimit, currentMillis);
+        this->sourceData->setCurrentNetworkDownload(netDownData.totalBytesTransfered + (random(1024, random(0, 100) > 90 ? 1048576 : 104857)), currentMillis);
 
         SourceDataQueueNetworkingValue netUpData = this->sourceData->getCurrentNetworkUpload();
 
-        this->sourceData->setCurrentNetworkUpload(netUpData.totalBytesTransfered + (random(1024, random(0, 100) > 90 ? 1048576 : 104857)), netUpData.totalBandwithBytesPerSecondLimit, currentMillis);
+        this->sourceData->setCurrentNetworkUpload(netUpData.totalBytesTransfered + (random(1024, random(0, 100) > 90 ? 1048576 : 104857)), currentMillis);
 
-        // this->sourceData->setCurrentTotalNetworkDownloaded(this->sourceData->getCurrentTotalNetworkDownloaded() + random(1024, random(0, 100) > 90 ? 1048576 : 104857), currentMillis);
-
-        // this->sourceData->setCurrentTotalNetworkUploaded(this->sourceData->getCurrentTotalNetworkUploaded() + random(1024, random(0, 100) > 90 ? 1048576 : 104857), currentMillis);
-
-        // TODO: remove if not required
         this->lastEllapsedMillis = currentMillis;
     }
 }

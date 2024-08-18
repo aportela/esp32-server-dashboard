@@ -14,10 +14,10 @@ SourceData::SourceData(bool truncateOverflows, uint64_t totalNetworkDownloadBand
     this->networkingDownloadQueue = xQueueCreate(1, sizeof(SourceDataQueueNetworkingValue));
     this->networkingUploadQueue = xQueueCreate(1, sizeof(SourceDataQueueNetworkingValue));
     this->truncateOverflows = truncateOverflows;
-    this->setCurrentNetworkDownload(0, totalNetworkDownloadBandwidthLimit, currentTimestamp);
-    this->setCurrentNetworkUpload(0, totalNetworkUploadBandwidthLimit, currentTimestamp);
-    // this->totalNetworkDownloadBandwidthLimit = totalNetworkDownloadBandwidthLimit;
-    // this->totalNetworkUploadBandwidthLimit = totalNetworkUploadBandwidthLimit;
+    // this->setCurrentNetworkDownload(0, totalNetworkDownloadBandwidthLimit, currentTimestamp);
+    // this->setCurrentNetworkUpload(0, totalNetworkUploadBandwidthLimit, currentTimestamp);
+    //  this->totalNetworkDownloadBandwidthLimit = totalNetworkDownloadBandwidthLimit;
+    //  this->totalNetworkUploadBandwidthLimit = totalNetworkUploadBandwidthLimit;
     if (networkInterfaceId != NULL && strlen(networkInterfaceId) > 0)
     {
         strncpy(this->networkInterfaceId, networkInterfaceId, sizeof(this->networkInterfaceId));
@@ -303,12 +303,11 @@ bool SourceData::setCurrentUptime(uint64_t seconds, uint64_t timestamp)
 
 SourceDataQueueNetworkingValue SourceData::getCurrentNetworkDownload(void)
 {
-    SourceDataQueueNetworkingValue data = {0, 0, 0, 0};
+    SourceDataQueueNetworkingValue data = {0, 0, 0};
     if (this->networkingDownloadQueue != NULL)
     {
         if (xQueuePeek(this->networkingDownloadQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
         {
-            data.totalBandwithBytesPerSecondLimit = 0;
             data.totalBytesTransfered = 0;
             data.currentBandwidthBytesPerSecond = 0;
             data.timestamp = 0;
@@ -316,7 +315,6 @@ SourceDataQueueNetworkingValue SourceData::getCurrentNetworkDownload(void)
     }
     else
     {
-        data.totalBandwithBytesPerSecondLimit = 0;
         data.totalBytesTransfered = 0;
         data.currentBandwidthBytesPerSecond = 0;
         data.timestamp = 0;
@@ -324,30 +322,28 @@ SourceDataQueueNetworkingValue SourceData::getCurrentNetworkDownload(void)
     return (data);
 }
 
-bool SourceData::setCurrentNetworkDownload(uint64_t totalBytes, uint64_t limitBytes, uint64_t timestamp)
+bool SourceData::setCurrentNetworkDownload(uint64_t totalBytes, uint64_t timestamp)
 {
     if (this->networkingDownloadQueue)
     {
         SourceDataQueueNetworkingValue data = this->getCurrentNetworkDownload();
-        uint64_t previousTimestamp = data.timestamp;
-        if (limitBytes != data.totalBandwithBytesPerSecondLimit)
-        {
-            data.totalBandwithBytesPerSecondLimit = limitBytes;
-            data.timestamp = timestamp;
-        }
         if (totalBytes != data.totalBytesTransfered)
         {
             uint64_t diffBytes = totalBytes - data.totalBytesTransfered;
-            float diffSeconds = (timestamp - previousTimestamp) / 1000.0;
+            float diffSeconds = (timestamp - data.timestamp) / 1000.0;
             data.currentBandwidthBytesPerSecond = diffSeconds > 0 ? diffBytes / diffSeconds : 0;
             data.totalBytesTransfered = totalBytes;
             data.timestamp = timestamp;
             return (xQueueOverwrite(this->networkingDownloadQueue, &data) == pdPASS);
         }
-        else
+        else if (timestamp != data.timestamp)
         {
             data.timestamp = timestamp;
             return (xQueueOverwrite(this->networkingDownloadQueue, &data) == pdPASS);
+        }
+        else
+        {
+            return (false);
         }
     }
     else
@@ -457,12 +453,11 @@ bool SourceData::setCurrentTotalNetworkDownloaded(uint64_t bytes, uint64_t times
 
 SourceDataQueueNetworkingValue SourceData::getCurrentNetworkUpload(void)
 {
-    SourceDataQueueNetworkingValue data = {0, 0, 0, 0};
+    SourceDataQueueNetworkingValue data = {0, 0, 0};
     if (this->networkingUploadQueue != NULL)
     {
         if (xQueuePeek(this->networkingUploadQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
         {
-            data.totalBandwithBytesPerSecondLimit = 0;
             data.totalBytesTransfered = 0;
             data.currentBandwidthBytesPerSecond = 0;
             data.timestamp = 0;
@@ -470,7 +465,6 @@ SourceDataQueueNetworkingValue SourceData::getCurrentNetworkUpload(void)
     }
     else
     {
-        data.totalBandwithBytesPerSecondLimit = 0;
         data.totalBytesTransfered = 0;
         data.currentBandwidthBytesPerSecond = 0;
         data.timestamp = 0;
@@ -478,30 +472,28 @@ SourceDataQueueNetworkingValue SourceData::getCurrentNetworkUpload(void)
     return (data);
 }
 
-bool SourceData::setCurrentNetworkUpload(uint64_t totalBytes, uint64_t limitBytes, uint64_t timestamp)
+bool SourceData::setCurrentNetworkUpload(uint64_t totalBytes, uint64_t timestamp)
 {
     if (this->networkingUploadQueue)
     {
         SourceDataQueueNetworkingValue data = this->getCurrentNetworkUpload();
-        uint64_t previousTimestamp = data.timestamp;
-        if (limitBytes != data.totalBandwithBytesPerSecondLimit)
-        {
-            data.totalBandwithBytesPerSecondLimit = limitBytes;
-            data.timestamp = timestamp;
-        }
         if (totalBytes != data.totalBytesTransfered)
         {
             uint64_t diffBytes = totalBytes - data.totalBytesTransfered;
-            float diffSeconds = (timestamp - previousTimestamp) / 1000.0;
+            float diffSeconds = (timestamp - data.timestamp) / 1000.0;
             data.currentBandwidthBytesPerSecond = diffSeconds > 0 ? diffBytes / diffSeconds : 0;
             data.totalBytesTransfered = totalBytes;
             data.timestamp = timestamp;
             return (xQueueOverwrite(this->networkingUploadQueue, &data) == pdPASS);
         }
-        else
+        else if (timestamp != data.timestamp)
         {
             data.timestamp = timestamp;
             return (xQueueOverwrite(this->networkingUploadQueue, &data) == pdPASS);
+        }
+        else
+        {
+            return (false);
         }
     }
     else
