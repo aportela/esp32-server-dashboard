@@ -9,9 +9,8 @@
 
 SourceData::SourceData(bool truncateOverflows, float minCPUTemperature, float maxCPUTemperature, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit, const char *networkInterfaceId, const char *networkInterfaceName)
 {
-#ifdef USE_MUTEX
-    this->mutex = xSemaphoreCreateMutex();
-#endif
+
+    this->cpuLoadQueue = xQueueCreate(1, sizeof(SourceDataQueueDecimalValue));
     this->truncateOverflows = truncateOverflows;
     this->totalMemory = totalMemory;
     this->minCPUTemperature = minCPUTemperature;
@@ -30,12 +29,7 @@ SourceData::SourceData(bool truncateOverflows, float minCPUTemperature, float ma
 
 SourceData::~SourceData()
 {
-#ifdef USE_MUTEX
-    if (this->mutex != NULL)
-    {
-        vSemaphoreDelete(this->mutex);
-    }
-#endif
+    vQueueDelete(this->cpuLoadQueue);
 }
 
 // NET IFACE
@@ -62,100 +56,67 @@ uint8_t SourceData::getMaxCPULoad(void) const
     return (MAX_CPU_LOAD);
 }
 
-float SourceData::getCurrentCPULoad(void) const
+SourceDataQueueDecimalValue SourceData::getCurrentCPULoad(void)
 {
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    float load = this->currentCPULoad;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (load);
-}
-
-uint64_t SourceData::getCurrentCPULoadTimestamp(void) const
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    uint64_t timestamp = this->currentCPULoadTimestamp;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (timestamp);
-}
-
-bool SourceData::changedCPULoad(uint64_t fromTimestamp) const
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    uint64_t timestamp = this->currentCPULoadTimestamp;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (fromTimestamp != timestamp);
-}
-
-bool SourceData::setCurrentCPULoad(float value, uint64_t timestamp)
-{
-    if (value != this->currentCPULoad)
+    SourceDataQueueDecimalValue data = {0.0f, 0};
+    if (this->cpuLoadQueue != NULL)
     {
-        if (value >= MIN_CPU_LOAD && value <= MAX_CPU_LOAD)
+        if (xQueuePeek(this->cpuLoadQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
         {
-#ifdef USE_MUTEX
-            xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-            this->currentCPULoad = value;
-            this->currentCPULoadTimestamp = timestamp;
-#ifdef USE_MUTEX
-            xSemaphoreGive(this->mutex);
-#endif
-            return (true);
-        }
-        else if (truncateOverflows)
-        {
-            if (value < MIN_CPU_LOAD)
-            {
-#ifdef USE_MUTEX
-                xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-                this->currentCPULoad = MIN_CPU_LOAD;
-                this->currentCPULoadTimestamp = timestamp;
-#ifdef USE_MUTEX
-                xSemaphoreGive(this->mutex);
-#endif
-                return (true);
-            }
-            else if (value > MAX_CPU_LOAD)
-            {
-#ifdef USE_MUTEX
-                xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-                this->currentCPULoad = MAX_CPU_LOAD;
-                this->currentCPULoadTimestamp = timestamp;
-#ifdef USE_MUTEX
-                xSemaphoreGive(this->mutex);
-#endif
-                return (true);
-            }
-        }
-        else
-        {
-            return (false);
+            data.value = 0.0f;
+            data.timestamp = 0;
         }
     }
     else
     {
-#ifdef USE_MUTEX
-        xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-        this->currentCPULoadTimestamp = timestamp;
-#ifdef USE_MUTEX
-        xSemaphoreGive(this->mutex);
-#endif
-        return (true);
+        data.value = 0.0f;
+        data.timestamp = 0;
+    }
+    return (data);
+}
+
+bool SourceData::setCurrentCPULoad(float value, uint64_t timestamp)
+{
+    if (this->cpuLoadQueue != NULL)
+    {
+        SourceDataQueueDecimalValue data = this->getCurrentCPULoad();
+        if (value != data.value)
+        {
+            if (value >= MIN_CPU_LOAD && value <= MAX_CPU_LOAD)
+            {
+                data.value = value;
+                data.timestamp = timestamp;
+                return (xQueueOverwrite(this->cpuLoadQueue, &data) == pdPASS);
+            }
+            else if (truncateOverflows)
+            {
+                if (value < MIN_CPU_LOAD)
+                {
+                    data.value = MIN_CPU_LOAD;
+                    data.timestamp = timestamp;
+                    return (xQueueOverwrite(this->cpuLoadQueue, &data) == pdPASS);
+                }
+                else if (value > MAX_CPU_LOAD)
+                {
+                    data.value = MAX_CPU_LOAD;
+                    data.timestamp = timestamp;
+                    return (xQueueOverwrite(this->cpuLoadQueue, &data) == pdPASS);
+                }
+            }
+            else
+            {
+                return (false);
+            }
+        }
+        else
+        {
+            data.timestamp = timestamp;
+            return (xQueueOverwrite(this->cpuLoadQueue, &data) == pdPASS);
+        }
+    }
+    else
+    {
+        return (false);
     }
 }
 

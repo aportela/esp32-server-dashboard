@@ -2,25 +2,32 @@
 #ifndef ESP32_SERVER_DASHBOARD_SOURCE_DATA_H
 #define ESP32_SERVER_DASHBOARD_SOURCE_DATA_H
 
-// #define USE_MUTEX
-
 #include <cstdint>
 #include <cstddef>
-#ifdef USE_MUTEX
+
 #include <freertos/FreeRTOS.h>
 #include <freertos/semphr.h>
-#endif
+
+#define QUEUE_PEEK_MS_TO_TICKS_TIMEOUT 5
 
 #define MAX_NETWORK_INTERFACE_ID_LENGTH 65
 #define MAX_NETWORK_INTERFACE_NAME_LENGTH 4
 
+typedef struct SourceDataQueueIntegerValue
+{
+    float value;
+    uint64_t timestamp;
+};
+
+typedef struct SourceDataQueueDecimalValue
+{
+    uint64_t value;
+    uint64_t timestamp;
+};
+
 class SourceData
 {
 private:
-#ifdef USE_MUTEX
-    SemaphoreHandle_t mutex;
-#endif
-
     bool truncateOverflows = false;
     char networkInterfaceId[MAX_NETWORK_INTERFACE_ID_LENGTH] = {'\0'};
     char networkInterfaceName[MAX_NETWORK_INTERFACE_NAME_LENGTH] = {'\0'};
@@ -54,6 +61,8 @@ private:
     uint64_t previousTotalNetworkUploadedTimestamp = 0;
     uint64_t currentNetworkUploadSpeed = 0;
 
+    QueueHandle_t cpuLoadQueue;
+
 public:
     SourceData(bool truncateOverflows, float minCPUTemperature, float maxCPUTemperature, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit, const char *networkInterfaceId, const char *networkInterfaceName);
     ~SourceData();
@@ -63,10 +72,11 @@ public:
     // CPU LOAD
     uint8_t getMinCPULoad(void) const;
     uint8_t getMaxCPULoad(void) const;
-    float getCurrentCPULoad(void) const;
-    uint64_t getCurrentCPULoadTimestamp(void) const;
-    bool changedCPULoad(uint64_t fromTimestamp) const;
+
     bool setCurrentCPULoad(float value, uint64_t timestamp);
+
+    SourceDataQueueDecimalValue getCurrentCPULoad(void);
+
     // MEMORY
     uint64_t getTotalMemory(void) const;
     uint64_t getUsedMemory(void) const;

@@ -21,22 +21,21 @@ LGFXScreenDashboardResumeEntityCPULoad::~LGFXScreenDashboardResumeEntityCPULoad(
 
 bool LGFXScreenDashboardResumeEntityCPULoad::refresh(bool force)
 {
-    uint64_t currentTimestamp = this->sourceData->getCurrentCPULoadTimestamp();
-    if (this->sourceData->changedCPULoad(this->timestamp) || force)
+    SourceDataQueueDecimalValue data = this->sourceData->getCurrentCPULoad();
+    if ((data.timestamp != 0 && data.timestamp != this->timestamp) || force)
     {
-        float currentValue = this->sourceData->getCurrentCPULoad();
-        this->timestamp = currentTimestamp;
-        uint8_t mapped100 = this->mapFloatValueFrom0To100(currentValue, this->sourceData->getMinCPULoad(), this->sourceData->getMaxCPULoad());
+        this->timestamp = data.timestamp;
+        uint8_t mapped100 = this->mapFloatValueFrom0To100(data.value, this->sourceData->getMinCPULoad(), this->sourceData->getMaxCPULoad());
         uint16_t currentGradientColor = (mapped100 != this->previousMappedValue) ? this->getGradientColorFrom0To100(mapped100) : this->previousGradientcolor;
         this->previousMappedValue = mapped100;
         this->previousGradientcolor = currentGradientColor;
-        if (currentValue != this->value || force)
+        if (data.value != this->value || force)
         {
             char strValue[7] = {'\0'};
             // 3 chars for integer part (left zero padded) + 1 char for decimal point + 2 chars for decimals
-            Format::parseFloatIntoCharArray(currentValue, 2, 6, strValue, sizeof(strValue));
+            Format::parseFloatIntoCharArray(data.value, 2, 6, strValue, sizeof(strValue));
             this->refreshStrValue(strValue, currentGradientColor, LGFX_SCR_DRE_FONT_BG_COLOR);
-            this->value = currentValue;
+            this->value = data.value;
         }
         this->refreshSprite(mapped100, currentGradientColor, true);
         return (true);
