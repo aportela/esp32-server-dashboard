@@ -38,15 +38,18 @@ typedef struct SourceDataQueueCPUTemperatureValue
     uint64_t timestamp;
 };
 
+typedef struct SourceDataQueueUptimeValue
+{
+    uint64_t seconds;
+    uint64_t timestamp;
+};
+
 class SourceData
 {
 private:
     bool truncateOverflows = false;
     char networkInterfaceId[MAX_NETWORK_INTERFACE_ID_LENGTH] = {'\0'};
     char networkInterfaceName[MAX_NETWORK_INTERFACE_NAME_LENGTH] = {'\0'};
-    // SYSTEM
-    uint64_t currentUptimeSeconds = 0;
-    uint64_t currentUptimeSecondsTimestamp = 0;
     // DOWNLOAD BANDWIDTH
     uint64_t totalNetworkDownloadBandwidthLimit = 0;
     uint64_t currentTotalNetworkDownloaded = 0;
@@ -65,6 +68,7 @@ private:
     QueueHandle_t cpuLoadQueue;
     QueueHandle_t usedMemoryQueue;
     QueueHandle_t cpuTemperatureQueue;
+    QueueHandle_t uptimeQueue;
 
 public:
     SourceData(bool truncateOverflows, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit, const char *networkInterfaceId, const char *networkInterfaceName);
@@ -86,10 +90,9 @@ public:
     bool setCurrentCPUTemperature(float celsious, uint64_t timestamp);
 
     // SYSTEM
-    uint64_t getCurrentUptimeSeconds(void) const;
-    uint64_t getCurrentUptimeSecondsTimestamp(void) const;
-    bool changedUptimeSeconds(uint64_t fromTimestamp) const;
-    bool setCurrentUptimeSeconds(uint64_t seconds, uint64_t timestamp);
+    SourceDataQueueUptimeValue getCurrentUptime(void);
+    bool setCurrentUptime(uint64_t seconds, uint64_t timestamp);
+
     // NET DOWNLOAD BANDWIDTH
     uint64_t getNetworkDownloadBandwidthLimit(void) const;
     bool setNetworkDownloadBandwidthLimit(uint64_t bytes);

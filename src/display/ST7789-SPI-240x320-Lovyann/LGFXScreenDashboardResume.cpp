@@ -90,10 +90,12 @@ bool LGFXScreenDashboardResume::refreshBottomCommonData(bool forceDrawAll)
         this->previousFPS = currentFPS;
         changed = true;
     }
-    if (this->currentSourceData->getCurrentUptimeSeconds() > 0)
+
+    SourceDataQueueUptimeValue data = this->currentSourceData->getCurrentUptime();
+    if (data.seconds > 0)
     {
         char str[sizeof(this->previousUptimeStr)];
-        Format::millisToHumanStr(this->currentSourceData->getCurrentUptimeSeconds() * 1000, str, sizeof(this->previousUptimeStr));
+        Format::millisToHumanStr(data.seconds * 1000, str, sizeof(this->previousUptimeStr));
         if (forceDrawAll || strcmp(str, this->previousUptimeStr) != 0)
         {
             this->parentDisplay->setFont(SCREEN_BOTTOM_COMMON_TEXTDATA_FONT);

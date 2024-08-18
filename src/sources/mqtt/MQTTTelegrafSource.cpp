@@ -189,7 +189,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
             // https://answers.microsoft.com/en-us/windows/forum/all/fast-startup-doesnt-break-power-cycle/07bd6bf8-dd24-4c77-b911-17df89c74eb3
             if (sscanf(payloadSubStr, "uptime=%" PRIu64 "i", &uptime) == 1)
             {
-                MQTTTelegrafSource::instance->sourceData->setCurrentUptimeSeconds(uptime, currentMessageTimestamp);
+                MQTTTelegrafSource::instance->sourceData->setCurrentUptime(uptime, currentMessageTimestamp);
             }
             else
             {

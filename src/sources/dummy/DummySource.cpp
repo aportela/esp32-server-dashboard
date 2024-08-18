@@ -69,7 +69,7 @@ void DummySource::refresh(uint16_t milliSeconds)
         }
         this->sourceData->setCurrentCPUTemperature(cpuTemperatureData.celsious, currentMillis);
 
-        this->sourceData->setCurrentUptimeSeconds(millis() / 1000, currentMillis);
+        this->sourceData->setCurrentUptime(currentMillis / 1000, currentMillis);
 
         this->sourceData->setCurrentTotalNetworkDownloaded(this->sourceData->getCurrentTotalNetworkDownloaded() + random(1024, random(0, 100) > 90 ? 1048576 : 104857), currentMillis);
 
