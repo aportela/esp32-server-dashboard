@@ -59,16 +59,16 @@ void DummySource::refresh(uint16_t milliSeconds)
         SourceDataQueueCPUTemperatureValue cpuTemperatureData = this->sourceData->getCurrentCPUTemperature();
         if (random(0, 20) % 2 == 0)
         {
-            if (cpuTemperatureData.value < this->sourceData->getMaxCPUTemperature())
+            if (cpuTemperatureData.celsious < this->sourceData->getMaxCPUTemperature())
             {
-                cpuTemperatureData.value++;
+                cpuTemperatureData.celsious++;
             }
         }
-        else if (cpuTemperatureData.value > (this->sourceData->getMaxCPUTemperature() / 5))
+        else if (cpuTemperatureData.celsious > (this->sourceData->getMaxCPUTemperature() / 5))
         {
-            cpuTemperatureData.value--;
+            cpuTemperatureData.celsious--;
         }
-        this->sourceData->setCurrentCPUTemperature(cpuTemperatureData.value, currentMillis);
+        this->sourceData->setCurrentCPUTemperature(cpuTemperatureData.celsious, currentMillis);
 
         this->sourceData->setCurrentUptimeSeconds(millis() / 1000, currentMillis);
 

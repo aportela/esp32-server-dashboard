@@ -375,13 +375,13 @@ SourceDataQueueCPUTemperatureValue SourceData::getCurrentCPUTemperature(void)
     {
         if (xQueuePeek(this->cpuTemperatureQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
         {
-            data.value = 0.0f;
+            data.celsious = 0.0f;
             data.timestamp = 0;
         }
     }
     else
     {
-        data.value = 0.0f;
+        data.celsious = 0.0f;
         data.timestamp = 0;
     }
     return (data);
@@ -392,11 +392,11 @@ bool SourceData::setCurrentCPUTemperature(float celsious, uint64_t timestamp)
     if (this->cpuTemperatureQueue != NULL)
     {
         SourceDataQueueCPUTemperatureValue data = this->getCurrentCPUTemperature();
-        if (celsious != data.value)
+        if (celsious != data.celsious)
         {
             if (celsious >= this->minCPUTemperature && celsious <= this->maxCPUTemperature)
             {
-                data.value = celsious;
+                data.celsious = celsious;
                 data.timestamp = timestamp;
                 return (xQueueOverwrite(this->cpuTemperatureQueue, &data) == pdPASS);
             }
@@ -404,13 +404,13 @@ bool SourceData::setCurrentCPUTemperature(float celsious, uint64_t timestamp)
             {
                 if (celsious < this->minCPUTemperature)
                 {
-                    data.value = this->minCPUTemperature;
+                    data.celsious = this->minCPUTemperature;
                     data.timestamp = timestamp;
                     return (xQueueOverwrite(this->cpuTemperatureQueue, &data) == pdPASS);
                 }
                 else if (celsious > this->maxCPUTemperature)
                 {
-                    data.value = this->maxCPUTemperature;
+                    data.celsious = this->maxCPUTemperature;
                     data.timestamp = timestamp;
                     return (xQueueOverwrite(this->cpuTemperatureQueue, &data) == pdPASS);
                 }

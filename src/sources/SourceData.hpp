@@ -28,7 +28,7 @@ typedef struct SourceDataQueueUsedMemoryValue
 
 typedef struct SourceDataQueueCPUTemperatureValue
 {
-    float value;
+    float celsious;
     uint64_t timestamp;
 };
 
