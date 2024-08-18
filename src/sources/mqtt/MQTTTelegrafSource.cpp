@@ -150,13 +150,15 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
                 }
                 else
                 {
-                    MQTTTelegrafSource::instance->sourceData->setCurrentUsedMemory(usedBytes, 0, currentMessageTimestamp);
+#ifdef DEBUG_MQTT_TELEGRAF
+                    Serial.println("Error parsing MEM total value");
+#endif
                 }
             }
             else
             {
 #ifdef DEBUG_MQTT_TELEGRAF
-                Serial.println("Error parsing MEM used/total values");
+                Serial.println("Error parsing MEM used value");
 #endif
             }
         }
@@ -212,8 +214,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
                 uint64_t bytesRecv = 0;
                 if (sscanf(payloadBytesRecvSubStr, "bytes_recv=%" PRIu64 "i", &bytesRecv) == 1)
                 {
-                    // TODO
-                    // MQTTTelegrafSource::instance->sourceData->setCurrentTotalNetworkDownloaded(bytesRecv, currentMessageTimestamp);
+                    MQTTTelegrafSource::instance->sourceData->setCurrentNetworkDownload(bytesRecv, currentMessageTimestamp);
                 }
                 else
                 {
@@ -228,8 +229,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
                 uint64_t bytesSent = 0;
                 if (sscanf(payloadBytesSentSubStr, "bytes_sent=%" PRIu64 "i", &bytesSent) == 1)
                 {
-                    // TODO
-                    // MQTTTelegrafSource::instance->sourceData->setCurrentTotalNetworkUploaded(bytesSent, currentMessageTimestamp);
+                    MQTTTelegrafSource::instance->sourceData->setCurrentNetworkUpload(bytesSent, currentMessageTimestamp);
                 }
                 else
                 {
