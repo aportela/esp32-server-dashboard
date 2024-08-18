@@ -11,6 +11,7 @@ SourceData::SourceData(bool truncateOverflows, float minCPUTemperature, float ma
 {
 
     this->cpuLoadQueue = xQueueCreate(1, sizeof(SourceDataQueueCPULoadValue));
+    this->usedMemoryQueue = xQueueCreate(1, sizeof(SourceDataQueueUsedMemoryValue));
     this->cpuTemperatureQueue = xQueueCreate(1, sizeof(SourceDataQueueCPUTemperatureValue));
     this->truncateOverflows = truncateOverflows;
     this->totalMemory = totalMemory;
@@ -31,6 +32,7 @@ SourceData::SourceData(bool truncateOverflows, float minCPUTemperature, float ma
 SourceData::~SourceData()
 {
     vQueueDelete(this->cpuLoadQueue);
+    vQueueDelete(this->usedMemoryQueue);
     vQueueDelete(this->cpuTemperatureQueue);
 }
 
@@ -65,42 +67,42 @@ SourceDataQueueCPULoadValue SourceData::getCurrentCPULoad(void)
     {
         if (xQueuePeek(this->cpuLoadQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
         {
-            data.value = 0.0f;
+            data.loadPercent = 0.0f;
             data.timestamp = 0;
         }
     }
     else
     {
-        data.value = 0.0f;
+        data.loadPercent = 0.0f;
         data.timestamp = 0;
     }
     return (data);
 }
 
-bool SourceData::setCurrentCPULoad(float value, uint64_t timestamp)
+bool SourceData::setCurrentCPULoad(float loadPercent, uint64_t timestamp)
 {
     if (this->cpuLoadQueue != NULL)
     {
         SourceDataQueueCPULoadValue data = this->getCurrentCPULoad();
-        if (value != data.value)
+        if (loadPercent != data.loadPercent)
         {
-            if (value >= MIN_CPU_LOAD && value <= MAX_CPU_LOAD)
+            if (loadPercent >= MIN_CPU_LOAD && loadPercent <= MAX_CPU_LOAD)
             {
-                data.value = value;
+                data.loadPercent = loadPercent;
                 data.timestamp = timestamp;
                 return (xQueueOverwrite(this->cpuLoadQueue, &data) == pdPASS);
             }
             else if (truncateOverflows)
             {
-                if (value < MIN_CPU_LOAD)
+                if (loadPercent < MIN_CPU_LOAD)
                 {
-                    data.value = MIN_CPU_LOAD;
+                    data.loadPercent = MIN_CPU_LOAD;
                     data.timestamp = timestamp;
                     return (xQueueOverwrite(this->cpuLoadQueue, &data) == pdPASS);
                 }
-                else if (value > MAX_CPU_LOAD)
+                else if (loadPercent > MAX_CPU_LOAD)
                 {
-                    data.value = MAX_CPU_LOAD;
+                    data.loadPercent = MAX_CPU_LOAD;
                     data.timestamp = timestamp;
                     return (xQueueOverwrite(this->cpuLoadQueue, &data) == pdPASS);
                 }

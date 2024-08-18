@@ -13,21 +13,22 @@
 #define MAX_NETWORK_INTERFACE_ID_LENGTH 65
 #define MAX_NETWORK_INTERFACE_NAME_LENGTH 4
 
-typedef struct SourceDataQueueIntegerValue
+typedef struct SourceDataQueueCPULoadValue
 {
-    float value;
+    float loadPercent;
     uint64_t timestamp;
 };
 
-typedef struct SourceDataQueueCPULoadValue
+typedef struct SourceDataQueueUsedMemoryValue
 {
     uint64_t value;
+    uint64_t total;
     uint64_t timestamp;
 };
 
 typedef struct SourceDataQueueCPUTemperatureValue
 {
-    uint64_t value;
+    float value;
     uint64_t timestamp;
 };
 
@@ -68,6 +69,7 @@ private:
     uint64_t currentNetworkUploadSpeed = 0;
 
     QueueHandle_t cpuLoadQueue;
+    QueueHandle_t usedMemoryQueue;
     QueueHandle_t cpuTemperatureQueue;
 
 public:
@@ -82,7 +84,7 @@ public:
     uint8_t getMaxCPULoad(void) const;
 
     SourceDataQueueCPULoadValue getCurrentCPULoad(void);
-    bool setCurrentCPULoad(float value, uint64_t timestamp);
+    bool setCurrentCPULoad(float loadPercent, uint64_t timestamp);
 
     // MEMORY
     uint64_t getTotalMemory(void) const;
