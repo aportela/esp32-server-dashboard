@@ -56,19 +56,19 @@ void DummySource::refresh(uint16_t milliSeconds)
         }
         this->sourceData->setUsedMemory(current, currentMillis);
 
-        fCurrent = this->sourceData->getCurrentCPUTemperature();
+        SourceDataQueueCPUTemperatureValue cpuTemperatureData = this->sourceData->getCurrentCPUTemperature();
         if (random(0, 20) % 2 == 0)
         {
-            if (fCurrent < this->sourceData->getMaxCPUTemperature())
+            if (cpuTemperatureData.value < this->sourceData->getMaxCPUTemperature())
             {
-                fCurrent++;
+                cpuTemperatureData.value++;
             }
         }
-        else if (fCurrent > (this->sourceData->getMaxCPUTemperature() / 5))
+        else if (cpuTemperatureData.value > (this->sourceData->getMaxCPUTemperature() / 5))
         {
-            fCurrent--;
+            cpuTemperatureData.value--;
         }
-        this->sourceData->setCurrentCPUTemperature(fCurrent, currentMillis);
+        this->sourceData->setCurrentCPUTemperature(cpuTemperatureData.value, currentMillis);
 
         this->sourceData->setCurrentUptimeSeconds(millis() / 1000, currentMillis);
 

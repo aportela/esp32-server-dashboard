@@ -21,7 +21,7 @@ LGFXScreenDashboardResumeEntityCPULoad::~LGFXScreenDashboardResumeEntityCPULoad(
 
 bool LGFXScreenDashboardResumeEntityCPULoad::refresh(bool force)
 {
-    SourceDataQueueDecimalValue data = this->sourceData->getCurrentCPULoad();
+    SourceDataQueueCPULoadValue data = this->sourceData->getCurrentCPULoad();
     if ((data.timestamp != 0 && data.timestamp != this->timestamp) || force)
     {
         this->timestamp = data.timestamp;

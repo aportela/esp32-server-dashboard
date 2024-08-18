@@ -10,7 +10,8 @@
 SourceData::SourceData(bool truncateOverflows, float minCPUTemperature, float maxCPUTemperature, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit, const char *networkInterfaceId, const char *networkInterfaceName)
 {
 
-    this->cpuLoadQueue = xQueueCreate(1, sizeof(SourceDataQueueDecimalValue));
+    this->cpuLoadQueue = xQueueCreate(1, sizeof(SourceDataQueueCPULoadValue));
+    this->cpuTemperatureQueue = xQueueCreate(1, sizeof(SourceDataQueueCPUTemperatureValue));
     this->truncateOverflows = truncateOverflows;
     this->totalMemory = totalMemory;
     this->minCPUTemperature = minCPUTemperature;
@@ -30,6 +31,7 @@ SourceData::SourceData(bool truncateOverflows, float minCPUTemperature, float ma
 SourceData::~SourceData()
 {
     vQueueDelete(this->cpuLoadQueue);
+    vQueueDelete(this->cpuTemperatureQueue);
 }
 
 // NET IFACE
@@ -56,9 +58,9 @@ uint8_t SourceData::getMaxCPULoad(void) const
     return (MAX_CPU_LOAD);
 }
 
-SourceDataQueueDecimalValue SourceData::getCurrentCPULoad(void)
+SourceDataQueueCPULoadValue SourceData::getCurrentCPULoad(void)
 {
-    SourceDataQueueDecimalValue data = {0.0f, 0};
+    SourceDataQueueCPULoadValue data = {0.0f, 0};
     if (this->cpuLoadQueue != NULL)
     {
         if (xQueuePeek(this->cpuLoadQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
@@ -79,7 +81,7 @@ bool SourceData::setCurrentCPULoad(float value, uint64_t timestamp)
 {
     if (this->cpuLoadQueue != NULL)
     {
-        SourceDataQueueDecimalValue data = this->getCurrentCPULoad();
+        SourceDataQueueCPULoadValue data = this->getCurrentCPULoad();
         if (value != data.value)
         {
             if (value >= MIN_CPU_LOAD && value <= MAX_CPU_LOAD)
@@ -364,100 +366,67 @@ bool SourceData::setMaxCPUTemperature(float celsious)
     return (true);
 }
 
-float SourceData::getCurrentCPUTemperature(void) const
+SourceDataQueueCPUTemperatureValue SourceData::getCurrentCPUTemperature(void)
 {
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    float temperature = this->currentCPUTemperature;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (temperature);
-}
-
-uint64_t SourceData::getCurrentCPUTemperatureTimestamp(void) const
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    uint64_t timestamp = this->currentCPUTemperatureTimestamp;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (timestamp);
-}
-
-bool SourceData::changedCPUTemperature(uint64_t fromTimestamp) const
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    uint64_t timestamp = this->currentCPUTemperatureTimestamp;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (fromTimestamp != timestamp);
-}
-
-bool SourceData::setCurrentCPUTemperature(float celsious, uint64_t timestamp)
-{
-    if (celsious != this->currentCPUTemperature)
+    SourceDataQueueCPUTemperatureValue data = {0.0f, 0};
+    if (this->cpuTemperatureQueue != NULL)
     {
-        if (celsious >= this->minCPUTemperature && celsious <= this->maxCPUTemperature)
+        if (xQueuePeek(this->cpuTemperatureQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
         {
-#ifdef USE_MUTEX
-            xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-            this->currentCPUTemperature = celsious;
-            this->currentCPUTemperatureTimestamp = timestamp;
-#ifdef USE_MUTEX
-            xSemaphoreGive(this->mutex);
-#endif
-            return (true);
-        }
-        else if (truncateOverflows)
-        {
-            if (celsious < this->minCPUTemperature)
-            {
-#ifdef USE_MUTEX
-                xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-                this->currentCPUTemperature = this->minCPUTemperature;
-                this->currentCPUTemperatureTimestamp = timestamp;
-#ifdef USE_MUTEX
-                xSemaphoreGive(this->mutex);
-#endif
-                return (true);
-            }
-            else if (celsious > this->maxCPUTemperature)
-            {
-#ifdef USE_MUTEX
-                xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-                this->currentCPUTemperature = this->maxCPUTemperature;
-                this->currentCPUTemperatureTimestamp = timestamp;
-#ifdef USE_MUTEX
-                xSemaphoreGive(this->mutex);
-#endif
-                return (true);
-            }
-        }
-        else
-        {
-            return (false);
+            data.value = 0.0f;
+            data.timestamp = 0;
         }
     }
     else
     {
-#ifdef USE_MUTEX
-        xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-        this->currentCPUTemperatureTimestamp = timestamp;
-#ifdef USE_MUTEX
-        xSemaphoreGive(this->mutex);
-#endif
-        return (true);
+        data.value = 0.0f;
+        data.timestamp = 0;
+    }
+    return (data);
+}
+
+bool SourceData::setCurrentCPUTemperature(float celsious, uint64_t timestamp)
+{
+    if (this->cpuTemperatureQueue != NULL)
+    {
+        SourceDataQueueCPUTemperatureValue data = this->getCurrentCPUTemperature();
+        if (celsious != data.value)
+        {
+            if (celsious >= this->minCPUTemperature && celsious <= this->maxCPUTemperature)
+            {
+                data.value = celsious;
+                data.timestamp = timestamp;
+                return (xQueueOverwrite(this->cpuTemperatureQueue, &data) == pdPASS);
+            }
+            else if (truncateOverflows)
+            {
+                if (celsious < this->minCPUTemperature)
+                {
+                    data.value = this->minCPUTemperature;
+                    data.timestamp = timestamp;
+                    return (xQueueOverwrite(this->cpuTemperatureQueue, &data) == pdPASS);
+                }
+                else if (celsious > this->maxCPUTemperature)
+                {
+                    data.value = this->maxCPUTemperature;
+                    data.timestamp = timestamp;
+                    return (xQueueOverwrite(this->cpuTemperatureQueue, &data) == pdPASS);
+                }
+            }
+            else
+            {
+                return (false);
+            }
+        }
+        else
+        {
+            data.timestamp = timestamp;
+            return (xQueueOverwrite(this->cpuTemperatureQueue, &data) == pdPASS);
+        }
+    }
+    else
+    {
+        return (false);
     }
 }
 

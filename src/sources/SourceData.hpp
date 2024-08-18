@@ -19,7 +19,13 @@ typedef struct SourceDataQueueIntegerValue
     uint64_t timestamp;
 };
 
-typedef struct SourceDataQueueDecimalValue
+typedef struct SourceDataQueueCPULoadValue
+{
+    uint64_t value;
+    uint64_t timestamp;
+};
+
+typedef struct SourceDataQueueCPUTemperatureValue
 {
     uint64_t value;
     uint64_t timestamp;
@@ -62,6 +68,7 @@ private:
     uint64_t currentNetworkUploadSpeed = 0;
 
     QueueHandle_t cpuLoadQueue;
+    QueueHandle_t cpuTemperatureQueue;
 
 public:
     SourceData(bool truncateOverflows, float minCPUTemperature, float maxCPUTemperature, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit, const char *networkInterfaceId, const char *networkInterfaceName);
@@ -69,13 +76,13 @@ public:
     // NET IFACE
     void getNetworkInterfaceId(char *buffer, size_t buffer_count);
     void getNetworkInterfaceName(char *buffer, size_t buffer_count);
+
     // CPU LOAD
     uint8_t getMinCPULoad(void) const;
     uint8_t getMaxCPULoad(void) const;
 
+    SourceDataQueueCPULoadValue getCurrentCPULoad(void);
     bool setCurrentCPULoad(float value, uint64_t timestamp);
-
-    SourceDataQueueDecimalValue getCurrentCPULoad(void);
 
     // MEMORY
     uint64_t getTotalMemory(void) const;
@@ -85,15 +92,16 @@ public:
     bool setTotalMemory(uint64_t bytes);
     bool setUsedMemory(uint64_t bytes, uint64_t timestamp);
     bool setUsedAndTotalMemory(uint64_t usedBytes, uint64_t totalBytes, uint64_t timestamp);
+
     // CPU TEMPERATURE
     float getMinCPUTemperature(void) const;
     bool setMinCPUTemperature(float celsious);
     float getMaxCPUTemperature(void) const;
     bool setMaxCPUTemperature(float celsious);
-    float getCurrentCPUTemperature(void) const;
-    uint64_t getCurrentCPUTemperatureTimestamp(void) const;
-    bool changedCPUTemperature(uint64_t fromTimestamp) const;
+
+    SourceDataQueueCPUTemperatureValue getCurrentCPUTemperature(void);
     bool setCurrentCPUTemperature(float celsious, uint64_t timestamp);
+
     // SYSTEM
     uint64_t getCurrentUptimeSeconds(void) const;
     uint64_t getCurrentUptimeSecondsTimestamp(void) const;
