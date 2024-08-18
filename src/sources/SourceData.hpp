@@ -13,6 +13,12 @@
 #define MAX_NETWORK_INTERFACE_ID_LENGTH 65
 #define MAX_NETWORK_INTERFACE_NAME_LENGTH 4
 
+#define MIN_CPU_LOAD 0
+#define MAX_CPU_LOAD 100
+
+#define MIN_CPU_TEMPERATURE 0.0f
+#define MAX_CPU_TEMPERATURE 100.0f
+
 typedef struct SourceDataQueueCPULoadValue
 {
     float loadPercent;
@@ -38,18 +44,6 @@ private:
     bool truncateOverflows = false;
     char networkInterfaceId[MAX_NETWORK_INTERFACE_ID_LENGTH] = {'\0'};
     char networkInterfaceName[MAX_NETWORK_INTERFACE_NAME_LENGTH] = {'\0'};
-    // CPU LOAD
-    float currentCPULoad = 0.0f;
-    uint64_t currentCPULoadTimestamp = 0;
-    // MEMORY
-    uint64_t totalMemory = 0;
-    uint64_t usedMemory = 0;
-    uint64_t currentUsedMemoryTimestamp = 0;
-    // CPU TEMPERATURE
-    float minCPUTemperature = 0.0f;
-    float maxCPUTemperature = 0.0f;
-    float currentCPUTemperature = 0.0f;
-    uint64_t currentCPUTemperatureTimestamp = 0;
     // SYSTEM
     uint64_t currentUptimeSeconds = 0;
     uint64_t currentUptimeSecondsTimestamp = 0;
@@ -73,16 +67,13 @@ private:
     QueueHandle_t cpuTemperatureQueue;
 
 public:
-    SourceData(bool truncateOverflows, float minCPUTemperature, float maxCPUTemperature, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit, const char *networkInterfaceId, const char *networkInterfaceName);
+    SourceData(bool truncateOverflows, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit, const char *networkInterfaceId, const char *networkInterfaceName);
     ~SourceData();
     // NET IFACE
     void getNetworkInterfaceId(char *buffer, size_t buffer_count);
     void getNetworkInterfaceName(char *buffer, size_t buffer_count);
 
     // CPU LOAD
-    uint8_t getMinCPULoad(void) const;
-    uint8_t getMaxCPULoad(void) const;
-
     SourceDataQueueCPULoadValue getCurrentCPULoad(void);
     bool setCurrentCPULoad(float loadPercent, uint64_t timestamp);
 
@@ -91,11 +82,6 @@ public:
     bool setCurrentUsedMemory(uint64_t usedBytes, uint64_t totalBytes, uint64_t timestamp);
 
     // CPU TEMPERATURE
-    float getMinCPUTemperature(void) const;
-    bool setMinCPUTemperature(float celsious);
-    float getMaxCPUTemperature(void) const;
-    bool setMaxCPUTemperature(float celsious);
-
     SourceDataQueueCPUTemperatureValue getCurrentCPUTemperature(void);
     bool setCurrentCPUTemperature(float celsious, uint64_t timestamp);
 

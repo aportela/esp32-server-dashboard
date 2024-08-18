@@ -4,19 +4,13 @@
 #include <cstdio>
 #include "../utils/Format.hpp"
 
-#define MIN_CPU_LOAD 0
-#define MAX_CPU_LOAD 100
-
-SourceData::SourceData(bool truncateOverflows, float minCPUTemperature, float maxCPUTemperature, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit, const char *networkInterfaceId, const char *networkInterfaceName)
+SourceData::SourceData(bool truncateOverflows, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit, const char *networkInterfaceId, const char *networkInterfaceName)
 {
 
     this->cpuLoadQueue = xQueueCreate(1, sizeof(SourceDataQueueCPULoadValue));
     this->usedMemoryQueue = xQueueCreate(1, sizeof(SourceDataQueueUsedMemoryValue));
     this->cpuTemperatureQueue = xQueueCreate(1, sizeof(SourceDataQueueCPUTemperatureValue));
     this->truncateOverflows = truncateOverflows;
-    this->totalMemory = totalMemory;
-    this->minCPUTemperature = minCPUTemperature;
-    this->maxCPUTemperature = maxCPUTemperature;
     this->totalNetworkDownloadBandwidthLimit = totalNetworkDownloadBandwidthLimit;
     this->totalNetworkUploadBandwidthLimit = totalNetworkUploadBandwidthLimit;
     if (networkInterfaceId != NULL && strlen(networkInterfaceId) > 0)
@@ -49,16 +43,6 @@ void SourceData::getNetworkInterfaceName(char *buffer, size_t buffer_count)
 }
 
 // CPU LOAD
-
-uint8_t SourceData::getMinCPULoad(void) const
-{
-    return (MIN_CPU_LOAD);
-}
-
-uint8_t SourceData::getMaxCPULoad(void) const
-{
-    return (MAX_CPU_LOAD);
-}
 
 SourceDataQueueCPULoadValue SourceData::getCurrentCPULoad(void)
 {
@@ -199,54 +183,6 @@ bool SourceData::setCurrentUsedMemory(uint64_t usedBytes, uint64_t totalBytes, u
 
 // CPU TEMPERATURE
 
-float SourceData::getMinCPUTemperature(void) const
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    float temperature = this->minCPUTemperature;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (temperature);
-}
-
-bool SourceData::setMinCPUTemperature(float celsious)
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    this->minCPUTemperature = celsious;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (true);
-}
-
-float SourceData::getMaxCPUTemperature(void) const
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    float temperature = this->maxCPUTemperature;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (temperature);
-}
-
-bool SourceData::setMaxCPUTemperature(float celsious)
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    this->maxCPUTemperature = celsious;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (true);
-}
-
 SourceDataQueueCPUTemperatureValue SourceData::getCurrentCPUTemperature(void)
 {
     SourceDataQueueCPUTemperatureValue data = {0.0f, 0};
@@ -273,7 +209,7 @@ bool SourceData::setCurrentCPUTemperature(float celsious, uint64_t timestamp)
         SourceDataQueueCPUTemperatureValue data = this->getCurrentCPUTemperature();
         if (celsious != data.celsious)
         {
-            if (celsious >= this->minCPUTemperature && celsious <= this->maxCPUTemperature)
+            if (celsious >= MIN_CPU_TEMPERATURE && celsious <= MAX_CPU_TEMPERATURE)
             {
                 data.celsious = celsious;
                 data.timestamp = timestamp;
@@ -281,15 +217,15 @@ bool SourceData::setCurrentCPUTemperature(float celsious, uint64_t timestamp)
             }
             else if (truncateOverflows)
             {
-                if (celsious < this->minCPUTemperature)
+                if (celsious < MIN_CPU_TEMPERATURE)
                 {
-                    data.celsious = this->minCPUTemperature;
+                    data.celsious = MIN_CPU_TEMPERATURE;
                     data.timestamp = timestamp;
                     return (xQueueOverwrite(this->cpuTemperatureQueue, &data) == pdPASS);
                 }
-                else if (celsious > this->maxCPUTemperature)
+                else if (celsious > MAX_CPU_TEMPERATURE)
                 {
-                    data.celsious = this->maxCPUTemperature;
+                    data.celsious = MAX_CPU_TEMPERATURE;
                     data.timestamp = timestamp;
                     return (xQueueOverwrite(this->cpuTemperatureQueue, &data) == pdPASS);
                 }

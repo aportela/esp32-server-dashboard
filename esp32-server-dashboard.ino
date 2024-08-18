@@ -150,12 +150,6 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
             Serial.print(SerialCommandStr[SERIAL_CMDT_SET_MQTT_TELEGRAF_TOPIC]);
             Serial.println(str);
         }
-        tmpFloat = Settings::getMinCPUTemperature();
-        Serial.print(SerialCommandStr[SERIAL_CMDT_SET_MIN_CPU_TEMPERATURE]);
-        Serial.println(tmpFloat);
-        tmpFloat = Settings::getMaxCPUTemperature();
-        Serial.print(SerialCommandStr[SERIAL_CMDT_SET_MAX_CPU_TEMPERATURE]);
-        Serial.println(tmpFloat);
         tmpUint64 = Settings::getMaxDownloadBandwidthBytes();
         if (tmpUint64 > 0)
         {
@@ -301,58 +295,6 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
             screen->toggleScreen();
         }
         break;
-    case SERIAL_CMDT_SET_MIN_CPU_TEMPERATURE:
-        if (value && strlen(value))
-        {
-            Serial.printf("Serial command received: set min cpu temperature (%s)\n", value);
-            if (Settings::setMinCPUTemperature(strtof(value, nullptr)))
-            {
-                Serial.println("Min CPU temperature saved. Reboot REQUIRED");
-            }
-            else
-            {
-                Serial.println("Error saving min CPU temperature");
-            }
-        }
-        else
-        {
-            Serial.println("Serial command received: unset min CPU temperature");
-            if (Settings::setMinCPUTemperature(0.0f))
-            {
-                Serial.println("Min CPU temperature removed. Reboot REQUIRED");
-            }
-            else
-            {
-                Serial.println("Error removing min CPU temperature");
-            }
-        }
-        break;
-    case SERIAL_CMDT_SET_MAX_CPU_TEMPERATURE:
-        if (value && strlen(value))
-        {
-            Serial.printf("Serial command received: set max cpu temperature (%s)\n", value);
-            if (Settings::setMaxCPUTemperature(strtof(value, nullptr)))
-            {
-                Serial.println("Max CPU temperature saved. Reboot REQUIRED");
-            }
-            else
-            {
-                Serial.println("Error saving max CPU temperature");
-            }
-        }
-        else
-        {
-            Serial.println("Serial command received: unset max CPU temperature");
-            if (Settings::setMaxCPUTemperature(0.0f))
-            {
-                Serial.println("Max CPU temperature removed. Reboot REQUIRED");
-            }
-            else
-            {
-                Serial.println("Error removing max CPU temperature");
-            }
-        }
-        break;
     case SERIAL_CMDT_SET_MAX_DOWNLOAD_BYTES_BANDWIDTH:
         if (value && strlen(value))
         {
@@ -489,7 +431,7 @@ void setup()
     Settings::getNetworkInterfaceId(networkInterfaceId, sizeof(networkInterfaceId));
     char networkInterfaceName[MAX_NETWORK_INTERFACE_NAME_LENGTH];
     Settings::getNetworkInterfaceId(networkInterfaceName, sizeof(networkInterfaceName));
-    sourceData = new SourceData(true, Settings::getMinCPUTemperature(), Settings::getMaxCPUTemperature(), Settings::getMaxDownloadBandwidthBytes(), Settings::getMaxUploadBandwidthBytes(), networkInterfaceId, networkInterfaceName);
+    sourceData = new SourceData(true, Settings::getMaxDownloadBandwidthBytes(), Settings::getMaxUploadBandwidthBytes(), networkInterfaceId, networkInterfaceName);
 #ifdef SOURCE_DUMMY
     dummySRC = new DummySource(sourceData);
 #endif // SOURCE_DUMMY

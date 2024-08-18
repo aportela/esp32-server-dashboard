@@ -15,8 +15,6 @@ const char *SerialCommandStr[]{
     "SET_MQTT_TELEGRAF_URI ",
     "SET_MQTT_TELEGRAF_GLOBAL_TOPIC ",
     "TOGGLE_SCREEN",
-    "SET_MIN_CPU_TEMPERATURE ",
-    "SET_MAX_CPU_TEMPERATURE ",
     "SET_MAX_DOWNLOAD_BYTES_BANDWITH ",
     "SET_MAX_UPLOAD_BYTES_BANDWITH ",
     "SET_NETWORK_INTERFACE_ID ",
@@ -165,44 +163,6 @@ void SerialManager::loop(void)
             if (SerialManager::remoteCallback != nullptr)
             {
                 SerialManager::remoteCallback(SERIAL_CMDT_TOGGLE_SCREEN, nullptr);
-            }
-        }
-        else if (rx.startsWith(SerialCommandStr[SERIAL_CMDT_SET_MIN_CPU_TEMPERATURE]))
-        {
-            uint16_t length = strlen(SerialCommandStr[SERIAL_CMDT_SET_MIN_CPU_TEMPERATURE]);
-            if (rx.length() > length)
-            {
-                String MinCPUTemperature = rx.substring(length);
-                if (SerialManager::remoteCallback != nullptr)
-                {
-                    SerialManager::remoteCallback(SERIAL_CMDT_SET_MIN_CPU_TEMPERATURE, MinCPUTemperature.c_str());
-                }
-            }
-            else
-            {
-                if (SerialManager::remoteCallback != nullptr)
-                {
-                    SerialManager::remoteCallback(SERIAL_CMDT_SET_MIN_CPU_TEMPERATURE, nullptr);
-                }
-            }
-        }
-        else if (rx.startsWith(SerialCommandStr[SERIAL_CMDT_SET_MAX_CPU_TEMPERATURE]))
-        {
-            uint16_t length = strlen(SerialCommandStr[SERIAL_CMDT_SET_MAX_CPU_TEMPERATURE]);
-            if (rx.length() > length)
-            {
-                String MaxCPUTemperature = rx.substring(length);
-                if (SerialManager::remoteCallback != nullptr)
-                {
-                    SerialManager::remoteCallback(SERIAL_CMDT_SET_MAX_CPU_TEMPERATURE, MaxCPUTemperature.c_str());
-                }
-            }
-            else
-            {
-                if (SerialManager::remoteCallback != nullptr)
-                {
-                    SerialManager::remoteCallback(SERIAL_CMDT_SET_MAX_CPU_TEMPERATURE, nullptr);
-                }
             }
         }
         else if (rx.startsWith(SerialCommandStr[SERIAL_CMDT_SET_MAX_DOWNLOAD_BYTES_BANDWIDTH]))

@@ -8,8 +8,6 @@
 #define KEY_WIFI_PASSWORD "WIFI_PASSWORD"
 #define KEY_MQTT_TELEGRAF_URI "SRC_MQTT_URI"
 #define KEY_MQTT_TELEGRAF_GLOBAL_TOPIC "SRC_MQTT_TOPIC"
-#define KEY_MIN_CPU_TEMPERATURE "MIN_CPU_TEMP"
-#define KEY_MAX_CPU_TEMPERATURE "MAX_CPU_TEMP"
 #define KEY_TOTAL_DOWNLOAD_BANDWIDTH_BYTES "T_D_BW_BYTES"
 #define KEY_TOTAL_UPLOAD_BANDWIDTH_BYTES "T_U_BW_BYTES"
 #define KEY_NET_IFACE_ID "NET_IFACE_ID"
@@ -244,40 +242,6 @@ bool Settings::setMQTTTelegrafGlobalTopic(const char *topic)
     else
     {
         return (Settings::deleteKey(KEY_MQTT_TELEGRAF_GLOBAL_TOPIC));
-    }
-}
-
-float Settings::getMinCPUTemperature()
-{
-    return (Settings::getFloatValue(KEY_MIN_CPU_TEMPERATURE, 0.0f));
-}
-
-bool Settings::setMinCPUTemperature(float celsius)
-{
-    if (celsius >= -128 && celsius <= 127)
-    {
-        return (Settings::setFloatValue(KEY_MIN_CPU_TEMPERATURE, celsius));
-    }
-    else
-    {
-        return (Settings::deleteKey(KEY_MIN_CPU_TEMPERATURE));
-    }
-}
-
-float Settings::getMaxCPUTemperature()
-{
-    return (Settings::getFloatValue(KEY_MAX_CPU_TEMPERATURE, 0.0f));
-}
-
-bool Settings::setMaxCPUTemperature(float celsius)
-{
-    if (celsius >= -128 && celsius <= 127)
-    {
-        return (Settings::setFloatValue(KEY_MAX_CPU_TEMPERATURE, celsius));
-    }
-    else
-    {
-        return (Settings::deleteKey(KEY_MAX_CPU_TEMPERATURE));
     }
 }
 

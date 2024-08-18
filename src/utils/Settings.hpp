@@ -33,12 +33,6 @@ public:
     static void getMQTTTelegrafGlobalTopic(char *topic, size_t count);
     static bool setMQTTTelegrafGlobalTopic(const char *topic);
 
-    static float getMinCPUTemperature();
-    static bool setMinCPUTemperature(float celsius = 0.0f);
-
-    static float getMaxCPUTemperature();
-    static bool setMaxCPUTemperature(float celsius = 0.0f);
-
     static uint64_t getMaxDownloadBandwidthBytes();
     static bool setMaxDownloadBandwidthBytes(uint64_t totalBytes = 0);
 
