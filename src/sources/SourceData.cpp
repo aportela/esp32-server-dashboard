@@ -6,14 +6,18 @@
 
 SourceData::SourceData(bool truncateOverflows, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit, const char *networkInterfaceId, const char *networkInterfaceName)
 {
-
+    uint64_t currentTimestamp = millis();
     this->cpuLoadQueue = xQueueCreate(1, sizeof(SourceDataQueueCPULoadValue));
     this->usedMemoryQueue = xQueueCreate(1, sizeof(SourceDataQueueUsedMemoryValue));
     this->cpuTemperatureQueue = xQueueCreate(1, sizeof(SourceDataQueueCPUTemperatureValue));
     this->uptimeQueue = xQueueCreate(1, sizeof(SourceDataQueueUptimeValue));
+    this->networkingDownloadQueue = xQueueCreate(1, sizeof(SourceDataQueueNetworkingValue));
+    this->networkingUploadQueue = xQueueCreate(1, sizeof(SourceDataQueueNetworkingValue));
     this->truncateOverflows = truncateOverflows;
-    this->totalNetworkDownloadBandwidthLimit = totalNetworkDownloadBandwidthLimit;
-    this->totalNetworkUploadBandwidthLimit = totalNetworkUploadBandwidthLimit;
+    this->setCurrentNetworkDownload(0, totalNetworkDownloadBandwidthLimit, currentTimestamp);
+    this->setCurrentNetworkUpload(0, totalNetworkUploadBandwidthLimit, currentTimestamp);
+    // this->totalNetworkDownloadBandwidthLimit = totalNetworkDownloadBandwidthLimit;
+    // this->totalNetworkUploadBandwidthLimit = totalNetworkUploadBandwidthLimit;
     if (networkInterfaceId != NULL && strlen(networkInterfaceId) > 0)
     {
         strncpy(this->networkInterfaceId, networkInterfaceId, sizeof(this->networkInterfaceId));
@@ -30,6 +34,8 @@ SourceData::~SourceData()
     vQueueDelete(this->usedMemoryQueue);
     vQueueDelete(this->cpuTemperatureQueue);
     vQueueDelete(this->uptimeQueue);
+    vQueueDelete(this->networkingDownloadQueue);
+    vQueueDelete(this->networkingUploadQueue);
 }
 
 // NET IFACE
@@ -295,6 +301,61 @@ bool SourceData::setCurrentUptime(uint64_t seconds, uint64_t timestamp)
 
 // NET DOWNLOAD BANDWIDTH
 
+SourceDataQueueNetworkingValue SourceData::getCurrentNetworkDownload(void)
+{
+    SourceDataQueueNetworkingValue data = {0, 0, 0, 0};
+    if (this->networkingDownloadQueue != NULL)
+    {
+        if (xQueuePeek(this->networkingDownloadQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
+        {
+            data.totalBandwithBytesPerSecondLimit = 0;
+            data.totalBytesTransfered = 0;
+            data.currentBandwidthBytesPerSecond = 0;
+            data.timestamp = 0;
+        }
+    }
+    else
+    {
+        data.totalBandwithBytesPerSecondLimit = 0;
+        data.totalBytesTransfered = 0;
+        data.currentBandwidthBytesPerSecond = 0;
+        data.timestamp = 0;
+    }
+    return (data);
+}
+
+bool SourceData::setCurrentNetworkDownload(uint64_t totalBytes, uint64_t limitBytes, uint64_t timestamp)
+{
+    if (this->networkingDownloadQueue)
+    {
+        SourceDataQueueNetworkingValue data = this->getCurrentNetworkDownload();
+        uint64_t previousTimestamp = data.timestamp;
+        if (limitBytes != data.totalBandwithBytesPerSecondLimit)
+        {
+            data.totalBandwithBytesPerSecondLimit = limitBytes;
+            data.timestamp = timestamp;
+        }
+        if (totalBytes != data.totalBytesTransfered)
+        {
+            uint64_t diffBytes = totalBytes - data.totalBytesTransfered;
+            float diffSeconds = (timestamp - previousTimestamp) / 1000.0;
+            data.currentBandwidthBytesPerSecond = diffSeconds > 0 ? diffBytes / diffSeconds : 0;
+            data.totalBytesTransfered = totalBytes;
+            data.timestamp = timestamp;
+            return (xQueueOverwrite(this->networkingDownloadQueue, &data) == pdPASS);
+        }
+        else
+        {
+            data.timestamp = timestamp;
+            return (xQueueOverwrite(this->networkingDownloadQueue, &data) == pdPASS);
+        }
+    }
+    else
+    {
+        return (false);
+    }
+}
+
 uint64_t SourceData::getNetworkDownloadBandwidthLimit(void) const
 {
 #ifdef USE_MUTEX
@@ -393,6 +454,61 @@ bool SourceData::setCurrentTotalNetworkDownloaded(uint64_t bytes, uint64_t times
 }
 
 // NET UPLOAD BANDWIDTH
+
+SourceDataQueueNetworkingValue SourceData::getCurrentNetworkUpload(void)
+{
+    SourceDataQueueNetworkingValue data = {0, 0, 0, 0};
+    if (this->networkingUploadQueue != NULL)
+    {
+        if (xQueuePeek(this->networkingUploadQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
+        {
+            data.totalBandwithBytesPerSecondLimit = 0;
+            data.totalBytesTransfered = 0;
+            data.currentBandwidthBytesPerSecond = 0;
+            data.timestamp = 0;
+        }
+    }
+    else
+    {
+        data.totalBandwithBytesPerSecondLimit = 0;
+        data.totalBytesTransfered = 0;
+        data.currentBandwidthBytesPerSecond = 0;
+        data.timestamp = 0;
+    }
+    return (data);
+}
+
+bool SourceData::setCurrentNetworkUpload(uint64_t totalBytes, uint64_t limitBytes, uint64_t timestamp)
+{
+    if (this->networkingUploadQueue)
+    {
+        SourceDataQueueNetworkingValue data = this->getCurrentNetworkUpload();
+        uint64_t previousTimestamp = data.timestamp;
+        if (limitBytes != data.totalBandwithBytesPerSecondLimit)
+        {
+            data.totalBandwithBytesPerSecondLimit = limitBytes;
+            data.timestamp = timestamp;
+        }
+        if (totalBytes != data.totalBytesTransfered)
+        {
+            uint64_t diffBytes = totalBytes - data.totalBytesTransfered;
+            float diffSeconds = (timestamp - previousTimestamp) / 1000.0;
+            data.currentBandwidthBytesPerSecond = diffSeconds > 0 ? diffBytes / diffSeconds : 0;
+            data.totalBytesTransfered = totalBytes;
+            data.timestamp = timestamp;
+            return (xQueueOverwrite(this->networkingUploadQueue, &data) == pdPASS);
+        }
+        else
+        {
+            data.timestamp = timestamp;
+            return (xQueueOverwrite(this->networkingUploadQueue, &data) == pdPASS);
+        }
+    }
+    else
+    {
+        return (false);
+    }
+}
 
 uint64_t SourceData::getNetworkUploadBandwidthLimit(void) const
 {

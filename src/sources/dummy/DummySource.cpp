@@ -71,10 +71,19 @@ void DummySource::refresh(uint16_t milliSeconds)
 
         this->sourceData->setCurrentUptime(currentMillis / 1000, currentMillis);
 
-        this->sourceData->setCurrentTotalNetworkDownloaded(this->sourceData->getCurrentTotalNetworkDownloaded() + random(1024, random(0, 100) > 90 ? 1048576 : 104857), currentMillis);
+        SourceDataQueueNetworkingValue netDownData = this->sourceData->getCurrentNetworkDownload();
 
-        this->sourceData->setCurrentTotalNetworkUploaded(this->sourceData->getCurrentTotalNetworkUploaded() + random(1024, random(0, 100) > 90 ? 1048576 : 104857), currentMillis);
+        this->sourceData->setCurrentNetworkDownload(netDownData.totalBytesTransfered + (random(1024, random(0, 100) > 90 ? 1048576 : 104857)), netDownData.totalBandwithBytesPerSecondLimit, currentMillis);
 
+        SourceDataQueueNetworkingValue netUpData = this->sourceData->getCurrentNetworkUpload();
+
+        this->sourceData->setCurrentNetworkUpload(netUpData.totalBytesTransfered + (random(1024, random(0, 100) > 90 ? 1048576 : 104857)), netUpData.totalBandwithBytesPerSecondLimit, currentMillis);
+
+        // this->sourceData->setCurrentTotalNetworkDownloaded(this->sourceData->getCurrentTotalNetworkDownloaded() + random(1024, random(0, 100) > 90 ? 1048576 : 104857), currentMillis);
+
+        // this->sourceData->setCurrentTotalNetworkUploaded(this->sourceData->getCurrentTotalNetworkUploaded() + random(1024, random(0, 100) > 90 ? 1048576 : 104857), currentMillis);
+
+        // TODO: remove if not required
         this->lastEllapsedMillis = currentMillis;
     }
 }

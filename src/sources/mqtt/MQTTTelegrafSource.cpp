@@ -212,7 +212,8 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
                 uint64_t bytesRecv = 0;
                 if (sscanf(payloadBytesRecvSubStr, "bytes_recv=%" PRIu64 "i", &bytesRecv) == 1)
                 {
-                    MQTTTelegrafSource::instance->sourceData->setCurrentTotalNetworkDownloaded(bytesRecv, currentMessageTimestamp);
+                    // TODO
+                    // MQTTTelegrafSource::instance->sourceData->setCurrentTotalNetworkDownloaded(bytesRecv, currentMessageTimestamp);
                 }
                 else
                 {
@@ -227,7 +228,8 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
                 uint64_t bytesSent = 0;
                 if (sscanf(payloadBytesSentSubStr, "bytes_sent=%" PRIu64 "i", &bytesSent) == 1)
                 {
-                    MQTTTelegrafSource::instance->sourceData->setCurrentTotalNetworkUploaded(bytesSent, currentMessageTimestamp);
+                    // TODO
+                    // MQTTTelegrafSource::instance->sourceData->setCurrentTotalNetworkUploaded(bytesSent, currentMessageTimestamp);
                 }
                 else
                 {
