@@ -10,7 +10,7 @@ SourceData::SourceData(bool truncateOverflows, uint64_t totalNetworkDownloadBand
     this->cpuLoadQueue = xQueueCreate(1, sizeof(SourceDataQueueCPULoadValue));
     this->usedMemoryQueue = xQueueCreate(1, sizeof(SourceDataQueueUsedMemoryValue));
     this->cpuTemperatureQueue = xQueueCreate(1, sizeof(SourceDataQueueCPUTemperatureValue));
-    this->uptimeQueue = xQueueCreate(1, sizeof(SourceDataQueueUptimeValue));
+    this->systemUptimeQueue = xQueueCreate(1, sizeof(SourceDataQueueUptimeValue));
     this->networkingDownloadQueue = xQueueCreate(1, sizeof(SourceDataQueueNetworkingValue));
     this->networkingUploadQueue = xQueueCreate(1, sizeof(SourceDataQueueNetworkingValue));
     this->truncateOverflows = truncateOverflows;
@@ -33,7 +33,7 @@ SourceData::~SourceData()
     vQueueDelete(this->cpuLoadQueue);
     vQueueDelete(this->usedMemoryQueue);
     vQueueDelete(this->cpuTemperatureQueue);
-    vQueueDelete(this->uptimeQueue);
+    vQueueDelete(this->systemUptimeQueue);
     vQueueDelete(this->networkingDownloadQueue);
     vQueueDelete(this->networkingUploadQueue);
 }
@@ -260,9 +260,9 @@ bool SourceData::setCurrentCPUTemperature(float celsious, uint64_t timestamp)
 SourceDataQueueUptimeValue SourceData::getCurrentUptime(void)
 {
     SourceDataQueueUptimeValue data = {0, 0};
-    if (this->uptimeQueue != NULL)
+    if (this->systemUptimeQueue != NULL)
     {
-        if (xQueuePeek(this->uptimeQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
+        if (xQueuePeek(this->systemUptimeQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
         {
             data.seconds = 0;
             data.timestamp = 0;
@@ -278,19 +278,19 @@ SourceDataQueueUptimeValue SourceData::getCurrentUptime(void)
 
 bool SourceData::setCurrentUptime(uint64_t seconds, uint64_t timestamp)
 {
-    if (this->uptimeQueue != NULL)
+    if (this->systemUptimeQueue != NULL)
     {
         SourceDataQueueUptimeValue data = this->getCurrentUptime();
         if (seconds != data.seconds)
         {
             data.seconds = seconds;
             data.timestamp = timestamp;
-            return (xQueueOverwrite(this->uptimeQueue, &data) == pdPASS);
+            return (xQueueOverwrite(this->systemUptimeQueue, &data) == pdPASS);
         }
         else
         {
             data.timestamp = timestamp;
-            return (xQueueOverwrite(this->uptimeQueue, &data) == pdPASS);
+            return (xQueueOverwrite(this->systemUptimeQueue, &data) == pdPASS);
         }
     }
     else

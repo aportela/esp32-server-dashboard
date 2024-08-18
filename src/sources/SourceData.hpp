@@ -76,14 +76,14 @@ private:
     QueueHandle_t cpuLoadQueue;
     QueueHandle_t usedMemoryQueue;
     QueueHandle_t cpuTemperatureQueue;
-    QueueHandle_t uptimeQueue;
-
+    QueueHandle_t systemUptimeQueue;
     QueueHandle_t networkingDownloadQueue;
     QueueHandle_t networkingUploadQueue;
 
 public:
     SourceData(bool truncateOverflows, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit, const char *networkInterfaceId, const char *networkInterfaceName);
     ~SourceData();
+
     // NET IFACE
     void getNetworkInterfaceId(char *buffer, size_t buffer_count);
     void getNetworkInterfaceName(char *buffer, size_t buffer_count);
