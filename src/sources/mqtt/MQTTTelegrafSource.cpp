@@ -146,11 +146,11 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
                 const char *totalSubStrStart = strstr(payload, "total=");
                 if (sscanf(totalSubStrStart, "total=%" PRIu64 "i", &totalBytes) == 1)
                 {
-                    MQTTTelegrafSource::instance->sourceData->setUsedAndTotalMemory(usedBytes, totalBytes, currentMessageTimestamp);
+                    MQTTTelegrafSource::instance->sourceData->setCurrentUsedMemory(usedBytes, totalBytes, currentMessageTimestamp);
                 }
                 else
                 {
-                    MQTTTelegrafSource::instance->sourceData->setUsedMemory(usedBytes, currentMessageTimestamp);
+                    MQTTTelegrafSource::instance->sourceData->setCurrentUsedMemory(usedBytes, 0, currentMessageTimestamp);
                 }
             }
             else

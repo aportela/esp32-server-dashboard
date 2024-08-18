@@ -21,8 +21,8 @@ typedef struct SourceDataQueueCPULoadValue
 
 typedef struct SourceDataQueueUsedMemoryValue
 {
-    uint64_t value;
-    uint64_t total;
+    uint64_t usedBytes;
+    uint64_t totalBytes;
     uint64_t timestamp;
 };
 
@@ -87,13 +87,8 @@ public:
     bool setCurrentCPULoad(float loadPercent, uint64_t timestamp);
 
     // MEMORY
-    uint64_t getTotalMemory(void) const;
-    uint64_t getUsedMemory(void) const;
-    uint64_t getCurrentUsedMemoryTimestamp(void) const;
-    bool changedUsedMemory(uint64_t fromTimestamp) const;
-    bool setTotalMemory(uint64_t bytes);
-    bool setUsedMemory(uint64_t bytes, uint64_t timestamp);
-    bool setUsedAndTotalMemory(uint64_t usedBytes, uint64_t totalBytes, uint64_t timestamp);
+    SourceDataQueueUsedMemoryValue getCurrentUsedMemory(void);
+    bool setCurrentUsedMemory(uint64_t usedBytes, uint64_t totalBytes, uint64_t timestamp);
 
     // CPU TEMPERATURE
     float getMinCPUTemperature(void) const;

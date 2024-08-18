@@ -126,195 +126,74 @@ bool SourceData::setCurrentCPULoad(float loadPercent, uint64_t timestamp)
 
 // MEMORY
 
-uint64_t SourceData::getTotalMemory(void) const
+SourceDataQueueUsedMemoryValue SourceData::getCurrentUsedMemory(void)
 {
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    uint64_t memory = this->totalMemory;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (memory);
-}
-
-uint64_t SourceData::getUsedMemory(void) const
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    uint64_t memory = this->usedMemory;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (memory);
-}
-
-uint64_t SourceData::getCurrentUsedMemoryTimestamp(void) const
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    uint64_t timestamp = this->currentUsedMemoryTimestamp;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (timestamp);
-}
-
-bool SourceData::changedUsedMemory(uint64_t fromTimestamp) const
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    uint64_t timestamp = this->currentUsedMemoryTimestamp;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (fromTimestamp != timestamp);
-}
-
-bool SourceData::setTotalMemory(uint64_t bytes)
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    this->totalMemory = bytes;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (true);
-}
-
-bool SourceData::setUsedMemory(uint64_t bytes, uint64_t timestamp)
-{
-    if (bytes != this->usedMemory)
+    SourceDataQueueUsedMemoryValue data = {0, 0, 0};
+    if (this->usedMemoryQueue != NULL)
     {
-        if (bytes >= 0 && bytes <= this->totalMemory)
+        if (xQueuePeek(this->usedMemoryQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
         {
-#ifdef USE_MUTEX
-            xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-            this->usedMemory = bytes;
-            this->currentUsedMemoryTimestamp = timestamp;
-#ifdef USE_MUTEX
-            xSemaphoreGive(this->mutex);
-#endif
-            return (true);
-        }
-        else if (truncateOverflows)
-        {
-            if (bytes < 0)
-            {
-#ifdef USE_MUTEX
-                xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-                this->usedMemory = 0;
-                this->currentUsedMemoryTimestamp = timestamp;
-#ifdef USE_MUTEX
-                xSemaphoreGive(this->mutex);
-#endif
-                return (true);
-            }
-            else if (bytes > this->totalMemory)
-            {
-#ifdef USE_MUTEX
-                xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-                this->usedMemory = this->totalMemory;
-                this->currentUsedMemoryTimestamp = timestamp;
-#ifdef USE_MUTEX
-                xSemaphoreGive(this->mutex);
-#endif
-                return (true);
-            }
-        }
-        else
-        {
-            return (false);
+            data.usedBytes = 0;
+            data.totalBytes = 0;
+            data.timestamp = 0;
         }
     }
     else
     {
-#ifdef USE_MUTEX
-        xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-        this->currentUsedMemoryTimestamp = timestamp;
-#ifdef USE_MUTEX
-        xSemaphoreGive(this->mutex);
-#endif
-        return (true);
+        data.usedBytes = 0;
+        data.totalBytes = 0;
+        data.timestamp = 0;
     }
+    return (data);
 }
 
-bool SourceData::setUsedAndTotalMemory(uint64_t usedBytes, uint64_t totalBytes, uint64_t timestamp)
+bool SourceData::setCurrentUsedMemory(uint64_t usedBytes, uint64_t totalBytes, uint64_t timestamp)
 {
-    if (totalBytes != this->totalMemory)
+    if (this->usedMemoryQueue)
     {
-#ifdef USE_MUTEX
-        xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-        this->totalMemory = totalBytes;
-#ifdef USE_MUTEX
-        xSemaphoreGive(this->mutex);
-#endif
-    }
-    if (usedBytes != this->usedMemory)
-    {
-        if (usedBytes >= 0 && usedBytes <= this->totalMemory)
+        SourceDataQueueUsedMemoryValue data = this->getCurrentUsedMemory();
+        if (totalBytes != data.totalBytes)
         {
-#ifdef USE_MUTEX
-            xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-            this->usedMemory = usedBytes;
-            this->currentUsedMemoryTimestamp = timestamp;
-#ifdef USE_MUTEX
-            xSemaphoreGive(this->mutex);
-#endif
-            return (true);
+            data.totalBytes = totalBytes;
+            data.timestamp = timestamp;
         }
-        else if (truncateOverflows)
+        if (usedBytes != data.usedBytes)
         {
-            if (usedBytes < 0)
+            if (usedBytes >= 0 && usedBytes <= data.totalBytes)
             {
-#ifdef USE_MUTEX
-                xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-                this->usedMemory = 0;
-                this->currentUsedMemoryTimestamp = timestamp;
-#ifdef USE_MUTEX
-                xSemaphoreGive(this->mutex);
-#endif
-                return (true);
+                data.usedBytes = usedBytes;
+                data.timestamp = timestamp;
+                return (xQueueOverwrite(this->usedMemoryQueue, &data) == pdPASS);
             }
-            else if (usedBytes > this->totalMemory)
+            else if (truncateOverflows)
             {
-#ifdef USE_MUTEX
-                xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-                this->usedMemory = this->totalMemory;
-                this->currentUsedMemoryTimestamp = timestamp;
-#ifdef USE_MUTEX
-                xSemaphoreGive(this->mutex);
-#endif
-                return (true);
+                if (usedBytes < 0)
+                {
+                    data.usedBytes = 0;
+                    data.timestamp = timestamp;
+                    return (xQueueOverwrite(this->usedMemoryQueue, &data) == pdPASS);
+                }
+                else if (usedBytes > data.totalBytes)
+                {
+                    data.usedBytes = data.totalBytes;
+                    data.timestamp = timestamp;
+                    return (xQueueOverwrite(this->usedMemoryQueue, &data) == pdPASS);
+                }
+            }
+            else
+            {
+                return (false);
             }
         }
         else
         {
-            return (false);
+            data.timestamp = timestamp;
+            return (xQueueOverwrite(this->usedMemoryQueue, &data) == pdPASS);
         }
     }
     else
     {
-#ifdef USE_MUTEX
-        xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-        this->currentUsedMemoryTimestamp = timestamp;
-#ifdef USE_MUTEX
-        xSemaphoreGive(this->mutex);
-#endif
-        return (true);
+        return (false);
     }
 }
 

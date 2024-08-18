@@ -16,34 +16,33 @@ LGFXScreenDashboardResumeEntityUsedMemory::~LGFXScreenDashboardResumeEntityUsedM
 
 bool LGFXScreenDashboardResumeEntityUsedMemory::refresh(bool force)
 {
-    uint64_t currentTimestamp = this->sourceData->getCurrentUsedMemoryTimestamp();
-    if (this->sourceData->changedUsedMemory(this->timestamp) || force)
+    SourceDataQueueUsedMemoryValue data = this->sourceData->getCurrentUsedMemory();
+    if ((data.timestamp != 0 && data.timestamp != this->timestamp) || force)
     {
-        uint64_t currentValue = this->sourceData->getUsedMemory();
-        this->timestamp = currentTimestamp;
-        if (this->realTotalMemory != this->sourceData->getTotalMemory())
+        this->timestamp = data.timestamp;
+        if (this->realTotalMemory != data.totalBytes)
         {
-            this->realTotalMemory = this->sourceData->getTotalMemory();
+            this->realTotalMemory = data.totalBytes;
             // redraw limits
             char maxStr[6] = {'\0'};
             Format::bytesToHumanStr(this->realTotalMemory, maxStr, sizeof(maxStr), false, true, false);
             this->printLimits("0B", maxStr);
         }
-        uint8_t mapped100 = this->mapUint64ValueFrom0To100(currentValue, 0, this->sourceData->getTotalMemory());
+        uint8_t mapped100 = this->mapUint64ValueFrom0To100(data.usedBytes, 0, data.totalBytes);
         uint16_t currentGradientColor = (mapped100 != this->previousMappedValue) ? this->getGradientColorFrom0To100(mapped100) : this->previousGradientcolor;
         this->previousMappedValue = mapped100;
         this->previousGradientcolor = currentGradientColor;
-        if (currentValue != this->value || force)
+        if (data.usedBytes != this->value || force)
         {
             char strValue[sizeof(this->oldStrValue)] = {'\0'};
-            Format::bytesToHumanStr(currentValue, strValue, sizeof(strValue), true, true, false);
+            Format::bytesToHumanStr(data.usedBytes, strValue, sizeof(strValue), true, true, false);
             strcat(strValue, "  ");
             if (strcmp(strValue, this->oldStrValue) != 0 || force)
             {
                 this->refreshStrValue(strValue, currentGradientColor, LGFX_SCR_DRE_FONT_BG_COLOR);
                 strncpy(this->oldStrValue, strValue, sizeof(this->oldStrValue));
             }
-            this->value = currentValue;
+            this->value = data.usedBytes;
         }
         this->refreshSprite(mapped100, currentGradientColor, true);
         return (true);

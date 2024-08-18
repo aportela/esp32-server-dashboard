@@ -5,8 +5,7 @@ DummySource::DummySource(SourceData *sourceData) : Source(sourceData)
 {
     randomSeed(analogRead(0) ^ (micros() * esp_random()));
     this->lastEllapsedMillis = millis();
-    this->sourceData->setTotalMemory(17044639744); // 16 Gbytes
-    this->sourceData->setUsedMemory(4261159936, this->lastEllapsedMillis);
+    this->sourceData->setCurrentUsedMemory(4261159936, 17044639744, this->lastEllapsedMillis);
     this->sourceData->setNetworkDownloadBandwidthLimit(73125000);
     this->sourceData->setNetworkUploadBandwidthLimit(73125000);
 }
@@ -41,20 +40,20 @@ void DummySource::refresh(uint16_t milliSeconds)
         fCurrent /= 100.0f;
         this->sourceData->setCurrentCPULoad(fCurrent, currentMillis);
 
-        current = this->sourceData->getUsedMemory();
-        change = random(10485760, this->sourceData->getTotalMemory() / 1024);
+        SourceDataQueueUsedMemoryValue memoryData = this->sourceData->getCurrentUsedMemory();
+        change = random(10485760, memoryData.totalBytes / 1024);
         if (random(0, 20) % 2 == 0)
         {
-            if (current < this->sourceData->getTotalMemory() - change)
+            if (memoryData.usedBytes < memoryData.totalBytes - change)
             {
-                current += change;
+                memoryData.usedBytes += change;
             }
         }
-        else if (current > change)
+        else if (memoryData.usedBytes > change)
         {
-            current -= change;
+            memoryData.usedBytes -= change;
         }
-        this->sourceData->setUsedMemory(current, currentMillis);
+        this->sourceData->setCurrentUsedMemory(memoryData.usedBytes, memoryData.totalBytes, currentMillis);
 
         SourceDataQueueCPUTemperatureValue cpuTemperatureData = this->sourceData->getCurrentCPUTemperature();
         if (random(0, 20) % 2 == 0)
