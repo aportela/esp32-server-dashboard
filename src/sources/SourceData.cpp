@@ -281,25 +281,12 @@ bool SourceData::setCurrentUptime(uint64_t seconds, uint64_t timestamp)
 
 uint64_t SourceData::getNetworkDownloadBandwidthLimit(void) const
 {
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    uint64_t bytes = this->totalNetworkDownloadBandwidthLimit;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (bytes);
+    return (this->totalNetworkDownloadBandwidthLimit);
 }
 
 bool SourceData::setNetworkDownloadBandwidthLimit(uint64_t bytes)
 {
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
     this->totalNetworkDownloadBandwidthLimit = bytes;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
     return (true);
 }
 
@@ -358,25 +345,12 @@ bool SourceData::setCurrentNetworkDownload(uint64_t totalBytes, uint64_t timesta
 
 uint64_t SourceData::getNetworkUploadBandwidthLimit(void) const
 {
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    uint64_t bytes = this->totalNetworkUploadBandwidthLimit;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (bytes);
+    return (this->totalNetworkUploadBandwidthLimit);
 }
 
 bool SourceData::setNetworkUploadBandwidthLimit(uint64_t bytes)
 {
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
     this->totalNetworkUploadBandwidthLimit = bytes;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
     return (true);
 }
 
