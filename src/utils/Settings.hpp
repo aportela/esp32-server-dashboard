@@ -41,9 +41,6 @@ public:
 
     static void getNetworkInterfaceId(char *id, size_t count);
     static bool setNetworkInterfaceId(const char *id);
-
-    static void getNetworkInterfaceName(char *name, size_t count);
-    static bool setNetworkInterfaceName(const char *name);
 };
 
 #endif

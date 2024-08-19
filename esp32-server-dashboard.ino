@@ -168,12 +168,6 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
             Serial.print(SerialCommandStr[SERIAL_CMDT_SET_NETWORK_INTERFACE_ID]);
             Serial.println(str);
         }
-        Settings::getNetworkInterfaceName(str, sizeof(str));
-        if (strlen(str) > 0)
-        {
-            Serial.print(SerialCommandStr[SERIAL_CMDT_SET_NETWORK_INTERFACE_NAME]);
-            Serial.println(str);
-        }
         Serial.println("REBOOT");
         Serial.println("# EXPORTED SETTINGS END");
         break;
@@ -373,32 +367,6 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
             }
         }
         break;
-    case SERIAL_CMDT_SET_NETWORK_INTERFACE_NAME:
-        if (value && strlen(value))
-        {
-            Serial.printf("Serial command received: set network interface name (%s)\n", value);
-            if (Settings::setNetworkInterfaceName(value))
-            {
-                Serial.println("Network interface name saved. Reboot REQUIRED");
-            }
-            else
-            {
-                Serial.println("Error saving network interface name");
-            }
-        }
-        else
-        {
-            Serial.println("Serial command received: unset network interface name");
-            if (Settings::setNetworkInterfaceName(""))
-            {
-                Serial.println("Network interface name removed. Reboot REQUIRED");
-            }
-            else
-            {
-                Serial.println("Error removing network interface name");
-            }
-        }
-        break;
     default:
         Serial.println("Serial command received (UNKNOWN):");
         if (value)
@@ -429,9 +397,7 @@ void setup()
 
     char networkInterfaceId[MAX_NETWORK_INTERFACE_ID_LENGTH];
     Settings::getNetworkInterfaceId(networkInterfaceId, sizeof(networkInterfaceId));
-    char networkInterfaceName[MAX_NETWORK_INTERFACE_NAME_LENGTH];
-    Settings::getNetworkInterfaceId(networkInterfaceName, sizeof(networkInterfaceName));
-    sourceData = new SourceData(true, Settings::getMaxDownloadBandwidthBytes(), Settings::getMaxUploadBandwidthBytes(), networkInterfaceId, networkInterfaceName);
+    sourceData = new SourceData(true, networkInterfaceId, Settings::getMaxDownloadBandwidthBytes(), Settings::getMaxUploadBandwidthBytes());
 #ifdef SOURCE_DUMMY
     dummySRC = new DummySource(sourceData);
 #endif // SOURCE_DUMMY

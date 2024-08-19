@@ -11,7 +11,6 @@
 #define KEY_TOTAL_DOWNLOAD_BANDWIDTH_BYTES "T_D_BW_BYTES"
 #define KEY_TOTAL_UPLOAD_BANDWIDTH_BYTES "T_U_BW_BYTES"
 #define KEY_NET_IFACE_ID "NET_IFACE_ID"
-#define KEY_NET_IFACE_NAME "NET_IFACE_NAME"
 
 Preferences Settings::preferences;
 
@@ -293,22 +292,5 @@ bool Settings::setNetworkInterfaceId(const char *id)
     else
     {
         return (Settings::deleteKey(KEY_NET_IFACE_ID));
-    }
-}
-
-void Settings::getNetworkInterfaceName(char *name, size_t count)
-{
-    Settings::getValue(KEY_NET_IFACE_NAME, name, count);
-}
-
-bool Settings::setNetworkInterfaceName(const char *name)
-{
-    if (strlen(name) > 0)
-    {
-        return (Settings::setValue(KEY_NET_IFACE_NAME, name));
-    }
-    else
-    {
-        return (Settings::deleteKey(KEY_NET_IFACE_NAME));
     }
 }

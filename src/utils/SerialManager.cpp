@@ -222,25 +222,6 @@ void SerialManager::loop(void)
                 }
             }
         }
-        else if (rx.startsWith(SerialCommandStr[SERIAL_CMDT_SET_NETWORK_INTERFACE_NAME]))
-        {
-            uint16_t length = strlen(SerialCommandStr[SERIAL_CMDT_SET_NETWORK_INTERFACE_NAME]);
-            if (rx.length() > length)
-            {
-                String Name = rx.substring(length);
-                if (SerialManager::remoteCallback != nullptr)
-                {
-                    SerialManager::remoteCallback(SERIAL_CMDT_SET_NETWORK_INTERFACE_NAME, Name.c_str());
-                }
-            }
-            else
-            {
-                if (SerialManager::remoteCallback != nullptr)
-                {
-                    SerialManager::remoteCallback(SERIAL_CMDT_SET_NETWORK_INTERFACE_NAME, nullptr);
-                }
-            }
-        }
         else
         {
             if (SerialManager::remoteCallback != nullptr)

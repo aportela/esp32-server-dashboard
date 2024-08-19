@@ -4,7 +4,7 @@
 #include <cstdio>
 #include "../utils/Format.hpp"
 
-SourceData::SourceData(bool truncateOverflows, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit, const char *networkInterfaceId, const char *networkInterfaceName)
+SourceData::SourceData(bool truncateOverflows, const char *networkInterfaceId, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit)
 {
     uint64_t currentTimestamp = millis();
     this->cpuLoadQueue = xQueueCreate(1, sizeof(SourceDataQueueCPULoadValue));
@@ -21,10 +21,6 @@ SourceData::SourceData(bool truncateOverflows, uint64_t totalNetworkDownloadBand
     if (networkInterfaceId != NULL && strlen(networkInterfaceId) > 0)
     {
         strncpy(this->networkInterfaceId, networkInterfaceId, sizeof(this->networkInterfaceId));
-    }
-    if (networkInterfaceName != NULL && strlen(networkInterfaceName) > 0)
-    {
-        strncpy(this->networkInterfaceName, networkInterfaceName, sizeof(this->networkInterfaceName));
     }
 }
 
@@ -43,11 +39,6 @@ SourceData::~SourceData()
 void SourceData::getNetworkInterfaceId(char *buffer, size_t buffer_count)
 {
     strncpy(buffer, this->networkInterfaceId, buffer_count);
-}
-
-void SourceData::getNetworkInterfaceName(char *buffer, size_t buffer_count)
-{
-    strncpy(buffer, this->networkInterfaceName, buffer_count);
 }
 
 // CPU LOAD

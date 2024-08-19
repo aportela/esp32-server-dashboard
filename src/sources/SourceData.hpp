@@ -11,7 +11,6 @@
 #define QUEUE_PEEK_MS_TO_TICKS_TIMEOUT 5
 
 #define MAX_NETWORK_INTERFACE_ID_LENGTH 65
-#define MAX_NETWORK_INTERFACE_NAME_LENGTH 4
 
 #define MIN_CPU_LOAD 0
 #define MAX_CPU_LOAD 100
@@ -56,7 +55,6 @@ class SourceData
 private:
     bool truncateOverflows = false;
     char networkInterfaceId[MAX_NETWORK_INTERFACE_ID_LENGTH] = {'\0'};
-    char networkInterfaceName[MAX_NETWORK_INTERFACE_NAME_LENGTH] = {'\0'};
     // DOWNLOAD BANDWIDTH
     uint64_t totalNetworkDownloadBandwidthLimit = 0;
     uint64_t currentTotalNetworkDownloaded = 0;
@@ -80,12 +78,11 @@ private:
     QueueHandle_t networkingUploadQueue;
 
 public:
-    SourceData(bool truncateOverflows, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit, const char *networkInterfaceId, const char *networkInterfaceName);
+    SourceData(bool truncateOverflows, const char *networkInterfaceId, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit);
     ~SourceData();
 
     // NET IFACE
     void getNetworkInterfaceId(char *buffer, size_t buffer_count);
-    void getNetworkInterfaceName(char *buffer, size_t buffer_count);
 
     // CPU LOAD
     SourceDataQueueCPULoadValue getCurrentCPULoad(void);
