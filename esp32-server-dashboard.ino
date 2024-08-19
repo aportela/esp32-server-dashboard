@@ -86,11 +86,13 @@ void onWifiConnectionChanged(bool connected)
         Settings::getMQTTTelegrafURI(mqttTelegrafURI, sizeof(mqttTelegrafURI));
         char mqttTelegrafGlobalTopic[512] = {'\0'};
         Settings::getMQTTTelegrafGlobalTopic(mqttTelegrafGlobalTopic, sizeof(mqttTelegrafGlobalTopic));
+        char networkInterfaceId[MAX_NETWORK_INTERFACE_ID_LENGTH];
+        Settings::getNetworkInterfaceId(networkInterfaceId, sizeof(networkInterfaceId));
         if (strlen(mqttTelegrafURI) > 0 && strlen(mqttTelegrafGlobalTopic) > 0)
         {
             char WiFiMacAddress[32] = {'\0'};
             WifiManager::getMacAddress(WiFiMacAddress, sizeof(WiFiMacAddress));
-            mqttTelegrafSRC = new MQTTTelegrafSource(sourceData, mqttTelegrafURI, WiFiMacAddress, mqttTelegrafGlobalTopic);
+            mqttTelegrafSRC = new MQTTTelegrafSource(sourceData, mqttTelegrafURI, WiFiMacAddress, mqttTelegrafGlobalTopic, networkInterfaceId);
         }
 #endif // SOURCE_MQTT_TELEGRAF
     }
@@ -395,9 +397,7 @@ void setup()
     WifiManager::setCredentials(WiFiSSID, WiFiPassword);
     WifiManager::connect(true);
 
-    char networkInterfaceId[MAX_NETWORK_INTERFACE_ID_LENGTH];
-    Settings::getNetworkInterfaceId(networkInterfaceId, sizeof(networkInterfaceId));
-    sourceData = new SourceData(true, networkInterfaceId, Settings::getMaxDownloadBandwidthBytes(), Settings::getMaxUploadBandwidthBytes());
+    sourceData = new SourceData(true, Settings::getMaxDownloadBandwidthBytes(), Settings::getMaxUploadBandwidthBytes());
 #ifdef SOURCE_DUMMY
     dummySRC = new DummySource(sourceData);
 #endif // SOURCE_DUMMY

@@ -55,20 +55,8 @@ class SourceData
 private:
     bool truncateOverflows = false;
 
-    // DOWNLOAD BANDWIDTH
     uint64_t totalNetworkDownloadBandwidthLimit = 0;
-    uint64_t currentTotalNetworkDownloaded = 0;
-    uint64_t previousTotalNetworkDownloaded = 0;
-    uint64_t currentTotalNetworkDownloadedTimestamp = 0;
-    uint64_t previousTotalNetworkDownloadedTimestamp = 0;
-    uint64_t currentNetworkDownloadSpeed = 0;
-    // UPLOAD BANDWIDTH
     uint64_t totalNetworkUploadBandwidthLimit = 0;
-    uint64_t currentTotalNetworkUploaded = 0;
-    uint64_t previousTotalNetworkUploaded = 0;
-    uint64_t currentTotalNetworkUploadedTimestamp = 0;
-    uint64_t previousTotalNetworkUploadedTimestamp = 0;
-    uint64_t currentNetworkUploadSpeed = 0;
 
     QueueHandle_t cpuLoadQueue;
     QueueHandle_t usedMemoryQueue;
@@ -78,7 +66,7 @@ private:
     QueueHandle_t networkingUploadQueue;
 
 public:
-    SourceData(bool truncateOverflows, const char *networkInterfaceId, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit);
+    SourceData(bool truncateOverflows, uint64_t totalNetworkDownloadBandwidthLimit = 0, uint64_t totalNetworkUploadBandwidthLimit = 0);
     ~SourceData();
 
     // CPU LOAD
@@ -98,28 +86,18 @@ public:
     bool setCurrentUptime(uint64_t seconds, uint64_t timestamp);
 
     // NET DOWNLOAD BANDWIDTH
+    uint64_t getNetworkDownloadBandwidthLimit(void) const;
+    bool setNetworkDownloadBandwidthLimit(uint64_t bytes);
+
     SourceDataQueueNetworkingValue getCurrentNetworkDownload(void);
     bool setCurrentNetworkDownload(uint64_t totalBytes, uint64_t timestamp);
 
-    uint64_t getNetworkDownloadBandwidthLimit(void) const;
-    bool setNetworkDownloadBandwidthLimit(uint64_t bytes);
-    uint64_t getNetworkDownloadSpeed(void) const;
-    uint64_t getNetworkDownloadSpeedTimestamp(void) const;
-    uint64_t getCurrentTotalNetworkDownloaded(void);
-    bool changedNetworkDownloadSpeed(uint64_t fromTimestamp) const;
-    bool setCurrentTotalNetworkDownloaded(uint64_t bytes, uint64_t timestamp);
-
     // NET UPLOAD BANDWIDTH
-    SourceDataQueueNetworkingValue getCurrentNetworkUpload(void);
-    bool setCurrentNetworkUpload(uint64_t totalBytes, uint64_t timestamp);
-
     uint64_t getNetworkUploadBandwidthLimit(void) const;
     bool setNetworkUploadBandwidthLimit(uint64_t bytes);
-    uint64_t getNetworkUploadSpeed(void) const;
-    uint64_t getNetworkUploadSpeedTimestamp(void) const;
-    uint64_t getCurrentTotalNetworkUploaded(void);
-    bool changedNetworkUploadSpeed(uint64_t fromTimestamp) const;
-    bool setCurrentTotalNetworkUploaded(uint64_t bytes, uint64_t timestamp);
+
+    SourceDataQueueNetworkingValue getCurrentNetworkUpload(void);
+    bool setCurrentNetworkUpload(uint64_t totalBytes, uint64_t timestamp);
 };
 
 #endif

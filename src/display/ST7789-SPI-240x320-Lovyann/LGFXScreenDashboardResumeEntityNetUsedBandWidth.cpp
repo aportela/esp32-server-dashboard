@@ -26,20 +26,25 @@ LGFXScreenDashboardResumeEntityNetUsedBandWidth::~LGFXScreenDashboardResumeEntit
 bool LGFXScreenDashboardResumeEntityNetUsedBandWidth::refresh(bool force)
 {
     uint64_t currentTimestamp = 0;
-    bool changed = false;
+    // bool changed = false;
+    SourceDataQueueNetworkingValue networkData;
     if (this->type == NBT_DOWNLOAD)
     {
-        currentTimestamp = this->sourceData->getNetworkDownloadSpeedTimestamp();
-        changed = this->sourceData->changedNetworkDownloadSpeed(this->timestamp);
+        networkData = this->sourceData->getCurrentNetworkDownload();
+        // currentTimestamp = this->sourceData->getNetworkDownloadSpeedTimestamp();
+        // changed = this->sourceData->changedNetworkDownloadSpeed(this->timestamp);
     }
     else
     {
-        currentTimestamp = this->sourceData->getNetworkUploadSpeedTimestamp();
-        changed = this->sourceData->changedNetworkUploadSpeed(this->timestamp);
+        networkData = this->sourceData->getCurrentNetworkUpload();
+        // currentTimestamp = this->sourceData->getNetworkUploadSpeedTimestamp();
+        // changed = this->sourceData->changedNetworkUploadSpeed(this->timestamp);
     }
-    if (changed || force)
+    if (networkData.timestamp != this->timestamp || force)
     {
-        uint64_t currentValue = 0;
+        // uint64_t currentValue = 0;
+        uint64_t currentValue = networkData.currentBandwidthBytesPerSecond;
+        /*
         if (this->type == NBT_DOWNLOAD)
         {
             currentValue = this->sourceData->getNetworkDownloadSpeed();
@@ -48,7 +53,9 @@ bool LGFXScreenDashboardResumeEntityNetUsedBandWidth::refresh(bool force)
         {
             currentValue = this->sourceData->getNetworkUploadSpeed();
         }
-        this->timestamp = currentTimestamp;
+        */
+        // this->timestamp = currentTimestamp;
+        this->timestamp = networkData.timestamp;
 
         uint8_t mapped100 = 0;
         if (this->type == NBT_DOWNLOAD)
