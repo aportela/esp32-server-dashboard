@@ -13,9 +13,13 @@ SourceData::SourceData(bool truncateOverflows, uint64_t totalNetworkDownloadBand
     this->systemUptimeQueue = xQueueCreate(1, sizeof(SourceDataQueueUptimeValue));
     this->networkingDownloadQueue = xQueueCreate(1, sizeof(SourceDataQueueNetworkingValue));
     this->networkingUploadQueue = xQueueCreate(1, sizeof(SourceDataQueueNetworkingValue));
+    this->networkingLimitsQueue = xQueueCreate(1, sizeof(SourceDataQueueNetworkingLimitsValue));
     this->truncateOverflows = truncateOverflows;
+    /*
     this->totalNetworkDownloadBandwidthLimit = totalNetworkDownloadBandwidthLimit;
     this->totalNetworkUploadBandwidthLimit = totalNetworkUploadBandwidthLimit;
+    */
+    this->setNetworkLimits(totalNetworkDownloadBandwidthLimit, totalNetworkUploadBandwidthLimit);
 }
 
 SourceData::~SourceData()
@@ -26,6 +30,7 @@ SourceData::~SourceData()
     vQueueDelete(this->systemUptimeQueue);
     vQueueDelete(this->networkingDownloadQueue);
     vQueueDelete(this->networkingUploadQueue);
+    vQueueDelete(this->networkingLimitsQueue);
 }
 
 // CPU LOAD
@@ -277,8 +282,43 @@ bool SourceData::setCurrentUptime(uint64_t seconds, uint64_t timestamp)
     }
 }
 
+// NET COMMON
+
+SourceDataQueueNetworkingLimitsValue SourceData::getNetworkLimits(void)
+{
+    SourceDataQueueNetworkingLimitsValue data = {0, 0};
+    if (this->networkingLimitsQueue != NULL)
+    {
+        if (xQueuePeek(this->networkingLimitsQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
+        {
+            data.byteDownloadLimit = 0;
+            data.byteUploadLimit = 0;
+        }
+    }
+    else
+    {
+        data.byteDownloadLimit = 0;
+        data.byteUploadLimit = 0;
+    }
+    return (data);
+}
+
+bool SourceData::setNetworkLimits(uint64_t byteDownloadLimit, uint64_t byteUploadLimit)
+{
+    if (this->networkingLimitsQueue != NULL)
+    {
+        SourceDataQueueUptimeValue data = {byteDownloadLimit, byteUploadLimit};
+        return (xQueueOverwrite(this->networkingLimitsQueue, &data) == pdPASS);
+    }
+    else
+    {
+        return (false);
+    }
+}
+
 // NET DOWNLOAD BANDWIDTH
 
+/*
 uint64_t SourceData::getNetworkDownloadBandwidthLimit(void) const
 {
     return (this->totalNetworkDownloadBandwidthLimit);
@@ -289,6 +329,8 @@ bool SourceData::setNetworkDownloadBandwidthLimit(uint64_t bytes)
     this->totalNetworkDownloadBandwidthLimit = bytes;
     return (true);
 }
+
+*/
 
 SourceDataQueueNetworkingValue SourceData::getCurrentNetworkDownload(void)
 {
@@ -343,6 +385,7 @@ bool SourceData::setCurrentNetworkDownload(uint64_t totalBytes, uint64_t timesta
 
 // NET UPLOAD BANDWIDTH
 
+/*
 uint64_t SourceData::getNetworkUploadBandwidthLimit(void) const
 {
     return (this->totalNetworkUploadBandwidthLimit);
@@ -354,6 +397,7 @@ bool SourceData::setNetworkUploadBandwidthLimit(uint64_t bytes)
     return (true);
 }
 
+*/
 SourceDataQueueNetworkingValue SourceData::getCurrentNetworkUpload(void)
 {
     SourceDataQueueNetworkingValue data = {0, 0, 0};

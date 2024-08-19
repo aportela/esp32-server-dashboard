@@ -50,13 +50,21 @@ typedef struct SourceDataQueueNetworkingValue
     uint64_t timestamp;
 };
 
+typedef struct SourceDataQueueNetworkingLimitsValue
+{
+    uint64_t byteDownloadLimit;
+    uint64_t byteUploadLimit;
+};
+
 class SourceData
 {
 private:
     bool truncateOverflows = false;
 
+    /*
     uint64_t totalNetworkDownloadBandwidthLimit = 0;
     uint64_t totalNetworkUploadBandwidthLimit = 0;
+    */
 
     QueueHandle_t cpuLoadQueue;
     QueueHandle_t usedMemoryQueue;
@@ -64,6 +72,7 @@ private:
     QueueHandle_t systemUptimeQueue;
     QueueHandle_t networkingDownloadQueue;
     QueueHandle_t networkingUploadQueue;
+    QueueHandle_t networkingLimitsQueue;
 
 public:
     SourceData(bool truncateOverflows, uint64_t totalNetworkDownloadBandwidthLimit = 0, uint64_t totalNetworkUploadBandwidthLimit = 0);
@@ -85,16 +94,20 @@ public:
     SourceDataQueueUptimeValue getCurrentUptime(void);
     bool setCurrentUptime(uint64_t seconds, uint64_t timestamp);
 
+    // NET COMMON
+    SourceDataQueueNetworkingLimitsValue getNetworkLimits(void);
+    bool setNetworkLimits(uint64_t byteDownloadLimit, uint64_t byteUploadLimit);
+
     // NET DOWNLOAD BANDWIDTH
-    uint64_t getNetworkDownloadBandwidthLimit(void) const;
-    bool setNetworkDownloadBandwidthLimit(uint64_t bytes);
+    // uint64_t getNetworkDownloadBandwidthLimit(void) const;
+    // bool setNetworkDownloadBandwidthLimit(uint64_t bytes);
 
     SourceDataQueueNetworkingValue getCurrentNetworkDownload(void);
     bool setCurrentNetworkDownload(uint64_t totalBytes, uint64_t timestamp);
 
     // NET UPLOAD BANDWIDTH
-    uint64_t getNetworkUploadBandwidthLimit(void) const;
-    bool setNetworkUploadBandwidthLimit(uint64_t bytes);
+    // uint64_t getNetworkUploadBandwidthLimit(void) const;
+    // bool setNetworkUploadBandwidthLimit(uint64_t bytes);
 
     SourceDataQueueNetworkingValue getCurrentNetworkUpload(void);
     bool setCurrentNetworkUpload(uint64_t totalBytes, uint64_t timestamp);

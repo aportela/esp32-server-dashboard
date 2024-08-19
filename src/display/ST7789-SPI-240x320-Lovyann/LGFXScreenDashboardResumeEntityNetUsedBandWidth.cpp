@@ -6,13 +6,14 @@ LGFXScreenDashboardResumeEntityNetUsedBandWidth::LGFXScreenDashboardResumeEntity
     if (this->parentDisplay != nullptr)
     {
         char maxStr[8] = {'\0'};
+        SourceDataQueueNetworkingLimitsValue networkLimits = sourceData->getNetworkLimits();
         if (this->type == NBT_DOWNLOAD)
         {
-            Format::bytesToHumanStr(sourceData->getNetworkDownloadBandwidthLimit(), maxStr, sizeof(maxStr), false, true, false);
+            Format::bytesToHumanStr(networkLimits.byteDownloadLimit, maxStr, sizeof(maxStr), false, true, false);
         }
         else
         {
-            Format::bytesToHumanStr(sourceData->getNetworkUploadBandwidthLimit(), maxStr, sizeof(maxStr), false, true, false);
+            Format::bytesToHumanStr(networkLimits.byteUploadLimit, maxStr, sizeof(maxStr), false, true, false);
         }
         this->printLimits("0B", maxStr);
         this->refreshStrValue("0000 B/s", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
@@ -27,6 +28,7 @@ bool LGFXScreenDashboardResumeEntityNetUsedBandWidth::refresh(bool force)
 {
     uint64_t currentTimestamp = 0;
     // bool changed = false;
+    SourceDataQueueNetworkingLimitsValue networkLimitsData = this->sourceData->getNetworkLimits();
     SourceDataQueueNetworkingValue networkData;
     if (this->type == NBT_DOWNLOAD)
     {
@@ -60,11 +62,11 @@ bool LGFXScreenDashboardResumeEntityNetUsedBandWidth::refresh(bool force)
         uint8_t mapped100 = 0;
         if (this->type == NBT_DOWNLOAD)
         {
-            mapped100 = this->mapUint64ValueFrom0To100(currentValue, 0, this->sourceData->getNetworkDownloadBandwidthLimit());
+            mapped100 = this->mapUint64ValueFrom0To100(currentValue, 0, networkLimitsData.byteDownloadLimit);
         }
         else
         {
-            mapped100 = this->mapUint64ValueFrom0To100(currentValue, 0, this->sourceData->getNetworkUploadBandwidthLimit());
+            mapped100 = this->mapUint64ValueFrom0To100(currentValue, 0, networkLimitsData.byteUploadLimit);
         }
         uint16_t currentGradientColor = (mapped100 != this->previousMappedValue) ? this->getGradientColorFrom0To100(mapped100) : this->previousGradientcolor;
         this->previousMappedValue = mapped100;

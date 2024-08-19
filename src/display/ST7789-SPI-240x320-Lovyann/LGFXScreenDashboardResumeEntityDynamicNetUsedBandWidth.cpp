@@ -8,8 +8,9 @@ LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth::LGFXScreenDashboardResum
         this->printLimits("0B", "???");
         this->refreshStrValue("0000 B/s", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
     }
-    this->sourceData->setNetworkDownloadBandwidthLimit(this->byteScales[this->currentByteScale]);
-    this->sourceData->setNetworkUploadBandwidthLimit(this->byteScales[this->currentByteScale]);
+    this->sourceData->setNetworkLimits(this->byteScales[this->currentByteScale], this->byteScales[this->currentByteScale]);
+    // this->sourceData->setNetworkDownloadBandwidthLimit(this->byteScales[this->currentByteScale]);
+    // this->sourceData->setNetworkUploadBandwidthLimit(this->byteScales[this->currentByteScale]);
     this->dynamicScaleValuesFIFO = new Uint64TFIFO(width);
 }
 
