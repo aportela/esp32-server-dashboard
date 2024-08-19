@@ -36,7 +36,7 @@ void DummySource::refresh(uint16_t milliSeconds)
         this->sourceData->setCurrentCPULoad(cpuLoadValue, currentMillis);
 
         SourceDataQueueUsedMemoryValue memoryData = this->sourceData->getCurrentUsedMemory();
-        uint64_t changedMemoryBytes = random(10485760, memoryData.totalBytes / 1024);
+        uint64_t changedMemoryBytes = random(memoryData.totalBytes / 1024, memoryData.totalBytes / 20);
         if (random(0, 20) % 2 == 0)
         {
             if (memoryData.usedBytes < memoryData.totalBytes - changedMemoryBytes)
