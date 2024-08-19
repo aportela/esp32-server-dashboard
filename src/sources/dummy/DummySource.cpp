@@ -5,7 +5,7 @@ DummySource::DummySource(SourceData *sourceData) : Source(sourceData)
 {
     randomSeed(analogRead(0) ^ (micros() * esp_random()));
     this->lastEllapsedMillis = millis();
-    this->sourceData->setCurrentUsedMemory(4261159936, 17044639744, this->lastEllapsedMillis);
+    this->sourceData->setCurrentUsedMemory(34359738368 / 10, 34359738368, this->lastEllapsedMillis); // total memory = 32 Gbytes
 }
 
 DummySource::~DummySource()
