@@ -14,7 +14,7 @@ char MQTTTelegrafSource::networkInterfaceId[MAX_NETWORK_INTERFACE_ID_LENGTH] = {
 
 MQTTTelegrafSource *MQTTTelegrafSource::instance = nullptr;
 
-MQTTTelegrafSource::MQTTTelegrafSource(SourceData *sourceData, const char *uri, const char *clientId, const char *topic) : Source(sourceData)
+MQTTTelegrafSource::MQTTTelegrafSource(SourceData *sourceData, const char *uri, const char *clientId, const char *topic, const char *networkInterfaceId) : Source(sourceData)
 {
 #ifdef DEBUG_MQTT_TELEGRAF
     Serial.println("MQTTTelegrafSource");
@@ -33,7 +33,10 @@ MQTTTelegrafSource::MQTTTelegrafSource(SourceData *sourceData, const char *uri, 
     MQTTTelegrafSource::generateTopic(topic, MQTTTelegrafSource::systemTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/system");
     MQTTTelegrafSource::generateTopic(topic, MQTTTelegrafSource::networkTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/net");
 
-    sourceData->getNetworkInterfaceId(MQTTTelegrafSource::networkInterfaceId, sizeof(MQTTTelegrafSource::networkInterfaceId));
+    if (strlen(networkInterfaceId) > 0)
+    {
+        strncpy(MQTTTelegrafSource::networkInterfaceId, networkInterfaceId, sizeof(MQTTTelegrafSource::networkInterfaceId));
+    }
 
 #ifdef DEBUG_MQTT_TELEGRAF
     Serial.println("networkInterfaceId: ");

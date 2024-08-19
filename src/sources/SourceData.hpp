@@ -54,7 +54,7 @@ class SourceData
 {
 private:
     bool truncateOverflows = false;
-    char networkInterfaceId[MAX_NETWORK_INTERFACE_ID_LENGTH] = {'\0'};
+
     // DOWNLOAD BANDWIDTH
     uint64_t totalNetworkDownloadBandwidthLimit = 0;
     uint64_t currentTotalNetworkDownloaded = 0;
@@ -80,9 +80,6 @@ private:
 public:
     SourceData(bool truncateOverflows, const char *networkInterfaceId, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit);
     ~SourceData();
-
-    // NET IFACE
-    void getNetworkInterfaceId(char *buffer, size_t buffer_count);
 
     // CPU LOAD
     SourceDataQueueCPULoadValue getCurrentCPULoad(void);

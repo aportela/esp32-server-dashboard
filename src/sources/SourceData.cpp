@@ -18,10 +18,6 @@ SourceData::SourceData(bool truncateOverflows, const char *networkInterfaceId, u
     // this->setCurrentNetworkUpload(0, totalNetworkUploadBandwidthLimit, currentTimestamp);
     //  this->totalNetworkDownloadBandwidthLimit = totalNetworkDownloadBandwidthLimit;
     //  this->totalNetworkUploadBandwidthLimit = totalNetworkUploadBandwidthLimit;
-    if (networkInterfaceId != NULL && strlen(networkInterfaceId) > 0)
-    {
-        strncpy(this->networkInterfaceId, networkInterfaceId, sizeof(this->networkInterfaceId));
-    }
 }
 
 SourceData::~SourceData()
@@ -32,13 +28,6 @@ SourceData::~SourceData()
     vQueueDelete(this->systemUptimeQueue);
     vQueueDelete(this->networkingDownloadQueue);
     vQueueDelete(this->networkingUploadQueue);
-}
-
-// NET IFACE
-
-void SourceData::getNetworkInterfaceId(char *buffer, size_t buffer_count)
-{
-    strncpy(buffer, this->networkInterfaceId, buffer_count);
 }
 
 // CPU LOAD
