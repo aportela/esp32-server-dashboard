@@ -18,7 +18,6 @@ const char *SerialCommandStr[]{
     "SET_MAX_DOWNLOAD_BYTES_BANDWITH ",
     "SET_MAX_UPLOAD_BYTES_BANDWITH ",
     "SET_NETWORK_INTERFACE_ID ",
-    "SET_NETWORK_INTERFACE_NAME ",
 };
 
 SerialCommandCallback SerialManager::remoteCallback = nullptr;
