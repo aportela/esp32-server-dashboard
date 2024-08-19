@@ -35,8 +35,8 @@ void Format::bytesToHumanStr(uint64_t bytes, char *buffer, size_t buffer_size, b
     }
     else
     {
-        const char *minByteUnitStr = shortUnits ? (bandwidthUnits ? ShortBandwidthByteUnits[0] : ShortByteUnits[0]) : (bandwidthUnits ? LongBandwidthByteUnits[0] : LongByteUnits[0]);
-        std::snprintf(buffer, buffer_size, zeroPadding ? "%04" PRIu64 "%s" : "%" PRIu64 "%s", 0, minByteUnitStr);
+        const char *minByteUnitStr = (shortUnits ? (bandwidthUnits ? ShortBandwidthByteUnits : ShortByteUnits) : (bandwidthUnits ? LongBandwidthByteUnits : LongByteUnits))[0];
+        std::snprintf(buffer, buffer_size, zeroPadding ? "0000%s" : "0%s", minByteUnitStr);
     }
 }
 
