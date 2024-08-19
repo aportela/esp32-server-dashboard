@@ -6,8 +6,6 @@ DummySource::DummySource(SourceData *sourceData) : Source(sourceData)
     randomSeed(analogRead(0) ^ (micros() * esp_random()));
     this->lastEllapsedMillis = millis();
     this->sourceData->setCurrentUsedMemory(4261159936, 17044639744, this->lastEllapsedMillis);
-    this->sourceData->setNetworkDownloadBandwidthLimit(73125000);
-    this->sourceData->setNetworkUploadBandwidthLimit(73125000);
 }
 
 DummySource::~DummySource()
