@@ -5,7 +5,7 @@ LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth::LGFXScreenDashboardResum
 {
     if (this->parentDisplay != nullptr)
     {
-        this->printLimits("0B", "???");
+        this->printLimits("0B", "0001KB");
         this->refreshStrValue("0000 B/s", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
     }
     this->sourceData->setNetworkLimits(this->byteScales[this->currentByteScale], this->byteScales[this->currentByteScale]);
