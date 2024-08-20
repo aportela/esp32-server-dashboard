@@ -12,18 +12,30 @@
 #define KEY_TOTAL_UPLOAD_BANDWIDTH_BYTES "T_U_BW_BYTES"
 #define KEY_NET_IFACE_ID "NET_IFACE_ID"
 
-Preferences Settings::preferences;
+Settings::Settings(void)
+{
+    this->preferences = new Preferences();
+}
+
+Settings::~Settings(void)
+{
+    if (this->preferences != nullptr)
+    {
+        delete this->preferences;
+        this->preferences = nullptr;
+    }
+}
 
 int8_t Settings::getSmallSignedIntegerValue(const char *key, int8_t defaultValue)
 {
-    if (Settings::preferences.begin(NAMESPACE, false))
+    if (this->preferences->begin(NAMESPACE, false))
     {
         uint64_t value = defaultValue;
-        if (Settings::preferences.isKey(key))
+        if (this->preferences->isKey(key))
         {
-            value = Settings::preferences.getChar(key, defaultValue);
+            value = this->preferences->getChar(key, defaultValue);
         }
-        Settings::preferences.end();
+        this->preferences->end();
         return (value);
     }
     else
@@ -34,10 +46,10 @@ int8_t Settings::getSmallSignedIntegerValue(const char *key, int8_t defaultValue
 
 bool Settings::setSmallSignedIntegerValue(const char *key, int8_t value)
 {
-    if (Settings::preferences.begin(NAMESPACE, false))
+    if (this->preferences->begin(NAMESPACE, false))
     {
-        bool saved = Settings::preferences.putChar(key, value) == sizeof(value);
-        Settings::preferences.end();
+        bool saved = this->preferences->putChar(key, value) == sizeof(value);
+        this->preferences->end();
         return (saved);
     }
     else
@@ -48,14 +60,14 @@ bool Settings::setSmallSignedIntegerValue(const char *key, int8_t value)
 
 uint64_t Settings::getBigUnsignedIntegerValue(const char *key, uint64_t defaultValue)
 {
-    if (Settings::preferences.begin(NAMESPACE, false))
+    if (this->preferences->begin(NAMESPACE, false))
     {
         uint64_t value = defaultValue;
-        if (Settings::preferences.isKey(key))
+        if (this->preferences->isKey(key))
         {
-            value = Settings::preferences.getULong64(key, defaultValue);
+            value = this->preferences->getULong64(key, defaultValue);
         }
-        Settings::preferences.end();
+        this->preferences->end();
         return (value);
     }
     else
@@ -66,10 +78,10 @@ uint64_t Settings::getBigUnsignedIntegerValue(const char *key, uint64_t defaultV
 
 bool Settings::setBigUnsigedIntegerValue(const char *key, uint64_t value)
 {
-    if (Settings::preferences.begin(NAMESPACE, false))
+    if (this->preferences->begin(NAMESPACE, false))
     {
-        bool saved = Settings::preferences.putULong64(key, value) == sizeof(value);
-        Settings::preferences.end();
+        bool saved = this->preferences->putULong64(key, value) == sizeof(value);
+        this->preferences->end();
         return (saved);
     }
     else
@@ -80,14 +92,14 @@ bool Settings::setBigUnsigedIntegerValue(const char *key, uint64_t value)
 
 float Settings::getFloatValue(const char *key, float defaultValue)
 {
-    if (Settings::preferences.begin(NAMESPACE, false))
+    if (this->preferences->begin(NAMESPACE, false))
     {
         float value = defaultValue;
-        if (Settings::preferences.isKey(key))
+        if (this->preferences->isKey(key))
         {
-            value = Settings::preferences.getFloat(key, defaultValue);
+            value = this->preferences->getFloat(key, defaultValue);
         }
-        Settings::preferences.end();
+        this->preferences->end();
         return (value);
     }
     else
@@ -98,10 +110,10 @@ float Settings::getFloatValue(const char *key, float defaultValue)
 
 bool Settings::setFloatValue(const char *key, float value)
 {
-    if (Settings::preferences.begin(NAMESPACE, false))
+    if (this->preferences->begin(NAMESPACE, false))
     {
-        bool saved = Settings::preferences.putFloat(key, value) == sizeof(value);
-        Settings::preferences.end();
+        bool saved = this->preferences->putFloat(key, value) == sizeof(value);
+        this->preferences->end();
         return (saved);
     }
     else
@@ -112,11 +124,11 @@ bool Settings::setFloatValue(const char *key, float value)
 
 void Settings::getValue(const char *key, char *value, size_t count)
 {
-    if (Settings::preferences.begin(NAMESPACE, false))
+    if (this->preferences->begin(NAMESPACE, false))
     {
-        if (Settings::preferences.isKey(key))
+        if (this->preferences->isKey(key))
         {
-            Settings::preferences.getString(key, value, count);
+            this->preferences->getString(key, value, count);
         }
         else
         {
@@ -125,16 +137,16 @@ void Settings::getValue(const char *key, char *value, size_t count)
                 value[0] = '\0';
             }
         }
-        Settings::preferences.end();
+        this->preferences->end();
     }
 }
 
 bool Settings::setValue(const char *key, const char *value)
 {
-    if (Settings::preferences.begin(NAMESPACE, false))
+    if (this->preferences->begin(NAMESPACE, false))
     {
-        bool saved = Settings::preferences.putString(key, value) == strlen(value);
-        Settings::preferences.end();
+        bool saved = this->preferences->putString(key, value) == strlen(value);
+        this->preferences->end();
         return (saved);
     }
     else
@@ -145,15 +157,15 @@ bool Settings::setValue(const char *key, const char *value)
 
 bool Settings::deleteKey(const char *key)
 {
-    if (Settings::preferences.begin(NAMESPACE, false))
+    if (this->preferences->begin(NAMESPACE, false))
     {
         bool removed = false;
-        if (Settings::preferences.isKey(key))
+        if (this->preferences->isKey(key))
         {
-            Settings::preferences.remove(key);
+            this->preferences->remove(key);
             removed = true;
         }
-        Settings::preferences.end();
+        this->preferences->end();
         return (removed);
     }
     else
@@ -164,10 +176,10 @@ bool Settings::deleteKey(const char *key)
 
 bool Settings::clear(void)
 {
-    if (Settings::preferences.begin(NAMESPACE, false))
+    if (this->preferences->begin(NAMESPACE, false))
     {
-        bool cleared = Settings::preferences.clear();
-        Settings::preferences.end();
+        bool cleared = this->preferences->clear();
+        this->preferences->end();
         return (cleared);
     }
     else
@@ -178,119 +190,119 @@ bool Settings::clear(void)
 
 void Settings::getWIFISSID(char *ssid, size_t count)
 {
-    Settings::getValue(KEY_WIFI_SSID, ssid, count);
+    this->getValue(KEY_WIFI_SSID, ssid, count);
 }
 
 bool Settings::setWIFISSID(const char *ssid)
 {
     if (strlen(ssid) > 0)
     {
-        return (Settings::setValue(KEY_WIFI_SSID, ssid));
+        return (this->setValue(KEY_WIFI_SSID, ssid));
     }
     else
     {
-        return (Settings::deleteKey(KEY_WIFI_SSID));
+        return (this->deleteKey(KEY_WIFI_SSID));
     }
 }
 
 void Settings::getWIFIPassword(char *password, size_t count)
 {
-    Settings::getValue(KEY_WIFI_PASSWORD, password, count);
+    this->getValue(KEY_WIFI_PASSWORD, password, count);
 }
 
 bool Settings::setWIFIPassword(const char *password)
 {
     if (strlen(password) > 0)
     {
-        return (Settings::setValue(KEY_WIFI_PASSWORD, password));
+        return (this->setValue(KEY_WIFI_PASSWORD, password));
     }
     else
     {
-        return (Settings::deleteKey(KEY_WIFI_PASSWORD));
+        return (this->deleteKey(KEY_WIFI_PASSWORD));
     }
 }
 
 void Settings::getMQTTTelegrafURI(char *uri, size_t count)
 {
-    Settings::getValue(KEY_MQTT_TELEGRAF_URI, uri, count);
+    this->getValue(KEY_MQTT_TELEGRAF_URI, uri, count);
 }
 
 bool Settings::setMQTTTelegrafURI(const char *uri)
 {
     if (strlen(uri) > 0)
     {
-        return (Settings::setValue(KEY_MQTT_TELEGRAF_URI, uri));
+        return (this->setValue(KEY_MQTT_TELEGRAF_URI, uri));
     }
     else
     {
-        return (Settings::deleteKey(KEY_MQTT_TELEGRAF_URI));
+        return (this->deleteKey(KEY_MQTT_TELEGRAF_URI));
     }
 }
 
 void Settings::getMQTTTelegrafGlobalTopic(char *topic, size_t count)
 {
-    Settings::getValue(KEY_MQTT_TELEGRAF_GLOBAL_TOPIC, topic, count);
+    this->getValue(KEY_MQTT_TELEGRAF_GLOBAL_TOPIC, topic, count);
 }
 
 bool Settings::setMQTTTelegrafGlobalTopic(const char *topic)
 {
     if (strlen(topic) > 0)
     {
-        return (Settings::setValue(KEY_MQTT_TELEGRAF_GLOBAL_TOPIC, topic));
+        return (this->setValue(KEY_MQTT_TELEGRAF_GLOBAL_TOPIC, topic));
     }
     else
     {
-        return (Settings::deleteKey(KEY_MQTT_TELEGRAF_GLOBAL_TOPIC));
+        return (this->deleteKey(KEY_MQTT_TELEGRAF_GLOBAL_TOPIC));
     }
 }
 
 uint64_t Settings::getMaxDownloadBandwidthBytes()
 {
-    return (Settings::getBigUnsignedIntegerValue(KEY_TOTAL_DOWNLOAD_BANDWIDTH_BYTES, 0));
+    return (this->getBigUnsignedIntegerValue(KEY_TOTAL_DOWNLOAD_BANDWIDTH_BYTES, 0));
 }
 
 bool Settings::setMaxDownloadBandwidthBytes(uint64_t totalBytes)
 {
     if (totalBytes > 0)
     {
-        return (Settings::setBigUnsigedIntegerValue(KEY_TOTAL_DOWNLOAD_BANDWIDTH_BYTES, totalBytes));
+        return (this->setBigUnsigedIntegerValue(KEY_TOTAL_DOWNLOAD_BANDWIDTH_BYTES, totalBytes));
     }
     else
     {
-        return (Settings::deleteKey(KEY_TOTAL_DOWNLOAD_BANDWIDTH_BYTES));
+        return (this->deleteKey(KEY_TOTAL_DOWNLOAD_BANDWIDTH_BYTES));
     }
 }
 
 uint64_t Settings::getMaxUploadBandwidthBytes()
 {
-    return (Settings::getBigUnsignedIntegerValue(KEY_TOTAL_UPLOAD_BANDWIDTH_BYTES, 0));
+    return (this->getBigUnsignedIntegerValue(KEY_TOTAL_UPLOAD_BANDWIDTH_BYTES, 0));
 }
 
 bool Settings::setMaxUploadBandwidthBytes(uint64_t totalBytes)
 {
     if (totalBytes > 0)
     {
-        return (Settings::setBigUnsigedIntegerValue(KEY_TOTAL_UPLOAD_BANDWIDTH_BYTES, totalBytes));
+        return (this->setBigUnsigedIntegerValue(KEY_TOTAL_UPLOAD_BANDWIDTH_BYTES, totalBytes));
     }
     else
     {
-        return (Settings::deleteKey(KEY_TOTAL_UPLOAD_BANDWIDTH_BYTES));
+        return (this->deleteKey(KEY_TOTAL_UPLOAD_BANDWIDTH_BYTES));
     }
 }
 
 void Settings::getNetworkInterfaceId(char *id, size_t count)
 {
-    Settings::getValue(KEY_NET_IFACE_ID, id, count);
+    this->getValue(KEY_NET_IFACE_ID, id, count);
 }
 
 bool Settings::setNetworkInterfaceId(const char *id)
 {
     if (strlen(id) > 0)
     {
-        return (Settings::setValue(KEY_NET_IFACE_ID, id));
+        return (this->setValue(KEY_NET_IFACE_ID, id));
     }
     else
     {
-        return (Settings::deleteKey(KEY_NET_IFACE_ID));
+        return (this->deleteKey(KEY_NET_IFACE_ID));
     }
 }
