@@ -50,7 +50,7 @@ LGFX *screen = nullptr;
 // #define SOURCE_DUMMY // this is for testing source with random values (debug)
 #define SOURCE_MQTT_TELEGRAF // this is telegraf source via mqtt protocol (production)
 
-#include "src/utils/Settings.hpp"
+#include "src/CustomSettings.hpp"
 #include "src/utils/WifiManager.hpp"
 #include "src/utils/SerialManager.hpp"
 #include "src/utils/Format.hpp"
@@ -73,7 +73,7 @@ MQTTTelegrafSource *mqttTelegrafSRC = nullptr;
 #endif // SOURCE_MQTT_TELEGRAF
 #endif // SOURCE_DUMMY
 
-Settings *settings;
+CustomSettings *settings = nullptr;
 SourceData *sourceData = nullptr;
 Bounce2::Button *button;
 
@@ -382,13 +382,11 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
 
 void setup()
 {
-    settings = new Settings();
-
     //  TODO: default info screen if no valid settings found
-    //  TODO: rotary encoder controller, button pressed at boot = enter settings mode, movement = toggle between screens
-
     SerialManager::init(SerialManager::DEFAULT_SPEED, onReceivedSerialCommand);
     Serial.println("Starting esp32-server-dashboard");
+
+    settings = new CustomSettings();
 
     char WiFiSSID[WIFI_SSID_CHAR_ARR_LENGTH];
     settings->getWIFISSID(WiFiSSID, WIFI_SSID_CHAR_ARR_LENGTH);
