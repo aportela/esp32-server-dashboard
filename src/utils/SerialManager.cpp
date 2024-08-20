@@ -1,5 +1,4 @@
 #include "SerialManager.hpp"
-#include "WiFiManager.hpp"
 #include <Arduino.h>
 
 const char *SerialCommandStr[]{
