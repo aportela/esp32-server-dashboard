@@ -6,8 +6,8 @@
 #include <cstdint>
 #include <cstdio>
 
-#define WIFI_SSID_CHAR_ARR_LENGTH 33
-#define WIFI_PASSWORD_CHAR_ARR_LENGTH 65
+#define SSID_CHAR_ARR_LENGTH 33
+#define PASSWORD_CHAR_ARR_LENGTH 65
 
 #define MAC_ADDRESS_CHAR_ARR_LENGTH 19
 #define IP_ADDRESS_CHAR_ARR_LENGTH 16
@@ -29,8 +29,8 @@ class WifiManager
 {
 private:
     static WifiManagerConnectionCallback connectionCallback;
-    static char WiFiSSID[WIFI_SSID_CHAR_ARR_LENGTH];
-    static char WiFiPassword[WIFI_PASSWORD_CHAR_ARR_LENGTH];
+    static char WiFiSSID[SSID_CHAR_ARR_LENGTH];
+    static char WiFiPassword[PASSWORD_CHAR_ARR_LENGTH];
     static bool tryingConnection;
     static bool validConnection;
     static bool reconnect;
@@ -40,6 +40,11 @@ private:
     static WIFISignalQuality signalQuality;
 
 public:
+    static const uint8_t SSID_LENGTH = SSID_CHAR_ARR_LENGTH;
+    static const uint8_t PASSWORD_LENGTH = PASSWORD_CHAR_ARR_LENGTH;
+    static const uint8_t MAC_ADDRESS_LENGTH = MAC_ADDRESS_CHAR_ARR_LENGTH;
+    static const uint8_t IP_ADDRESS_LENGTH = IP_ADDRESS_CHAR_ARR_LENGTH;
+
     static void onConnectionStatusChanged(WifiManagerConnectionCallback callback);
     static void setCredentials(const char *ssid, const char *password);
     static void connect(bool reconnectIfLost = true);

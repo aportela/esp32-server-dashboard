@@ -388,11 +388,11 @@ void setup()
 
     settings = new CustomSettings();
 
-    char WiFiSSID[WIFI_SSID_CHAR_ARR_LENGTH];
-    settings->getWIFISSID(WiFiSSID, WIFI_SSID_CHAR_ARR_LENGTH);
+    char WiFiSSID[WifiManager::SSID_LENGTH];
+    settings->getWIFISSID(WiFiSSID, sizeof(WiFiSSID));
 
-    char WiFiPassword[WIFI_PASSWORD_CHAR_ARR_LENGTH];
-    settings->getWIFIPassword(WiFiPassword, WIFI_PASSWORD_CHAR_ARR_LENGTH);
+    char WiFiPassword[WifiManager::PASSWORD_LENGTH];
+    settings->getWIFIPassword(WiFiPassword, sizeof(WiFiPassword));
 
     WifiManager::onConnectionStatusChanged(onWifiConnectionStatusChanged);
     WifiManager::setCredentials(WiFiSSID, WiFiPassword);

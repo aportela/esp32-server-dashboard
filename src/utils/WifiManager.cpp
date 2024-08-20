@@ -1,8 +1,8 @@
 #include "WifiManager.hpp"
 
 WifiManagerConnectionCallback WifiManager::connectionCallback = nullptr;
-char WifiManager::WiFiSSID[WIFI_SSID_CHAR_ARR_LENGTH] = {'\0'};
-char WifiManager::WiFiPassword[WIFI_PASSWORD_CHAR_ARR_LENGTH] = {'\0'};
+char WifiManager::WiFiSSID[SSID_CHAR_ARR_LENGTH] = {'\0'};
+char WifiManager::WiFiPassword[PASSWORD_CHAR_ARR_LENGTH] = {'\0'};
 bool WifiManager::tryingConnection = false;
 bool WifiManager::validConnection = false;
 bool WifiManager::reconnect = false;
