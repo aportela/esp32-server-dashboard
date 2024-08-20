@@ -29,45 +29,12 @@ bool LGFXScreenDashboardResumeEntityNetUsedBandWidth::refresh(bool force)
     uint64_t currentTimestamp = 0;
     // bool changed = false;
     SourceDataQueueNetworkingLimitsValue networkLimitsData = this->sourceData->getNetworkLimits();
-    SourceDataQueueNetworkingValue networkData;
-    if (this->type == NBT_DOWNLOAD)
-    {
-        networkData = this->sourceData->getCurrentNetworkDownload();
-        // currentTimestamp = this->sourceData->getNetworkDownloadSpeedTimestamp();
-        // changed = this->sourceData->changedNetworkDownloadSpeed(this->timestamp);
-    }
-    else
-    {
-        networkData = this->sourceData->getCurrentNetworkUpload();
-        // currentTimestamp = this->sourceData->getNetworkUploadSpeedTimestamp();
-        // changed = this->sourceData->changedNetworkUploadSpeed(this->timestamp);
-    }
+    SourceDataQueueNetworkingValue networkData = this->type == NBT_DOWNLOAD ? this->sourceData->getCurrentNetworkDownload() : this->sourceData->getCurrentNetworkUpload();
     if (networkData.timestamp != this->timestamp || force)
     {
-        // uint64_t currentValue = 0;
         uint64_t currentValue = networkData.currentBandwidthBytesPerSecond;
-        /*
-        if (this->type == NBT_DOWNLOAD)
-        {
-            currentValue = this->sourceData->getNetworkDownloadSpeed();
-        }
-        else
-        {
-            currentValue = this->sourceData->getNetworkUploadSpeed();
-        }
-        */
-        // this->timestamp = currentTimestamp;
         this->timestamp = networkData.timestamp;
-
-        uint8_t mapped100 = 0;
-        if (this->type == NBT_DOWNLOAD)
-        {
-            mapped100 = this->mapUint64ValueFrom0To100(currentValue, 0, networkLimitsData.byteDownloadLimit);
-        }
-        else
-        {
-            mapped100 = this->mapUint64ValueFrom0To100(currentValue, 0, networkLimitsData.byteUploadLimit);
-        }
+        uint8_t mapped100 = this->type == NBT_DOWNLOAD ? this->mapUint64ValueFrom0To100(currentValue, 0, networkLimitsData.byteDownloadLimit) : this->mapUint64ValueFrom0To100(currentValue, 0, networkLimitsData.byteUploadLimit);
         uint16_t currentGradientColor = (mapped100 != this->previousMappedValue) ? this->getGradientColorFrom0To100(mapped100) : this->previousGradientcolor;
         this->previousMappedValue = mapped100;
         this->previousGradientcolor = currentGradientColor;
