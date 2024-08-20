@@ -109,80 +109,80 @@ void onWifiConnectionStatusChanged(bool connected)
     }
 }
 
-void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
+void onReceivedSerialCommand(SerialManagerCommand cmd, const char *value)
 {
     char str[1024] = {'\0'};
     uint64_t tmpUint64 = 0;
     float tmpFloat = 0.0f;
     switch (cmd)
     {
-    case SERIAL_CMDT_REBOOT:
+    case SerialManagerCommand_REBOOT:
         Serial.println("Serial command received: rebooting");
         ESP.restart();
         break;
-    case SERIAL_CMDT_CLEAR_SETTINGS:
+    case SerialManagerCommand_CLEAR_SETTINGS:
         Serial.println("Serial command received: reset settings");
         settings->clear();
         Serial.println("Settings cleared. Reboot REQUIRED");
         break;
-    case SERIAL_CMDT_EXPORT_SETTINGS:
+    case SerialManagerCommand_EXPORT_SETTINGS:
         Serial.println("Serial command received: export settings");
         Serial.println("# EXPORTED SETTINGS BEGIN");
-        Serial.println(SerialCommandStr[SERIAL_CMDT_CLEAR_SETTINGS]);
+        Serial.println(SerialCommandStr[SerialManagerCommand_CLEAR_SETTINGS]);
         settings->getWIFISSID(str, sizeof(str));
         if (strlen(str) > 0)
         {
-            Serial.print(SerialCommandStr[SERIAL_CMDT_SET_WIFI_SSID]);
+            Serial.print(SerialCommandStr[SerialManagerCommand_SET_WIFI_SSID]);
             Serial.println(str);
         }
         settings->getWIFIPassword(str, sizeof(str));
         if (strlen(str) > 0)
         {
-            Serial.print(SerialCommandStr[SERIAL_CMDT_SET_WIFI_PASSWORD]);
+            Serial.print(SerialCommandStr[SerialManagerCommand_SET_WIFI_PASSWORD]);
             Serial.println(str);
         }
         settings->getMQTTTelegrafURI(str, sizeof(str));
         if (strlen(str) > 0)
         {
-            Serial.print(SerialCommandStr[SERIAL_CMDT_SET_MQTT_TELEGRAF_URI]);
+            Serial.print(SerialCommandStr[SerialManagerCommand_SET_MQTT_TELEGRAF_URI]);
             Serial.println(str);
         }
         settings->getMQTTTelegrafGlobalTopic(str, sizeof(str));
         if (strlen(str) > 0)
         {
-            Serial.print(SerialCommandStr[SERIAL_CMDT_SET_MQTT_TELEGRAF_TOPIC]);
+            Serial.print(SerialCommandStr[SerialManagerCommand_SET_MQTT_TELEGRAF_TOPIC]);
             Serial.println(str);
         }
         tmpUint64 = settings->getMaxDownloadBandwidthBytes();
         if (tmpUint64 > 0)
         {
-            Serial.print(SerialCommandStr[SERIAL_CMDT_SET_MAX_DOWNLOAD_BYTES_BANDWIDTH]);
+            Serial.print(SerialCommandStr[SerialManagerCommand_SET_MAX_DOWNLOAD_BYTES_BANDWIDTH]);
             Serial.println(tmpUint64);
         }
         tmpUint64 = settings->getMaxUploadBandwidthBytes();
         if (tmpUint64 > 0)
         {
-            Serial.print(SerialCommandStr[SERIAL_CMDT_SET_MAX_UPLOAD_BYTES_BANDWIDTH]);
+            Serial.print(SerialCommandStr[SerialManagerCommand_SET_MAX_UPLOAD_BYTES_BANDWIDTH]);
             Serial.println(tmpUint64);
         }
         settings->getNetworkInterfaceId(str, sizeof(str));
         if (strlen(str) > 0)
         {
-            Serial.print(SerialCommandStr[SERIAL_CMDT_SET_NETWORK_INTERFACE_ID]);
+            Serial.print(SerialCommandStr[SerialManagerCommand_SET_NETWORK_INTERFACE_ID]);
             Serial.println(str);
         }
         Serial.println("REBOOT");
         Serial.println("# EXPORTED SETTINGS END");
         break;
-    case SERIAL_CMDT_CONNECT_WIFI:
+    case SerialManagerCommand_CONNECT_WIFI:
         Serial.println("Serial command received: connect WiFi");
         WiFiManager::connect(false);
         break;
-    case SERIAL_CMDT_DISCONNECT_WIFI:
+    case SerialManagerCommand_DISCONNECT_WIFI:
         Serial.println("Serial command received: disconnect WiFi");
         WiFiManager::disconnect();
         break;
-    case SERIAL_CMDT_SET_WIFI_SSID:
+    case SerialManagerCommand_SET_WIFI_SSID:
         if (value && strlen(value))
         {
             Serial.printf("Serial command received: set WiFi SSID (%s)\n", value);
@@ -208,7 +208,7 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
             }
         }
         break;
-    case SERIAL_CMDT_SET_WIFI_PASSWORD:
+    case SerialManagerCommand_SET_WIFI_PASSWORD:
         if (value && strlen(value))
         {
             Serial.printf("Serial command received: set WiFi password (%s)\n", value);
@@ -234,7 +234,7 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
             }
         }
         break;
-    case SERIAL_CMDT_SET_MQTT_TELEGRAF_URI:
+    case SerialManagerCommand_SET_MQTT_TELEGRAF_URI:
         if (value && strlen(value))
         {
             Serial.printf("Serial command received: set MQTT Telegraf URI (%s)\n", value);
@@ -260,7 +260,7 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
             }
         }
         break;
-    case SERIAL_CMDT_SET_MQTT_TELEGRAF_TOPIC:
+    case SerialManagerCommand_SET_MQTT_TELEGRAF_TOPIC:
         if (value && strlen(value))
         {
             Serial.printf("Serial command received: set MQTT Telegraf global topic (%s)\n", value);
@@ -286,13 +286,13 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
             }
         }
         break;
-    case SERIAL_CMDT_TOGGLE_SCREEN:
+    case SerialManagerCommand_TOGGLE_SCREEN:
         if (screen != nullptr)
         {
             screen->toggleScreen();
         }
         break;
-    case SERIAL_CMDT_SET_MAX_DOWNLOAD_BYTES_BANDWIDTH:
+    case SerialManagerCommand_SET_MAX_DOWNLOAD_BYTES_BANDWIDTH:
         if (value && strlen(value))
         {
             Serial.printf("Serial command received: set max download bandwidth bytes (%s)\n", value);
@@ -318,7 +318,7 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
             }
         }
         break;
-    case SERIAL_CMDT_SET_MAX_UPLOAD_BYTES_BANDWIDTH:
+    case SerialManagerCommand_SET_MAX_UPLOAD_BYTES_BANDWIDTH:
         if (value && strlen(value))
         {
             Serial.printf("Serial command received: set max upload bandwidth bytes (%s)\n", value);
@@ -344,7 +344,7 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
             }
         }
         break;
-    case SERIAL_CMDT_SET_NETWORK_INTERFACE_ID:
+    case SerialManagerCommand_SET_NETWORK_INTERFACE_ID:
         if (value && strlen(value))
         {
             Serial.printf("Serial command received: set network interface id (%s)\n", value);

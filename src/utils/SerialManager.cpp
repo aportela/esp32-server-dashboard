@@ -19,7 +19,7 @@ const char *SerialCommandStr[]{
     "SET_NETWORK_INTERFACE_ID ",
 };
 
-SerialCommandCallback SerialManager::remoteCallback = nullptr;
+SerialCommandCallback SerialManager::commandReceivedCallback = nullptr;
 
 void SerialManager::init(uint32_t speed, SerialCommandCallback callback)
 {
@@ -29,14 +29,14 @@ void SerialManager::init(uint32_t speed, SerialCommandCallback callback)
         yield();
         delay(10);
     }
-    SerialManager::setCallback(callback);
+    SerialManager::onCommandReceived(callback);
 }
 
-void SerialManager::setCallback(SerialCommandCallback callback)
+void SerialManager::onCommandReceived(SerialCommandCallback callback)
 {
     if (callback != nullptr)
     {
-        SerialManager::remoteCallback = callback;
+        SerialManager::commandReceivedCallback = callback;
     }
 }
 
@@ -45,186 +45,186 @@ void SerialManager::loop(void)
     while (Serial.available() > 0)
     {
         String rx = Serial.readStringUntil('\n');
-        if (rx == SerialCommandStr[SERIAL_CMDT_REBOOT])
+        if (rx == SerialCommandStr[SerialManagerCommand_REBOOT])
         {
-            if (SerialManager::remoteCallback != nullptr)
+            if (SerialManager::commandReceivedCallback != nullptr)
             {
-                SerialManager::remoteCallback(SERIAL_CMDT_REBOOT, nullptr);
+                SerialManager::commandReceivedCallback(SerialManagerCommand_REBOOT, nullptr);
             }
         }
-        else if (rx == SerialCommandStr[SERIAL_CMDT_CLEAR_SETTINGS])
+        else if (rx == SerialCommandStr[SerialManagerCommand_CLEAR_SETTINGS])
         {
-            if (SerialManager::remoteCallback != nullptr)
+            if (SerialManager::commandReceivedCallback != nullptr)
             {
-                SerialManager::remoteCallback(SERIAL_CMDT_CLEAR_SETTINGS, nullptr);
+                SerialManager::commandReceivedCallback(SerialManagerCommand_CLEAR_SETTINGS, nullptr);
             }
         }
-        else if (rx == SerialCommandStr[SERIAL_CMDT_EXPORT_SETTINGS])
+        else if (rx == SerialCommandStr[SerialManagerCommand_EXPORT_SETTINGS])
         {
-            if (SerialManager::remoteCallback != nullptr)
+            if (SerialManager::commandReceivedCallback != nullptr)
             {
-                SerialManager::remoteCallback(SERIAL_CMDT_EXPORT_SETTINGS, nullptr);
+                SerialManager::commandReceivedCallback(SerialManagerCommand_EXPORT_SETTINGS, nullptr);
             }
         }
-        else if (rx == SerialCommandStr[SERIAL_CMDT_CONNECT_WIFI])
+        else if (rx == SerialCommandStr[SerialManagerCommand_CONNECT_WIFI])
         {
-            if (SerialManager::remoteCallback != nullptr)
+            if (SerialManager::commandReceivedCallback != nullptr)
             {
-                SerialManager::remoteCallback(SERIAL_CMDT_CONNECT_WIFI, nullptr);
+                SerialManager::commandReceivedCallback(SerialManagerCommand_CONNECT_WIFI, nullptr);
             }
         }
-        else if (rx == SerialCommandStr[SERIAL_CMDT_DISCONNECT_WIFI])
+        else if (rx == SerialCommandStr[SerialManagerCommand_DISCONNECT_WIFI])
         {
-            if (SerialManager::remoteCallback != nullptr)
+            if (SerialManager::commandReceivedCallback != nullptr)
             {
-                SerialManager::remoteCallback(SERIAL_CMDT_DISCONNECT_WIFI, nullptr);
+                SerialManager::commandReceivedCallback(SerialManagerCommand_DISCONNECT_WIFI, nullptr);
             }
         }
-        else if (rx.startsWith(SerialCommandStr[SERIAL_CMDT_SET_WIFI_SSID]))
+        else if (rx.startsWith(SerialCommandStr[SerialManagerCommand_SET_WIFI_SSID]))
         {
-            uint16_t length = strlen(SerialCommandStr[SERIAL_CMDT_SET_WIFI_SSID]);
+            uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_WIFI_SSID]);
             if (rx.length() > length)
             {
                 String WiFiSSID = rx.substring(length);
-                if (SerialManager::remoteCallback != nullptr)
+                if (SerialManager::commandReceivedCallback != nullptr)
                 {
-                    SerialManager::remoteCallback(SERIAL_CMDT_SET_WIFI_SSID, WiFiSSID.c_str());
+                    SerialManager::commandReceivedCallback(SerialManagerCommand_SET_WIFI_SSID, WiFiSSID.c_str());
                 }
             }
             else
             {
-                if (SerialManager::remoteCallback != nullptr)
+                if (SerialManager::commandReceivedCallback != nullptr)
                 {
-                    SerialManager::remoteCallback(SERIAL_CMDT_SET_WIFI_SSID, nullptr);
+                    SerialManager::commandReceivedCallback(SerialManagerCommand_SET_WIFI_SSID, nullptr);
                 }
             }
         }
-        else if (rx.startsWith(SerialCommandStr[SERIAL_CMDT_SET_WIFI_PASSWORD]))
+        else if (rx.startsWith(SerialCommandStr[SerialManagerCommand_SET_WIFI_PASSWORD]))
         {
-            uint16_t length = strlen(SerialCommandStr[SERIAL_CMDT_SET_WIFI_PASSWORD]);
+            uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_WIFI_PASSWORD]);
             if (rx.length() > length)
             {
                 String WiFiPassword = rx.substring(length);
-                if (SerialManager::remoteCallback != nullptr)
+                if (SerialManager::commandReceivedCallback != nullptr)
                 {
-                    SerialManager::remoteCallback(SERIAL_CMDT_SET_WIFI_PASSWORD, WiFiPassword.c_str());
+                    SerialManager::commandReceivedCallback(SerialManagerCommand_SET_WIFI_PASSWORD, WiFiPassword.c_str());
                 }
             }
             else
             {
-                if (SerialManager::remoteCallback != nullptr)
+                if (SerialManager::commandReceivedCallback != nullptr)
                 {
-                    SerialManager::remoteCallback(SERIAL_CMDT_SET_WIFI_PASSWORD, nullptr);
+                    SerialManager::commandReceivedCallback(SerialManagerCommand_SET_WIFI_PASSWORD, nullptr);
                 }
             }
         }
-        else if (rx.startsWith(SerialCommandStr[SERIAL_CMDT_SET_MQTT_TELEGRAF_URI]))
+        else if (rx.startsWith(SerialCommandStr[SerialManagerCommand_SET_MQTT_TELEGRAF_URI]))
         {
-            uint16_t length = strlen(SerialCommandStr[SERIAL_CMDT_SET_MQTT_TELEGRAF_URI]);
+            uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_MQTT_TELEGRAF_URI]);
             if (rx.length() > length)
             {
                 String MQTTTelegrafURI = rx.substring(length);
-                if (SerialManager::remoteCallback != nullptr)
+                if (SerialManager::commandReceivedCallback != nullptr)
                 {
-                    SerialManager::remoteCallback(SERIAL_CMDT_SET_MQTT_TELEGRAF_URI, MQTTTelegrafURI.c_str());
+                    SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MQTT_TELEGRAF_URI, MQTTTelegrafURI.c_str());
                 }
             }
             else
             {
-                if (SerialManager::remoteCallback != nullptr)
+                if (SerialManager::commandReceivedCallback != nullptr)
                 {
-                    SerialManager::remoteCallback(SERIAL_CMDT_SET_MQTT_TELEGRAF_URI, nullptr);
+                    SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MQTT_TELEGRAF_URI, nullptr);
                 }
             }
         }
-        else if (rx.startsWith(SerialCommandStr[SERIAL_CMDT_SET_MQTT_TELEGRAF_TOPIC]))
+        else if (rx.startsWith(SerialCommandStr[SerialManagerCommand_SET_MQTT_TELEGRAF_TOPIC]))
         {
-            uint16_t length = strlen(SerialCommandStr[SERIAL_CMDT_SET_MQTT_TELEGRAF_TOPIC]);
+            uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_MQTT_TELEGRAF_TOPIC]);
             if (rx.length() > length)
             {
                 String MQTTTelegrafTopic = rx.substring(length);
-                if (SerialManager::remoteCallback != nullptr)
+                if (SerialManager::commandReceivedCallback != nullptr)
                 {
-                    SerialManager::remoteCallback(SERIAL_CMDT_SET_MQTT_TELEGRAF_TOPIC, MQTTTelegrafTopic.c_str());
+                    SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MQTT_TELEGRAF_TOPIC, MQTTTelegrafTopic.c_str());
                 }
             }
             else
             {
-                if (SerialManager::remoteCallback != nullptr)
+                if (SerialManager::commandReceivedCallback != nullptr)
                 {
-                    SerialManager::remoteCallback(SERIAL_CMDT_SET_MQTT_TELEGRAF_TOPIC, nullptr);
+                    SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MQTT_TELEGRAF_TOPIC, nullptr);
                 }
             }
         }
-        else if (rx == (SerialCommandStr[SERIAL_CMDT_TOGGLE_SCREEN]))
+        else if (rx == (SerialCommandStr[SerialManagerCommand_TOGGLE_SCREEN]))
         {
-            if (SerialManager::remoteCallback != nullptr)
+            if (SerialManager::commandReceivedCallback != nullptr)
             {
-                SerialManager::remoteCallback(SERIAL_CMDT_TOGGLE_SCREEN, nullptr);
+                SerialManager::commandReceivedCallback(SerialManagerCommand_TOGGLE_SCREEN, nullptr);
             }
         }
-        else if (rx.startsWith(SerialCommandStr[SERIAL_CMDT_SET_MAX_DOWNLOAD_BYTES_BANDWIDTH]))
+        else if (rx.startsWith(SerialCommandStr[SerialManagerCommand_SET_MAX_DOWNLOAD_BYTES_BANDWIDTH]))
         {
-            uint16_t length = strlen(SerialCommandStr[SERIAL_CMDT_SET_MAX_DOWNLOAD_BYTES_BANDWIDTH]);
+            uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_MAX_DOWNLOAD_BYTES_BANDWIDTH]);
             if (rx.length() > length)
             {
                 String MaxDownloadBytesBandwidth = rx.substring(length);
-                if (SerialManager::remoteCallback != nullptr)
+                if (SerialManager::commandReceivedCallback != nullptr)
                 {
-                    SerialManager::remoteCallback(SERIAL_CMDT_SET_MAX_DOWNLOAD_BYTES_BANDWIDTH, MaxDownloadBytesBandwidth.c_str());
+                    SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MAX_DOWNLOAD_BYTES_BANDWIDTH, MaxDownloadBytesBandwidth.c_str());
                 }
             }
             else
             {
-                if (SerialManager::remoteCallback != nullptr)
+                if (SerialManager::commandReceivedCallback != nullptr)
                 {
-                    SerialManager::remoteCallback(SERIAL_CMDT_SET_MAX_DOWNLOAD_BYTES_BANDWIDTH, nullptr);
+                    SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MAX_DOWNLOAD_BYTES_BANDWIDTH, nullptr);
                 }
             }
         }
-        else if (rx.startsWith(SerialCommandStr[SERIAL_CMDT_SET_MAX_UPLOAD_BYTES_BANDWIDTH]))
+        else if (rx.startsWith(SerialCommandStr[SerialManagerCommand_SET_MAX_UPLOAD_BYTES_BANDWIDTH]))
         {
-            uint16_t length = strlen(SerialCommandStr[SERIAL_CMDT_SET_MAX_UPLOAD_BYTES_BANDWIDTH]);
+            uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_MAX_UPLOAD_BYTES_BANDWIDTH]);
             if (rx.length() > length)
             {
                 String MaxUploadBytesBandwidth = rx.substring(length);
-                if (SerialManager::remoteCallback != nullptr)
+                if (SerialManager::commandReceivedCallback != nullptr)
                 {
-                    SerialManager::remoteCallback(SERIAL_CMDT_SET_MAX_UPLOAD_BYTES_BANDWIDTH, MaxUploadBytesBandwidth.c_str());
+                    SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MAX_UPLOAD_BYTES_BANDWIDTH, MaxUploadBytesBandwidth.c_str());
                 }
             }
             else
             {
-                if (SerialManager::remoteCallback != nullptr)
+                if (SerialManager::commandReceivedCallback != nullptr)
                 {
-                    SerialManager::remoteCallback(SERIAL_CMDT_SET_MAX_UPLOAD_BYTES_BANDWIDTH, nullptr);
+                    SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MAX_UPLOAD_BYTES_BANDWIDTH, nullptr);
                 }
             }
         }
-        else if (rx.startsWith(SerialCommandStr[SERIAL_CMDT_SET_NETWORK_INTERFACE_ID]))
+        else if (rx.startsWith(SerialCommandStr[SerialManagerCommand_SET_NETWORK_INTERFACE_ID]))
         {
-            uint16_t length = strlen(SerialCommandStr[SERIAL_CMDT_SET_NETWORK_INTERFACE_ID]);
+            uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_NETWORK_INTERFACE_ID]);
             if (rx.length() > length)
             {
                 String Id = rx.substring(length);
-                if (SerialManager::remoteCallback != nullptr)
+                if (SerialManager::commandReceivedCallback != nullptr)
                 {
-                    SerialManager::remoteCallback(SERIAL_CMDT_SET_NETWORK_INTERFACE_ID, Id.c_str());
+                    SerialManager::commandReceivedCallback(SerialManagerCommand_SET_NETWORK_INTERFACE_ID, Id.c_str());
                 }
             }
             else
             {
-                if (SerialManager::remoteCallback != nullptr)
+                if (SerialManager::commandReceivedCallback != nullptr)
                 {
-                    SerialManager::remoteCallback(SERIAL_CMDT_SET_NETWORK_INTERFACE_ID, nullptr);
+                    SerialManager::commandReceivedCallback(SerialManagerCommand_SET_NETWORK_INTERFACE_ID, nullptr);
                 }
             }
         }
         else
         {
-            if (SerialManager::remoteCallback != nullptr)
+            if (SerialManager::commandReceivedCallback != nullptr)
             {
-                SerialManager::remoteCallback(SERIAL_CMDT_UNKNOWN, rx.c_str());
+                SerialManager::commandReceivedCallback(SerialManagerCommand_UNKNOWN, rx.c_str());
             }
         }
     }

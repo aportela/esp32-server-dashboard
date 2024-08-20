@@ -6,38 +6,38 @@
 #include <cstdint>
 #include <cstdio>
 
-enum SerialCommandType
+enum SerialManagerCommand
 {
-    SERIAL_CMDT_NONE = 0,
-    SERIAL_CMDT_UNKNOWN = 1,
-    SERIAL_CMDT_REBOOT = 2,
-    SERIAL_CMDT_CLEAR_SETTINGS = 3,
-    SERIAL_CMDT_EXPORT_SETTINGS = 4,
-    SERIAL_CMDT_CONNECT_WIFI = 5,
-    SERIAL_CMDT_DISCONNECT_WIFI = 6,
-    SERIAL_CMDT_SET_WIFI_SSID = 7,
-    SERIAL_CMDT_SET_WIFI_PASSWORD = 8,
-    SERIAL_CMDT_SET_MQTT_TELEGRAF_URI = 9,
-    SERIAL_CMDT_SET_MQTT_TELEGRAF_TOPIC = 10,
-    SERIAL_CMDT_TOGGLE_SCREEN = 11,
-    SERIAL_CMDT_SET_MAX_DOWNLOAD_BYTES_BANDWIDTH = 12,
-    SERIAL_CMDT_SET_MAX_UPLOAD_BYTES_BANDWIDTH = 13,
-    SERIAL_CMDT_SET_NETWORK_INTERFACE_ID = 14,
+    SerialManagerCommand_NONE = 0,
+    SerialManagerCommand_UNKNOWN = 1,
+    SerialManagerCommand_REBOOT = 2,
+    SerialManagerCommand_CLEAR_SETTINGS = 3,
+    SerialManagerCommand_EXPORT_SETTINGS = 4,
+    SerialManagerCommand_CONNECT_WIFI = 5,
+    SerialManagerCommand_DISCONNECT_WIFI = 6,
+    SerialManagerCommand_SET_WIFI_SSID = 7,
+    SerialManagerCommand_SET_WIFI_PASSWORD = 8,
+    SerialManagerCommand_SET_MQTT_TELEGRAF_URI = 9,
+    SerialManagerCommand_SET_MQTT_TELEGRAF_TOPIC = 10,
+    SerialManagerCommand_TOGGLE_SCREEN = 11,
+    SerialManagerCommand_SET_MAX_DOWNLOAD_BYTES_BANDWIDTH = 12,
+    SerialManagerCommand_SET_MAX_UPLOAD_BYTES_BANDWIDTH = 13,
+    SerialManagerCommand_SET_NETWORK_INTERFACE_ID = 14,
 };
 
 extern const char *SerialCommandStr[];
 
-typedef void (*SerialCommandCallback)(SerialCommandType cmd, const char *value);
+typedef void (*SerialCommandCallback)(SerialManagerCommand cmd, const char *value);
 
 class SerialManager
 {
 private:
-    static SerialCommandCallback remoteCallback;
+    static SerialCommandCallback commandReceivedCallback;
 
 public:
     static const uint32_t DEFAULT_SPEED = 9600;
     static void init(uint32_t speed, SerialCommandCallback callback);
-    static void setCallback(SerialCommandCallback callback);
+    static void onCommandReceived(SerialCommandCallback callback);
     static void loop(void);
 };
 
