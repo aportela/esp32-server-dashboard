@@ -50,7 +50,7 @@ public:
     static void getMacAddress(char *buffer, size_t buffer_size);
     static void getIPAddress(char *buffer, size_t buffer_size);
     static long getSignalStrength(void);
-    static WIFISignalQuality getSignalQuality(long signalStrength);
+    static WIFISignalQuality convertToSignalQuality(long signalStrength);
 };
 
 #endif

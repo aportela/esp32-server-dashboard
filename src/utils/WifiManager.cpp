@@ -116,7 +116,7 @@ long WifiManager::getSignalStrength(void)
     return (WiFi.RSSI());
 }
 
-WIFISignalQuality WifiManager::getSignalQuality(long signalStrength)
+WIFISignalQuality WifiManager::convertToSignalQuality(long signalStrength)
 {
     if (signalStrength < -90)
     {
