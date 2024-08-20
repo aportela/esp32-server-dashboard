@@ -25,7 +25,7 @@ MQTTTelegrafSource::MQTTTelegrafSource(SourceData *sourceData, const char *uri, 
     Serial.println("topic: ");
     Serial.println(topic);
 #endif
-    MQTT::setCallback(MQTTTelegrafSource::onMessageReceived);
+    MQTT::onMessageReceived(MQTTTelegrafSource::onMessageReceived);
     MQTT::init(clientId, uri, topic);
     MQTTTelegrafSource::generateTopic(topic, MQTTTelegrafSource::cpuTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/cpu");
     MQTTTelegrafSource::generateTopic(topic, MQTTTelegrafSource::memoryTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/mem");

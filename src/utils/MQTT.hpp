@@ -5,18 +5,21 @@
 #include <mqtt_client.h>
 
 #define MAX_MQTT_TOPIC_LENGTH 256
+
+typedef void (*MQTTMessageReceivedCallback)(const char *topic, const char *payload);
+
 class MQTT
 {
 private:
     static esp_mqtt_client_handle_t client;
-    static void (*messageCallback)(const char *topic, const char *payload);
+    static MQTTMessageReceivedCallback messageReceivedCallback;
     static void event_handler(void *handler_args, esp_event_base_t event_base, int32_t event_id, void *event_data);
     static char topic[MAX_MQTT_TOPIC_LENGTH];
 
 public:
     static void init(const char *id, const char *uri, const char *topic);
     static void destroy(void);
-    static void setCallback(void (*callback)(const char *topic, const char *payload));
+    static void onMessageReceived(MQTTMessageReceivedCallback callback);
 };
 
 #endif
