@@ -4,482 +4,373 @@
 #include <cstdio>
 #include "../utils/Format.hpp"
 
-#define MIN_CPU_LOAD 0
-#define MAX_CPU_LOAD 100
-
-SourceData::SourceData(bool truncateOverflows, float minCPUTemperature, float maxCPUTemperature, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit, const char *networkInterfaceId, const char *networkInterfaceName)
+SourceData::SourceData(bool truncateOverflows, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit)
 {
-#ifdef USE_MUTEX
-    this->mutex = xSemaphoreCreateMutex();
-#endif
+    uint64_t currentTimestamp = millis();
+    this->cpuLoadQueue = xQueueCreate(1, sizeof(SourceDataQueueCPULoadValue));
+    this->usedMemoryQueue = xQueueCreate(1, sizeof(SourceDataQueueUsedMemoryValue));
+    this->cpuTemperatureQueue = xQueueCreate(1, sizeof(SourceDataQueueCPUTemperatureValue));
+    this->systemUptimeQueue = xQueueCreate(1, sizeof(SourceDataQueueUptimeValue));
+    this->networkingDownloadQueue = xQueueCreate(1, sizeof(SourceDataQueueNetworkingValue));
+    this->networkingUploadQueue = xQueueCreate(1, sizeof(SourceDataQueueNetworkingValue));
+    this->networkingLimitsQueue = xQueueCreate(1, sizeof(SourceDataQueueNetworkingLimitsValue));
     this->truncateOverflows = truncateOverflows;
-    this->totalMemory = totalMemory;
-    this->minCPUTemperature = minCPUTemperature;
-    this->maxCPUTemperature = maxCPUTemperature;
+    /*
     this->totalNetworkDownloadBandwidthLimit = totalNetworkDownloadBandwidthLimit;
     this->totalNetworkUploadBandwidthLimit = totalNetworkUploadBandwidthLimit;
-    if (networkInterfaceId != NULL && strlen(networkInterfaceId) > 0)
-    {
-        strncpy(this->networkInterfaceId, networkInterfaceId, sizeof(this->networkInterfaceId));
-    }
-    if (networkInterfaceName != NULL && strlen(networkInterfaceName) > 0)
-    {
-        strncpy(this->networkInterfaceName, networkInterfaceName, sizeof(this->networkInterfaceName));
-    }
+    */
+    this->setNetworkLimits(totalNetworkDownloadBandwidthLimit, totalNetworkUploadBandwidthLimit);
 }
 
 SourceData::~SourceData()
 {
-#ifdef USE_MUTEX
-    if (this->mutex != NULL)
-    {
-        vSemaphoreDelete(this->mutex);
-    }
-#endif
-}
-
-// NET IFACE
-
-void SourceData::getNetworkInterfaceId(char *buffer, size_t buffer_count)
-{
-    strncpy(buffer, this->networkInterfaceId, buffer_count);
-}
-
-void SourceData::getNetworkInterfaceName(char *buffer, size_t buffer_count)
-{
-    strncpy(buffer, this->networkInterfaceName, buffer_count);
+    vQueueDelete(this->cpuLoadQueue);
+    vQueueDelete(this->usedMemoryQueue);
+    vQueueDelete(this->cpuTemperatureQueue);
+    vQueueDelete(this->systemUptimeQueue);
+    vQueueDelete(this->networkingDownloadQueue);
+    vQueueDelete(this->networkingUploadQueue);
+    vQueueDelete(this->networkingLimitsQueue);
 }
 
 // CPU LOAD
 
-uint8_t SourceData::getMinCPULoad(void) const
+SourceDataQueueCPULoadValue SourceData::getCurrentCPULoad(void)
 {
-    return (MIN_CPU_LOAD);
-}
-
-uint8_t SourceData::getMaxCPULoad(void) const
-{
-    return (MAX_CPU_LOAD);
-}
-
-float SourceData::getCurrentCPULoad(void) const
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    float load = this->currentCPULoad;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (load);
-}
-
-uint64_t SourceData::getCurrentCPULoadTimestamp(void) const
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    uint64_t timestamp = this->currentCPULoadTimestamp;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (timestamp);
-}
-
-bool SourceData::changedCPULoad(uint64_t fromTimestamp) const
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    uint64_t timestamp = this->currentCPULoadTimestamp;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (fromTimestamp != timestamp);
-}
-
-bool SourceData::setCurrentCPULoad(float value, uint64_t timestamp)
-{
-    if (value != this->currentCPULoad)
+    SourceDataQueueCPULoadValue data = {0.0f, 0};
+    if (this->cpuLoadQueue != NULL)
     {
-        if (value >= MIN_CPU_LOAD && value <= MAX_CPU_LOAD)
+        if (xQueuePeek(this->cpuLoadQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
         {
-#ifdef USE_MUTEX
-            xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-            this->currentCPULoad = value;
-            this->currentCPULoadTimestamp = timestamp;
-#ifdef USE_MUTEX
-            xSemaphoreGive(this->mutex);
-#endif
-            return (true);
-        }
-        else if (truncateOverflows)
-        {
-            if (value < MIN_CPU_LOAD)
-            {
-#ifdef USE_MUTEX
-                xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-                this->currentCPULoad = MIN_CPU_LOAD;
-                this->currentCPULoadTimestamp = timestamp;
-#ifdef USE_MUTEX
-                xSemaphoreGive(this->mutex);
-#endif
-                return (true);
-            }
-            else if (value > MAX_CPU_LOAD)
-            {
-#ifdef USE_MUTEX
-                xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-                this->currentCPULoad = MAX_CPU_LOAD;
-                this->currentCPULoadTimestamp = timestamp;
-#ifdef USE_MUTEX
-                xSemaphoreGive(this->mutex);
-#endif
-                return (true);
-            }
-        }
-        else
-        {
-            return (false);
+            data.loadPercent = 0.0f;
+            data.timestamp = 0;
         }
     }
     else
     {
-#ifdef USE_MUTEX
-        xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-        this->currentCPULoadTimestamp = timestamp;
-#ifdef USE_MUTEX
-        xSemaphoreGive(this->mutex);
-#endif
-        return (true);
+        data.loadPercent = 0.0f;
+        data.timestamp = 0;
+    }
+    return (data);
+}
+
+bool SourceData::setCurrentCPULoad(float loadPercent, uint64_t timestamp)
+{
+    if (this->cpuLoadQueue != NULL)
+    {
+        SourceDataQueueCPULoadValue data = this->getCurrentCPULoad();
+        if (loadPercent != data.loadPercent)
+        {
+            if (loadPercent >= MIN_CPU_LOAD && loadPercent <= MAX_CPU_LOAD)
+            {
+                data.loadPercent = loadPercent;
+                data.timestamp = timestamp;
+                return (xQueueOverwrite(this->cpuLoadQueue, &data) == pdPASS);
+            }
+            else if (truncateOverflows)
+            {
+                if (loadPercent < MIN_CPU_LOAD)
+                {
+                    data.loadPercent = MIN_CPU_LOAD;
+                    data.timestamp = timestamp;
+                    return (xQueueOverwrite(this->cpuLoadQueue, &data) == pdPASS);
+                }
+                else if (loadPercent > MAX_CPU_LOAD)
+                {
+                    data.loadPercent = MAX_CPU_LOAD;
+                    data.timestamp = timestamp;
+                    return (xQueueOverwrite(this->cpuLoadQueue, &data) == pdPASS);
+                }
+            }
+            else
+            {
+                return (false);
+            }
+        }
+        else
+        {
+            data.timestamp = timestamp;
+            return (xQueueOverwrite(this->cpuLoadQueue, &data) == pdPASS);
+        }
+    }
+    else
+    {
+        return (false);
     }
 }
 
 // MEMORY
 
-uint64_t SourceData::getTotalMemory(void) const
+SourceDataQueueUsedMemoryValue SourceData::getCurrentUsedMemory(void)
 {
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    uint64_t memory = this->totalMemory;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (memory);
-}
-
-uint64_t SourceData::getUsedMemory(void) const
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    uint64_t memory = this->usedMemory;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (memory);
-}
-
-uint64_t SourceData::getCurrentUsedMemoryTimestamp(void) const
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    uint64_t timestamp = this->currentUsedMemoryTimestamp;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (timestamp);
-}
-
-bool SourceData::changedUsedMemory(uint64_t fromTimestamp) const
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    uint64_t timestamp = this->currentUsedMemoryTimestamp;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (fromTimestamp != timestamp);
-}
-
-bool SourceData::setTotalMemory(uint64_t bytes)
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    this->totalMemory = bytes;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-}
-
-bool SourceData::setUsedMemory(uint64_t bytes, uint64_t timestamp)
-{
-    if (bytes != this->usedMemory)
+    SourceDataQueueUsedMemoryValue data = {0, 0, 0};
+    if (this->usedMemoryQueue != NULL)
     {
-        if (bytes >= 0 && bytes <= this->totalMemory)
+        if (xQueuePeek(this->usedMemoryQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
         {
-#ifdef USE_MUTEX
-            xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-            this->usedMemory = bytes;
-            this->currentUsedMemoryTimestamp = timestamp;
-#ifdef USE_MUTEX
-            xSemaphoreGive(this->mutex);
-#endif
-            return (true);
-        }
-        else if (truncateOverflows)
-        {
-            if (bytes < 0)
-            {
-#ifdef USE_MUTEX
-                xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-                this->usedMemory = 0;
-                this->currentUsedMemoryTimestamp = timestamp;
-#ifdef USE_MUTEX
-                xSemaphoreGive(this->mutex);
-#endif
-                return (true);
-            }
-            else if (bytes > this->totalMemory)
-            {
-#ifdef USE_MUTEX
-                xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-                this->usedMemory = this->totalMemory;
-                this->currentUsedMemoryTimestamp = timestamp;
-#ifdef USE_MUTEX
-                xSemaphoreGive(this->mutex);
-#endif
-                return (true);
-            }
-        }
-        else
-        {
-            return (false);
+            data.usedBytes = 0;
+            data.totalBytes = 0;
+            data.timestamp = 0;
         }
     }
     else
     {
-#ifdef USE_MUTEX
-        xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-        this->currentUsedMemoryTimestamp = timestamp;
-#ifdef USE_MUTEX
-        xSemaphoreGive(this->mutex);
-#endif
-        return (true);
+        data.usedBytes = 0;
+        data.totalBytes = 0;
+        data.timestamp = 0;
     }
+    return (data);
 }
 
-bool SourceData::setUsedAndTotalMemory(uint64_t usedBytes, uint64_t totalBytes, uint64_t timestamp)
+bool SourceData::setCurrentUsedMemory(uint64_t usedBytes, uint64_t totalBytes, uint64_t timestamp)
 {
-    if (totalBytes != this->totalMemory)
+    if (this->usedMemoryQueue)
     {
-#ifdef USE_MUTEX
-        xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-        this->totalMemory = totalBytes;
-#ifdef USE_MUTEX
-        xSemaphoreGive(this->mutex);
-#endif
-    }
-    if (usedBytes != this->usedMemory)
-    {
-        if (usedBytes >= 0 && usedBytes <= this->totalMemory)
+        SourceDataQueueUsedMemoryValue data = this->getCurrentUsedMemory();
+        if (totalBytes != data.totalBytes)
         {
-#ifdef USE_MUTEX
-            xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-            this->usedMemory = usedBytes;
-            this->currentUsedMemoryTimestamp = timestamp;
-#ifdef USE_MUTEX
-            xSemaphoreGive(this->mutex);
-#endif
-            return (true);
+            data.totalBytes = totalBytes;
+            data.timestamp = timestamp;
         }
-        else if (truncateOverflows)
+        if (usedBytes != data.usedBytes)
         {
-            if (usedBytes < 0)
+            if (usedBytes >= 0 && usedBytes <= data.totalBytes)
             {
-#ifdef USE_MUTEX
-                xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-                this->usedMemory = 0;
-                this->currentUsedMemoryTimestamp = timestamp;
-#ifdef USE_MUTEX
-                xSemaphoreGive(this->mutex);
-#endif
-                return (true);
+                data.usedBytes = usedBytes;
+                data.timestamp = timestamp;
+                return (xQueueOverwrite(this->usedMemoryQueue, &data) == pdPASS);
             }
-            else if (usedBytes > this->totalMemory)
+            else if (truncateOverflows)
             {
-#ifdef USE_MUTEX
-                xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-                this->usedMemory = this->totalMemory;
-                this->currentUsedMemoryTimestamp = timestamp;
-#ifdef USE_MUTEX
-                xSemaphoreGive(this->mutex);
-#endif
-                return (true);
+                if (usedBytes < 0)
+                {
+                    data.usedBytes = 0;
+                    data.timestamp = timestamp;
+                    return (xQueueOverwrite(this->usedMemoryQueue, &data) == pdPASS);
+                }
+                else if (usedBytes > data.totalBytes)
+                {
+                    data.usedBytes = data.totalBytes;
+                    data.timestamp = timestamp;
+                    return (xQueueOverwrite(this->usedMemoryQueue, &data) == pdPASS);
+                }
+            }
+            else
+            {
+                return (false);
             }
         }
         else
         {
-            return (false);
+            data.timestamp = timestamp;
+            return (xQueueOverwrite(this->usedMemoryQueue, &data) == pdPASS);
         }
     }
     else
     {
-#ifdef USE_MUTEX
-        xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-        this->currentUsedMemoryTimestamp = timestamp;
-#ifdef USE_MUTEX
-        xSemaphoreGive(this->mutex);
-#endif
-        return (true);
+        return (false);
     }
 }
 
 // CPU TEMPERATURE
 
-float SourceData::getMinCPUTemperature(void) const
+SourceDataQueueCPUTemperatureValue SourceData::getCurrentCPUTemperature(void)
 {
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    float temperature = this->minCPUTemperature;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (temperature);
-}
-
-bool SourceData::setMinCPUTemperature(float celsious)
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    this->minCPUTemperature = celsious;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (true);
-}
-
-float SourceData::getMaxCPUTemperature(void) const
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    float temperature = this->maxCPUTemperature;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (temperature);
-}
-
-bool SourceData::setMaxCPUTemperature(float celsious)
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    this->maxCPUTemperature = celsious;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (true);
-}
-
-float SourceData::getCurrentCPUTemperature(void) const
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    float temperature = this->currentCPUTemperature;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (temperature);
-}
-
-uint64_t SourceData::getCurrentCPUTemperatureTimestamp(void) const
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    uint64_t timestamp = this->currentCPUTemperatureTimestamp;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (timestamp);
-}
-
-bool SourceData::changedCPUTemperature(uint64_t fromTimestamp) const
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    uint64_t timestamp = this->currentCPUTemperatureTimestamp;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (fromTimestamp != timestamp);
+    SourceDataQueueCPUTemperatureValue data = {0.0f, 0};
+    if (this->cpuTemperatureQueue != NULL)
+    {
+        if (xQueuePeek(this->cpuTemperatureQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
+        {
+            data.celsious = 0.0f;
+            data.timestamp = 0;
+        }
+    }
+    else
+    {
+        data.celsious = 0.0f;
+        data.timestamp = 0;
+    }
+    return (data);
 }
 
 bool SourceData::setCurrentCPUTemperature(float celsious, uint64_t timestamp)
 {
-    if (celsious != this->currentCPUTemperature)
+    if (this->cpuTemperatureQueue != NULL)
     {
-        if (celsious >= this->minCPUTemperature && celsious <= this->maxCPUTemperature)
+        SourceDataQueueCPUTemperatureValue data = this->getCurrentCPUTemperature();
+        if (celsious != data.celsious)
         {
-#ifdef USE_MUTEX
-            xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-            this->currentCPUTemperature = celsious;
-            this->currentCPUTemperatureTimestamp = timestamp;
-#ifdef USE_MUTEX
-            xSemaphoreGive(this->mutex);
-#endif
-            return (true);
+            if (celsious >= MIN_CPU_TEMPERATURE && celsious <= MAX_CPU_TEMPERATURE)
+            {
+                data.celsious = celsious;
+                data.timestamp = timestamp;
+                return (xQueueOverwrite(this->cpuTemperatureQueue, &data) == pdPASS);
+            }
+            else if (truncateOverflows)
+            {
+                if (celsious < MIN_CPU_TEMPERATURE)
+                {
+                    data.celsious = MIN_CPU_TEMPERATURE;
+                    data.timestamp = timestamp;
+                    return (xQueueOverwrite(this->cpuTemperatureQueue, &data) == pdPASS);
+                }
+                else if (celsious > MAX_CPU_TEMPERATURE)
+                {
+                    data.celsious = MAX_CPU_TEMPERATURE;
+                    data.timestamp = timestamp;
+                    return (xQueueOverwrite(this->cpuTemperatureQueue, &data) == pdPASS);
+                }
+            }
+            else
+            {
+                return (false);
+            }
         }
-        else if (truncateOverflows)
+        else
         {
-            if (celsious < this->minCPUTemperature)
-            {
-#ifdef USE_MUTEX
-                xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-                this->currentCPUTemperature = this->minCPUTemperature;
-                this->currentCPUTemperatureTimestamp = timestamp;
-#ifdef USE_MUTEX
-                xSemaphoreGive(this->mutex);
-#endif
-                return (true);
-            }
-            else if (celsious > this->maxCPUTemperature)
-            {
-#ifdef USE_MUTEX
-                xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-                this->currentCPUTemperature = this->maxCPUTemperature;
-                this->currentCPUTemperatureTimestamp = timestamp;
-#ifdef USE_MUTEX
-                xSemaphoreGive(this->mutex);
-#endif
-                return (true);
-            }
+            data.timestamp = timestamp;
+            return (xQueueOverwrite(this->cpuTemperatureQueue, &data) == pdPASS);
+        }
+    }
+    else
+    {
+        return (false);
+    }
+}
+
+// SYSTEM
+
+SourceDataQueueUptimeValue SourceData::getCurrentUptime(void)
+{
+    SourceDataQueueUptimeValue data = {0, 0};
+    if (this->systemUptimeQueue != NULL)
+    {
+        if (xQueuePeek(this->systemUptimeQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
+        {
+            data.seconds = 0;
+            data.timestamp = 0;
+        }
+    }
+    else
+    {
+        data.seconds = 0;
+        data.timestamp = 0;
+    }
+    return (data);
+}
+
+bool SourceData::setCurrentUptime(uint64_t seconds, uint64_t timestamp)
+{
+    if (this->systemUptimeQueue != NULL)
+    {
+        SourceDataQueueUptimeValue data = this->getCurrentUptime();
+        if (seconds != data.seconds)
+        {
+            data.seconds = seconds;
+            data.timestamp = timestamp;
+            return (xQueueOverwrite(this->systemUptimeQueue, &data) == pdPASS);
+        }
+        else
+        {
+            data.timestamp = timestamp;
+            return (xQueueOverwrite(this->systemUptimeQueue, &data) == pdPASS);
+        }
+    }
+    else
+    {
+        return (false);
+    }
+}
+
+// NET COMMON
+
+SourceDataQueueNetworkingLimitsValue SourceData::getNetworkLimits(void)
+{
+    SourceDataQueueNetworkingLimitsValue data = {0, 0};
+    if (this->networkingLimitsQueue != NULL)
+    {
+        if (xQueuePeek(this->networkingLimitsQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
+        {
+            data.byteDownloadLimit = 0;
+            data.byteUploadLimit = 0;
+        }
+    }
+    else
+    {
+        data.byteDownloadLimit = 0;
+        data.byteUploadLimit = 0;
+    }
+    return (data);
+}
+
+bool SourceData::setNetworkLimits(uint64_t byteDownloadLimit, uint64_t byteUploadLimit)
+{
+    if (this->networkingLimitsQueue != NULL)
+    {
+        SourceDataQueueUptimeValue data = {byteDownloadLimit, byteUploadLimit};
+        return (xQueueOverwrite(this->networkingLimitsQueue, &data) == pdPASS);
+    }
+    else
+    {
+        return (false);
+    }
+}
+
+// NET DOWNLOAD BANDWIDTH
+
+/*
+uint64_t SourceData::getNetworkDownloadBandwidthLimit(void) const
+{
+    return (this->totalNetworkDownloadBandwidthLimit);
+}
+
+bool SourceData::setNetworkDownloadBandwidthLimit(uint64_t bytes)
+{
+    this->totalNetworkDownloadBandwidthLimit = bytes;
+    return (true);
+}
+
+*/
+
+SourceDataQueueNetworkingValue SourceData::getCurrentNetworkDownload(void)
+{
+    SourceDataQueueNetworkingValue data = {0, 0, 0};
+    if (this->networkingDownloadQueue != NULL)
+    {
+        if (xQueuePeek(this->networkingDownloadQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
+        {
+            data.totalBytesTransfered = 0;
+            data.currentBandwidthBytesPerSecond = 0;
+            data.timestamp = 0;
+        }
+    }
+    else
+    {
+        data.totalBytesTransfered = 0;
+        data.currentBandwidthBytesPerSecond = 0;
+        data.timestamp = 0;
+    }
+    return (data);
+}
+
+bool SourceData::setCurrentNetworkDownload(uint64_t totalBytes, uint64_t timestamp)
+{
+    if (this->networkingDownloadQueue)
+    {
+        SourceDataQueueNetworkingValue data = this->getCurrentNetworkDownload();
+        if (totalBytes != data.totalBytesTransfered)
+        {
+            uint64_t diffBytes = totalBytes - data.totalBytesTransfered;
+            float diffSeconds = (timestamp - data.timestamp) / 1000.0;
+            data.currentBandwidthBytesPerSecond = diffSeconds > 0 ? diffBytes / diffSeconds : 0;
+            data.totalBytesTransfered = totalBytes;
+            data.timestamp = timestamp;
+            return (xQueueOverwrite(this->networkingDownloadQueue, &data) == pdPASS);
+        }
+        else if (timestamp != data.timestamp)
+        {
+            data.timestamp = timestamp;
+            return (xQueueOverwrite(this->networkingDownloadQueue, &data) == pdPASS);
         }
         else
         {
@@ -488,265 +379,72 @@ bool SourceData::setCurrentCPUTemperature(float celsious, uint64_t timestamp)
     }
     else
     {
-#ifdef USE_MUTEX
-        xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-        this->currentCPUTemperatureTimestamp = timestamp;
-#ifdef USE_MUTEX
-        xSemaphoreGive(this->mutex);
-#endif
-        return (true);
+        return (false);
     }
-}
-
-// SYSTEM
-
-uint64_t SourceData::getCurrentUptimeSeconds(void) const
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    uint64_t seconds = this->currentUptimeSeconds;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (seconds);
-}
-
-uint64_t SourceData::getCurrentUptimeSecondsTimestamp(void) const
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    uint64_t timestamp = this->currentUptimeSecondsTimestamp;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (timestamp);
-}
-
-bool SourceData::changedUptimeSeconds(uint64_t fromTimestamp) const
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    uint64_t timestamp = this->currentUptimeSecondsTimestamp;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (fromTimestamp != timestamp);
-}
-
-bool SourceData::setCurrentUptimeSeconds(uint64_t seconds, uint64_t timestamp)
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    if (seconds != this->currentUptimeSeconds)
-    {
-        this->currentUptimeSeconds = seconds;
-    }
-    this->currentUptimeSecondsTimestamp = timestamp;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (true);
-}
-
-// NET DOWNLOAD BANDWIDTH
-
-uint64_t SourceData::getNetworkDownloadBandwidthLimit(void) const
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    uint64_t bytes = this->totalNetworkDownloadBandwidthLimit;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (bytes);
-}
-
-bool SourceData::setNetworkDownloadBandwidthLimit(uint64_t bytes)
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    this->totalNetworkDownloadBandwidthLimit = bytes;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (true);
-}
-
-uint64_t SourceData::getNetworkDownloadSpeed(void) const
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    uint64_t bytesPerSecond = this->currentNetworkDownloadSpeed;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (bytesPerSecond);
-}
-
-uint64_t SourceData::getNetworkDownloadSpeedTimestamp(void) const
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    uint64_t timestamp = this->currentTotalNetworkDownloadedTimestamp;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (timestamp);
-}
-
-uint64_t SourceData::getCurrentTotalNetworkDownloaded(void)
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    uint64_t bytesPerSecond = this->currentTotalNetworkDownloaded;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (bytesPerSecond);
-}
-
-bool SourceData::changedNetworkDownloadSpeed(uint64_t fromTimestamp) const
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    uint64_t timestamp = this->currentTotalNetworkDownloadedTimestamp;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (fromTimestamp != timestamp);
-}
-
-bool SourceData::setCurrentTotalNetworkDownloaded(uint64_t bytes, uint64_t timestamp)
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    if (bytes != this->currentTotalNetworkDownloaded)
-    {
-        this->previousTotalNetworkDownloaded = this->currentTotalNetworkDownloaded;
-        this->currentTotalNetworkDownloaded = bytes;
-    }
-    else
-    {
-        this->previousTotalNetworkDownloaded = this->currentTotalNetworkDownloaded;
-    }
-    uint64_t diffBytes = this->currentTotalNetworkDownloaded - this->previousTotalNetworkDownloaded;
-    this->previousTotalNetworkDownloadedTimestamp = this->currentTotalNetworkDownloadedTimestamp;
-    this->currentTotalNetworkDownloadedTimestamp = timestamp;
-    float diffSeconds = (this->currentTotalNetworkDownloadedTimestamp - this->previousTotalNetworkDownloadedTimestamp) / 1000.0;
-    this->currentNetworkDownloadSpeed = diffSeconds > 0 ? diffBytes / diffSeconds : 0;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (true);
 }
 
 // NET UPLOAD BANDWIDTH
 
+/*
 uint64_t SourceData::getNetworkUploadBandwidthLimit(void) const
 {
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    uint64_t bytes = this->totalNetworkUploadBandwidthLimit;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (bytes);
+    return (this->totalNetworkUploadBandwidthLimit);
 }
 
 bool SourceData::setNetworkUploadBandwidthLimit(uint64_t bytes)
 {
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
     this->totalNetworkUploadBandwidthLimit = bytes;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
     return (true);
 }
 
-uint64_t SourceData::getNetworkUploadSpeed(void) const
+*/
+SourceDataQueueNetworkingValue SourceData::getCurrentNetworkUpload(void)
 {
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    uint64_t bytesPerSecond = this->currentNetworkUploadSpeed;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (bytesPerSecond);
-}
-
-uint64_t SourceData::getNetworkUploadSpeedTimestamp(void) const
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    uint64_t timestamp = this->currentTotalNetworkUploadedTimestamp;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (timestamp);
-}
-
-uint64_t SourceData::getCurrentTotalNetworkUploaded(void)
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    uint64_t bytesPerSecond = this->currentTotalNetworkUploaded;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (bytesPerSecond);
-}
-
-bool SourceData::changedNetworkUploadSpeed(uint64_t fromTimestamp) const
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    uint64_t timestamp = this->currentTotalNetworkUploadedTimestamp;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (fromTimestamp != timestamp);
-}
-
-bool SourceData::setCurrentTotalNetworkUploaded(uint64_t bytes, uint64_t timestamp)
-{
-#ifdef USE_MUTEX
-    xSemaphoreTake(this->mutex, portMAX_DELAY);
-#endif
-    if (bytes != this->currentTotalNetworkUploaded)
+    SourceDataQueueNetworkingValue data = {0, 0, 0};
+    if (this->networkingUploadQueue != NULL)
     {
-        this->previousTotalNetworkUploaded = this->currentTotalNetworkUploaded;
-        this->currentTotalNetworkUploaded = bytes;
+        if (xQueuePeek(this->networkingUploadQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
+        {
+            data.totalBytesTransfered = 0;
+            data.currentBandwidthBytesPerSecond = 0;
+            data.timestamp = 0;
+        }
     }
     else
     {
-        this->previousTotalNetworkDownloaded = this->currentTotalNetworkUploaded;
+        data.totalBytesTransfered = 0;
+        data.currentBandwidthBytesPerSecond = 0;
+        data.timestamp = 0;
     }
-    uint64_t diffBytes = this->currentTotalNetworkUploaded - this->previousTotalNetworkUploaded;
-    this->previousTotalNetworkUploadedTimestamp = this->currentTotalNetworkUploadedTimestamp;
-    this->currentTotalNetworkUploadedTimestamp = timestamp;
-    float diffSeconds = (this->currentTotalNetworkUploadedTimestamp - this->previousTotalNetworkUploadedTimestamp) / 1000.0;
-    this->currentNetworkUploadSpeed = diffSeconds > 0 ? diffBytes / diffSeconds : 0;
-#ifdef USE_MUTEX
-    xSemaphoreGive(this->mutex);
-#endif
-    return (true);
+    return (data);
+}
+
+bool SourceData::setCurrentNetworkUpload(uint64_t totalBytes, uint64_t timestamp)
+{
+    if (this->networkingUploadQueue)
+    {
+        SourceDataQueueNetworkingValue data = this->getCurrentNetworkUpload();
+        if (totalBytes != data.totalBytesTransfered)
+        {
+            uint64_t diffBytes = totalBytes - data.totalBytesTransfered;
+            float diffSeconds = (timestamp - data.timestamp) / 1000.0;
+            data.currentBandwidthBytesPerSecond = diffSeconds > 0 ? diffBytes / diffSeconds : 0;
+            data.totalBytesTransfered = totalBytes;
+            data.timestamp = timestamp;
+            return (xQueueOverwrite(this->networkingUploadQueue, &data) == pdPASS);
+        }
+        else if (timestamp != data.timestamp)
+        {
+            data.timestamp = timestamp;
+            return (xQueueOverwrite(this->networkingUploadQueue, &data) == pdPASS);
+        }
+        else
+        {
+            return (false);
+        }
+    }
+    else
+    {
+        return (false);
+    }
 }

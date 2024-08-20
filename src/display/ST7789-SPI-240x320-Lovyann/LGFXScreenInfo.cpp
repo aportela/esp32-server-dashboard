@@ -101,7 +101,7 @@ void LGFXScreenInfo::refreshWIFISignalLevelBars(void)
     int colors[TOTAL_WIFI_SIGNAL_LEVEL_BARS];
     if (WifiManager::isConnected())
     {
-        switch (WifiManager::getSignalQuality(WifiManager::getSignalStrength()))
+        switch (WifiManager::convertToSignalQuality(WifiManager::getSignalStrength()))
         {
         case WIFISignalQuality_NONE:
             colors[0] = TFT_DARKGREY;
@@ -283,7 +283,7 @@ bool LGFXScreenInfo::refresh(bool force)
             this->WIFISignalStrengthChanged = true;
             changed = true;
         }
-        WIFISignalQuality currentWiFiSignalQuality = WifiManager::getSignalQuality(currentWiFiSignalStrength);
+        WIFISignalQuality currentWiFiSignalQuality = WifiManager::convertToSignalQuality(currentWiFiSignalStrength);
         if (this->previousWiFiSignalQuality != currentWiFiSignalQuality)
         {
             this->WIFISignalLevelBarsChanged = true;

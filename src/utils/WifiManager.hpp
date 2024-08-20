@@ -40,7 +40,7 @@ private:
     static WIFISignalQuality signalQuality;
 
 public:
-    static void setConnectionCallbackHandler(WifiManagerConnectionCallback callback);
+    static void onConnectionStatusChanged(WifiManagerConnectionCallback callback);
     static void setCredentials(const char *ssid, const char *password);
     static void connect(bool reconnectIfLost = true);
     static void disconnect(void);
@@ -50,7 +50,7 @@ public:
     static void getMacAddress(char *buffer, size_t buffer_size);
     static void getIPAddress(char *buffer, size_t buffer_size);
     static long getSignalStrength(void);
-    static WIFISignalQuality getSignalQuality(long signalStrength);
+    static WIFISignalQuality convertToSignalQuality(long signalStrength);
 };
 
 #endif

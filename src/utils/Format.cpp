@@ -3,7 +3,6 @@
 #include <Arduino.h>
 #include <inttypes.h>
 
-#define BYTE_UNIT_DIVISOR 1024
 #define BYTE_UNITS_SIZE 7 // next const arrays size
 
 const char *const ShortByteUnits[] = {"B", "KB", "MB", "GB", "TB", "PB", "EB"};
@@ -20,15 +19,15 @@ void Format::parseFloatIntoCharArray(float value, uint8_t decimalCount, uint8_t 
     std::snprintf(buffer, buffer_size, format, strDecimalValue);           // set left zero padding
 }
 
-void Format::bytesToHumanStr(uint64_t bytes, char *buffer, size_t buffer_size, bool zeroPadding, bool shortUnits, bool bandwidthUnits)
+void Format::bytesToHumanStr(uint64_t bytes, char *buffer, size_t buffer_size, bool zeroPadding, bool shortUnits, bool bandwidthUnits, KILO_BYTE_DIVISOR kByteDivisorUnit)
 {
     if (bytes > 0)
     {
         uint8_t currentUnitIndex = 0;
         uint64_t tmpBytes = bytes;
-        while (tmpBytes >= BYTE_UNIT_DIVISOR && currentUnitIndex < BYTE_UNITS_SIZE - 1)
+        while (tmpBytes >= kByteDivisorUnit && currentUnitIndex < BYTE_UNITS_SIZE - 1)
         {
-            tmpBytes /= BYTE_UNIT_DIVISOR;
+            tmpBytes /= kByteDivisorUnit;
             currentUnitIndex++;
         }
         const char *byteUnitStr = (shortUnits ? (bandwidthUnits ? ShortBandwidthByteUnits : ShortByteUnits) : (bandwidthUnits ? LongBandwidthByteUnits : LongByteUnits))[currentUnitIndex];
@@ -36,8 +35,8 @@ void Format::bytesToHumanStr(uint64_t bytes, char *buffer, size_t buffer_size, b
     }
     else
     {
-        const char *minByteUnitStr = shortUnits ? (bandwidthUnits ? ShortBandwidthByteUnits[0] : ShortByteUnits[0]) : (bandwidthUnits ? LongBandwidthByteUnits[0] : LongByteUnits[0]);
-        std::snprintf(buffer, buffer_size, zeroPadding ? "%04" PRIu64 "%s" : "%" PRIu64 "%s", 0, minByteUnitStr);
+        const char *minByteUnitStr = (shortUnits ? (bandwidthUnits ? ShortBandwidthByteUnits : ShortByteUnits) : (bandwidthUnits ? LongBandwidthByteUnits : LongByteUnits))[0];
+        std::snprintf(buffer, buffer_size, zeroPadding ? "0000%s" : "0%s", minByteUnitStr);
     }
 }
 

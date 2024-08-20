@@ -7,49 +7,43 @@
 class Settings
 {
 private:
-    static Preferences preferences;
+    Preferences *preferences;
 
-    static int8_t getSmallSignedIntegerValue(const char *key, int8_t defaultValue = 0);
-    static bool setSmallSignedIntegerValue(const char *key, int8_t value = 0);
-    static uint64_t getBigUnsignedIntegerValue(const char *key, uint64_t defaultValue = 0);
-    static bool setBigUnsigedIntegerValue(const char *key, uint64_t value = 0);
-    static float getFloatValue(const char *key, float defaultValue = 0.0f);
-    static bool setFloatValue(const char *key, float value = 0.0f);
-    static void getValue(const char *key, char *value, size_t count);
-    static bool setValue(const char *key, const char *value);
-    static bool deleteKey(const char *key);
+    int8_t getSmallSignedIntegerValue(const char *key, int8_t defaultValue = 0);
+    bool setSmallSignedIntegerValue(const char *key, int8_t value = 0);
+    uint64_t getBigUnsignedIntegerValue(const char *key, uint64_t defaultValue = 0);
+    bool setBigUnsigedIntegerValue(const char *key, uint64_t value = 0);
+    float getFloatValue(const char *key, float defaultValue = 0.0f);
+    bool setFloatValue(const char *key, float value = 0.0f);
+    void getValue(const char *key, char *value, size_t count);
+    bool setValue(const char *key, const char *value);
+    bool deleteKey(const char *key);
 
 public:
-    static bool clear(void);
+    Settings(void);
+    ~Settings();
 
-    static void getWIFISSID(char *ssid, size_t count);
-    static bool setWIFISSID(const char *ssid);
-    static void getWIFIPassword(char *password, size_t count);
-    static bool setWIFIPassword(const char *password);
+    bool clear(void);
 
-    static void getMQTTTelegrafURI(char *uri, size_t count);
-    static bool setMQTTTelegrafURI(const char *uri);
+    void getWIFISSID(char *ssid, size_t count);
+    bool setWIFISSID(const char *ssid);
+    void getWIFIPassword(char *password, size_t count);
+    bool setWIFIPassword(const char *password);
 
-    static void getMQTTTelegrafGlobalTopic(char *topic, size_t count);
-    static bool setMQTTTelegrafGlobalTopic(const char *topic);
+    void getMQTTTelegrafURI(char *uri, size_t count);
+    bool setMQTTTelegrafURI(const char *uri);
 
-    static float getMinCPUTemperature();
-    static bool setMinCPUTemperature(float celsius = 0.0f);
+    void getMQTTTelegrafGlobalTopic(char *topic, size_t count);
+    bool setMQTTTelegrafGlobalTopic(const char *topic);
 
-    static float getMaxCPUTemperature();
-    static bool setMaxCPUTemperature(float celsius = 0.0f);
+    uint64_t getMaxDownloadBandwidthBytes();
+    bool setMaxDownloadBandwidthBytes(uint64_t totalBytes = 0);
 
-    static uint64_t getMaxDownloadBandwidthBytes();
-    static bool setMaxDownloadBandwidthBytes(uint64_t totalBytes = 0);
+    uint64_t getMaxUploadBandwidthBytes();
+    bool setMaxUploadBandwidthBytes(uint64_t totalBytes = 0);
 
-    static uint64_t getMaxUploadBandwidthBytes();
-    static bool setMaxUploadBandwidthBytes(uint64_t totalBytes = 0);
-
-    static void getNetworkInterfaceId(char *id, size_t count);
-    static bool setNetworkInterfaceId(const char *id);
-
-    static void getNetworkInterfaceName(char *name, size_t count);
-    static bool setNetworkInterfaceName(const char *name);
+    void getNetworkInterfaceId(char *id, size_t count);
+    bool setNetworkInterfaceId(const char *id);
 };
 
 #endif

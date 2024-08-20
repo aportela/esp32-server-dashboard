@@ -14,7 +14,7 @@ char MQTTTelegrafSource::networkInterfaceId[MAX_NETWORK_INTERFACE_ID_LENGTH] = {
 
 MQTTTelegrafSource *MQTTTelegrafSource::instance = nullptr;
 
-MQTTTelegrafSource::MQTTTelegrafSource(SourceData *sourceData, const char *uri, const char *clientId, const char *topic) : Source(sourceData)
+MQTTTelegrafSource::MQTTTelegrafSource(SourceData *sourceData, const char *uri, const char *clientId, const char *topic, const char *networkInterfaceId) : Source(sourceData)
 {
 #ifdef DEBUG_MQTT_TELEGRAF
     Serial.println("MQTTTelegrafSource");
@@ -33,7 +33,10 @@ MQTTTelegrafSource::MQTTTelegrafSource(SourceData *sourceData, const char *uri, 
     MQTTTelegrafSource::generateTopic(topic, MQTTTelegrafSource::systemTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/system");
     MQTTTelegrafSource::generateTopic(topic, MQTTTelegrafSource::networkTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/net");
 
-    sourceData->getNetworkInterfaceId(MQTTTelegrafSource::networkInterfaceId, sizeof(MQTTTelegrafSource::networkInterfaceId));
+    if (strlen(networkInterfaceId) > 0)
+    {
+        strncpy(MQTTTelegrafSource::networkInterfaceId, networkInterfaceId, sizeof(MQTTTelegrafSource::networkInterfaceId));
+    }
 
 #ifdef DEBUG_MQTT_TELEGRAF
     Serial.println("networkInterfaceId: ");
@@ -146,17 +149,19 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
                 const char *totalSubStrStart = strstr(payload, "total=");
                 if (sscanf(totalSubStrStart, "total=%" PRIu64 "i", &totalBytes) == 1)
                 {
-                    MQTTTelegrafSource::instance->sourceData->setUsedAndTotalMemory(usedBytes, totalBytes, currentMessageTimestamp);
+                    MQTTTelegrafSource::instance->sourceData->setCurrentUsedMemory(usedBytes, totalBytes, currentMessageTimestamp);
                 }
                 else
                 {
-                    MQTTTelegrafSource::instance->sourceData->setUsedMemory(usedBytes, currentMessageTimestamp);
+#ifdef DEBUG_MQTT_TELEGRAF
+                    Serial.println("Error parsing MEM total value");
+#endif
                 }
             }
             else
             {
 #ifdef DEBUG_MQTT_TELEGRAF
-                Serial.println("Error parsing MEM used/total values");
+                Serial.println("Error parsing MEM used value");
 #endif
             }
         }
@@ -189,7 +194,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
             // https://answers.microsoft.com/en-us/windows/forum/all/fast-startup-doesnt-break-power-cycle/07bd6bf8-dd24-4c77-b911-17df89c74eb3
             if (sscanf(payloadSubStr, "uptime=%" PRIu64 "i", &uptime) == 1)
             {
-                MQTTTelegrafSource::instance->sourceData->setCurrentUptimeSeconds(uptime, currentMessageTimestamp);
+                MQTTTelegrafSource::instance->sourceData->setCurrentUptime(uptime, currentMessageTimestamp);
             }
             else
             {
@@ -212,7 +217,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
                 uint64_t bytesRecv = 0;
                 if (sscanf(payloadBytesRecvSubStr, "bytes_recv=%" PRIu64 "i", &bytesRecv) == 1)
                 {
-                    MQTTTelegrafSource::instance->sourceData->setCurrentTotalNetworkDownloaded(bytesRecv, currentMessageTimestamp);
+                    MQTTTelegrafSource::instance->sourceData->setCurrentNetworkDownload(bytesRecv, currentMessageTimestamp);
                 }
                 else
                 {
@@ -227,7 +232,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
                 uint64_t bytesSent = 0;
                 if (sscanf(payloadBytesSentSubStr, "bytes_sent=%" PRIu64 "i", &bytesSent) == 1)
                 {
-                    MQTTTelegrafSource::instance->sourceData->setCurrentTotalNetworkUploaded(bytesSent, currentMessageTimestamp);
+                    MQTTTelegrafSource::instance->sourceData->setCurrentNetworkUpload(bytesSent, currentMessageTimestamp);
                 }
                 else
                 {

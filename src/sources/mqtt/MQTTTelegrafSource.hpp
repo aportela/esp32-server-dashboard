@@ -19,7 +19,7 @@ private:
     static void onMessageReceived(const char *topic, const char *payload);
 
 public:
-    MQTTTelegrafSource(SourceData *sourceData, const char *uri, const char *clientId, const char *topic);
+    MQTTTelegrafSource(SourceData *sourceData, const char *uri, const char *clientId, const char *topic, const char *networkInterfaceId);
     ~MQTTTelegrafSource();
 };
 

@@ -11,7 +11,7 @@ char WifiManager::ipAddress[IP_ADDRESS_CHAR_ARR_LENGTH] = {'\0'};
 long WifiManager::signalStrength = -91;
 WIFISignalQuality WifiManager::signalQuality = WIFISignalQuality_NONE;
 
-void WifiManager::setConnectionCallbackHandler(WifiManagerConnectionCallback callback)
+void WifiManager::onConnectionStatusChanged(WifiManagerConnectionCallback callback)
 {
     if (callback != nullptr)
     {
@@ -116,7 +116,7 @@ long WifiManager::getSignalStrength(void)
     return (WiFi.RSSI());
 }
 
-WIFISignalQuality WifiManager::getSignalQuality(long signalStrength)
+WIFISignalQuality WifiManager::convertToSignalQuality(long signalStrength)
 {
     if (signalStrength < -90)
     {
