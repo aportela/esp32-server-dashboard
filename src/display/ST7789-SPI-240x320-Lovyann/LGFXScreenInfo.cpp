@@ -2,7 +2,7 @@
 #include "../../utils/Format.hpp"
 #include "../../utils/SerialManager.hpp"
 #include "../../utils/FPS.hpp"
-#include "../../utils/CommonDefines.hpp"
+#include "../../CommonDefines.hpp"
 
 #define SCREEN_TITLE_TEXT "ESP32-SERVER-DASHBBOARD"
 #define SCREEN_TITLE_TEXT_COLOR TFT_WHITE
