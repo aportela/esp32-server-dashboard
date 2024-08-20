@@ -12,23 +12,23 @@
 #define MAC_ADDRESS_CHAR_ARR_LENGTH 19
 #define IP_ADDRESS_CHAR_ARR_LENGTH 16
 
-enum WIFISignalQuality
+enum WiFiSignalQuality
 {
-    WIFISignalQuality_NONE,
-    WIFISignalQuality_WORST,
-    WIFISignalQuality_BAD,
-    WIFISignalQuality_NORMAL,
-    WIFISignalQuality_GOOD,
-    WIFISignalQuality_BEST
+    WiFiSignalQuality_NONE,
+    WiFiSignalQuality_WORST,
+    WiFiSignalQuality_BAD,
+    WiFiSignalQuality_NORMAL,
+    WiFiSignalQuality_GOOD,
+    WiFiSignalQuality_BEST
 
 };
 
-typedef void (*WifiManagerConnectionCallback)(bool connected);
+typedef void (*WiFiManagerConnectionCallback)(bool connected);
 
-class WifiManager
+class WiFiManager
 {
 private:
-    static WifiManagerConnectionCallback connectionCallback;
+    static WiFiManagerConnectionCallback connectionCallback;
     static char WiFiSSID[SSID_CHAR_ARR_LENGTH];
     static char WiFiPassword[PASSWORD_CHAR_ARR_LENGTH];
     static bool tryingConnection;
@@ -37,7 +37,7 @@ private:
     static char macAddress[MAC_ADDRESS_CHAR_ARR_LENGTH];
     static char ipAddress[IP_ADDRESS_CHAR_ARR_LENGTH];
     static long signalStrength;
-    static WIFISignalQuality signalQuality;
+    static WiFiSignalQuality signalQuality;
 
 public:
     static const uint8_t SSID_LENGTH = SSID_CHAR_ARR_LENGTH;
@@ -45,7 +45,7 @@ public:
     static const uint8_t MAC_ADDRESS_LENGTH = MAC_ADDRESS_CHAR_ARR_LENGTH;
     static const uint8_t IP_ADDRESS_LENGTH = IP_ADDRESS_CHAR_ARR_LENGTH;
 
-    static void onConnectionStatusChanged(WifiManagerConnectionCallback callback);
+    static void onConnectionStatusChanged(WiFiManagerConnectionCallback callback);
     static void setCredentials(const char *ssid, const char *password);
     static void connect(bool reconnectIfLost = true);
     static void disconnect(void);
@@ -55,7 +55,7 @@ public:
     static void getMacAddress(char *buffer, size_t buffer_size);
     static void getIPAddress(char *buffer, size_t buffer_size);
     static long getSignalStrength(void);
-    static WIFISignalQuality convertToSignalQuality(long signalStrength);
+    static WiFiSignalQuality convertToSignalQuality(long signalStrength);
 };
 
 #endif

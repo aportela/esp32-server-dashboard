@@ -1,7 +1,7 @@
 #include "LGFXScreenDashboardResume.hpp"
 #include <inttypes.h>
 #include "../SizesAndOffsets-320x240.hpp"
-#include "../../utils/WifiManager.hpp"
+#include "../../utils/WiFiManager.hpp"
 #include "../../utils/FPS.hpp"
 #include "../../utils/Format.hpp"
 

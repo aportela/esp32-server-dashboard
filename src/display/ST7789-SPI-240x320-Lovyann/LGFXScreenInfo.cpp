@@ -60,7 +60,7 @@ LGFXScreenInfo::LGFXScreenInfo(LovyanGFX *display) : LGFXScreen(display)
         this->parentDisplay->setCursor(SCREEN_TITLE_X_OFFSET, SCREEN_TITLE_Y_OFFSET);
         this->parentDisplay->println(SCREEN_TITLE_TEXT);
 
-        this->wasConnected = WifiManager::isConnected();
+        this->wasConnected = WiFiManager::isConnected();
         this->refresh(true);
     }
 }
@@ -72,7 +72,7 @@ LGFXScreenInfo::~LGFXScreenInfo()
 
 void LGFXScreenInfo::refreshWIFILogo(void)
 {
-    this->parentDisplay->fillRect(SCREEN_WIFI_LOGO_RECT_X_OFFSET, SCREEN_WIFI_LOGO_RECT_Y_OFFSET, SCREEN_WIFI_LOGO_RECT_WIDTH, SCREEN_WIFI_LOGO_RECT_HEIGHT, WifiManager::isConnected() ? SCREEN_WIFI_LOGO_BG_COLOR_CONNECTED : SCREEN_WIFI_LOGO_BG_COLOR_DISCONNECTED);
+    this->parentDisplay->fillRect(SCREEN_WIFI_LOGO_RECT_X_OFFSET, SCREEN_WIFI_LOGO_RECT_Y_OFFSET, SCREEN_WIFI_LOGO_RECT_WIDTH, SCREEN_WIFI_LOGO_RECT_HEIGHT, WiFiManager::isConnected() ? SCREEN_WIFI_LOGO_BG_COLOR_CONNECTED : SCREEN_WIFI_LOGO_BG_COLOR_DISCONNECTED);
     this->parentDisplay->setFont(SCREEN_WIFI_LOGO_FONT);
     this->parentDisplay->setTextSize(SCREEN_WIFI_LOGO_FONT_SIZE);
     this->parentDisplay->setTextColor(SCREEN_WIFI_LOGO_TEXT_COLOR);
@@ -86,45 +86,45 @@ void LGFXScreenInfo::refreshWIFISignalStrength(void)
     this->parentDisplay->setTextSize(SCREEN_WIFI_SIGNAL_STRENGTH_FONT_SIZE);
     this->parentDisplay->setTextColor(SCREEN_WIFI_SIGNAL_STRENGTH_TEXT_COLOR, SCREEN_WIFI_SIGNAL_STRENGTH_TEXT_BG_COLOR);
     this->parentDisplay->setCursor(SCREEN_WIFI_SIGNAL_STRENGTH_TEXT_X_OFFSET, SCREEN_WIFI_SIGNAL_STRENGTH_TEXT_Y_OFFSET);
-    if (WifiManager::isConnected())
+    if (WiFiManager::isConnected())
     {
-        this->parentDisplay->printf("%+02ddBm", WifiManager::getSignalStrength());
+        this->parentDisplay->printf("%+02ddBm", WiFiManager::getSignalStrength());
     }
     else
     {
-        this->parentDisplay->printf("      ", WifiManager::getSignalStrength());
+        this->parentDisplay->printf("      ", WiFiManager::getSignalStrength());
     }
 }
 
 void LGFXScreenInfo::refreshWIFISignalLevelBars(void)
 {
     int colors[TOTAL_WIFI_SIGNAL_LEVEL_BARS];
-    if (WifiManager::isConnected())
+    if (WiFiManager::isConnected())
     {
-        switch (WifiManager::convertToSignalQuality(WifiManager::getSignalStrength()))
+        switch (WiFiManager::convertToSignalQuality(WiFiManager::getSignalStrength()))
         {
-        case WIFISignalQuality_NONE:
+        case WiFiSignalQuality_NONE:
             colors[0] = TFT_DARKGREY;
             colors[1] = TFT_DARKGREY;
             colors[2] = TFT_DARKGREY;
             colors[3] = TFT_DARKGREY;
             colors[4] = TFT_DARKGREY;
             break;
-        case WIFISignalQuality_WORST:
+        case WiFiSignalQuality_WORST:
             colors[0] = TFT_GREEN;
             colors[1] = TFT_DARKGREY;
             colors[2] = TFT_DARKGREY;
             colors[3] = TFT_DARKGREY;
             colors[4] = TFT_DARKGREY;
             break;
-        case WIFISignalQuality_BAD:
+        case WiFiSignalQuality_BAD:
             colors[0] = TFT_GREEN;
             colors[1] = TFT_GREEN;
             colors[2] = TFT_DARKGREY;
             colors[3] = TFT_DARKGREY;
             colors[4] = TFT_DARKGREY;
             break;
-        case WIFISignalQuality_NORMAL:
+        case WiFiSignalQuality_NORMAL:
 
             colors[0] = TFT_GREEN;
             colors[1] = TFT_GREEN;
@@ -132,14 +132,14 @@ void LGFXScreenInfo::refreshWIFISignalLevelBars(void)
             colors[3] = TFT_DARKGREY;
             colors[4] = TFT_DARKGREY;
             break;
-        case WIFISignalQuality_GOOD:
+        case WiFiSignalQuality_GOOD:
             colors[0] = TFT_GREEN;
             colors[1] = TFT_GREEN;
             colors[2] = TFT_GREEN;
             colors[3] = TFT_GREEN;
             colors[4] = TFT_DARKGREY;
             break;
-        case WIFISignalQuality_BEST:
+        case WiFiSignalQuality_BEST:
 
             colors[0] = TFT_GREEN;
             colors[1] = TFT_GREEN;
@@ -178,9 +178,9 @@ void LGFXScreenInfo::refreshWIFISignalLevelBars(void)
 
 void LGFXScreenInfo::refreshWIFIData(bool forceDrawAll)
 {
-    WifiManager::getSSID(this->WIFISSID, sizeof(this->WIFISSID));
-    WifiManager::getMacAddress(this->WIFIMacAddress, sizeof(this->WIFIMacAddress));
-    WifiManager::getIPAddress(this->WIFIIPAddress, sizeof(this->WIFIIPAddress));
+    WiFiManager::getSSID(this->WIFISSID, sizeof(this->WIFISSID));
+    WiFiManager::getMacAddress(this->WIFIMacAddress, sizeof(this->WIFIMacAddress));
+    WiFiManager::getIPAddress(this->WIFIIPAddress, sizeof(this->WIFIIPAddress));
     this->parentDisplay->setFont(SCREEN_COMMON_TEXTDATA_FONT);
     this->parentDisplay->setTextSize(SCREEN_COMMON_TEXTDATA_FONT_SIZE);
     this->parentDisplay->setTextColor(SCREEN_COMMON_TEXTDATA_COLOR, SCREEN_COMMON_TEXTDATA_BG_COLOR);
@@ -259,7 +259,7 @@ bool LGFXScreenInfo::refresh(bool force)
         this->WIFISignalLevelBarsChanged = false;
         this->WIFIDataChanged = false;
 
-        bool isConnected = WifiManager::isConnected();
+        bool isConnected = WiFiManager::isConnected();
         if (!force)
         {
             if (this->wasConnected != isConnected)
@@ -277,13 +277,13 @@ bool LGFXScreenInfo::refresh(bool force)
                 changed = true;
             }
         }
-        long currentWiFiSignalStrength = WifiManager::getSignalStrength();
+        long currentWiFiSignalStrength = WiFiManager::getSignalStrength();
         if (this->previousWiFiSignalStrength != currentWiFiSignalStrength)
         {
             this->WIFISignalStrengthChanged = true;
             changed = true;
         }
-        WIFISignalQuality currentWiFiSignalQuality = WifiManager::convertToSignalQuality(currentWiFiSignalStrength);
+        WiFiSignalQuality currentWiFiSignalQuality = WiFiManager::convertToSignalQuality(currentWiFiSignalStrength);
         if (this->previousWiFiSignalQuality != currentWiFiSignalQuality)
         {
             this->WIFISignalLevelBarsChanged = true;

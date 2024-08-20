@@ -3,7 +3,7 @@
 
 #include "LGFXScreen.hpp"
 
-#include "../../utils/WifiManager.hpp"
+#include "../../utils/WiFiManager.hpp"
 
 class LGFXScreenInfo : public LGFXScreen
 {
@@ -17,13 +17,13 @@ private:
 
     // properties for tracking changes
     long previousWiFiSignalStrength;
-    WIFISignalQuality previousWiFiSignalQuality;
+    WiFiSignalQuality previousWiFiSignalQuality;
     char previousRuntimeStr[16] = {'\0'};
     uint16_t previousFPS = 0;
 
-    char WIFISSID[WifiManager::SSID_LENGTH] = {'\0'};
-    char WIFIMacAddress[WifiManager::MAC_ADDRESS_LENGTH] = {'\0'};
-    char WIFIIPAddress[WifiManager::IP_ADDRESS_LENGTH] = {'\0'};
+    char WIFISSID[WiFiManager::SSID_LENGTH] = {'\0'};
+    char WIFIMacAddress[WiFiManager::MAC_ADDRESS_LENGTH] = {'\0'};
+    char WIFIIPAddress[WiFiManager::IP_ADDRESS_LENGTH] = {'\0'};
 
     void refreshWIFILogo(void);
     void refreshWIFISignalStrength(void);

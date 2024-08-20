@@ -51,7 +51,7 @@ LGFX *screen = nullptr;
 #define SOURCE_MQTT_TELEGRAF // this is telegraf source via mqtt protocol (production)
 
 #include "src/CustomSettings.hpp"
-#include "src/utils/WifiManager.hpp"
+#include "src/utils/WiFiManager.hpp"
 #include "src/utils/SerialManager.hpp"
 #include "src/utils/Format.hpp"
 #include "src/utils/FPS.hpp"
@@ -92,7 +92,7 @@ void onWifiConnectionStatusChanged(bool connected)
         if (strlen(mqttTelegrafURI) > 0 && strlen(mqttTelegrafGlobalTopic) > 0)
         {
             char WiFiMacAddress[32] = {'\0'};
-            WifiManager::getMacAddress(WiFiMacAddress, sizeof(WiFiMacAddress));
+            WiFiManager::getMacAddress(WiFiMacAddress, sizeof(WiFiMacAddress));
             mqttTelegrafSRC = new MQTTTelegrafSource(sourceData, mqttTelegrafURI, WiFiMacAddress, mqttTelegrafGlobalTopic, networkInterfaceId);
         }
 #endif // SOURCE_MQTT_TELEGRAF
@@ -176,11 +176,11 @@ void onReceivedSerialCommand(SerialCommandType cmd, const char *value)
         break;
     case SERIAL_CMDT_CONNECT_WIFI:
         Serial.println("Serial command received: connect WiFi");
-        WifiManager::connect(false);
+        WiFiManager::connect(false);
         break;
     case SERIAL_CMDT_DISCONNECT_WIFI:
         Serial.println("Serial command received: disconnect WiFi");
-        WifiManager::disconnect();
+        WiFiManager::disconnect();
         break;
     case SERIAL_CMDT_SET_WIFI_SSID:
         if (value && strlen(value))
@@ -388,15 +388,15 @@ void setup()
 
     settings = new CustomSettings();
 
-    char WiFiSSID[WifiManager::SSID_LENGTH];
+    char WiFiSSID[WiFiManager::SSID_LENGTH];
     settings->getWIFISSID(WiFiSSID, sizeof(WiFiSSID));
 
-    char WiFiPassword[WifiManager::PASSWORD_LENGTH];
+    char WiFiPassword[WiFiManager::PASSWORD_LENGTH];
     settings->getWIFIPassword(WiFiPassword, sizeof(WiFiPassword));
 
-    WifiManager::onConnectionStatusChanged(onWifiConnectionStatusChanged);
-    WifiManager::setCredentials(WiFiSSID, WiFiPassword);
-    WifiManager::connect(true);
+    WiFiManager::onConnectionStatusChanged(onWifiConnectionStatusChanged);
+    WiFiManager::setCredentials(WiFiSSID, WiFiPassword);
+    WiFiManager::connect(true);
 
     sourceData = new SourceData(true, settings->getMaxDownloadBandwidthBytes(), settings->getMaxUploadBandwidthBytes());
 #ifdef SOURCE_DUMMY
@@ -417,7 +417,7 @@ void setup()
 void loop()
 {
     SerialManager::loop();
-    WifiManager::loop();
+    WiFiManager::loop();
 #ifdef SOURCE_DUMMY
     dummySRC->refresh(SOURCE_DUMMY_UPDATES_EVERY_MS);
 #endif // SOURCE_DUMMY
