@@ -77,7 +77,7 @@ SourceData *sourceData = nullptr;
 Bounce2::Button *button;
 
 // create / delete telegraf/mqtt handler on wifi connect/disconnect events
-void onWifiConnectionChanged(bool connected)
+void onWifiConnectionStatusChanged(bool connected)
 {
     if (connected)
     {
@@ -393,7 +393,7 @@ void setup()
     char WiFiPassword[WIFI_PASSWORD_CHAR_ARR_LENGTH];
     Settings::getWIFIPassword(WiFiPassword, WIFI_PASSWORD_CHAR_ARR_LENGTH);
 
-    WifiManager::onConnectionStatusChanged(onWifiConnectionChanged);
+    WifiManager::onConnectionStatusChanged(onWifiConnectionStatusChanged);
     WifiManager::setCredentials(WiFiSSID, WiFiPassword);
     WifiManager::connect(true);
 
