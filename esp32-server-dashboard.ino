@@ -47,8 +47,8 @@ LGFX *screen = nullptr;
 #error NO_DISPLAY_DRIVER
 #endif // DISPLAY_DRIVER_LOVYANN_ST7789
 
-#define SOURCE_DUMMY // this is for testing source with random values (debug)
-// #define SOURCE_MQTT_TELEGRAF // this is telegraf source via mqtt protocol (production)
+// #define SOURCE_DUMMY // this is for testing source with random values (debug)
+#define SOURCE_MQTT_TELEGRAF // this is telegraf source via mqtt protocol (production)
 
 #include "src/utils/Settings.hpp"
 #include "src/utils/WifiManager.hpp"
@@ -393,7 +393,7 @@ void setup()
     char WiFiPassword[WIFI_PASSWORD_CHAR_ARR_LENGTH];
     Settings::getWIFIPassword(WiFiPassword, WIFI_PASSWORD_CHAR_ARR_LENGTH);
 
-    WifiManager::setConnectionCallbackHandler(onWifiConnectionChanged);
+    WifiManager::onConnectionStatusChanged(onWifiConnectionChanged);
     WifiManager::setCredentials(WiFiSSID, WiFiPassword);
     WifiManager::connect(true);
 

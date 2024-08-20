@@ -40,7 +40,7 @@ private:
     static WIFISignalQuality signalQuality;
 
 public:
-    static void setConnectionCallbackHandler(WifiManagerConnectionCallback callback);
+    static void onConnectionStatusChanged(WifiManagerConnectionCallback callback);
     static void setCredentials(const char *ssid, const char *password);
     static void connect(bool reconnectIfLost = true);
     static void disconnect(void);
