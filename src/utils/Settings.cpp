@@ -2,7 +2,7 @@
 
 Settings::Settings(const char *nameSpace)
 {
-    if (nameSpace != NULL && strlen(nameSpace) > 0 && strlen(nameSpace) < 16)
+    if (nameSpace != NULL && strlen(nameSpace) > 0 && strlen(nameSpace) < SETTINGS_NAMESPACE_ARR_LENGTH)
     {
         strncpy(this->nameSpace, nameSpace, sizeof(this->nameSpace));
         this->preferences = new Preferences();

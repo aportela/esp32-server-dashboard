@@ -453,10 +453,10 @@ void setup()
 
     settings = new CustomSettings();
 
-    char WiFiSSID[WiFiManager::SSID_LENGTH];
+    char WiFiSSID[WiFiManager::MAX_SSID_LENGTH + 1];
     settings->getWIFISSID(WiFiSSID, sizeof(WiFiSSID));
 
-    char WiFiPassword[WiFiManager::PASSWORD_LENGTH];
+    char WiFiPassword[WiFiManager::MAX_PASSWORD_LENGTH + 1];
     settings->getWIFIPassword(WiFiPassword, sizeof(WiFiPassword));
 
     WiFiManager::onConnectionStatusChanged(onWifiConnectionStatusChanged);

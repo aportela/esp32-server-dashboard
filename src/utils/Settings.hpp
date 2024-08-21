@@ -7,13 +7,13 @@
 // WARNING: namespaces with length > 15 WILL NOT OPEN NVS CORRECTLY
 // WARNING: ALSO keys with length > 15 DO NOT WORK
 
-#define MAX_SETTINGS_NAMESPACE_LENGTH 16 // (15 chars + '\0')
+#define SETTINGS_NAMESPACE_ARR_LENGTH 16 // (15 chars + '\0')
 
 class Settings
 {
 protected:
     Preferences *preferences;
-    char nameSpace[MAX_SETTINGS_NAMESPACE_LENGTH];
+    char nameSpace[SETTINGS_NAMESPACE_ARR_LENGTH];
 
     int8_t getSmallSignedIntegerValue(const char *key, int8_t defaultValue = 0);
     bool setSmallSignedIntegerValue(const char *key, int8_t value = 0);

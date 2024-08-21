@@ -21,9 +21,9 @@ private:
     char previousRuntimeStr[16] = {'\0'};
     uint16_t previousFPS = 0;
 
-    char WIFISSID[WiFiManager::SSID_LENGTH] = {'\0'};
-    char WIFIMacAddress[WiFiManager::MAC_ADDRESS_LENGTH] = {'\0'};
-    char WIFIIPAddress[WiFiManager::IP_ADDRESS_LENGTH] = {'\0'};
+    char WIFISSID[WiFiManager::MAX_SSID_LENGTH + 1] = {'\0'};
+    char WIFIMacAddress[WiFiManager::MAC_ADDRESS_LENGTH + 1] = {'\0'};
+    char WIFIIPAddress[WiFiManager::IP_ADDRESS_LENGTH + 1] = {'\0'};
 
     void refreshWIFILogo(void);
     void refreshWIFISignalStrength(void);

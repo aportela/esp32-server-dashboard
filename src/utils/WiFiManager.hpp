@@ -40,10 +40,10 @@ private:
     static WiFiSignalQuality signalQuality;
 
 public:
-    static const uint8_t SSID_LENGTH = SSID_CHAR_ARR_LENGTH;
-    static const uint8_t PASSWORD_LENGTH = PASSWORD_CHAR_ARR_LENGTH;
-    static const uint8_t MAC_ADDRESS_LENGTH = MAC_ADDRESS_CHAR_ARR_LENGTH;
-    static const uint8_t IP_ADDRESS_LENGTH = IP_ADDRESS_CHAR_ARR_LENGTH;
+    static const uint8_t MAX_SSID_LENGTH = SSID_CHAR_ARR_LENGTH - 1;
+    static const uint8_t MAX_PASSWORD_LENGTH = PASSWORD_CHAR_ARR_LENGTH - 1;
+    static const uint8_t MAC_ADDRESS_LENGTH = MAC_ADDRESS_CHAR_ARR_LENGTH - 1;
+    static const uint8_t IP_ADDRESS_LENGTH = IP_ADDRESS_CHAR_ARR_LENGTH - 1;
 
     static void onConnectionStatusChanged(WiFiManagerConnectionCallback callback);
     static void setCredentials(const char *ssid, const char *password);
