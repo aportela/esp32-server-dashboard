@@ -7,14 +7,7 @@ LGFXScreenDashboardResumeEntityNetUsedBandWidth::LGFXScreenDashboardResumeEntity
     {
         char maxStr[8] = {'\0'};
         SourceDataQueueNetworkingLimitsValue networkLimits = sourceData->getNetworkLimits();
-        if (this->type == NBT_DOWNLOAD)
-        {
-            Format::bytesToHumanStr(networkLimits.byteDownloadLimit, maxStr, sizeof(maxStr), false, true, false);
-        }
-        else
-        {
-            Format::bytesToHumanStr(networkLimits.byteUploadLimit, maxStr, sizeof(maxStr), false, true, false);
-        }
+        Format::bytesToHumanStr(this->type == NBT_DOWNLOAD ? networkLimits.byteDownloadLimit : networkLimits.byteUploadLimit, maxStr, sizeof(maxStr), false, true, false);
         this->printLimits("0B", maxStr);
         this->refreshStrValue("0000 B/s", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
     }
