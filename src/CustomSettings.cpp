@@ -11,6 +11,8 @@
 #define KEY_TOTAL_DOWNLOAD_BANDWIDTH_BYTES "T_D_BW_BYTES"
 #define KEY_TOTAL_UPLOAD_BANDWIDTH_BYTES "T_U_BW_BYTES"
 #define KEY_NET_IFACE_ID "NET_IFACE_ID"
+#define KEY_HOSTNAME "KEY_HOSTNAME"
+#define DEFAULT_SCREEN "DEFAULT_SCREEN"
 
 CustomSettings::CustomSettings() : Settings(NAMESPACE)
 {
@@ -136,5 +138,39 @@ bool CustomSettings::setNetworkInterfaceId(const char *id)
     else
     {
         return (this->deleteKey(KEY_NET_IFACE_ID));
+    }
+}
+
+void CustomSettings::getHostname(char *name, size_t count)
+{
+    this->getStringValue(KEY_HOSTNAME, name, count);
+}
+
+bool CustomSettings::setHostname(const char *name)
+{
+    if (strlen(name) > 0)
+    {
+        return (this->setStringValue(KEY_HOSTNAME, name));
+    }
+    else
+    {
+        return (this->deleteKey(KEY_HOSTNAME));
+    }
+}
+
+ScreenType CustomSettings::getDefaultScreen(ScreenType defaultScreen)
+{
+    return ((enum ScreenType)this->getSmallUnsignedIntegerValue(DEFAULT_SCREEN, (uint8_t)defaultScreen));
+}
+
+bool CustomSettings::setDefaultScreen(ScreenType defaultScreen)
+{
+    if (defaultScreen != ST_NONE)
+    {
+        return (this->setSmallUnsignedIntegerValue(DEFAULT_SCREEN, (uint8_t)defaultScreen));
+    }
+    else
+    {
+        return (this->deleteKey(DEFAULT_SCREEN));
     }
 }

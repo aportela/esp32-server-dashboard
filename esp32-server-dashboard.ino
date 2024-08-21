@@ -112,6 +112,7 @@ void onWifiConnectionStatusChanged(bool connected)
 void onReceivedSerialCommand(SerialManagerCommand cmd, const char *value)
 {
     char str[1024] = {'\0'};
+    uint8_t tmpUint8 = 0;
     uint64_t tmpUint64 = 0;
     float tmpFloat = 0.0f;
     switch (cmd)
@@ -170,6 +171,18 @@ void onReceivedSerialCommand(SerialManagerCommand cmd, const char *value)
         {
             Serial.print(SerialCommandStr[SerialManagerCommand_SET_NETWORK_INTERFACE_ID]);
             Serial.println(str);
+        }
+        settings->getHostname(str, sizeof(str));
+        if (strlen(str) > 0)
+        {
+            Serial.print(SerialCommandStr[SerialManagerCommand_SET_HOSTNAME]);
+            Serial.println(str);
+        }
+        tmpUint8 = settings->getDefaultScreen();
+        if (tmpUint8 > 0)
+        {
+            Serial.print(SerialCommandStr[SerialManagerCommand_SET_DEFAULT_SCREEN]);
+            Serial.println(tmpUint8);
         }
         Serial.println("REBOOT");
         Serial.println("# EXPORTED SETTINGS END");
@@ -370,6 +383,58 @@ void onReceivedSerialCommand(SerialManagerCommand cmd, const char *value)
             }
         }
         break;
+    case SerialManagerCommand_SET_HOSTNAME:
+        if (value && strlen(value))
+        {
+            Serial.printf("Serial command received: set hostname (%s)\n", value);
+            if (settings->setHostname(value))
+            {
+                Serial.println("Hostname saved. Reboot REQUIRED");
+            }
+            else
+            {
+                Serial.println("Error saving hostname");
+            }
+        }
+        else
+        {
+            Serial.println("Serial command received: unset hostname");
+            if (settings->setHostname(""))
+            {
+                Serial.println("Hostname removed. Reboot REQUIRED");
+            }
+            else
+            {
+                Serial.println("Error removing hostname");
+            }
+        }
+        break;
+    case SerialManagerCommand_SET_DEFAULT_SCREEN:
+        if (value && strlen(value))
+        {
+            Serial.printf("Serial command received: set default screen (%s)\n", value);
+            if (settings->setDefaultScreen((enum ScreenType)(uint8_t)strtoul(value, nullptr, 10)))
+            {
+                Serial.println("Default screen saved. Reboot REQUIRED");
+            }
+            else
+            {
+                Serial.println("Error saving default screen");
+            }
+        }
+        else
+        {
+            Serial.println("Serial command received: unset default screen");
+            if (settings->setDefaultScreen(ST_NONE))
+            {
+                Serial.println("Default screen removed. Reboot REQUIRED");
+            }
+            else
+            {
+                Serial.println("Error removing default screen");
+            }
+        }
+        break;
     default:
         Serial.println("Serial command received (UNKNOWN):");
         if (value)
@@ -405,8 +470,7 @@ void setup()
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     screen = new LGFX(PIN_SDA, PIN_SCL, PIN_CS, PIN_DC, PIN_RST, DISPLAY_DRIVER_LOVYANN_ST7789_WIDTH, DISPLAY_DRIVER_LOVYANN_ST7789_HEIGHT, DISPLAY_DRIVER_LOVYANN_ST7789_ROTATION);
     screen->setSourceData(sourceData);
-    screen->initScreen(ST_INFO);
-    // screen->initScreen(ST_DATA_RESUME);
+    screen->initScreen(settings->getDefaultScreen(ST_INFO));
 #endif // DISPLAY_DRIVER_LOVYANN_ST7789
     button = new Bounce2::Button();
     button->attach(PIN_BUTTON_SW, INPUT_PULLUP);

@@ -1,6 +1,7 @@
 #include "SerialManager.hpp"
 #include <Arduino.h>
 
+// WARNINT: THIS NEEDS TO BE "PAIRED" WITH SerialManagerCommand defined on SerialManager.hpp
 const char *SerialCommandStr[]{
     "NONE",
     "UNKNOWN",
@@ -17,6 +18,8 @@ const char *SerialCommandStr[]{
     "SET_MAX_DOWNLOAD_BYTES_BANDWITH ",
     "SET_MAX_UPLOAD_BYTES_BANDWITH ",
     "SET_NETWORK_INTERFACE_ID ",
+    "SET_HOSTNAME ",
+    "SET_DEFAULT_SCREEN ",
 };
 
 SerialCommandCallback SerialManager::commandReceivedCallback = nullptr;
@@ -217,6 +220,44 @@ void SerialManager::loop(void)
                 if (SerialManager::commandReceivedCallback != nullptr)
                 {
                     SerialManager::commandReceivedCallback(SerialManagerCommand_SET_NETWORK_INTERFACE_ID, nullptr);
+                }
+            }
+        }
+        else if (rx.startsWith(SerialCommandStr[SerialManagerCommand_SET_HOSTNAME]))
+        {
+            uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_HOSTNAME]);
+            if (rx.length() > length)
+            {
+                String Hostname = rx.substring(length);
+                if (SerialManager::commandReceivedCallback != nullptr)
+                {
+                    SerialManager::commandReceivedCallback(SerialManagerCommand_SET_HOSTNAME, Hostname.c_str());
+                }
+            }
+            else
+            {
+                if (SerialManager::commandReceivedCallback != nullptr)
+                {
+                    SerialManager::commandReceivedCallback(SerialManagerCommand_SET_HOSTNAME, nullptr);
+                }
+            }
+        }
+        else if (rx.startsWith(SerialCommandStr[SerialManagerCommand_SET_DEFAULT_SCREEN]))
+        {
+            uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_DEFAULT_SCREEN]);
+            if (rx.length() > length)
+            {
+                String defaultScreen = rx.substring(length);
+                if (SerialManager::commandReceivedCallback != nullptr)
+                {
+                    SerialManager::commandReceivedCallback(SerialManagerCommand_SET_DEFAULT_SCREEN, defaultScreen.c_str());
+                }
+            }
+            else
+            {
+                if (SerialManager::commandReceivedCallback != nullptr)
+                {
+                    SerialManager::commandReceivedCallback(SerialManagerCommand_SET_DEFAULT_SCREEN, nullptr);
                 }
             }
         }

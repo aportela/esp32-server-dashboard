@@ -2,6 +2,7 @@
 #define ESP32_SERVER_DASHBOARD_CUSTOM_SETTINGS_H
 
 #include "utils/Settings.hpp"
+#include "src/display/ScreenType.hpp"
 
 class CustomSettings : public Settings
 {
@@ -28,6 +29,12 @@ public:
 
     void getNetworkInterfaceId(char *id, size_t count);
     bool setNetworkInterfaceId(const char *id);
+
+    void getHostname(char *name, size_t count);
+    bool setHostname(const char *name);
+
+    ScreenType getDefaultScreen(ScreenType defaultScreen = ST_NONE);
+    bool setDefaultScreen(ScreenType defaultScreen);
 };
 
 #endif
