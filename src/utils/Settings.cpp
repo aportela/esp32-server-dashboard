@@ -50,6 +50,38 @@ bool Settings::setSmallSignedIntegerValue(const char *key, int8_t value)
     }
 }
 
+int8_t Settings::getSmallUnsignedIntegerValue(const char *key, uint8_t defaultValue)
+{
+    if (this->preferences != nullptr && this->preferences->begin(this->nameSpace, false))
+    {
+        uint64_t value = defaultValue;
+        if (this->preferences->isKey(key))
+        {
+            value = this->preferences->getUChar(key, defaultValue);
+        }
+        this->preferences->end();
+        return (value);
+    }
+    else
+    {
+        return (defaultValue);
+    }
+}
+
+bool Settings::setSmallUnsignedIntegerValue(const char *key, uint8_t value)
+{
+    if (this->preferences != nullptr && this->preferences->begin(this->nameSpace, false))
+    {
+        bool saved = this->preferences->putUChar(key, value) == sizeof(value);
+        this->preferences->end();
+        return (saved);
+    }
+    else
+    {
+        return (false);
+    }
+}
+
 uint64_t Settings::getBigUnsignedIntegerValue(const char *key, uint64_t defaultValue)
 {
     if (this->preferences != nullptr && this->preferences->begin(this->nameSpace, false))

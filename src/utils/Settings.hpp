@@ -17,6 +17,8 @@ protected:
 
     int8_t getSmallSignedIntegerValue(const char *key, int8_t defaultValue = 0);
     bool setSmallSignedIntegerValue(const char *key, int8_t value = 0);
+    int8_t getSmallUnsignedIntegerValue(const char *key, uint8_t defaultValue = 0);
+    bool setSmallUnsignedIntegerValue(const char *key, uint8_t value = 0);
     uint64_t getBigUnsignedIntegerValue(const char *key, uint64_t defaultValue = 0);
     bool setBigUnsigedIntegerValue(const char *key, uint64_t value = 0);
     float getFloatValue(const char *key, float defaultValue = 0.0f);
