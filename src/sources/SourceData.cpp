@@ -29,6 +29,31 @@ SourceData::~SourceData()
     vQueueDelete(this->networkingLimitsQueue);
 }
 
+bool SourceData::setHostname(const char *hostname)
+{
+    if (hostname && strlen(hostname) > 0 && strlen(hostname) <= SourceData::MAX_HOSTNAME_LENGTH)
+    {
+        strncpy(this->hostname, hostname, sizeof(this->hostname));
+        return (true);
+    }
+    else
+    {
+        return (false);
+    }
+}
+
+void SourceData::getHostname(char *hostname, size_t count)
+{
+    if (this->hostname && strlen(this->hostname) > 0)
+    {
+        strncpy(hostname, this->hostname, count);
+    }
+    else
+    {
+        hostname[0] = '\0';
+    }
+}
+
 // CPU LOAD
 
 SourceDataQueueCPULoadValue SourceData::getCurrentCPULoad(void)

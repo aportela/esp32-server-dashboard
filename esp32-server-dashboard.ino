@@ -464,6 +464,10 @@ void setup()
     WiFiManager::connect(true);
 
     sourceData = new SourceData(true, settings->getMaxDownloadBandwidthBytes(), settings->getMaxUploadBandwidthBytes());
+    char hostname[SourceData::MAX_HOSTNAME_LENGTH + 1];
+    settings->getHostname(hostname, sizeof(hostname));
+    sourceData->setHostname(hostname);
+
 #ifdef SOURCE_DUMMY
     dummySRC = new DummySource(sourceData);
 #endif // SOURCE_DUMMY

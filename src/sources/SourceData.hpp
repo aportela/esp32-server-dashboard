@@ -56,9 +56,12 @@ typedef struct SourceDataQueueNetworkingLimitsValue
     uint64_t byteUploadLimit;
 };
 
+#define HOSTNAME_ARR_LENGTH 17
+
 class SourceData
 {
 private:
+    char hostname[HOSTNAME_ARR_LENGTH] = {'\0'};
     bool truncateOverflows = false;
 
     QueueHandle_t cpuLoadQueue;
@@ -70,12 +73,18 @@ private:
     QueueHandle_t networkingLimitsQueue;
 
 public:
+    static const uint8_t MAX_HOSTNAME_LENGTH = HOSTNAME_ARR_LENGTH - 1;
+
     SourceData(bool truncateOverflows, uint64_t totalNetworkDownloadBandwidthLimit = 0, uint64_t totalNetworkUploadBandwidthLimit = 0);
     ~SourceData();
 
+    bool setHostname(const char *hostname);
+    void getHostname(char *hostname, size_t count);
+
     // CPU LOAD
 
-    SourceDataQueueCPULoadValue getCurrentCPULoad(void);
+    SourceDataQueueCPULoadValue
+    getCurrentCPULoad(void);
     bool setCurrentCPULoad(float loadPercent, uint64_t timestamp);
 
     // MEMORY
