@@ -7,6 +7,7 @@
 SourceData::SourceData(bool truncateOverflows, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit)
 {
     uint64_t currentTimestamp = millis();
+    this->truncateOverflows = truncateOverflows;
     this->cpuLoadQueue = xQueueCreate(1, sizeof(SourceDataQueueCPULoadValue));
     this->usedMemoryQueue = xQueueCreate(1, sizeof(SourceDataQueueUsedMemoryValue));
     this->cpuTemperatureQueue = xQueueCreate(1, sizeof(SourceDataQueueCPUTemperatureValue));
@@ -14,11 +15,6 @@ SourceData::SourceData(bool truncateOverflows, uint64_t totalNetworkDownloadBand
     this->networkingDownloadQueue = xQueueCreate(1, sizeof(SourceDataQueueNetworkingValue));
     this->networkingUploadQueue = xQueueCreate(1, sizeof(SourceDataQueueNetworkingValue));
     this->networkingLimitsQueue = xQueueCreate(1, sizeof(SourceDataQueueNetworkingLimitsValue));
-    this->truncateOverflows = truncateOverflows;
-    /*
-    this->totalNetworkDownloadBandwidthLimit = totalNetworkDownloadBandwidthLimit;
-    this->totalNetworkUploadBandwidthLimit = totalNetworkUploadBandwidthLimit;
-    */
     this->setNetworkLimits(totalNetworkDownloadBandwidthLimit, totalNetworkUploadBandwidthLimit);
 }
 
@@ -316,22 +312,6 @@ bool SourceData::setNetworkLimits(uint64_t byteDownloadLimit, uint64_t byteUploa
     }
 }
 
-// NET DOWNLOAD BANDWIDTH
-
-/*
-uint64_t SourceData::getNetworkDownloadBandwidthLimit(void) const
-{
-    return (this->totalNetworkDownloadBandwidthLimit);
-}
-
-bool SourceData::setNetworkDownloadBandwidthLimit(uint64_t bytes)
-{
-    this->totalNetworkDownloadBandwidthLimit = bytes;
-    return (true);
-}
-
-*/
-
 SourceDataQueueNetworkingValue SourceData::getCurrentNetworkDownload(void)
 {
     SourceDataQueueNetworkingValue data = {0, 0, 0};
@@ -383,21 +363,6 @@ bool SourceData::setCurrentNetworkDownload(uint64_t totalBytes, uint64_t timesta
     }
 }
 
-// NET UPLOAD BANDWIDTH
-
-/*
-uint64_t SourceData::getNetworkUploadBandwidthLimit(void) const
-{
-    return (this->totalNetworkUploadBandwidthLimit);
-}
-
-bool SourceData::setNetworkUploadBandwidthLimit(uint64_t bytes)
-{
-    this->totalNetworkUploadBandwidthLimit = bytes;
-    return (true);
-}
-
-*/
 SourceDataQueueNetworkingValue SourceData::getCurrentNetworkUpload(void)
 {
     SourceDataQueueNetworkingValue data = {0, 0, 0};
