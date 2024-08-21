@@ -27,9 +27,14 @@ private:
     SourceData *currentSourceData;
 
     uint16_t previousFPS = 0;
+    uint16_t FPSValueXOffset = 0;
+
     char previousUptimeStr[16] = {'\0'};
 
+    char hostname[SourceData::MAX_HOSTNAME_LENGTH + 1] = {'\0'};
+
     bool refreshBottomCommonData(bool forceDrawAll);
+    uint16_t uptimeValueXOffset = 0;
 
 public:
     LGFXScreenDashboardResume(LovyanGFX *display, SourceData *sourceData);

@@ -14,9 +14,9 @@
 #define SCREEN_BOTTOM_COMMON_TEXTDATA_COLOR TFT_WHITE
 #define SCREEN_BOTTOM_COMMON_TEXTDATA_BG_COLOR TFT_BLACK
 #define SCREEN_BOTTOM_COMMON_TEXTDATA_X_OFFSET 0
-#define SCREEN_BOTTOM_COMMON_TEXTDATA_FIELD_FPS_X_OFFSET 33
-#define SCREEN_BOTTOM_COMMON_TEXTDATA_FIELD_UPTIME_X_OFFSET 123
 #define SCREEN_BOTTOM_COMMON_TEXTDATA_Y_OFFSET 224
+
+// #define DEBUG_FPS // If defined, this will replace bottom hostname info with "FPS" counter (used only to "bench" & DEBUG_FPS optimizations)
 
 LGFXScreenDashboardResume::LGFXScreenDashboardResume(LovyanGFX *display, SourceData *sourceData) : LGFXScreen(display)
 {
@@ -25,7 +25,9 @@ LGFXScreenDashboardResume::LGFXScreenDashboardResume(LovyanGFX *display, SourceD
         this->currentSourceData = sourceData;
         if (display != nullptr)
         {
+#ifdef DEBUG_FPS
             FPS::init();
+#endif // DEBUG_FPS
             this->cpuLoadBlock = new LGFXScreenDashboardResumeEntityCPULoad(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 0);
             this->usedMemoryBlock = new LGFXScreenDashboardResumeEntityUsedMemory(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 1);
             this->cpuTemperatureBlock = new LGFXScreenDashboardResumeEntityCPUTemperature(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 2);
@@ -46,6 +48,7 @@ LGFXScreenDashboardResume::LGFXScreenDashboardResume(LovyanGFX *display, SourceD
             {
                 this->networkUploadBandwidthBlock = new LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth(NBT_UPLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 4);
             }
+            sourceData->getHostname(this->hostname, sizeof(this->hostname));
             this->refresh(true);
         }
     }
@@ -90,19 +93,34 @@ bool LGFXScreenDashboardResume::refreshBottomCommonData(bool forceDrawAll)
         this->parentDisplay->setTextSize(SCREEN_BOTTOM_COMMON_TEXTDATA_FONT_SIZE);
         this->parentDisplay->setTextColor(SCREEN_BOTTOM_COMMON_TEXTDATA_COLOR, SCREEN_BOTTOM_COMMON_TEXTDATA_BG_COLOR);
         this->parentDisplay->setCursor(SCREEN_BOTTOM_COMMON_TEXTDATA_X_OFFSET, SCREEN_BOTTOM_COMMON_TEXTDATA_Y_OFFSET);
-        this->parentDisplay->print("FPS:      - Uptime: NO DATA");
+#ifdef DEBUG_FPS
+        this->parentDisplay->print("FPS: ");
+        this->FPSValueXOffset = this->parentDisplay->getCursorX();
+        this->parentDisplay->print("000 - Uptime: ");
+        this->uptimeValueXOffset = this->parentDisplay->getCursorX();
+        this->parentDisplay->print("NO DATA");
+#else
+        this->parentDisplay->print("Host: ");
+        this->FPSValueXOffset = this->parentDisplay->getCursorX();
+        this->parentDisplay->printf("%s - Uptime: ", strlen(this->hostname) > 0 ? this->hostname : "[NOT SET]");
+        this->uptimeValueXOffset = this->parentDisplay->getCursorX();
+        this->parentDisplay->print("NO DATA");
+#endif
     }
+#ifdef DEBUG_FPS
     uint16_t currentFPS = FPS::getFPS();
     if (forceDrawAll || currentFPS != this->previousFPS)
     {
         this->parentDisplay->setFont(SCREEN_BOTTOM_COMMON_TEXTDATA_FONT);
         this->parentDisplay->setTextSize(SCREEN_BOTTOM_COMMON_TEXTDATA_FONT_SIZE);
         this->parentDisplay->setTextColor(SCREEN_BOTTOM_COMMON_TEXTDATA_COLOR, SCREEN_BOTTOM_COMMON_TEXTDATA_BG_COLOR);
-        this->parentDisplay->setCursor(SCREEN_BOTTOM_COMMON_TEXTDATA_FIELD_FPS_X_OFFSET, SCREEN_BOTTOM_COMMON_TEXTDATA_Y_OFFSET);
+        this->parentDisplay->setCursor(this->FPSValueXOffset, SCREEN_BOTTOM_COMMON_TEXTDATA_Y_OFFSET);
         this->parentDisplay->printf("%03u", currentFPS);
         this->previousFPS = currentFPS;
         changed = true;
     }
+#else
+#endif // DEBUG_FPS
 
     SourceDataQueueUptimeValue data = this->currentSourceData->getCurrentUptime();
     if (data.seconds > 0)
@@ -114,7 +132,7 @@ bool LGFXScreenDashboardResume::refreshBottomCommonData(bool forceDrawAll)
             this->parentDisplay->setFont(SCREEN_BOTTOM_COMMON_TEXTDATA_FONT);
             this->parentDisplay->setTextSize(SCREEN_BOTTOM_COMMON_TEXTDATA_FONT_SIZE);
             this->parentDisplay->setTextColor(SCREEN_BOTTOM_COMMON_TEXTDATA_COLOR, SCREEN_BOTTOM_COMMON_TEXTDATA_BG_COLOR);
-            this->parentDisplay->setCursor(SCREEN_BOTTOM_COMMON_TEXTDATA_FIELD_UPTIME_X_OFFSET, SCREEN_BOTTOM_COMMON_TEXTDATA_Y_OFFSET);
+            this->parentDisplay->setCursor(uptimeValueXOffset, SCREEN_BOTTOM_COMMON_TEXTDATA_Y_OFFSET);
             this->parentDisplay->printf("%s    ", str);
             strncpy(this->previousUptimeStr, str, sizeof(this->previousUptimeStr));
             changed = true;
