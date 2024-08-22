@@ -1,6 +1,8 @@
 #include "LGFXScreenDashboardResumeEntityCPUTemperature.hpp"
 #include "../../utils/Format.hpp"
 
+using namespace aportela::microcontroller::utils;
+
 LGFXScreenDashboardResumeEntityCPUTemperature::LGFXScreenDashboardResumeEntityCPUTemperature(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset) : LGFXScreenDashboardResumeEntity(display, sourceData, width, height, xOffset, yOffset, "CPU TEMP")
 {
     if (this->parentDisplay != nullptr)

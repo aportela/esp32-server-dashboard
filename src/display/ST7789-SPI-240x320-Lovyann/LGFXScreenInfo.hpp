@@ -5,6 +5,8 @@
 
 #include "../../utils/WiFiManager.hpp"
 
+using namespace aportela::microcontroller::utils;
+
 class LGFXScreenInfo : public LGFXScreen
 {
 private:
@@ -37,4 +39,4 @@ public:
     bool refresh(bool force = false) override;
 };
 
-#endif
+#endif // ESP32_SERVER_DASHBOARD_LGFX_SCREEN_INFO_H

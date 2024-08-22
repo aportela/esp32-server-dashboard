@@ -4,6 +4,8 @@
 #include "utils/Settings.hpp"
 #include "src/display/ScreenType.hpp"
 
+using namespace aportela::microcontroller::utils;
+
 class CustomSettings : public Settings
 {
 public:
@@ -37,4 +39,4 @@ public:
     bool setDefaultScreen(ScreenType defaultScreen);
 };
 
-#endif
+#endif // ESP32_SERVER_DASHBOARD_CUSTOM_SETTINGS_H

@@ -4,6 +4,8 @@
 #include "LGFXScreenDashboardResumeEntityNetUsedBandWidth.hpp"
 #include "../../utils/Uint64TFIFO.hpp"
 
+using namespace aportela::microcontroller::utils;
+
 class LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth : public LGFXScreenDashboardResumeEntityNetUsedBandWidth
 {
 private:
@@ -44,4 +46,4 @@ public:
     bool refresh(bool force = false) override;
 };
 
-#endif
+#endif // ESP32_SERVER_DASHBOARD_LGFX_SCREEN_DASHBOARD_RESUME_ENTITY_USED_NETWORK_DYNAMIC_BANDWIDTH_H

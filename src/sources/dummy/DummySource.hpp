@@ -16,4 +16,4 @@ public:
     void refresh(uint16_t milliSeconds = 0);
 };
 
-#endif
+#endif // ESP32_SERVER_DASHBOARD_DUMMY_SOURCE_H

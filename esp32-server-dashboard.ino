@@ -77,6 +77,8 @@ CustomSettings *settings = nullptr;
 SourceData *sourceData = nullptr;
 Bounce2::Button *button;
 
+using namespace aportela::microcontroller::utils;
+
 // create / delete telegraf/mqtt handler on wifi connect/disconnect events
 void onWifiConnectionStatusChanged(bool connected)
 {

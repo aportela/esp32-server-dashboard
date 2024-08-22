@@ -15,4 +15,4 @@ public:
     bool refresh(bool force = false) override;
 };
 
-#endif
+#endif // ESP32_SERVER_DASHBOARD_LGFX_SCREEN_DASHBOARD_RESUME_ENTITY_CPU_TEMPERATURE_H

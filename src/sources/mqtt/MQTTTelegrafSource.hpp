@@ -5,6 +5,8 @@
 #include "../Source.hpp"
 #include "../../utils/MQTT.hpp"
 
+using namespace aportela::microcontroller::utils;
+
 class MQTTTelegrafSource : public Source
 {
 private:
@@ -23,4 +25,4 @@ public:
     ~MQTTTelegrafSource();
 };
 
-#endif
+#endif // ESP32_SERVER_DASHBOARD_MQTT_TELEGRAF_SOURCE_H

@@ -15,4 +15,4 @@ public:
     virtual bool refresh(bool force = false) = 0;
 };
 
-#endif
+#endif // ESP32_SERVER_DASHBOARD_LGFX_SCREEN_H

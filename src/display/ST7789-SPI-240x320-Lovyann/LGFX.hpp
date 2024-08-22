@@ -32,4 +32,4 @@ public:
     bool refresh(void);
 };
 
-#endif
+#endif // ESP32_SERVER_DASHBOARD_LGFX_H

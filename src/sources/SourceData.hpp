@@ -114,4 +114,4 @@ public:
     bool setCurrentNetworkUpload(uint64_t totalBytes, uint64_t timestamp);
 };
 
-#endif
+#endif // ESP32_SERVER_DASHBOARD_SOURCE_DATA_H
