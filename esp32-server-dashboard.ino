@@ -92,11 +92,15 @@ void onWifiConnectionStatusChanged(bool connected)
         settings->getMQTTTelegrafGlobalTopic(mqttTelegrafGlobalTopic, sizeof(mqttTelegrafGlobalTopic));
         char networkInterfaceId[MAX_NETWORK_INTERFACE_ID_LENGTH];
         settings->getNetworkInterfaceId(networkInterfaceId, sizeof(networkInterfaceId));
+        char mqttUsername[256] = {'\0'};
+        settings->getMQTTUsername(mqttUsername, sizeof(mqttUsername));
+        char mqttPassword[256] = {'\0'};
+        settings->getMQTTPassword(mqttPassword, sizeof(mqttPassword));
         if (strlen(mqttTelegrafURI) > 0 && strlen(mqttTelegrafGlobalTopic) > 0)
         {
             char WiFiMacAddress[32] = {'\0'};
             WiFiManager::getMacAddress(WiFiMacAddress, sizeof(WiFiMacAddress));
-            mqttTelegrafSRC = new MQTTTelegrafSource(sourceData, mqttTelegrafURI, WiFiMacAddress, mqttTelegrafGlobalTopic, networkInterfaceId);
+            mqttTelegrafSRC = new MQTTTelegrafSource(sourceData, mqttTelegrafURI, WiFiMacAddress, mqttTelegrafGlobalTopic, networkInterfaceId, mqttUsername, mqttPassword);
         }
 #endif // SOURCE_MQTT_TELEGRAF
     }
@@ -149,6 +153,18 @@ void onReceivedSerialCommand(SerialManagerCommand cmd, const char *value)
         if (strlen(str) > 0)
         {
             Serial.print(SerialCommandStr[SerialManagerCommand_SET_MQTT_TELEGRAF_URI]);
+            Serial.println(str);
+        }
+        settings->getMQTTUsername(str, sizeof(str));
+        if (strlen(str) > 0)
+        {
+            Serial.print(SerialCommandStr[SerialManagerCommand_SET_MQTT_USERNAME]);
+            Serial.println(str);
+        }
+        settings->getMQTTPassword(str, sizeof(str));
+        if (strlen(str) > 0)
+        {
+            Serial.print(SerialCommandStr[SerialManagerCommand_SET_MQTT_PASSWORD]);
             Serial.println(str);
         }
         settings->getMQTTTelegrafGlobalTopic(str, sizeof(str));
@@ -278,6 +294,58 @@ void onReceivedSerialCommand(SerialManagerCommand cmd, const char *value)
             else
             {
                 Serial.println("Error removing MQTT Telegraf URI");
+            }
+        }
+        break;
+    case SerialManagerCommand_SET_MQTT_USERNAME:
+        if (value && strlen(value))
+        {
+            Serial.printf("Serial command received: set MQTT username (%s)\n", value);
+            if (settings->setMQTTUsername(value))
+            {
+                Serial.println("MQTT Telegraf username saved. Reboot REQUIRED");
+            }
+            else
+            {
+                Serial.println("Error saving MQTT username");
+            }
+        }
+        else
+        {
+            Serial.println("Serial command received: unset MQTT username");
+            if (settings->setMQTTUsername(""))
+            {
+                Serial.println("MQTT Telegraf username. Reboot REQUIRED");
+            }
+            else
+            {
+                Serial.println("Error removing MQTT username");
+            }
+        }
+        break;
+    case SerialManagerCommand_SET_MQTT_PASSWORD:
+        if (value && strlen(value))
+        {
+            Serial.printf("Serial command received: set MQTT password (%s)\n", value);
+            if (settings->setMQTTPassword(value))
+            {
+                Serial.println("MQTT Telegraf password. Reboot REQUIRED");
+            }
+            else
+            {
+                Serial.println("Error saving MQTT password");
+            }
+        }
+        else
+        {
+            Serial.println("Serial command received: unset MQTT password");
+            if (settings->setMQTTPassword(""))
+            {
+                Serial.println("MQTT password removed. Reboot REQUIRED");
+            }
+            else
+            {
+                Serial.println("Error removing MQTT password");
             }
         }
         break;

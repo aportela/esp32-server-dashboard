@@ -14,7 +14,7 @@ char MQTTTelegrafSource::networkInterfaceId[MAX_NETWORK_INTERFACE_ID_LENGTH] = {
 
 MQTTTelegrafSource *MQTTTelegrafSource::instance = nullptr;
 
-MQTTTelegrafSource::MQTTTelegrafSource(SourceData *sourceData, const char *uri, const char *clientId, const char *topic, const char *networkInterfaceId) : Source(sourceData)
+MQTTTelegrafSource::MQTTTelegrafSource(SourceData *sourceData, const char *uri, const char *clientId, const char *topic, const char *networkInterfaceId, const char *username, const char *password) : Source(sourceData)
 {
 #ifdef DEBUG_MQTT_TELEGRAF
     Serial.println("MQTTTelegrafSource");
@@ -26,7 +26,7 @@ MQTTTelegrafSource::MQTTTelegrafSource(SourceData *sourceData, const char *uri, 
     Serial.println(topic);
 #endif
     MQTT::onMessageReceived(MQTTTelegrafSource::onMessageReceived);
-    MQTT::init(clientId, uri, topic);
+    MQTT::init(clientId, uri, topic, username, password);
     MQTTTelegrafSource::generateTopic(topic, MQTTTelegrafSource::cpuTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/cpu");
     MQTTTelegrafSource::generateTopic(topic, MQTTTelegrafSource::memoryTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/mem");
     MQTTTelegrafSource::generateTopic(topic, MQTTTelegrafSource::temperatureTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/temp");
