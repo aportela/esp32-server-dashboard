@@ -21,6 +21,7 @@ namespace aportela::microcontroller::utils
         "SET_MAX_UPLOAD_BYTES_BANDWITH ",
         "SET_NETWORK_INTERFACE_ID ",
         "SET_HOSTNAME ",
+        "SET_SCREEN_MIRROR_FLIP_VERTICAL ",
         "SET_DEFAULT_SCREEN ",
     };
 
@@ -241,6 +242,25 @@ namespace aportela::microcontroller::utils
                     if (SerialManager::commandReceivedCallback != nullptr)
                     {
                         SerialManager::commandReceivedCallback(SerialManagerCommand_SET_HOSTNAME, nullptr);
+                    }
+                }
+            }
+            else if (rx.startsWith(SerialCommandStr[SerialManagerCommand_SET_SCREEN_MIRROR_FLIP_VERTICAL]))
+            {
+                uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_SCREEN_MIRROR_FLIP_VERTICAL]);
+                if (rx.length() > length)
+                {
+                    String screenMirrorFlipVertical = rx.substring(length);
+                    if (SerialManager::commandReceivedCallback != nullptr)
+                    {
+                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_SCREEN_MIRROR_FLIP_VERTICAL, screenMirrorFlipVertical.c_str());
+                    }
+                }
+                else
+                {
+                    if (SerialManager::commandReceivedCallback != nullptr)
+                    {
+                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_SCREEN_MIRROR_FLIP_VERTICAL, nullptr);
                     }
                 }
             }

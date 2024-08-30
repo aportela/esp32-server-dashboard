@@ -26,7 +26,8 @@ namespace aportela::microcontroller::utils
         SerialManagerCommand_SET_MAX_UPLOAD_BYTES_BANDWIDTH = 13,
         SerialManagerCommand_SET_NETWORK_INTERFACE_ID = 14,
         SerialManagerCommand_SET_HOSTNAME = 15,
-        SerialManagerCommand_SET_DEFAULT_SCREEN = 16,
+        SerialManagerCommand_SET_SCREEN_MIRROR_FLIP_VERTICAL = 16,
+        SerialManagerCommand_SET_DEFAULT_SCREEN = 17,
     };
 
     extern const char *SerialCommandStr[];

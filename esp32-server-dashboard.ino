@@ -42,6 +42,7 @@
 #endif // ESP32_C3_SUPER_MINI
 
 LGFX *screen = nullptr;
+bool screenMirrorFlipVertical = false;
 
 #else
 #error NO_DISPLAY_DRIVER
@@ -185,6 +186,11 @@ void onReceivedSerialCommand(SerialManagerCommand cmd, const char *value)
         {
             Serial.print(SerialCommandStr[SerialManagerCommand_SET_DEFAULT_SCREEN]);
             Serial.println(tmpUint8);
+        }
+        if (settings->getScreenMirrorFlipVertical())
+        {
+            Serial.print(SerialCommandStr[SerialManagerCommand_SET_SCREEN_MIRROR_FLIP_VERTICAL]);
+            Serial.println("true");
         }
         Serial.println("REBOOT");
         Serial.println("# EXPORTED SETTINGS END");
@@ -411,6 +417,32 @@ void onReceivedSerialCommand(SerialManagerCommand cmd, const char *value)
             }
         }
         break;
+    case SerialManagerCommand_SET_SCREEN_MIRROR_FLIP_VERTICAL:
+        if (value && strlen(value))
+        {
+            Serial.printf("Serial command received: set screen mirror flip vertical flag (%s)\n", value);
+            if (settings->setScreenMirrorFlipVertical(true))
+            {
+                Serial.println("Screen mirror flip vertical flag saved. Reboot REQUIRED");
+            }
+            else
+            {
+                Serial.println("Error saving screen mirror flip vertical flag");
+            }
+        }
+        else
+        {
+            Serial.println("Serial command received: unset screen mirror flip vertical flag");
+            if (settings->setScreenMirrorFlipVertical(false))
+            {
+                Serial.println("Screen mirror flip vertical flag removed. Reboot REQUIRED");
+            }
+            else
+            {
+                Serial.println("Error removing screen mirror flip vertical flag");
+            }
+        }
+        break;
     case SerialManagerCommand_SET_DEFAULT_SCREEN:
         if (value && strlen(value))
         {
@@ -455,6 +487,8 @@ void setup()
 
     settings = new CustomSettings();
 
+    screenMirrorFlipVertical = settings->getScreenMirrorFlipVertical();
+
     char WiFiSSID[WiFiManager::MAX_SSID_LENGTH + 1];
     settings->getWIFISSID(WiFiSSID, sizeof(WiFiSSID));
 
@@ -474,7 +508,7 @@ void setup()
     dummySRC = new DummySource(sourceData);
 #endif // SOURCE_DUMMY
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
-    screen = new LGFX(PIN_SDA, PIN_SCL, PIN_CS, PIN_DC, PIN_RST, DISPLAY_DRIVER_LOVYANN_ST7789_WIDTH, DISPLAY_DRIVER_LOVYANN_ST7789_HEIGHT, DISPLAY_DRIVER_LOVYANN_ST7789_ROTATION);
+    screen = new LGFX(PIN_SDA, PIN_SCL, PIN_CS, PIN_DC, PIN_RST, DISPLAY_DRIVER_LOVYANN_ST7789_WIDTH, DISPLAY_DRIVER_LOVYANN_ST7789_HEIGHT, !screenMirrorFlipVertical ? DISPLAY_DRIVER_LOVYANN_ST7789_ROTATION : DISPLAY_DRIVER_LOVYANN_ST7789_ROTATION_MIRROR_FLIP_VERTICAL);
     screen->setSourceData(sourceData);
     screen->initScreen(settings->getDefaultScreen(ST_INFO));
 #endif // DISPLAY_DRIVER_LOVYANN_ST7789

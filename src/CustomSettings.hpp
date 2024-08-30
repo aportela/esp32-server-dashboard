@@ -35,6 +35,9 @@ public:
     void getHostname(char *name, size_t count);
     bool setHostname(const char *name);
 
+    bool getScreenMirrorFlipVertical();
+    bool setScreenMirrorFlipVertical(bool mirrorFlipVertical = false);
+
     ScreenType getDefaultScreen(ScreenType defaultScreen = ST_NONE);
     bool setDefaultScreen(ScreenType defaultScreen);
 };

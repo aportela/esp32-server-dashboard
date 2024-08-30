@@ -11,7 +11,8 @@
 #define KEY_TOTAL_DOWNLOAD_BANDWIDTH_BYTES "T_D_BW_BYTES"
 #define KEY_TOTAL_UPLOAD_BANDWIDTH_BYTES "T_U_BW_BYTES"
 #define KEY_NET_IFACE_ID "NET_IFACE_ID"
-#define KEY_HOSTNAME "KEY_HOSTNAME"
+#define KEY_HOSTNAME "HOSTNAME"
+#define KEY_SCREEN_MIRROR_FLIP_VERTICAL "SCREEN_MIRROR"
 #define DEFAULT_SCREEN "DEFAULT_SCREEN"
 
 CustomSettings::CustomSettings() : Settings(NAMESPACE)
@@ -155,6 +156,23 @@ bool CustomSettings::setHostname(const char *name)
     else
     {
         return (this->deleteKey(KEY_HOSTNAME));
+    }
+}
+
+bool CustomSettings::getScreenMirrorFlipVertical()
+{
+    return (this->getBoolValue(KEY_SCREEN_MIRROR_FLIP_VERTICAL, false));
+}
+
+bool CustomSettings::setScreenMirrorFlipVertical(bool mirrorFlipVertical)
+{
+    if (mirrorFlipVertical)
+    {
+        return (this->setBoolValue(KEY_SCREEN_MIRROR_FLIP_VERTICAL, mirrorFlipVertical));
+    }
+    else
+    {
+        return (this->deleteKey(KEY_SCREEN_MIRROR_FLIP_VERTICAL));
     }
 }
 
