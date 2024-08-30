@@ -9,9 +9,14 @@ namespace aportela::microcontroller::utils
     esp_mqtt_client_handle_t MQTT::client = nullptr;
     MQTTMessageReceivedCallback MQTT::messageReceivedCallback = nullptr;
 
-    void MQTT::init(const char *id, const char *uri, const char *topic)
+    void MQTT::init(const char *id, const char *uri, const char *topic, const char *username, const char *password)
     {
         esp_mqtt_client_config_t mqtt_cfg = {};
+        if (username != NULL && password != NULL)
+        {
+            mqtt_cfg.credentials.username = username;
+            mqtt_cfg.credentials.authentication.password = password;
+        }
         mqtt_cfg.credentials.client_id = id;
         mqtt_cfg.broker.address.uri = uri;
         MQTT::client = esp_mqtt_client_init(&mqtt_cfg);
