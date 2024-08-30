@@ -4,6 +4,7 @@
 #include "utils/Settings.hpp"
 #include "src/display/ScreenType.hpp"
 
+// TODO: change
 using namespace aportela::microcontroller::utils;
 
 class CustomSettings : public Settings
@@ -20,6 +21,10 @@ public:
     void getMQTTTelegrafURI(char *uri, size_t count);
     bool setMQTTTelegrafURI(const char *uri);
 
+    void getMQTTUsername(char *username, size_t count);
+    bool setMQTTUsername(const char *username);
+    void getMQTTPassword(char *password, size_t count);
+    bool setMQTTPassword(const char *password);
     void getMQTTTelegrafGlobalTopic(char *topic, size_t count);
     bool setMQTTTelegrafGlobalTopic(const char *topic);
 

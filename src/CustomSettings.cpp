@@ -7,6 +7,8 @@
 #define KEY_WIFI_SSID "WIFI_SSID"
 #define KEY_WIFI_PASSWORD "WIFI_PASSWORD"
 #define KEY_MQTT_TELEGRAF_URI "SRC_MQTT_URI"
+#define KEY_MQTT_USERNAME "MQTT_USERNAME"
+#define KEY_MQTT_PASSWORD "MQTT_PASSWORD"
 #define KEY_MQTT_TELEGRAF_GLOBAL_TOPIC "SRC_MQTT_TOPIC"
 #define KEY_TOTAL_DOWNLOAD_BANDWIDTH_BYTES "T_D_BW_BYTES"
 #define KEY_TOTAL_UPLOAD_BANDWIDTH_BYTES "T_U_BW_BYTES"
@@ -71,6 +73,40 @@ bool CustomSettings::setMQTTTelegrafURI(const char *uri)
     else
     {
         return (this->deleteKey(KEY_MQTT_TELEGRAF_URI));
+    }
+}
+
+void CustomSettings::getMQTTUsername(char *username, size_t count)
+{
+    this->getStringValue(KEY_MQTT_USERNAME, username, count);
+}
+
+bool CustomSettings::setMQTTUsername(const char *username)
+{
+    if (strlen(username) > 0)
+    {
+        return (this->setStringValue(KEY_MQTT_USERNAME, username));
+    }
+    else
+    {
+        return (this->deleteKey(KEY_MQTT_USERNAME));
+    }
+}
+
+void CustomSettings::getMQTTTPassword(char *password, size_t count)
+{
+    this->getStringValue(KEY_MQTT_PASSWORD, password, count);
+}
+
+bool CustomSettings::setMQTTPassword(const char *password)
+{
+    if (strlen(password) > 0)
+    {
+        return (this->setStringValue(KEY_MQTT_PASSWORD, password));
+    }
+    else
+    {
+        return (this->deleteKey(KEY_MQTT_PASSWORD));
     }
 }
 

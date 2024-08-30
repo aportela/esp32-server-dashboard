@@ -15,6 +15,8 @@ namespace aportela::microcontroller::utils
         "SET_WIFI_SSID ",
         "SET_WIFI_PASSWORD ",
         "SET_MQTT_TELEGRAF_URI ",
+        "SET_MQTT_USERNAME ",
+        "SET_MQTT_PASSWORD ",
         "SET_MQTT_TELEGRAF_GLOBAL_TOPIC ",
         "TOGGLE_SCREEN",
         "SET_MAX_DOWNLOAD_BYTES_BANDWITH ",
@@ -140,6 +142,44 @@ namespace aportela::microcontroller::utils
                     if (SerialManager::commandReceivedCallback != nullptr)
                     {
                         SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MQTT_TELEGRAF_URI, nullptr);
+                    }
+                }
+            }
+            else if (rx.startsWith(SerialCommandStr[SerialManagerCommand_SET_MQTT_USERNAME]))
+            {
+                uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_MQTT_USERNAME]);
+                if (rx.length() > length)
+                {
+                    String MQTTUsername = rx.substring(length);
+                    if (SerialManager::commandReceivedCallback != nullptr)
+                    {
+                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MQTT_USERNAME, MQTTUsername.c_str());
+                    }
+                }
+                else
+                {
+                    if (SerialManager::commandReceivedCallback != nullptr)
+                    {
+                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MQTT_USERNAME, nullptr);
+                    }
+                }
+            }
+            else if (rx.startsWith(SerialCommandStr[SerialManagerCommand_SET_MQTT_PASSWORD]))
+            {
+                uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_MQTT_PASSWORD]);
+                if (rx.length() > length)
+                {
+                    String MQTTPassword = rx.substring(length);
+                    if (SerialManager::commandReceivedCallback != nullptr)
+                    {
+                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MQTT_PASSWORD, MQTTUsername.c_str());
+                    }
+                }
+                else
+                {
+                    if (SerialManager::commandReceivedCallback != nullptr)
+                    {
+                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MQTT_PASSWORD, nullptr);
                     }
                 }
             }
