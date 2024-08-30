@@ -12,13 +12,13 @@ namespace aportela::microcontroller::utils
     void MQTT::init(const char *id, const char *uri, const char *topic, const char *username, const char *password)
     {
         esp_mqtt_client_config_t mqtt_cfg = {};
-        if (username != NULL && password != NULL)
+        if (username != nullptr && strlen(username) > 0 && password != nullptr && strlen(password) > 0)
         {
-            mqtt_cfg.credentials.username = username;
-            mqtt_cfg.credentials.authentication.password = password;
+            mqtt_cfg.credentials.username = strdup(username);
+            mqtt_cfg.credentials.authentication.password = strdup(password);
         }
-        mqtt_cfg.credentials.client_id = id;
-        mqtt_cfg.broker.address.uri = uri;
+        mqtt_cfg.credentials.client_id = strdup(id);
+        mqtt_cfg.broker.address.uri = strdup(uri);
         MQTT::client = esp_mqtt_client_init(&mqtt_cfg);
         esp_mqtt_client_register_event(MQTT::client, (esp_mqtt_event_id_t)ESP_EVENT_ANY_ID, MQTT::event_handler, NULL);
         esp_mqtt_client_start(MQTT::client);

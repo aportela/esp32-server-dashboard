@@ -19,7 +19,7 @@ namespace aportela::microcontroller::utils
         static char topic[MAX_MQTT_TOPIC_LENGTH];
 
     public:
-        static void init(const char *id, const char *uri, const char *topic, const char *username = NULL, const char *password = NULL);
+        static void init(const char *id, const char *uri, const char *topic, const char *username = nullptr, const char *password = nullptr);
         static void destroy(void);
         static void onMessageReceived(MQTTMessageReceivedCallback callback);
     };
