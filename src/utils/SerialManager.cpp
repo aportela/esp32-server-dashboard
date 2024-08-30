@@ -93,10 +93,9 @@ namespace aportela::microcontroller::utils
                 uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_WIFI_SSID]);
                 if (rx.length() > length)
                 {
-                    String WiFiSSID = rx.substring(length);
                     if (SerialManager::commandReceivedCallback != nullptr)
                     {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_WIFI_SSID, WiFiSSID.c_str());
+                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_WIFI_SSID, rx.substring(length).c_str());
                     }
                 }
                 else
@@ -112,10 +111,9 @@ namespace aportela::microcontroller::utils
                 uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_WIFI_PASSWORD]);
                 if (rx.length() > length)
                 {
-                    String WiFiPassword = rx.substring(length);
                     if (SerialManager::commandReceivedCallback != nullptr)
                     {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_WIFI_PASSWORD, WiFiPassword.c_str());
+                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_WIFI_PASSWORD, rx.substring(length).c_str());
                     }
                 }
                 else
@@ -131,10 +129,9 @@ namespace aportela::microcontroller::utils
                 uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_MQTT_TELEGRAF_URI]);
                 if (rx.length() > length)
                 {
-                    String MQTTTelegrafURI = rx.substring(length);
                     if (SerialManager::commandReceivedCallback != nullptr)
                     {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MQTT_TELEGRAF_URI, MQTTTelegrafURI.c_str());
+                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MQTT_TELEGRAF_URI, rx.substring(length).c_str());
                     }
                 }
                 else
@@ -150,10 +147,9 @@ namespace aportela::microcontroller::utils
                 uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_MQTT_USERNAME]);
                 if (rx.length() > length)
                 {
-                    String MQTTUsername = rx.substring(length);
                     if (SerialManager::commandReceivedCallback != nullptr)
                     {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MQTT_USERNAME, MQTTUsername.c_str());
+                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MQTT_USERNAME, rx.substring(length).c_str());
                     }
                 }
                 else
@@ -169,10 +165,9 @@ namespace aportela::microcontroller::utils
                 uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_MQTT_PASSWORD]);
                 if (rx.length() > length)
                 {
-                    String MQTTPassword = rx.substring(length);
                     if (SerialManager::commandReceivedCallback != nullptr)
                     {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MQTT_PASSWORD, MQTTUsername.c_str());
+                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MQTT_PASSWORD, rx.substring(length).c_str());
                     }
                 }
                 else
@@ -188,10 +183,9 @@ namespace aportela::microcontroller::utils
                 uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_MQTT_TELEGRAF_TOPIC]);
                 if (rx.length() > length)
                 {
-                    String MQTTTelegrafTopic = rx.substring(length);
                     if (SerialManager::commandReceivedCallback != nullptr)
                     {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MQTT_TELEGRAF_TOPIC, MQTTTelegrafTopic.c_str());
+                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MQTT_TELEGRAF_TOPIC, rx.substring(length).c_str());
                     }
                 }
                 else
@@ -214,10 +208,9 @@ namespace aportela::microcontroller::utils
                 uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_MAX_DOWNLOAD_BYTES_BANDWIDTH]);
                 if (rx.length() > length)
                 {
-                    String MaxDownloadBytesBandwidth = rx.substring(length);
                     if (SerialManager::commandReceivedCallback != nullptr)
                     {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MAX_DOWNLOAD_BYTES_BANDWIDTH, MaxDownloadBytesBandwidth.c_str());
+                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MAX_DOWNLOAD_BYTES_BANDWIDTH, rx.substring(length).c_str());
                     }
                 }
                 else
@@ -233,10 +226,9 @@ namespace aportela::microcontroller::utils
                 uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_MAX_UPLOAD_BYTES_BANDWIDTH]);
                 if (rx.length() > length)
                 {
-                    String MaxUploadBytesBandwidth = rx.substring(length);
                     if (SerialManager::commandReceivedCallback != nullptr)
                     {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MAX_UPLOAD_BYTES_BANDWIDTH, MaxUploadBytesBandwidth.c_str());
+                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MAX_UPLOAD_BYTES_BANDWIDTH, rx.substring(length).c_str());
                     }
                 }
                 else
@@ -252,10 +244,9 @@ namespace aportela::microcontroller::utils
                 uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_NETWORK_INTERFACE_ID]);
                 if (rx.length() > length)
                 {
-                    String Id = rx.substring(length);
                     if (SerialManager::commandReceivedCallback != nullptr)
                     {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_NETWORK_INTERFACE_ID, Id.c_str());
+                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_NETWORK_INTERFACE_ID, rx.substring(length).c_str());
                     }
                 }
                 else
@@ -271,10 +262,9 @@ namespace aportela::microcontroller::utils
                 uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_HOSTNAME]);
                 if (rx.length() > length)
                 {
-                    String Hostname = rx.substring(length);
                     if (SerialManager::commandReceivedCallback != nullptr)
                     {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_HOSTNAME, Hostname.c_str());
+                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_HOSTNAME, rx.substring(length).c_str());
                     }
                 }
                 else
@@ -290,10 +280,9 @@ namespace aportela::microcontroller::utils
                 uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_SCREEN_MIRROR_FLIP_VERTICAL]);
                 if (rx.length() > length)
                 {
-                    String screenMirrorFlipVertical = rx.substring(length);
                     if (SerialManager::commandReceivedCallback != nullptr)
                     {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_SCREEN_MIRROR_FLIP_VERTICAL, screenMirrorFlipVertical.c_str());
+                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_SCREEN_MIRROR_FLIP_VERTICAL, rx.substring(length).c_str());
                     }
                 }
                 else
@@ -309,10 +298,9 @@ namespace aportela::microcontroller::utils
                 uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_DEFAULT_SCREEN]);
                 if (rx.length() > length)
                 {
-                    String defaultScreen = rx.substring(length);
                     if (SerialManager::commandReceivedCallback != nullptr)
                     {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_DEFAULT_SCREEN, defaultScreen.c_str());
+                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_DEFAULT_SCREEN, rx.substring(length).c_str());
                     }
                 }
                 else
