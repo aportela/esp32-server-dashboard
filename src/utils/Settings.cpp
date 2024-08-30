@@ -20,6 +20,38 @@ namespace aportela::microcontroller::utils
         }
     }
 
+    bool Settings::getBoolValue(const char *key, bool defaultValue)
+    {
+        if (this->preferences != nullptr && this->preferences->begin(this->nameSpace, false))
+        {
+            bool value = defaultValue;
+            if (this->preferences->isKey(key))
+            {
+                value = this->preferences->getBool(key, defaultValue);
+            }
+            this->preferences->end();
+            return (value);
+        }
+        else
+        {
+            return (defaultValue);
+        }
+    }
+
+    bool Settings::setBoolValue(const char *key, bool value)
+    {
+        if (this->preferences != nullptr && this->preferences->begin(this->nameSpace, false))
+        {
+            bool saved = this->preferences->putBool(key, value) == sizeof(value);
+            this->preferences->end();
+            return (saved);
+        }
+        else
+        {
+            return (false);
+        }
+    }
+
     int8_t Settings::getSmallSignedIntegerValue(const char *key, int8_t defaultValue)
     {
         if (this->preferences != nullptr && this->preferences->begin(this->nameSpace, false))

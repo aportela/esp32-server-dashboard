@@ -17,6 +17,8 @@ namespace aportela::microcontroller::utils
         Preferences *preferences;
         char nameSpace[SETTINGS_NAMESPACE_ARR_LENGTH];
 
+        bool getBoolValue(const char *key, bool defaultValue = false);
+        bool setBoolValue(const char *key, bool value = false);
         int8_t getSmallSignedIntegerValue(const char *key, int8_t defaultValue = 0);
         bool setSmallSignedIntegerValue(const char *key, int8_t value = 0);
         int8_t getSmallUnsignedIntegerValue(const char *key, uint8_t defaultValue = 0);
