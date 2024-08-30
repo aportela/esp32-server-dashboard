@@ -4,7 +4,6 @@
 #include "utils/Settings.hpp"
 #include "src/display/ScreenType.hpp"
 
-// TODO: change
 using namespace aportela::microcontroller::utils;
 
 class CustomSettings : public Settings
