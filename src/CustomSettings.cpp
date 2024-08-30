@@ -93,7 +93,7 @@ bool CustomSettings::setMQTTUsername(const char *username)
     }
 }
 
-void CustomSettings::getMQTTTPassword(char *password, size_t count)
+void CustomSettings::getMQTTPassword(char *password, size_t count)
 {
     this->getStringValue(KEY_MQTT_PASSWORD, password, count);
 }
