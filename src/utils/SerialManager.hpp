@@ -8,44 +8,15 @@
 
 namespace aportela::microcontroller::utils
 {
-    enum SerialManagerCommand
-    {
-        SerialManagerCommand_NONE = 0,
-        SerialManagerCommand_UNKNOWN = 1,
-        SerialManagerCommand_REBOOT = 2,
-        SerialManagerCommand_CLEAR_SETTINGS = 3,
-        SerialManagerCommand_EXPORT_SETTINGS = 4,
-        SerialManagerCommand_CONNECT_WIFI = 5,
-        SerialManagerCommand_DISCONNECT_WIFI = 6,
-        SerialManagerCommand_SET_WIFI_SSID = 7,
-        SerialManagerCommand_SET_WIFI_PASSWORD = 8,
-        SerialManagerCommand_SET_MQTT_TELEGRAF_URI = 9,
-        SerialManagerCommand_SET_MQTT_USERNAME = 10,
-        SerialManagerCommand_SET_MQTT_PASSWORD = 11,
-        SerialManagerCommand_SET_MQTT_TELEGRAF_TOPIC = 12,
-        SerialManagerCommand_TOGGLE_SCREEN = 13,
-        SerialManagerCommand_SET_MAX_DOWNLOAD_BYTES_BANDWIDTH = 14,
-        SerialManagerCommand_SET_MAX_UPLOAD_BYTES_BANDWIDTH = 15,
-        SerialManagerCommand_SET_NETWORK_INTERFACE_ID = 16,
-        SerialManagerCommand_SET_HOSTNAME = 17,
-        SerialManagerCommand_SET_SCREEN_MIRROR_FLIP_VERTICAL = 18,
-        SerialManagerCommand_SET_DEFAULT_SCREEN = 19,
-    };
 
-    extern const char *SerialCommandStr[];
-
-    typedef void (*SerialCommandCallback)(SerialManagerCommand cmd, const char *value);
+    typedef void (*SerialCommandCallback)(int8_t commandIndex, const char *value);
 
     class SerialManager
     {
-    private:
-        static SerialCommandCallback commandReceivedCallback;
-
     public:
         static const uint32_t DEFAULT_SPEED = 9600;
-        static void init(uint32_t speed, SerialCommandCallback callback);
-        static void onCommandReceived(SerialCommandCallback callback);
-        static void loop(void);
+        static void init(uint32_t speed);
+        static void loop(const char *commands[], size_t numCommands, SerialCommandCallback callback);
     };
 }
 

@@ -3,33 +3,7 @@
 
 namespace aportela::microcontroller::utils
 {
-    // WARNINT: THIS NEEDS TO BE "PAIRED" WITH SerialManagerCommand defined on SerialManager.hpp
-    const char *SerialCommandStr[]{
-        "NONE",
-        "UNKNOWN",
-        "REBOOT",
-        "CLEAR_SETTINGS",
-        "EXPORT_SETTINGS",
-        "CONNECT_WIFI",
-        "DISCONNECT_WIFI",
-        "SET_WIFI_SSID ",
-        "SET_WIFI_PASSWORD ",
-        "SET_MQTT_TELEGRAF_URI ",
-        "SET_MQTT_USERNAME ",
-        "SET_MQTT_PASSWORD ",
-        "SET_MQTT_TELEGRAF_GLOBAL_TOPIC ",
-        "TOGGLE_SCREEN",
-        "SET_MAX_DOWNLOAD_BYTES_BANDWITH ",
-        "SET_MAX_UPLOAD_BYTES_BANDWITH ",
-        "SET_NETWORK_INTERFACE_ID ",
-        "SET_HOSTNAME ",
-        "SET_SCREEN_MIRROR_FLIP_VERTICAL ",
-        "SET_DEFAULT_SCREEN ",
-    };
-
-    SerialCommandCallback SerialManager::commandReceivedCallback = nullptr;
-
-    void SerialManager::init(uint32_t speed, SerialCommandCallback callback)
+    void SerialManager::init(uint32_t speed)
     {
         Serial.begin(speed);
         while (!Serial)
@@ -37,285 +11,66 @@ namespace aportela::microcontroller::utils
             yield();
             delay(10);
         }
-        SerialManager::onCommandReceived(callback);
     }
 
-    void SerialManager::onCommandReceived(SerialCommandCallback callback)
-    {
-        if (callback != nullptr)
-        {
-            SerialManager::commandReceivedCallback = callback;
-        }
-    }
-
-    void SerialManager::loop(void)
+    void SerialManager::loop(const char *commands[], size_t numCommands, SerialCommandCallback callback)
     {
         while (Serial.available() > 0)
         {
             String rx = Serial.readStringUntil('\n');
-            if (rx == SerialCommandStr[SerialManagerCommand_REBOOT])
+            if (rx.length() > 0)
             {
-                if (SerialManager::commandReceivedCallback != nullptr)
+                bool validCommand = false;
+                for (size_t i = 0; i < numCommands && !validCommand; i++)
                 {
-                    SerialManager::commandReceivedCallback(SerialManagerCommand_REBOOT, nullptr);
-                }
-            }
-            else if (rx == SerialCommandStr[SerialManagerCommand_CLEAR_SETTINGS])
-            {
-                if (SerialManager::commandReceivedCallback != nullptr)
-                {
-                    SerialManager::commandReceivedCallback(SerialManagerCommand_CLEAR_SETTINGS, nullptr);
-                }
-            }
-            else if (rx == SerialCommandStr[SerialManagerCommand_EXPORT_SETTINGS])
-            {
-                if (SerialManager::commandReceivedCallback != nullptr)
-                {
-                    SerialManager::commandReceivedCallback(SerialManagerCommand_EXPORT_SETTINGS, nullptr);
-                }
-            }
-            else if (rx == SerialCommandStr[SerialManagerCommand_CONNECT_WIFI])
-            {
-                if (SerialManager::commandReceivedCallback != nullptr)
-                {
-                    SerialManager::commandReceivedCallback(SerialManagerCommand_CONNECT_WIFI, nullptr);
-                }
-            }
-            else if (rx == SerialCommandStr[SerialManagerCommand_DISCONNECT_WIFI])
-            {
-                if (SerialManager::commandReceivedCallback != nullptr)
-                {
-                    SerialManager::commandReceivedCallback(SerialManagerCommand_DISCONNECT_WIFI, nullptr);
-                }
-            }
-            else if (rx.startsWith(SerialCommandStr[SerialManagerCommand_SET_WIFI_SSID]))
-            {
-                uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_WIFI_SSID]);
-                if (rx.length() > length)
-                {
-                    if (SerialManager::commandReceivedCallback != nullptr)
+                    int commandLength = strlen(commands[i]);
+                    if (commandLength > 0)
                     {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_WIFI_SSID, rx.substring(length).c_str());
+                        // comand with params
+                        if (commands[i][commandLength - 1] == ' ')
+                        {
+                            if (rx.startsWith(commands[i]))
+                            {
+                                if (rx.length() > commandLength)
+                                {
+                                    validCommand = true;
+                                    if (callback != nullptr)
+                                    {
+
+                                        callback(i, rx.substring(commandLength).c_str());
+                                    }
+                                }
+                                else
+                                {
+                                    validCommand = true;
+                                    if (callback != nullptr)
+                                    {
+
+                                        callback(i, nullptr);
+                                    }
+                                }
+                            }
+                        }
+                        // single command
+                        else
+                        {
+                            if (rx == commands[i])
+                            {
+                                validCommand = true;
+                                if (callback != nullptr)
+                                {
+                                    callback(i, nullptr);
+                                }
+                            }
+                        }
                     }
                 }
-                else
+                if (!validCommand)
                 {
-                    if (SerialManager::commandReceivedCallback != nullptr)
+                    if (callback != nullptr)
                     {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_WIFI_SSID, nullptr);
+                        callback(-1, rx.c_str());
                     }
-                }
-            }
-            else if (rx.startsWith(SerialCommandStr[SerialManagerCommand_SET_WIFI_PASSWORD]))
-            {
-                uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_WIFI_PASSWORD]);
-                if (rx.length() > length)
-                {
-                    if (SerialManager::commandReceivedCallback != nullptr)
-                    {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_WIFI_PASSWORD, rx.substring(length).c_str());
-                    }
-                }
-                else
-                {
-                    if (SerialManager::commandReceivedCallback != nullptr)
-                    {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_WIFI_PASSWORD, nullptr);
-                    }
-                }
-            }
-            else if (rx.startsWith(SerialCommandStr[SerialManagerCommand_SET_MQTT_TELEGRAF_URI]))
-            {
-                uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_MQTT_TELEGRAF_URI]);
-                if (rx.length() > length)
-                {
-                    if (SerialManager::commandReceivedCallback != nullptr)
-                    {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MQTT_TELEGRAF_URI, rx.substring(length).c_str());
-                    }
-                }
-                else
-                {
-                    if (SerialManager::commandReceivedCallback != nullptr)
-                    {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MQTT_TELEGRAF_URI, nullptr);
-                    }
-                }
-            }
-            else if (rx.startsWith(SerialCommandStr[SerialManagerCommand_SET_MQTT_USERNAME]))
-            {
-                uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_MQTT_USERNAME]);
-                if (rx.length() > length)
-                {
-                    if (SerialManager::commandReceivedCallback != nullptr)
-                    {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MQTT_USERNAME, rx.substring(length).c_str());
-                    }
-                }
-                else
-                {
-                    if (SerialManager::commandReceivedCallback != nullptr)
-                    {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MQTT_USERNAME, nullptr);
-                    }
-                }
-            }
-            else if (rx.startsWith(SerialCommandStr[SerialManagerCommand_SET_MQTT_PASSWORD]))
-            {
-                uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_MQTT_PASSWORD]);
-                if (rx.length() > length)
-                {
-                    if (SerialManager::commandReceivedCallback != nullptr)
-                    {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MQTT_PASSWORD, rx.substring(length).c_str());
-                    }
-                }
-                else
-                {
-                    if (SerialManager::commandReceivedCallback != nullptr)
-                    {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MQTT_PASSWORD, nullptr);
-                    }
-                }
-            }
-            else if (rx.startsWith(SerialCommandStr[SerialManagerCommand_SET_MQTT_TELEGRAF_TOPIC]))
-            {
-                uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_MQTT_TELEGRAF_TOPIC]);
-                if (rx.length() > length)
-                {
-                    if (SerialManager::commandReceivedCallback != nullptr)
-                    {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MQTT_TELEGRAF_TOPIC, rx.substring(length).c_str());
-                    }
-                }
-                else
-                {
-                    if (SerialManager::commandReceivedCallback != nullptr)
-                    {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MQTT_TELEGRAF_TOPIC, nullptr);
-                    }
-                }
-            }
-            else if (rx == (SerialCommandStr[SerialManagerCommand_TOGGLE_SCREEN]))
-            {
-                if (SerialManager::commandReceivedCallback != nullptr)
-                {
-                    SerialManager::commandReceivedCallback(SerialManagerCommand_TOGGLE_SCREEN, nullptr);
-                }
-            }
-            else if (rx.startsWith(SerialCommandStr[SerialManagerCommand_SET_MAX_DOWNLOAD_BYTES_BANDWIDTH]))
-            {
-                uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_MAX_DOWNLOAD_BYTES_BANDWIDTH]);
-                if (rx.length() > length)
-                {
-                    if (SerialManager::commandReceivedCallback != nullptr)
-                    {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MAX_DOWNLOAD_BYTES_BANDWIDTH, rx.substring(length).c_str());
-                    }
-                }
-                else
-                {
-                    if (SerialManager::commandReceivedCallback != nullptr)
-                    {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MAX_DOWNLOAD_BYTES_BANDWIDTH, nullptr);
-                    }
-                }
-            }
-            else if (rx.startsWith(SerialCommandStr[SerialManagerCommand_SET_MAX_UPLOAD_BYTES_BANDWIDTH]))
-            {
-                uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_MAX_UPLOAD_BYTES_BANDWIDTH]);
-                if (rx.length() > length)
-                {
-                    if (SerialManager::commandReceivedCallback != nullptr)
-                    {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MAX_UPLOAD_BYTES_BANDWIDTH, rx.substring(length).c_str());
-                    }
-                }
-                else
-                {
-                    if (SerialManager::commandReceivedCallback != nullptr)
-                    {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_MAX_UPLOAD_BYTES_BANDWIDTH, nullptr);
-                    }
-                }
-            }
-            else if (rx.startsWith(SerialCommandStr[SerialManagerCommand_SET_NETWORK_INTERFACE_ID]))
-            {
-                uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_NETWORK_INTERFACE_ID]);
-                if (rx.length() > length)
-                {
-                    if (SerialManager::commandReceivedCallback != nullptr)
-                    {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_NETWORK_INTERFACE_ID, rx.substring(length).c_str());
-                    }
-                }
-                else
-                {
-                    if (SerialManager::commandReceivedCallback != nullptr)
-                    {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_NETWORK_INTERFACE_ID, nullptr);
-                    }
-                }
-            }
-            else if (rx.startsWith(SerialCommandStr[SerialManagerCommand_SET_HOSTNAME]))
-            {
-                uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_HOSTNAME]);
-                if (rx.length() > length)
-                {
-                    if (SerialManager::commandReceivedCallback != nullptr)
-                    {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_HOSTNAME, rx.substring(length).c_str());
-                    }
-                }
-                else
-                {
-                    if (SerialManager::commandReceivedCallback != nullptr)
-                    {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_HOSTNAME, nullptr);
-                    }
-                }
-            }
-            else if (rx.startsWith(SerialCommandStr[SerialManagerCommand_SET_SCREEN_MIRROR_FLIP_VERTICAL]))
-            {
-                uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_SCREEN_MIRROR_FLIP_VERTICAL]);
-                if (rx.length() > length)
-                {
-                    if (SerialManager::commandReceivedCallback != nullptr)
-                    {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_SCREEN_MIRROR_FLIP_VERTICAL, rx.substring(length).c_str());
-                    }
-                }
-                else
-                {
-                    if (SerialManager::commandReceivedCallback != nullptr)
-                    {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_SCREEN_MIRROR_FLIP_VERTICAL, nullptr);
-                    }
-                }
-            }
-            else if (rx.startsWith(SerialCommandStr[SerialManagerCommand_SET_DEFAULT_SCREEN]))
-            {
-                uint16_t length = strlen(SerialCommandStr[SerialManagerCommand_SET_DEFAULT_SCREEN]);
-                if (rx.length() > length)
-                {
-                    if (SerialManager::commandReceivedCallback != nullptr)
-                    {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_DEFAULT_SCREEN, rx.substring(length).c_str());
-                    }
-                }
-                else
-                {
-                    if (SerialManager::commandReceivedCallback != nullptr)
-                    {
-                        SerialManager::commandReceivedCallback(SerialManagerCommand_SET_DEFAULT_SCREEN, nullptr);
-                    }
-                }
-            }
-            else
-            {
-                if (SerialManager::commandReceivedCallback != nullptr)
-                {
-                    SerialManager::commandReceivedCallback(SerialManagerCommand_UNKNOWN, rx.c_str());
                 }
             }
         }

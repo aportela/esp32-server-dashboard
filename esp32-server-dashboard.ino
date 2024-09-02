@@ -78,6 +78,53 @@ CustomSettings *settings = nullptr;
 SourceData *sourceData = nullptr;
 Bounce2::Button *button;
 
+const char *CUSTOM_SERIAL_COMMANDS[]{
+    "REBOOT",
+    "CLEAR_SETTINGS",
+    "EXPORT_SETTINGS",
+    "CONNECT_WIFI",
+    "DISCONNECT_WIFI",
+    "SET_WIFI_SSID ",
+    "SET_WIFI_PASSWORD ",
+    "SET_MQTT_TELEGRAF_URI ",
+    "SET_MQTT_USERNAME ",
+    "SET_MQTT_PASSWORD ",
+    "SET_MQTT_TELEGRAF_GLOBAL_TOPIC ",
+    "TOGGLE_SCREEN",
+    "SET_MAX_DOWNLOAD_BYTES_BANDWITH ",
+    "SET_MAX_UPLOAD_BYTES_BANDWITH ",
+    "SET_NETWORK_INTERFACE_ID ",
+    "SET_HOSTNAME ",
+    "SET_SCREEN_MIRROR_FLIP_VERTICAL ",
+    "SET_DEFAULT_SCREEN ",
+};
+
+// this is not required, but make it more "friendly" eval callback uint_8 command index responses
+enum CUSTOM_SERIAL_COMMAND_INDEX
+{
+    CUSTOM_SERIAL_COMMAND_INDEX_UNKNOWN = -1,
+    CUSTOM_SERIAL_COMMAND_INDEX_REBOOT = 0,
+    CUSTOM_SERIAL_COMMAND_INDEX_CLEAR_SETTINGS = 1,
+    CUSTOM_SERIAL_COMMAND_INDEX_EXPORT_SETTINGS = 2,
+    CUSTOM_SERIAL_COMMAND_INDEX_CONNECT_WIFI = 3,
+    CUSTOM_SERIAL_COMMAND_INDEX_DISCONNECT_WIFI = 4,
+    CUSTOM_SERIAL_COMMAND_INDEX_SET_WIFI_SSID = 5,
+    CUSTOM_SERIAL_COMMAND_INDEX_SET_WIFI_PASSWORD = 6,
+    CUSTOM_SERIAL_COMMAND_INDEX_SET_MQTT_TELEGRAF_URI = 7,
+    CUSTOM_SERIAL_COMMAND_INDEX_SET_MQTT_USERNAME = 8,
+    CUSTOM_SERIAL_COMMAND_INDEX_SET_MQTT_PASSWORD = 9,
+    CUSTOM_SERIAL_COMMAND_INDEX_SET_MQTT_TELEGRAF_GLOBAL_TOPIC = 10,
+    CUSTOM_SERIAL_COMMAND_INDEX_TOGGLE_SCREEN = 11,
+    CUSTOM_SERIAL_COMMAND_INDEX_SET_MAX_DOWNLOAD_BYTES_BANDWITH = 12,
+    CUSTOM_SERIAL_COMMAND_INDEX_SET_MAX_UPLOAD_BYTES_BANDWITH = 13,
+    CUSTOM_SERIAL_COMMAND_INDEX_SET_NETWORK_INTERFACE_ID = 14,
+    CUSTOM_SERIAL_COMMAND_INDEX_SET_HOSTNAME = 15,
+    CUSTOM_SERIAL_COMMAND_INDEX_SET_SCREEN_MIRROR_FLIP_VERTICAL = 16,
+    CUSTOM_SERIAL_COMMAND_INDEX_SET_DEFAULT_SCREEN = 17,
+};
+
+#define CUSTOM_SERIAL_COMMAND_COUNT (sizeof(CUSTOM_SERIAL_COMMANDS) / sizeof(CUSTOM_SERIAL_COMMANDS[0]))
+
 using namespace aportela::microcontroller::utils;
 
 // create / delete telegraf/mqtt handler on wifi connect/disconnect events
@@ -116,110 +163,110 @@ void onWifiConnectionStatusChanged(bool connected)
     }
 }
 
-void onReceivedSerialCommand(SerialManagerCommand cmd, const char *value)
+void onReceivedSerialCommand(int8_t commandIndex, const char *value)
 {
     char str[1024] = {'\0'};
     uint8_t tmpUint8 = 0;
     uint64_t tmpUint64 = 0;
     float tmpFloat = 0.0f;
-    switch (cmd)
+    switch ((CUSTOM_SERIAL_COMMAND_INDEX)commandIndex)
     {
-    case SerialManagerCommand_REBOOT:
+    case CUSTOM_SERIAL_COMMAND_INDEX_REBOOT:
         Serial.println("Serial command received: rebooting");
         ESP.restart();
         break;
-    case SerialManagerCommand_CLEAR_SETTINGS:
+    case CUSTOM_SERIAL_COMMAND_INDEX_CLEAR_SETTINGS:
         Serial.println("Serial command received: reset settings");
         settings->clear();
         Serial.println("Settings cleared. Reboot REQUIRED");
         break;
-    case SerialManagerCommand_EXPORT_SETTINGS:
+    case CUSTOM_SERIAL_COMMAND_INDEX_EXPORT_SETTINGS:
         Serial.println("Serial command received: export settings");
         Serial.println("# EXPORTED SETTINGS BEGIN");
-        Serial.println(SerialCommandStr[SerialManagerCommand_CLEAR_SETTINGS]);
+        Serial.println(CUSTOM_SERIAL_COMMANDS[CUSTOM_SERIAL_COMMAND_INDEX_EXPORT_SETTINGS]);
         settings->getWIFISSID(str, sizeof(str));
         if (strlen(str) > 0)
         {
-            Serial.print(SerialCommandStr[SerialManagerCommand_SET_WIFI_SSID]);
+            Serial.print(CUSTOM_SERIAL_COMMANDS[CUSTOM_SERIAL_COMMAND_INDEX_SET_WIFI_SSID]);
             Serial.println(str);
         }
         settings->getWIFIPassword(str, sizeof(str));
         if (strlen(str) > 0)
         {
-            Serial.print(SerialCommandStr[SerialManagerCommand_SET_WIFI_PASSWORD]);
+            Serial.print(CUSTOM_SERIAL_COMMANDS[CUSTOM_SERIAL_COMMAND_INDEX_SET_WIFI_PASSWORD]);
             Serial.println(str);
         }
         settings->getMQTTTelegrafURI(str, sizeof(str));
         if (strlen(str) > 0)
         {
-            Serial.print(SerialCommandStr[SerialManagerCommand_SET_MQTT_TELEGRAF_URI]);
+            Serial.print(CUSTOM_SERIAL_COMMANDS[CUSTOM_SERIAL_COMMAND_INDEX_SET_MQTT_TELEGRAF_URI]);
             Serial.println(str);
         }
         settings->getMQTTUsername(str, sizeof(str));
         if (strlen(str) > 0)
         {
-            Serial.print(SerialCommandStr[SerialManagerCommand_SET_MQTT_USERNAME]);
+            Serial.print(CUSTOM_SERIAL_COMMANDS[CUSTOM_SERIAL_COMMAND_INDEX_SET_MQTT_USERNAME]);
             Serial.println(str);
         }
         settings->getMQTTPassword(str, sizeof(str));
         if (strlen(str) > 0)
         {
-            Serial.print(SerialCommandStr[SerialManagerCommand_SET_MQTT_PASSWORD]);
+            Serial.print(CUSTOM_SERIAL_COMMANDS[CUSTOM_SERIAL_COMMAND_INDEX_SET_MQTT_PASSWORD]);
             Serial.println(str);
         }
         settings->getMQTTTelegrafGlobalTopic(str, sizeof(str));
         if (strlen(str) > 0)
         {
-            Serial.print(SerialCommandStr[SerialManagerCommand_SET_MQTT_TELEGRAF_TOPIC]);
+            Serial.print(CUSTOM_SERIAL_COMMANDS[CUSTOM_SERIAL_COMMAND_INDEX_SET_MQTT_TELEGRAF_GLOBAL_TOPIC]);
             Serial.println(str);
         }
         tmpUint64 = settings->getMaxDownloadBandwidthBytes();
         if (tmpUint64 > 0)
         {
-            Serial.print(SerialCommandStr[SerialManagerCommand_SET_MAX_DOWNLOAD_BYTES_BANDWIDTH]);
+            Serial.print(CUSTOM_SERIAL_COMMANDS[CUSTOM_SERIAL_COMMAND_INDEX_SET_MAX_DOWNLOAD_BYTES_BANDWITH]);
             Serial.println(tmpUint64);
         }
         tmpUint64 = settings->getMaxUploadBandwidthBytes();
         if (tmpUint64 > 0)
         {
-            Serial.print(SerialCommandStr[SerialManagerCommand_SET_MAX_UPLOAD_BYTES_BANDWIDTH]);
+            Serial.print(CUSTOM_SERIAL_COMMANDS[CUSTOM_SERIAL_COMMAND_INDEX_SET_MAX_UPLOAD_BYTES_BANDWITH]);
             Serial.println(tmpUint64);
         }
         settings->getNetworkInterfaceId(str, sizeof(str));
         if (strlen(str) > 0)
         {
-            Serial.print(SerialCommandStr[SerialManagerCommand_SET_NETWORK_INTERFACE_ID]);
+            Serial.print(CUSTOM_SERIAL_COMMANDS[CUSTOM_SERIAL_COMMAND_INDEX_SET_NETWORK_INTERFACE_ID]);
             Serial.println(str);
         }
         settings->getHostname(str, sizeof(str));
         if (strlen(str) > 0)
         {
-            Serial.print(SerialCommandStr[SerialManagerCommand_SET_HOSTNAME]);
+            Serial.print(CUSTOM_SERIAL_COMMANDS[CUSTOM_SERIAL_COMMAND_INDEX_SET_HOSTNAME]);
             Serial.println(str);
         }
         tmpUint8 = settings->getDefaultScreen();
         if (tmpUint8 > 0)
         {
-            Serial.print(SerialCommandStr[SerialManagerCommand_SET_DEFAULT_SCREEN]);
+            Serial.print(CUSTOM_SERIAL_COMMANDS[CUSTOM_SERIAL_COMMAND_INDEX_SET_DEFAULT_SCREEN]);
             Serial.println(tmpUint8);
         }
         if (settings->getScreenMirrorFlipVertical())
         {
-            Serial.print(SerialCommandStr[SerialManagerCommand_SET_SCREEN_MIRROR_FLIP_VERTICAL]);
+            Serial.print(CUSTOM_SERIAL_COMMANDS[CUSTOM_SERIAL_COMMAND_INDEX_SET_SCREEN_MIRROR_FLIP_VERTICAL]);
             Serial.println("true");
         }
         Serial.println("REBOOT");
         Serial.println("# EXPORTED SETTINGS END");
         break;
-    case SerialManagerCommand_CONNECT_WIFI:
+    case CUSTOM_SERIAL_COMMAND_INDEX_CONNECT_WIFI:
         Serial.println("Serial command received: connect WiFi");
         WiFiManager::connect(false);
         break;
-    case SerialManagerCommand_DISCONNECT_WIFI:
+    case CUSTOM_SERIAL_COMMAND_INDEX_DISCONNECT_WIFI:
         Serial.println("Serial command received: disconnect WiFi");
         WiFiManager::disconnect();
         break;
-    case SerialManagerCommand_SET_WIFI_SSID:
+    case CUSTOM_SERIAL_COMMAND_INDEX_SET_WIFI_SSID:
         if (value && strlen(value))
         {
             Serial.printf("Serial command received: set WiFi SSID (%s)\n", value);
@@ -245,7 +292,7 @@ void onReceivedSerialCommand(SerialManagerCommand cmd, const char *value)
             }
         }
         break;
-    case SerialManagerCommand_SET_WIFI_PASSWORD:
+    case CUSTOM_SERIAL_COMMAND_INDEX_SET_WIFI_PASSWORD:
         if (value && strlen(value))
         {
             Serial.printf("Serial command received: set WiFi password (%s)\n", value);
@@ -271,7 +318,7 @@ void onReceivedSerialCommand(SerialManagerCommand cmd, const char *value)
             }
         }
         break;
-    case SerialManagerCommand_SET_MQTT_TELEGRAF_URI:
+    case CUSTOM_SERIAL_COMMAND_INDEX_SET_MQTT_TELEGRAF_URI:
         if (value && strlen(value))
         {
             Serial.printf("Serial command received: set MQTT Telegraf URI (%s)\n", value);
@@ -297,7 +344,7 @@ void onReceivedSerialCommand(SerialManagerCommand cmd, const char *value)
             }
         }
         break;
-    case SerialManagerCommand_SET_MQTT_USERNAME:
+    case CUSTOM_SERIAL_COMMAND_INDEX_SET_MQTT_USERNAME:
         if (value && strlen(value))
         {
             Serial.printf("Serial command received: set MQTT username (%s)\n", value);
@@ -323,7 +370,7 @@ void onReceivedSerialCommand(SerialManagerCommand cmd, const char *value)
             }
         }
         break;
-    case SerialManagerCommand_SET_MQTT_PASSWORD:
+    case CUSTOM_SERIAL_COMMAND_INDEX_SET_MQTT_PASSWORD:
         if (value && strlen(value))
         {
             Serial.printf("Serial command received: set MQTT password (%s)\n", value);
@@ -349,7 +396,7 @@ void onReceivedSerialCommand(SerialManagerCommand cmd, const char *value)
             }
         }
         break;
-    case SerialManagerCommand_SET_MQTT_TELEGRAF_TOPIC:
+    case CUSTOM_SERIAL_COMMAND_INDEX_SET_MQTT_TELEGRAF_GLOBAL_TOPIC:
         if (value && strlen(value))
         {
             Serial.printf("Serial command received: set MQTT Telegraf global topic (%s)\n", value);
@@ -375,13 +422,13 @@ void onReceivedSerialCommand(SerialManagerCommand cmd, const char *value)
             }
         }
         break;
-    case SerialManagerCommand_TOGGLE_SCREEN:
+    case CUSTOM_SERIAL_COMMAND_INDEX_TOGGLE_SCREEN:
         if (screen != nullptr)
         {
             screen->toggleScreen();
         }
         break;
-    case SerialManagerCommand_SET_MAX_DOWNLOAD_BYTES_BANDWIDTH:
+    case CUSTOM_SERIAL_COMMAND_INDEX_SET_MAX_DOWNLOAD_BYTES_BANDWITH:
         if (value && strlen(value))
         {
             Serial.printf("Serial command received: set max download bandwidth bytes (%s)\n", value);
@@ -407,7 +454,7 @@ void onReceivedSerialCommand(SerialManagerCommand cmd, const char *value)
             }
         }
         break;
-    case SerialManagerCommand_SET_MAX_UPLOAD_BYTES_BANDWIDTH:
+    case CUSTOM_SERIAL_COMMAND_INDEX_SET_MAX_UPLOAD_BYTES_BANDWITH:
         if (value && strlen(value))
         {
             Serial.printf("Serial command received: set max upload bandwidth bytes (%s)\n", value);
@@ -433,7 +480,7 @@ void onReceivedSerialCommand(SerialManagerCommand cmd, const char *value)
             }
         }
         break;
-    case SerialManagerCommand_SET_NETWORK_INTERFACE_ID:
+    case CUSTOM_SERIAL_COMMAND_INDEX_SET_NETWORK_INTERFACE_ID:
         if (value && strlen(value))
         {
             Serial.printf("Serial command received: set network interface id (%s)\n", value);
@@ -459,7 +506,7 @@ void onReceivedSerialCommand(SerialManagerCommand cmd, const char *value)
             }
         }
         break;
-    case SerialManagerCommand_SET_HOSTNAME:
+    case CUSTOM_SERIAL_COMMAND_INDEX_SET_HOSTNAME:
         if (value && strlen(value))
         {
             Serial.printf("Serial command received: set hostname (%s)\n", value);
@@ -485,7 +532,7 @@ void onReceivedSerialCommand(SerialManagerCommand cmd, const char *value)
             }
         }
         break;
-    case SerialManagerCommand_SET_SCREEN_MIRROR_FLIP_VERTICAL:
+    case CUSTOM_SERIAL_COMMAND_INDEX_SET_SCREEN_MIRROR_FLIP_VERTICAL:
         if (value && strlen(value))
         {
             Serial.printf("Serial command received: set screen mirror flip vertical flag (%s)\n", value);
@@ -511,7 +558,7 @@ void onReceivedSerialCommand(SerialManagerCommand cmd, const char *value)
             }
         }
         break;
-    case SerialManagerCommand_SET_DEFAULT_SCREEN:
+    case CUSTOM_SERIAL_COMMAND_INDEX_SET_DEFAULT_SCREEN:
         if (value && strlen(value))
         {
             Serial.printf("Serial command received: set default screen (%s)\n", value);
@@ -537,6 +584,7 @@ void onReceivedSerialCommand(SerialManagerCommand cmd, const char *value)
             }
         }
         break;
+    case CUSTOM_SERIAL_COMMAND_INDEX_UNKNOWN:
     default:
         Serial.println("Serial command received (UNKNOWN):");
         if (value)
@@ -550,7 +598,7 @@ void onReceivedSerialCommand(SerialManagerCommand cmd, const char *value)
 void setup()
 {
     //  TODO: default info screen if no valid settings found
-    SerialManager::init(SerialManager::DEFAULT_SPEED, onReceivedSerialCommand);
+    SerialManager::init(SerialManager::DEFAULT_SPEED);
     Serial.println("Starting esp32-server-dashboard");
 
     settings = new CustomSettings();
@@ -588,7 +636,8 @@ void setup()
 
 void loop()
 {
-    SerialManager::loop();
+    // SerialManager::loop();
+    SerialManager::loop(CUSTOM_SERIAL_COMMANDS, CUSTOM_SERIAL_COMMAND_COUNT, onReceivedSerialCommand);
     WiFiManager::loop();
 #ifdef SOURCE_DUMMY
     dummySRC->refresh(SOURCE_DUMMY_UPDATES_EVERY_MS);
