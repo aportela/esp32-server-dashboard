@@ -7,17 +7,21 @@
 
 using namespace aportela::microcontroller::utils;
 
+#define WINDOWS
+
 class MQTTTelegrafSource : public Source
 {
 private:
     static char cpuTopic[MAX_MQTT_TOPIC_LENGTH];
     static char memoryTopic[MAX_MQTT_TOPIC_LENGTH];
+    static char sensorsTopic[MAX_MQTT_TOPIC_LENGTH];
     static char temperatureTopic[MAX_MQTT_TOPIC_LENGTH];
     static char systemTopic[MAX_MQTT_TOPIC_LENGTH];
     static char networkTopic[MAX_MQTT_TOPIC_LENGTH];
     static char networkInterfaceId[MAX_NETWORK_INTERFACE_ID_LENGTH];
     static MQTTTelegrafSource *instance;
-    static bool generateTopic(const char *baseTopic, char *buffer, size_t buffer_size, const char *suffix);
+    static bool generateTopic(const char *baseTopic, char *buffer, size_t bufferSize, const char *suffix);
+    static bool getPayloadTokenWithValue(const char *payload, const char *separator, const char *tokenName, char *buffer, size_t bufferSize);
     static void onMessageReceived(const char *topic, const char *payload);
 
 public:
