@@ -510,13 +510,20 @@ void onReceivedSerialCommand(int8_t commandIndex, const char *value)
         if (value && strlen(value))
         {
             Serial.printf("Serial command received: set hostname (%s)\n", value);
-            if (settings->setHostname(value))
+            if (strlen(value) < SourceData::MAX_HOSTNAME_LENGTH + 1)
             {
-                Serial.println("Hostname saved. Reboot REQUIRED");
+                if (settings->setHostname(value))
+                {
+                    Serial.println("Hostname saved. Reboot REQUIRED");
+                }
+                else
+                {
+                    Serial.println("Error saving hostname");
+                }
             }
             else
             {
-                Serial.println("Error saving hostname");
+                Serial.printf("Invalid hostname (max length %d)\n", SourceData::MAX_HOSTNAME_LENGTH);
             }
         }
         else
