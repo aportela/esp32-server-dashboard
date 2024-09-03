@@ -12,16 +12,16 @@ namespace aportela::microcontroller::utils
     const char *const ShortBandwidthByteUnits[] = {"B/s", "KB/s", "MB/s", "GB/s", "TB/s", "PB/s", "EB/s"};
     const char *const LongBandwidthByteUnits[] = {"Bytes/seg", "KBytes/seg", "MBytes/seg", "GBytes/seg", "TBytes/seg", "PBytes/seg", "EBytes/seg"};
 
-    void Format::parseFloatIntoCharArray(float value, uint8_t decimalCount, uint8_t leftZeroPaddingCount, char *buffer, size_t buffer_size)
+    void Format::parseFloatIntoCharArray(float value, uint8_t decimalCount, uint8_t leftZeroPaddingCount, char *buffer, size_t bufferSize)
     {
         char strDecimalValue[32] = {'\0'};
         std::snprintf(strDecimalValue, sizeof(strDecimalValue), "%.2f", value); // set 2 decimals
         char format[8] = {'\0'};
         std::snprintf(format, sizeof(format), "%%0%us", leftZeroPaddingCount); // set dynamic format left zero padding
-        std::snprintf(buffer, buffer_size, format, strDecimalValue);           // set left zero padding
+        std::snprintf(buffer, bufferSize, format, strDecimalValue);            // set left zero padding
     }
 
-    void Format::bytesToHumanStr(uint64_t bytes, char *buffer, size_t buffer_size, bool zeroPadding, bool shortUnits, bool bandwidthUnits, KILO_BYTE_DIVISOR kByteDivisorUnit)
+    void Format::bytesToHumanStr(uint64_t bytes, char *buffer, size_t bufferSize, bool zeroPadding, bool shortUnits, bool bandwidthUnits, KILO_BYTE_DIVISOR kByteDivisorUnit)
     {
         if (bytes > 0)
         {
@@ -33,16 +33,16 @@ namespace aportela::microcontroller::utils
                 currentUnitIndex++;
             }
             const char *byteUnitStr = (shortUnits ? (bandwidthUnits ? ShortBandwidthByteUnits : ShortByteUnits) : (bandwidthUnits ? LongBandwidthByteUnits : LongByteUnits))[currentUnitIndex];
-            std::snprintf(buffer, buffer_size, zeroPadding ? "%04" PRIu64 "%s" : "%" PRIu64 "%s", tmpBytes, byteUnitStr);
+            std::snprintf(buffer, bufferSize, zeroPadding ? "%04" PRIu64 "%s" : "%" PRIu64 "%s", tmpBytes, byteUnitStr);
         }
         else
         {
             const char *minByteUnitStr = (shortUnits ? (bandwidthUnits ? ShortBandwidthByteUnits : ShortByteUnits) : (bandwidthUnits ? LongBandwidthByteUnits : LongByteUnits))[0];
-            std::snprintf(buffer, buffer_size, zeroPadding ? "0000%s" : "0%s", minByteUnitStr);
+            std::snprintf(buffer, bufferSize, zeroPadding ? "0000%s" : "0%s", minByteUnitStr);
         }
     }
 
-    void Format::millisToHumanStr(uint64_t millis_diff, char *buffer, size_t buffer_size)
+    void Format::millisToHumanStr(uint64_t millis_diff, char *buffer, size_t bufferSize)
     {
         static const uint64_t millis_in_second = 1000;
         static const uint64_t millis_in_minute = millis_in_second * 60;
@@ -85,6 +85,6 @@ namespace aportela::microcontroller::utils
             unit = (time >= 2) ? "secs" : "sec";
         }
 
-        std::snprintf(buffer, buffer_size, "%.1f %s", time, unit);
+        std::snprintf(buffer, bufferSize, "%.1f %s", time, unit);
     }
 }
