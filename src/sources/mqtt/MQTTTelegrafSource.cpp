@@ -27,14 +27,14 @@ MQTTTelegrafSource::MQTTTelegrafSource(SourceData *sourceData, const char *uri, 
     Serial.println("topic: ");
     Serial.println(topic);
 #endif
-    MQTT::OnMessageReceived(MQTTTelegrafSource::onMessageReceived);
+    MQTT::OnMessageReceived(MQTTTelegrafSource::OnMessageReceived);
     MQTT::Init(clientId, uri, topic, username, password);
-    MQTTTelegrafSource::generateTopic(topic, MQTTTelegrafSource::cpuTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/cpu");
-    MQTTTelegrafSource::generateTopic(topic, MQTTTelegrafSource::memoryTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/mem");
-    MQTTTelegrafSource::generateTopic(topic, MQTTTelegrafSource::sensorsTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/sensors");
-    MQTTTelegrafSource::generateTopic(topic, MQTTTelegrafSource::temperatureTopic, sizeof(MQTTTelegrafSource::temperatureTopic), "/temp");
-    MQTTTelegrafSource::generateTopic(topic, MQTTTelegrafSource::systemTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/system");
-    MQTTTelegrafSource::generateTopic(topic, MQTTTelegrafSource::networkTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/net");
+    MQTTTelegrafSource::GenerateTopic(topic, MQTTTelegrafSource::cpuTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/cpu");
+    MQTTTelegrafSource::GenerateTopic(topic, MQTTTelegrafSource::memoryTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/mem");
+    MQTTTelegrafSource::GenerateTopic(topic, MQTTTelegrafSource::sensorsTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/sensors");
+    MQTTTelegrafSource::GenerateTopic(topic, MQTTTelegrafSource::temperatureTopic, sizeof(MQTTTelegrafSource::temperatureTopic), "/temp");
+    MQTTTelegrafSource::GenerateTopic(topic, MQTTTelegrafSource::systemTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/system");
+    MQTTTelegrafSource::GenerateTopic(topic, MQTTTelegrafSource::networkTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/net");
 
     if (strlen(networkInterfaceId) > 0)
     {
@@ -61,7 +61,7 @@ MQTTTelegrafSource::~MQTTTelegrafSource()
 }
 
 // generate "sub-topic" from base topic (replace end "/#"" on base topic with suffix)
-bool MQTTTelegrafSource::generateTopic(const char *baseTopic, char *buffer, size_t bufferSize, const char *suffix)
+bool MQTTTelegrafSource::GenerateTopic(const char *baseTopic, char *buffer, size_t bufferSize, const char *suffix)
 {
     size_t baseTopicLength = strlen(baseTopic);
     size_t suffixLength = strlen(suffix);
@@ -86,7 +86,7 @@ bool MQTTTelegrafSource::generateTopic(const char *baseTopic, char *buffer, size
     }
 }
 
-bool MQTTTelegrafSource::getPayloadTokenWithValue(const char *payload, const char *separator, const char *tokenName, char *buffer, size_t bufferSize)
+bool MQTTTelegrafSource::GetPayloadTokenWithValue(const char *payload, const char *separator, const char *tokenName, char *buffer, size_t bufferSize)
 {
     char *newStr = strdup(payload);
     if (newStr == NULL)
@@ -113,7 +113,7 @@ bool MQTTTelegrafSource::getPayloadTokenWithValue(const char *payload, const cha
     return (false);
 }
 
-void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payload)
+void MQTTTelegrafSource::OnMessageReceived(const char *topic, const char *payload)
 {
 #ifdef DEBUG_MQTT_TELEGRAF
     Serial.print("Topic:");
@@ -157,7 +157,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
     char tokenWithValue[255] = {'\0'};
     if (strcmp(topic, MQTTTelegrafSource::cpuTopic) == 0 && strncmp(payload, "cpu,cpu=cpu-total", 17) == 0)
     {
-        if (MQTTTelegrafSource::getPayloadTokenWithValue(cleanPayloadPtr, ",", "usage_idle", tokenWithValue, sizeof(tokenWithValue)))
+        if (MQTTTelegrafSource::GetPayloadTokenWithValue(cleanPayloadPtr, ",", "usage_idle", tokenWithValue, sizeof(tokenWithValue)))
         {
             float usageIdle = 0.0;
             if (sscanf(tokenWithValue, "usage_idle=%f", &usageIdle) == 1)
@@ -181,13 +181,13 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
     }
     else if (strcmp(topic, MQTTTelegrafSource::memoryTopic) == 0)
     {
-        if (MQTTTelegrafSource::getPayloadTokenWithValue(cleanPayloadPtr, ",", "used", tokenWithValue, sizeof(tokenWithValue)))
+        if (MQTTTelegrafSource::GetPayloadTokenWithValue(cleanPayloadPtr, ",", "used", tokenWithValue, sizeof(tokenWithValue)))
         {
             uint64_t usedBytes = 0;
             if (sscanf(tokenWithValue, "used=%" PRIu64 "i", &usedBytes) == 1)
             {
                 uint64_t totalBytes = 0;
-                if (MQTTTelegrafSource::getPayloadTokenWithValue(cleanPayloadPtr, ",", "total", tokenWithValue, sizeof(tokenWithValue)))
+                if (MQTTTelegrafSource::GetPayloadTokenWithValue(cleanPayloadPtr, ",", "total", tokenWithValue, sizeof(tokenWithValue)))
                 {
                     if (sscanf(tokenWithValue, "total=%" PRIu64 "i", &totalBytes) == 1)
                     {
@@ -223,9 +223,9 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
     }
     else if (strcmp(topic, MQTTTelegrafSource::sensorsTopic) == 0)
     {
-        if (MQTTTelegrafSource::getPayloadTokenWithValue(payload, ",", "feature", tokenWithValue, sizeof(tokenWithValue)) && strncmp(tokenWithValue, "feature=package_id_0", 20) == 0)
+        if (MQTTTelegrafSource::GetPayloadTokenWithValue(payload, ",", "feature", tokenWithValue, sizeof(tokenWithValue)) && strncmp(tokenWithValue, "feature=package_id_0", 20) == 0)
         {
-            if (MQTTTelegrafSource::getPayloadTokenWithValue(cleanPayloadPtr, ",", "temp_input", tokenWithValue, sizeof(tokenWithValue)))
+            if (MQTTTelegrafSource::GetPayloadTokenWithValue(cleanPayloadPtr, ",", "temp_input", tokenWithValue, sizeof(tokenWithValue)))
             {
                 float temp = 0;
                 if (sscanf(tokenWithValue, "temp_input=%f", &temp) == 1)
@@ -255,7 +255,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
     }
     else if (strcmp(topic, MQTTTelegrafSource::temperatureTopic) == 0)
     {
-        if (MQTTTelegrafSource::getPayloadTokenWithValue(cleanPayloadPtr, ",", "temp", tokenWithValue, sizeof(tokenWithValue)))
+        if (MQTTTelegrafSource::GetPayloadTokenWithValue(cleanPayloadPtr, ",", "temp", tokenWithValue, sizeof(tokenWithValue)))
         {
             float temp = 0;
             if (sscanf(tokenWithValue, "temp=%f", &temp) == 1)
@@ -278,7 +278,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
     }
     else if (strcmp(topic, MQTTTelegrafSource::systemTopic) == 0)
     {
-        if (MQTTTelegrafSource::getPayloadTokenWithValue(cleanPayloadPtr, ",", "uptime", tokenWithValue, sizeof(tokenWithValue)))
+        if (MQTTTelegrafSource::GetPayloadTokenWithValue(cleanPayloadPtr, ",", "uptime", tokenWithValue, sizeof(tokenWithValue)))
         {
             uint64_t uptime = 0;
             // WARNING: (BEFORE REPORTING BUG) WINDOWS REPORTS "INVALID" UPTIME IF YOU ARE USING "FAST STARTUP" SO IF YOUR SERVER UPTIME SEEMS TO BE WRONG CHECK IF YOU HAVE THIS FEATURE ENABLED
@@ -308,7 +308,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
         std::snprintf(payloadSearchStr, sizeof(payloadSearchStr), "interface=%s", MQTTTelegrafSource::networkInterfaceId);
         if (strstr(payload, payloadSearchStr))
         {
-            if (MQTTTelegrafSource::getPayloadTokenWithValue(cleanPayloadPtr, ",", "bytes_recv", tokenWithValue, sizeof(tokenWithValue)))
+            if (MQTTTelegrafSource::GetPayloadTokenWithValue(cleanPayloadPtr, ",", "bytes_recv", tokenWithValue, sizeof(tokenWithValue)))
             {
                 uint64_t bytesRecv = 0;
                 if (sscanf(tokenWithValue, "bytes_recv=%" PRIu64 "i", &bytesRecv) == 1)
@@ -328,7 +328,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
                 Serial.println("Error parsing network received bytes value (token not found)");
 #endif
             }
-            if (MQTTTelegrafSource::getPayloadTokenWithValue(cleanPayloadPtr, ",", "bytes_sent", tokenWithValue, sizeof(tokenWithValue)))
+            if (MQTTTelegrafSource::GetPayloadTokenWithValue(cleanPayloadPtr, ",", "bytes_sent", tokenWithValue, sizeof(tokenWithValue)))
             {
                 uint64_t bytesSent = 0;
                 if (sscanf(tokenWithValue, "bytes_sent=%" PRIu64 "i", &bytesSent) == 1)

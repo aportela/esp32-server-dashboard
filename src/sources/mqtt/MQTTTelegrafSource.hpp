@@ -20,9 +20,9 @@ private:
     static char networkTopic[MAX_MQTT_TOPIC_LENGTH];
     static char networkInterfaceId[MAX_NETWORK_INTERFACE_ID_LENGTH];
     static MQTTTelegrafSource *instance;
-    static bool generateTopic(const char *baseTopic, char *buffer, size_t bufferSize, const char *suffix);
-    static bool getPayloadTokenWithValue(const char *payload, const char *separator, const char *tokenName, char *buffer, size_t bufferSize);
-    static void onMessageReceived(const char *topic, const char *payload);
+    static bool GenerateTopic(const char *baseTopic, char *buffer, size_t bufferSize, const char *suffix);
+    static bool GetPayloadTokenWithValue(const char *payload, const char *separator, const char *tokenName, char *buffer, size_t bufferSize);
+    static void OnMessageReceived(const char *topic, const char *payload);
 
 public:
     MQTTTelegrafSource(SourceData *sourceData, const char *uri, const char *clientId, const char *topic, const char *networkInterfaceId, const char *username = nullptr, const char *password = nullptr);
