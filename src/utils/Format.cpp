@@ -1,22 +1,30 @@
 #include "Format.hpp"
 #include <cinttypes>
 
-#define BYTE_UNITS_SIZE 7 // next const arrays size
-
 namespace aportela::microcontroller::utils
 {
+#define BYTE_UNITS_SIZE 7 // next const arrays size
     const char *const SHORT_BYTE_UNITS[] = {"B", "KB", "MB", "GB", "TB", "PB", "EB"};
     const char *const LONG_BYTE_UNITS[] = {"Bytes", "KBytes", "MBytes", "GBytes", "TBytes", "PBytes", "EBytes"};
     const char *const SHORT_BANDWITH_BYTE_UNITS[] = {"B/s", "KB/s", "MB/s", "GB/s", "TB/s", "PB/s", "EB/s"};
     const char *const LONG_BANDWITH_BYTE_UNITS[] = {"Bytes/seg", "KBytes/seg", "MBytes/seg", "GBytes/seg", "TBytes/seg", "PBytes/seg", "EBytes/seg"};
 
-    void Format::ParseFloatToString(float value, char *buffer, size_t bufferSize, uint8_t decimalCount, uint8_t leftZeroPaddingCount)
+    void Format::ParseFloatToString(float value, char *buffer, size_t bufferSize, uint8_t decimalCount, uint8_t leftZeroPaddingToCharCount)
     {
+        char decimalFormatPattern[8] = {'\0'};
+        std::snprintf(decimalFormatPattern, sizeof(decimalFormatPattern), "%%.%df", decimalCount); // => %.2f (for 2 decimals)
         char strDecimalValue[32] = {'\0'};
-        std::snprintf(strDecimalValue, sizeof(strDecimalValue), "%.2f", value); // set 2 decimals
-        char format[8] = {'\0'};
-        std::snprintf(format, sizeof(format), "%%0%us", leftZeroPaddingCount); // set dynamic format left zero padding
-        std::snprintf(buffer, bufferSize, format, strDecimalValue);            // set left zero padding
+        std::snprintf(strDecimalValue, sizeof(strDecimalValue), decimalFormatPattern, value); // => 24.96 (for previous 2 decimal format on float value = 24.96102)
+        if (leftZeroPaddingToCharCount > 0)
+        {
+            char finalFormatWithZeroPadding[8] = {'\0'};
+            std::snprintf(finalFormatWithZeroPadding, sizeof(finalFormatWithZeroPadding), "%%0%us", leftZeroPaddingToCharCount); // => %06s (for 6 total chars with left zero padding)
+            std::snprintf(buffer, bufferSize, finalFormatWithZeroPadding, strDecimalValue);                                      // => 024.96 (for previous "24.96" plus left zero padding to 6 chars)
+        }
+        else
+        {
+            std::snprintf(buffer, bufferSize, "%s", strDecimalValue);
+        }
     }
 
     void Format::ParseBytesToHumanString(uint64_t bytes, char *buffer, size_t bufferSize, bool zeroPadding, bool shortUnits, bool bandwidthUnits, KILO_BYTE_DIVISOR kByteDivisorUnit)
