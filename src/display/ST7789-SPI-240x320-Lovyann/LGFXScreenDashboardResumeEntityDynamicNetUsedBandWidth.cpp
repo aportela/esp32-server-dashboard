@@ -53,7 +53,7 @@ bool LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth::refresh(bool force)
         if (changeScaleRequired)
         {
             char currentStrScale[sizeof(this->oldStrValue)] = {'\0'};
-            Format::bytesToHumanStr(this->byteScales[this->currentByteScale], currentStrScale, sizeof(currentStrScale), true, true, false);
+            Format::ParseBytesToHumanString(this->byteScales[this->currentByteScale], currentStrScale, sizeof(currentStrScale), true, true, false);
             strcat(currentStrScale, " ");
             this->printLimits("0B", currentStrScale);
             this->clearSprite();
@@ -68,7 +68,7 @@ bool LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth::refresh(bool force)
                 if (i == this->dynamicScaleValuesFIFO->getCount() - 1 && (this->dynamicScaleValuesFIFO->getValueAt(index) != this->value) || force)
                 {
                     char strValue[sizeof(this->oldStrValue)] = {'\0'};
-                    Format::bytesToHumanStr(this->dynamicScaleValuesFIFO->getValueAt(index), strValue, sizeof(strValue), true, true, true);
+                    Format::ParseBytesToHumanString(this->dynamicScaleValuesFIFO->getValueAt(index), strValue, sizeof(strValue), true, true, true);
                     strcat(strValue, "  ");
                     this->refreshStrValue(strValue, currentGradientColor, LGFX_SCR_DRE_FONT_BG_COLOR);
                     this->value = this->dynamicScaleValuesFIFO->getValueAt(index);
@@ -88,7 +88,7 @@ bool LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth::refresh(bool force)
             if (currentValue != this->value || force)
             {
                 char strValue[sizeof(this->oldStrValue)] = {'\0'};
-                Format::bytesToHumanStr(currentValue, strValue, sizeof(strValue), true, true, true);
+                Format::ParseBytesToHumanString(currentValue, strValue, sizeof(strValue), true, true, true);
                 strcat(strValue, "  ");
                 if (strcmp(strValue, this->oldStrValue) != 0 || force)
                 {

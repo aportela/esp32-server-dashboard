@@ -27,7 +27,7 @@ bool LGFXScreenDashboardResumeEntityUsedMemory::refresh(bool force)
             this->realTotalMemory = data.totalBytes;
             // redraw limits
             char maxStr[6] = {'\0'};
-            Format::bytesToHumanStr(this->realTotalMemory, maxStr, sizeof(maxStr), false, true, false);
+            Format::ParseBytesToHumanString(this->realTotalMemory, maxStr, sizeof(maxStr), false, true, false);
             this->printLimits("0B", maxStr);
         }
         uint8_t mapped100 = this->mapUint64ValueFrom0To100(data.usedBytes, 0, data.totalBytes);
@@ -37,7 +37,7 @@ bool LGFXScreenDashboardResumeEntityUsedMemory::refresh(bool force)
         if (data.usedBytes != this->value || force)
         {
             char strValue[sizeof(this->oldStrValue)] = {'\0'};
-            Format::bytesToHumanStr(data.usedBytes, strValue, sizeof(strValue), true, true, false);
+            Format::ParseBytesToHumanString(data.usedBytes, strValue, sizeof(strValue), true, true, false);
             strcat(strValue, "  ");
             if (strcmp(strValue, this->oldStrValue) != 0 || force)
             {

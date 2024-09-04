@@ -6,24 +6,24 @@
 
 namespace aportela::microcontroller::utils
 {
-    extern const char *const ShortByteUnits[];
-    extern const char *const LongByteUnits[];
-    extern const char *const ShortBandwidthByteUnits[];
-    extern const char *const LongBandwidthByteUnits[];
+    extern const char *const SHORT_BYTE_UNITS[];
+    extern const char *const LONG_BYTE_UNITS[];
+    extern const char *const SHORT_BANDWITH_BYTE_UNITS[];
+    extern const char *const LONG_BANDWITH_BYTE_UNITS[];
 
     enum KILO_BYTE_DIVISOR
     {
-        KBD_1024 = 1024,
-        KBD_1000 = 1000
+        KILO_BYTE_DIVISOR_1024 = 1024,
+        KILO_BYTE_DIVISOR_1000 = 1000
     };
 
     class Format
     {
     private:
     public:
-        static void parseFloatIntoCharArray(float value, uint8_t decimalCount, uint8_t leftZeroPaddingCount, char *buffer, size_t bufferSize);
-        static void bytesToHumanStr(uint64_t bytes, char *buffer, size_t bufferSize, bool zeroPadding = false, bool shortUnits = false, bool bandwidthUnits = false, KILO_BYTE_DIVISOR kByteDivisorUnit = KBD_1024);
-        static void millisToHumanStr(uint64_t millisDiff, char *buffer, size_t bufferSize);
+        static void ParseFloatToString(float value, uint8_t decimalCount, uint8_t leftZeroPaddingCount, char *buffer, size_t bufferSize);
+        static void ParseBytesToHumanString(uint64_t bytes, char *buffer, size_t bufferSize, bool zeroPadding = false, bool shortUnits = false, bool bandwidthUnits = false, KILO_BYTE_DIVISOR kByteDivisorUnit = KILO_BYTE_DIVISOR_1024);
+        static void ParseMillisToHumanString(uint64_t millisDiff, char *buffer, size_t bufferSize);
     };
 }
 

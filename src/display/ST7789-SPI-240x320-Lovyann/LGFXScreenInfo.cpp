@@ -238,7 +238,7 @@ bool LGFXScreenInfo::refreshCommonData(bool forceDrawAll)
         this->parentDisplay->print(" RUN ");
     }
     char str[sizeof(this->previousRuntimeStr)];
-    Format::millisToHumanStr(millis(), str, sizeof(this->previousRuntimeStr));
+    Format::ParseMillisToHumanString(millis(), str, sizeof(this->previousRuntimeStr));
     if (forceDrawAll || strcmp(str, this->previousRuntimeStr) != 0)
     {
         this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_VALUE_X_OFFSET, 220);

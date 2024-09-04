@@ -120,7 +120,7 @@ bool LGFXScreenDashboardResume::refreshBottomCommonData(bool forceDrawAll)
     if (data.seconds > 0)
     {
         char str[sizeof(this->previousUptimeStr)];
-        Format::millisToHumanStr(data.seconds * 1000, str, sizeof(this->previousUptimeStr));
+        Format::ParseMillisToHumanString(data.seconds * 1000, str, sizeof(this->previousUptimeStr));
         if (forceDrawAll || strcmp(str, this->previousUptimeStr) != 0)
         {
             this->parentDisplay->setFont(SCREEN_BOTTOM_COMMON_TEXTDATA_FONT);

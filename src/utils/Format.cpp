@@ -7,12 +7,12 @@
 
 namespace aportela::microcontroller::utils
 {
-    const char *const ShortByteUnits[] = {"B", "KB", "MB", "GB", "TB", "PB", "EB"};
-    const char *const LongByteUnits[] = {"Bytes", "KBytes", "MBytes", "GBytes", "TBytes", "PBytes", "EBytes"};
-    const char *const ShortBandwidthByteUnits[] = {"B/s", "KB/s", "MB/s", "GB/s", "TB/s", "PB/s", "EB/s"};
-    const char *const LongBandwidthByteUnits[] = {"Bytes/seg", "KBytes/seg", "MBytes/seg", "GBytes/seg", "TBytes/seg", "PBytes/seg", "EBytes/seg"};
+    const char *const SHORT_BYTE_UNITS[] = {"B", "KB", "MB", "GB", "TB", "PB", "EB"};
+    const char *const LONG_BYTE_UNITS[] = {"Bytes", "KBytes", "MBytes", "GBytes", "TBytes", "PBytes", "EBytes"};
+    const char *const SHORT_BANDWITH_BYTE_UNITS[] = {"B/s", "KB/s", "MB/s", "GB/s", "TB/s", "PB/s", "EB/s"};
+    const char *const LONG_BANDWITH_BYTE_UNITS[] = {"Bytes/seg", "KBytes/seg", "MBytes/seg", "GBytes/seg", "TBytes/seg", "PBytes/seg", "EBytes/seg"};
 
-    void Format::parseFloatIntoCharArray(float value, uint8_t decimalCount, uint8_t leftZeroPaddingCount, char *buffer, size_t bufferSize)
+    void Format::ParseFloatToString(float value, uint8_t decimalCount, uint8_t leftZeroPaddingCount, char *buffer, size_t bufferSize)
     {
         char strDecimalValue[32] = {'\0'};
         std::snprintf(strDecimalValue, sizeof(strDecimalValue), "%.2f", value); // set 2 decimals
@@ -21,7 +21,7 @@ namespace aportela::microcontroller::utils
         std::snprintf(buffer, bufferSize, format, strDecimalValue);            // set left zero padding
     }
 
-    void Format::bytesToHumanStr(uint64_t bytes, char *buffer, size_t bufferSize, bool zeroPadding, bool shortUnits, bool bandwidthUnits, KILO_BYTE_DIVISOR kByteDivisorUnit)
+    void Format::ParseBytesToHumanString(uint64_t bytes, char *buffer, size_t bufferSize, bool zeroPadding, bool shortUnits, bool bandwidthUnits, KILO_BYTE_DIVISOR kByteDivisorUnit)
     {
         if (bytes > 0)
         {
@@ -32,17 +32,17 @@ namespace aportela::microcontroller::utils
                 tmpBytes /= kByteDivisorUnit;
                 currentUnitIndex++;
             }
-            const char *byteUnitStr = (shortUnits ? (bandwidthUnits ? ShortBandwidthByteUnits : ShortByteUnits) : (bandwidthUnits ? LongBandwidthByteUnits : LongByteUnits))[currentUnitIndex];
+            const char *byteUnitStr = (shortUnits ? (bandwidthUnits ? SHORT_BANDWITH_BYTE_UNITS : SHORT_BYTE_UNITS) : (bandwidthUnits ? LONG_BANDWITH_BYTE_UNITS : LONG_BYTE_UNITS))[currentUnitIndex];
             std::snprintf(buffer, bufferSize, zeroPadding ? "%04" PRIu64 "%s" : "%" PRIu64 "%s", tmpBytes, byteUnitStr);
         }
         else
         {
-            const char *minByteUnitStr = (shortUnits ? (bandwidthUnits ? ShortBandwidthByteUnits : ShortByteUnits) : (bandwidthUnits ? LongBandwidthByteUnits : LongByteUnits))[0];
+            const char *minByteUnitStr = (shortUnits ? (bandwidthUnits ? SHORT_BANDWITH_BYTE_UNITS : SHORT_BYTE_UNITS) : (bandwidthUnits ? LONG_BANDWITH_BYTE_UNITS : LONG_BYTE_UNITS))[0];
             std::snprintf(buffer, bufferSize, zeroPadding ? "0000%s" : "0%s", minByteUnitStr);
         }
     }
 
-    void Format::millisToHumanStr(uint64_t millisDiff, char *buffer, size_t bufferSize)
+    void Format::ParseMillisToHumanString(uint64_t millisDiff, char *buffer, size_t bufferSize)
     {
         static const uint64_t totalMillisInSecond = 1000;
         static const uint64_t totalMillisInMinute = totalMillisInSecond * 60;
