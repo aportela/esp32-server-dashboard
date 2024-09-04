@@ -5,21 +5,20 @@
 
 namespace aportela::microcontroller::utils
 {
-
   /*
     WARNING: THIS IS NOT A "REAL FPS DATA", ONLY AN APROXIMATTION DATA FOR BENCH & OPTIMIZE CODE FOR MAX SCREEN UPDATES
   */
   class FPS
   {
-  public:
-    static void Init(void);
-    static void Loop(uint16_t limit = 0);
-    static uint16_t GetFPS(void);
-
   private:
     static uint64_t frameCount;
     static uint64_t lastTime;
     static uint16_t fps;
+
+  public:
+    static void Init(void);
+    static void Loop(uint16_t limit = 0);
+    static uint16_t GetFPS(void);
   };
 }
 
