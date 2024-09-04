@@ -12,7 +12,7 @@ namespace aportela::microcontroller::utils
     const char *const SHORT_BANDWITH_BYTE_UNITS[] = {"B/s", "KB/s", "MB/s", "GB/s", "TB/s", "PB/s", "EB/s"};
     const char *const LONG_BANDWITH_BYTE_UNITS[] = {"Bytes/seg", "KBytes/seg", "MBytes/seg", "GBytes/seg", "TBytes/seg", "PBytes/seg", "EBytes/seg"};
 
-    void Format::ParseFloatToString(float value, uint8_t decimalCount, uint8_t leftZeroPaddingCount, char *buffer, size_t bufferSize)
+    void Format::ParseFloatToString(float value, char *buffer, size_t bufferSize, uint8_t decimalCount, uint8_t leftZeroPaddingCount)
     {
         char strDecimalValue[32] = {'\0'};
         std::snprintf(strDecimalValue, sizeof(strDecimalValue), "%.2f", value); // set 2 decimals

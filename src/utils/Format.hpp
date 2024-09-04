@@ -21,7 +21,7 @@ namespace aportela::microcontroller::utils
     {
     private:
     public:
-        static void ParseFloatToString(float value, uint8_t decimalCount, uint8_t leftZeroPaddingCount, char *buffer, size_t bufferSize);
+        static void ParseFloatToString(float value, char *buffer, size_t bufferSize, uint8_t decimalCount = 2, uint8_t leftZeroPaddingCount = 0);
         static void ParseBytesToHumanString(uint64_t bytes, char *buffer, size_t bufferSize, bool zeroPadding = false, bool shortUnits = false, bool bandwidthUnits = false, KILO_BYTE_DIVISOR kByteDivisorUnit = KILO_BYTE_DIVISOR_1024);
         static void ParseMillisToHumanString(uint64_t millisDiff, char *buffer, size_t bufferSize);
     };

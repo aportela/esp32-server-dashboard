@@ -35,7 +35,7 @@ bool LGFXScreenDashboardResumeEntityCPUTemperature::refresh(bool force)
         {
             char strValue[7] = {'\0'};
             // 3 chars for integer part (left zero padded) + 1 char for decimal point + 2 chars for decimals
-            Format::ParseFloatToString(data.celsious, 2, 6, strValue, sizeof(strValue));
+            Format::ParseFloatToString(data.celsious, strValue, sizeof(strValue), 2, 6);
             this->refreshStrValue(strValue, currentGradientColor, LGFX_SCR_DRE_FONT_BG_COLOR);
             this->value = data.celsious;
         }
