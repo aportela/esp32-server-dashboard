@@ -15,6 +15,7 @@ SourceData::SourceData(bool truncateOverflows, uint64_t totalNetworkDownloadBand
     this->networkingDownloadQueue = xQueueCreate(1, sizeof(SourceDataQueueNetworkingValue));
     this->networkingUploadQueue = xQueueCreate(1, sizeof(SourceDataQueueNetworkingValue));
     this->networkingLimitsQueue = xQueueCreate(1, sizeof(SourceDataQueueNetworkingLimitsValue));
+    this->fixedNetworkingLimits = totalNetworkDownloadBandwidthLimit > 0 && totalNetworkUploadBandwidthLimit > 0;
     this->setNetworkLimits(totalNetworkDownloadBandwidthLimit, totalNetworkUploadBandwidthLimit);
 }
 
@@ -27,6 +28,11 @@ SourceData::~SourceData()
     vQueueDelete(this->networkingDownloadQueue);
     vQueueDelete(this->networkingUploadQueue);
     vQueueDelete(this->networkingLimitsQueue);
+}
+
+bool SourceData::hasFixedNetworkingLimits(void)
+{
+    return (this->fixedNetworkingLimits);
 }
 
 bool SourceData::setHostname(const char *hostname)

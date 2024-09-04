@@ -63,6 +63,7 @@ class SourceData
 private:
     char hostname[HOSTNAME_ARR_LENGTH] = {'\0'};
     bool truncateOverflows = false;
+    bool fixedNetworkingLimits = false;
 
     QueueHandle_t cpuLoadQueue;
     QueueHandle_t usedMemoryQueue;
@@ -77,6 +78,8 @@ public:
 
     SourceData(bool truncateOverflows, uint64_t totalNetworkDownloadBandwidthLimit = 0, uint64_t totalNetworkUploadBandwidthLimit = 0);
     ~SourceData();
+
+    bool hasFixedNetworkingLimits(void);
 
     bool setHostname(const char *hostname);
     void getHostname(char *hostname, size_t count);
