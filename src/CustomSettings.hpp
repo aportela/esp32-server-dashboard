@@ -42,8 +42,8 @@ public:
     bool GetScreenMirrorFlipVertical();
     bool SetScreenMirrorFlipVertical(bool mirrorFlipVertical = false);
 
-    ScreenType GetDefaultScreen(ScreenType defaultScreen = ST_NONE);
-    bool SetDefaultScreen(ScreenType defaultScreen);
+    SCREEN_TYPE GetDefaultScreen(SCREEN_TYPE defaultScreen = SCREEN_TYPE_NONE);
+    bool SetDefaultScreen(SCREEN_TYPE defaultScreen);
 };
 
 #endif // ESP32_SERVER_DASHBOARD_CUSTOM_SETTINGS_H

@@ -569,7 +569,7 @@ void onReceivedSerialCommand(int8_t commandIndex, const char *value)
         if (value && strlen(value))
         {
             Serial.printf("Serial command received: set default screen (%s)\n", value);
-            if (settings->SetDefaultScreen((enum ScreenType)(uint8_t)strtoul(value, nullptr, 10)))
+            if (settings->SetDefaultScreen((enum SCREEN_TYPE)(uint8_t)strtoul(value, nullptr, 10)))
             {
                 Serial.println("Default screen saved. Reboot REQUIRED");
             }
@@ -581,7 +581,7 @@ void onReceivedSerialCommand(int8_t commandIndex, const char *value)
         else
         {
             Serial.println("Serial command received: unset default screen");
-            if (settings->SetDefaultScreen(ST_NONE))
+            if (settings->SetDefaultScreen(SCREEN_TYPE_NONE))
             {
                 Serial.println("Default screen removed. Reboot REQUIRED");
             }
@@ -633,7 +633,7 @@ void setup()
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     screen = new LGFX(PIN_SDA, PIN_SCL, PIN_CS, PIN_DC, PIN_RST, DISPLAY_DRIVER_LOVYANN_ST7789_WIDTH, DISPLAY_DRIVER_LOVYANN_ST7789_HEIGHT, !screenMirrorFlipVertical ? DISPLAY_DRIVER_LOVYANN_ST7789_ROTATION : DISPLAY_DRIVER_LOVYANN_ST7789_ROTATION_MIRROR_FLIP_VERTICAL);
     screen->setSourceData(sourceData);
-    screen->initScreen(settings->GetDefaultScreen(ST_INFO));
+    screen->initScreen(settings->GetDefaultScreen(SCREEN_TYPE_INFO));
 #endif // DISPLAY_DRIVER_LOVYANN_ST7789
     button = new Bounce2::Button();
     button->attach(PIN_BUTTON_SW, INPUT_PULLUP);

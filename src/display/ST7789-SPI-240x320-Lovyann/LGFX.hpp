@@ -15,7 +15,7 @@ private:
 
     SourceData *sourceData;
 
-    ScreenType currentScreenType = ST_NONE;
+    SCREEN_TYPE currentScreenType = SCREEN_TYPE_NONE;
 
     LGFXScreen *currentScreen = nullptr;
 
@@ -25,9 +25,9 @@ public:
     LGFX(uint8_t PIN_SDA, uint8_t PIN_SCL, uint8_t PIN_CS, uint8_t PIN_DC, uint8_t PIN_RST, uint16_t width, uint16_t height, uint8_t rotation);
     ~LGFX();
     void setSourceData(SourceData *src);
-    void initScreen(ScreenType scr);
-    ScreenType getCurrentScreenType(void);
-    bool flipToScreen(ScreenType scr);
+    void initScreen(SCREEN_TYPE scr);
+    SCREEN_TYPE getCurrentScreenType(void);
+    bool flipToScreen(SCREEN_TYPE scr);
     bool toggleScreen(void);
     bool refresh(void);
 };

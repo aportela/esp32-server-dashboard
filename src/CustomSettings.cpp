@@ -212,14 +212,14 @@ bool CustomSettings::SetScreenMirrorFlipVertical(bool mirrorFlipVertical)
     }
 }
 
-ScreenType CustomSettings::GetDefaultScreen(ScreenType defaultScreen)
+SCREEN_TYPE CustomSettings::GetDefaultScreen(SCREEN_TYPE defaultScreen)
 {
-    return ((enum ScreenType)this->GetSmallUnsignedIntegerValue(DEFAULT_SCREEN, (uint8_t)defaultScreen));
+    return ((enum SCREEN_TYPE)this->GetSmallUnsignedIntegerValue(DEFAULT_SCREEN, (uint8_t)defaultScreen));
 }
 
-bool CustomSettings::SetDefaultScreen(ScreenType defaultScreen)
+bool CustomSettings::SetDefaultScreen(SCREEN_TYPE defaultScreen)
 {
-    if (defaultScreen != ST_NONE)
+    if (defaultScreen != SCREEN_TYPE_NONE)
     {
         return (this->SetSmallUnsignedIntegerValue(DEFAULT_SCREEN, (uint8_t)defaultScreen));
     }

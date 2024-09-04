@@ -65,25 +65,25 @@ void LGFX::setSourceData(SourceData *src)
     this->sourceData = src;
 }
 
-void LGFX::initScreen(ScreenType screenType)
+void LGFX::initScreen(SCREEN_TYPE screenType)
 {
     switch (screenType)
     {
-    case ST_INFO:
+    case SCREEN_TYPE_INFO:
         if (this->currentScreen == nullptr)
         {
             this->currentScreen = new LGFXScreenInfo(this);
         }
         this->currentScreenType = screenType;
         break;
-    case ST_DATA_RESUME:
+    case SCREEN_TYPE_DASHBOARD_REALTIME_GRAPHS:
         if (this->currentScreen == nullptr)
         {
             this->currentScreen = new LGFXScreenDashboardResume(this, this->sourceData);
         }
         this->currentScreenType = screenType;
         break;
-    case ST_NONE:
+    case SCREEN_TYPE_NONE:
     default:
         break;
     }
@@ -91,23 +91,23 @@ void LGFX::initScreen(ScreenType screenType)
 
 void LGFX::deleteCurrentScreen(void)
 {
-    if (this->currentScreenType != ST_NONE)
+    if (this->currentScreenType != SCREEN_TYPE_NONE)
     {
         if (this->currentScreen != nullptr)
         {
             delete this->currentScreen;
             this->currentScreen = nullptr;
-            this->currentScreenType == ST_NONE;
+            this->currentScreenType == SCREEN_TYPE_NONE;
         }
     }
 }
 
-ScreenType LGFX::getCurrentScreenType(void)
+SCREEN_TYPE LGFX::getCurrentScreenType(void)
 {
     return (this->currentScreenType);
 }
 
-bool LGFX::flipToScreen(ScreenType screenType)
+bool LGFX::flipToScreen(SCREEN_TYPE screenType)
 {
     if (screenType != this->currentScreenType)
     {
@@ -126,11 +126,11 @@ bool LGFX::toggleScreen(void)
     bool success = false;
     switch (this->getCurrentScreenType())
     {
-    case ST_INFO:
-        success = this->flipToScreen(ST_DATA_RESUME);
+    case SCREEN_TYPE_INFO:
+        success = this->flipToScreen(SCREEN_TYPE_DASHBOARD_REALTIME_GRAPHS);
         break;
-    case ST_DATA_RESUME:
-        success = this->flipToScreen(ST_INFO);
+    case SCREEN_TYPE_DASHBOARD_REALTIME_GRAPHS:
+        success = this->flipToScreen(SCREEN_TYPE_INFO);
         break;
     }
     return (success);
@@ -138,7 +138,7 @@ bool LGFX::toggleScreen(void)
 
 bool LGFX::refresh(void)
 {
-    if (this->currentScreenType != ST_NONE)
+    if (this->currentScreenType != SCREEN_TYPE_NONE)
     {
         if (this->currentScreen != nullptr)
         {
