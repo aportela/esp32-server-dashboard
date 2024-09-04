@@ -1,5 +1,6 @@
 #include "LGFXScreenDashboardResumeEntityCPULoad.hpp"
 #include "../../utils/Format.hpp"
+#include <cstdio>
 
 using namespace aportela::microcontroller::utils;
 

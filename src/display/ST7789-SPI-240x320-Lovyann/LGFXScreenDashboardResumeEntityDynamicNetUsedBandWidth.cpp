@@ -1,5 +1,7 @@
 #include "LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth.hpp"
 #include "../../utils/Format.hpp"
+#include <cstring>
+#include <cstdio>
 
 using namespace aportela::microcontroller::utils;
 

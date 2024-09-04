@@ -2,6 +2,7 @@
 #include "SourceData.hpp"
 #include <Arduino.h>
 #include <cstdio>
+#include <cstring>
 #include "../utils/Format.hpp"
 
 SourceData::SourceData(bool truncateOverflows, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit)

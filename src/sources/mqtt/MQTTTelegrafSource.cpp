@@ -1,5 +1,6 @@
 #include "MQTTTelegrafSource.hpp"
 #include <cstring>
+#include <cstdio>
 #include <inttypes.h>
 #include <Arduino.h>
 

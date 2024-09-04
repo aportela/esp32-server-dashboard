@@ -1,4 +1,5 @@
 #include "Settings.hpp"
+#include <cstring>
 
 namespace aportela::microcontroller::utils
 {
