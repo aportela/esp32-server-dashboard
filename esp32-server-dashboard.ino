@@ -625,7 +625,7 @@ void setup()
     sourceData = new SourceData(true, settings->getMaxDownloadBandwidthBytes(), settings->getMaxUploadBandwidthBytes());
     char hostname[SourceData::MAX_HOSTNAME_LENGTH + 1];
     settings->getHostname(hostname, sizeof(hostname));
-    sourceData->setHostname(hostname);
+    sourceData->SetHostname(hostname);
 
 #ifdef SOURCE_DUMMY
     dummySRC = new DummySource(sourceData);

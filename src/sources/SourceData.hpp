@@ -79,42 +79,39 @@ public:
     SourceData(bool truncateOverflows, uint64_t totalNetworkDownloadBandwidthLimit = 0, uint64_t totalNetworkUploadBandwidthLimit = 0);
     ~SourceData();
 
-    bool hasFixedNetworkingLimits(void);
+    bool HasFixedNetworkingLimits(void);
 
-    bool setHostname(const char *hostname);
-    void getHostname(char *hostname, size_t count);
+    bool SetHostname(const char *hostname);
+    void GetHostname(char *hostname, size_t count);
 
     // CPU LOAD
 
-    SourceDataQueueCPULoadValue
-    getCurrentCPULoad(void);
-    bool setCurrentCPULoad(float loadPercent, uint64_t timestamp);
+    SourceDataQueueCPULoadValue GetCurrentCPULoad(void);
+    bool SetCurrentCPULoad(float loadPercent, uint64_t timestamp);
 
     // MEMORY
 
-    SourceDataQueueUsedMemoryValue getCurrentUsedMemory(void);
-    bool setCurrentUsedMemory(uint64_t usedBytes, uint64_t totalBytes, uint64_t timestamp);
+    SourceDataQueueUsedMemoryValue GetCurrentUsedMemory(void);
+    bool SetCurrentUsedMemory(uint64_t usedBytes, uint64_t totalBytes, uint64_t timestamp);
 
     // CPU TEMPERATURE
 
-    SourceDataQueueCPUTemperatureValue getCurrentCPUTemperature(void);
-    bool setCurrentCPUTemperature(float celsious, uint64_t timestamp);
+    SourceDataQueueCPUTemperatureValue GetCurrentCPUTemperature(void);
+    bool SetCurrentCPUTemperature(float celsious, uint64_t timestamp);
 
     // SYSTEM
 
-    SourceDataQueueUptimeValue getCurrentUptime(void);
-    bool setCurrentUptime(uint64_t seconds, uint64_t timestamp);
+    SourceDataQueueUptimeValue GetCurrentUptime(void);
+    bool SetCurrentUptime(uint64_t seconds, uint64_t timestamp);
 
     // NET COMMON
 
-    SourceDataQueueNetworkingLimitsValue getNetworkLimits(void);
-    bool setNetworkLimits(uint64_t byteDownloadLimit, uint64_t byteUploadLimit);
-
-    SourceDataQueueNetworkingValue getCurrentNetworkDownload(void);
-    bool setCurrentNetworkDownload(uint64_t totalBytes, uint64_t timestamp);
-
-    SourceDataQueueNetworkingValue getCurrentNetworkUpload(void);
-    bool setCurrentNetworkUpload(uint64_t totalBytes, uint64_t timestamp);
+    SourceDataQueueNetworkingLimitsValue GetNetworkLimits(void);
+    bool SetNetworkLimits(uint64_t byteDownloadLimit, uint64_t byteUploadLimit);
+    SourceDataQueueNetworkingValue GetCurrentNetworkDownload(void);
+    bool SetCurrentNetworkDownload(uint64_t totalBytes, uint64_t timestamp);
+    SourceDataQueueNetworkingValue GetCurrentNetworkUpload(void);
+    bool SetCurrentNetworkUpload(uint64_t totalBytes, uint64_t timestamp);
 };
 
 #endif // ESP32_SERVER_DASHBOARD_SOURCE_DATA_H

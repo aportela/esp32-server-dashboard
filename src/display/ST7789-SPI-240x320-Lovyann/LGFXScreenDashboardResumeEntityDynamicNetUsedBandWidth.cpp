@@ -27,7 +27,7 @@ LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth::~LGFXScreenDashboardResu
 bool LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth::refresh(bool force)
 {
     uint64_t currentTimestamp = 0;
-    SourceDataQueueNetworkingValue networkData = this->type == NBT_DOWNLOAD ? this->sourceData->getCurrentNetworkDownload() : this->sourceData->getCurrentNetworkUpload();
+    SourceDataQueueNetworkingValue networkData = this->type == NBT_DOWNLOAD ? this->sourceData->GetCurrentNetworkDownload() : this->sourceData->GetCurrentNetworkUpload();
     if (networkData.timestamp != this->timestamp || force)
     {
         uint64_t currentValue = networkData.currentBandwidthBytesPerSecond;

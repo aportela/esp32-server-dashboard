@@ -24,7 +24,7 @@ LGFXScreenDashboardResumeEntityCPUTemperature::~LGFXScreenDashboardResumeEntityC
 
 bool LGFXScreenDashboardResumeEntityCPUTemperature::refresh(bool force)
 {
-    SourceDataQueueCPUTemperatureValue data = this->sourceData->getCurrentCPUTemperature();
+    SourceDataQueueCPUTemperatureValue data = this->sourceData->GetCurrentCPUTemperature();
     if ((data.timestamp != 0 && data.timestamp != this->timestamp) || force)
     {
         this->timestamp = data.timestamp;

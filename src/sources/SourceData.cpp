@@ -17,7 +17,7 @@ SourceData::SourceData(bool truncateOverflows, uint64_t totalNetworkDownloadBand
     this->networkingUploadQueue = xQueueCreate(1, sizeof(SourceDataQueueNetworkingValue));
     this->networkingLimitsQueue = xQueueCreate(1, sizeof(SourceDataQueueNetworkingLimitsValue));
     this->fixedNetworkingLimits = totalNetworkDownloadBandwidthLimit > 0 && totalNetworkUploadBandwidthLimit > 0;
-    this->setNetworkLimits(totalNetworkDownloadBandwidthLimit, totalNetworkUploadBandwidthLimit);
+    this->SetNetworkLimits(totalNetworkDownloadBandwidthLimit, totalNetworkUploadBandwidthLimit);
 }
 
 SourceData::~SourceData()
@@ -31,12 +31,12 @@ SourceData::~SourceData()
     vQueueDelete(this->networkingLimitsQueue);
 }
 
-bool SourceData::hasFixedNetworkingLimits(void)
+bool SourceData::HasFixedNetworkingLimits(void)
 {
     return (this->fixedNetworkingLimits);
 }
 
-bool SourceData::setHostname(const char *hostname)
+bool SourceData::SetHostname(const char *hostname)
 {
     if (hostname && strlen(hostname) > 0 && strlen(hostname) <= SourceData::MAX_HOSTNAME_LENGTH)
     {
@@ -49,7 +49,7 @@ bool SourceData::setHostname(const char *hostname)
     }
 }
 
-void SourceData::getHostname(char *hostname, size_t count)
+void SourceData::GetHostname(char *hostname, size_t count)
 {
     if (this->hostname && strlen(this->hostname) > 0)
     {
@@ -63,7 +63,7 @@ void SourceData::getHostname(char *hostname, size_t count)
 
 // CPU LOAD
 
-SourceDataQueueCPULoadValue SourceData::getCurrentCPULoad(void)
+SourceDataQueueCPULoadValue SourceData::GetCurrentCPULoad(void)
 {
     SourceDataQueueCPULoadValue data = {0.0f, 0};
     if (this->cpuLoadQueue != NULL)
@@ -82,11 +82,11 @@ SourceDataQueueCPULoadValue SourceData::getCurrentCPULoad(void)
     return (data);
 }
 
-bool SourceData::setCurrentCPULoad(float loadPercent, uint64_t timestamp)
+bool SourceData::SetCurrentCPULoad(float loadPercent, uint64_t timestamp)
 {
     if (this->cpuLoadQueue != NULL)
     {
-        SourceDataQueueCPULoadValue data = this->getCurrentCPULoad();
+        SourceDataQueueCPULoadValue data = this->GetCurrentCPULoad();
         if (loadPercent != data.loadPercent)
         {
             if (loadPercent >= MIN_CPU_LOAD && loadPercent <= MAX_CPU_LOAD)
@@ -129,7 +129,7 @@ bool SourceData::setCurrentCPULoad(float loadPercent, uint64_t timestamp)
 
 // MEMORY
 
-SourceDataQueueUsedMemoryValue SourceData::getCurrentUsedMemory(void)
+SourceDataQueueUsedMemoryValue SourceData::GetCurrentUsedMemory(void)
 {
     SourceDataQueueUsedMemoryValue data = {0, 0, 0};
     if (this->usedMemoryQueue != NULL)
@@ -150,11 +150,11 @@ SourceDataQueueUsedMemoryValue SourceData::getCurrentUsedMemory(void)
     return (data);
 }
 
-bool SourceData::setCurrentUsedMemory(uint64_t usedBytes, uint64_t totalBytes, uint64_t timestamp)
+bool SourceData::SetCurrentUsedMemory(uint64_t usedBytes, uint64_t totalBytes, uint64_t timestamp)
 {
     if (this->usedMemoryQueue)
     {
-        SourceDataQueueUsedMemoryValue data = this->getCurrentUsedMemory();
+        SourceDataQueueUsedMemoryValue data = this->GetCurrentUsedMemory();
         if (totalBytes != data.totalBytes)
         {
             data.totalBytes = totalBytes;
@@ -202,7 +202,7 @@ bool SourceData::setCurrentUsedMemory(uint64_t usedBytes, uint64_t totalBytes, u
 
 // CPU TEMPERATURE
 
-SourceDataQueueCPUTemperatureValue SourceData::getCurrentCPUTemperature(void)
+SourceDataQueueCPUTemperatureValue SourceData::GetCurrentCPUTemperature(void)
 {
     SourceDataQueueCPUTemperatureValue data = {0.0f, 0};
     if (this->cpuTemperatureQueue != NULL)
@@ -221,11 +221,11 @@ SourceDataQueueCPUTemperatureValue SourceData::getCurrentCPUTemperature(void)
     return (data);
 }
 
-bool SourceData::setCurrentCPUTemperature(float celsious, uint64_t timestamp)
+bool SourceData::SetCurrentCPUTemperature(float celsious, uint64_t timestamp)
 {
     if (this->cpuTemperatureQueue != NULL)
     {
-        SourceDataQueueCPUTemperatureValue data = this->getCurrentCPUTemperature();
+        SourceDataQueueCPUTemperatureValue data = this->GetCurrentCPUTemperature();
         if (celsious != data.celsious)
         {
             if (celsious >= MIN_CPU_TEMPERATURE && celsious <= MAX_CPU_TEMPERATURE)
@@ -268,7 +268,7 @@ bool SourceData::setCurrentCPUTemperature(float celsious, uint64_t timestamp)
 
 // SYSTEM
 
-SourceDataQueueUptimeValue SourceData::getCurrentUptime(void)
+SourceDataQueueUptimeValue SourceData::GetCurrentUptime(void)
 {
     SourceDataQueueUptimeValue data = {0, 0};
     if (this->systemUptimeQueue != NULL)
@@ -287,11 +287,11 @@ SourceDataQueueUptimeValue SourceData::getCurrentUptime(void)
     return (data);
 }
 
-bool SourceData::setCurrentUptime(uint64_t seconds, uint64_t timestamp)
+bool SourceData::SetCurrentUptime(uint64_t seconds, uint64_t timestamp)
 {
     if (this->systemUptimeQueue != NULL)
     {
-        SourceDataQueueUptimeValue data = this->getCurrentUptime();
+        SourceDataQueueUptimeValue data = this->GetCurrentUptime();
         if (seconds != data.seconds)
         {
             data.seconds = seconds;
@@ -312,7 +312,7 @@ bool SourceData::setCurrentUptime(uint64_t seconds, uint64_t timestamp)
 
 // NET COMMON
 
-SourceDataQueueNetworkingLimitsValue SourceData::getNetworkLimits(void)
+SourceDataQueueNetworkingLimitsValue SourceData::GetNetworkLimits(void)
 {
     SourceDataQueueNetworkingLimitsValue data = {0, 0};
     if (this->networkingLimitsQueue != NULL)
@@ -331,7 +331,7 @@ SourceDataQueueNetworkingLimitsValue SourceData::getNetworkLimits(void)
     return (data);
 }
 
-bool SourceData::setNetworkLimits(uint64_t byteDownloadLimit, uint64_t byteUploadLimit)
+bool SourceData::SetNetworkLimits(uint64_t byteDownloadLimit, uint64_t byteUploadLimit)
 {
     if (this->networkingLimitsQueue != NULL)
     {
@@ -344,7 +344,7 @@ bool SourceData::setNetworkLimits(uint64_t byteDownloadLimit, uint64_t byteUploa
     }
 }
 
-SourceDataQueueNetworkingValue SourceData::getCurrentNetworkDownload(void)
+SourceDataQueueNetworkingValue SourceData::GetCurrentNetworkDownload(void)
 {
     SourceDataQueueNetworkingValue data = {0, 0, 0};
     if (this->networkingDownloadQueue != NULL)
@@ -365,11 +365,11 @@ SourceDataQueueNetworkingValue SourceData::getCurrentNetworkDownload(void)
     return (data);
 }
 
-bool SourceData::setCurrentNetworkDownload(uint64_t totalBytes, uint64_t timestamp)
+bool SourceData::SetCurrentNetworkDownload(uint64_t totalBytes, uint64_t timestamp)
 {
     if (this->networkingDownloadQueue)
     {
-        SourceDataQueueNetworkingValue data = this->getCurrentNetworkDownload();
+        SourceDataQueueNetworkingValue data = this->GetCurrentNetworkDownload();
         if (totalBytes != data.totalBytesTransfered)
         {
             uint64_t diffBytes = totalBytes - data.totalBytesTransfered;
@@ -395,7 +395,7 @@ bool SourceData::setCurrentNetworkDownload(uint64_t totalBytes, uint64_t timesta
     }
 }
 
-SourceDataQueueNetworkingValue SourceData::getCurrentNetworkUpload(void)
+SourceDataQueueNetworkingValue SourceData::GetCurrentNetworkUpload(void)
 {
     SourceDataQueueNetworkingValue data = {0, 0, 0};
     if (this->networkingUploadQueue != NULL)
@@ -416,11 +416,11 @@ SourceDataQueueNetworkingValue SourceData::getCurrentNetworkUpload(void)
     return (data);
 }
 
-bool SourceData::setCurrentNetworkUpload(uint64_t totalBytes, uint64_t timestamp)
+bool SourceData::SetCurrentNetworkUpload(uint64_t totalBytes, uint64_t timestamp)
 {
     if (this->networkingUploadQueue)
     {
-        SourceDataQueueNetworkingValue data = this->getCurrentNetworkUpload();
+        SourceDataQueueNetworkingValue data = this->GetCurrentNetworkUpload();
         if (totalBytes != data.totalBytesTransfered)
         {
             uint64_t diffBytes = totalBytes - data.totalBytesTransfered;

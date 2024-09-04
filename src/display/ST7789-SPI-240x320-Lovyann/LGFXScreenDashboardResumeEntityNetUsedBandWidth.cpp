@@ -8,7 +8,7 @@ LGFXScreenDashboardResumeEntityNetUsedBandWidth::LGFXScreenDashboardResumeEntity
     if (this->parentDisplay != nullptr)
     {
         char maxStr[8] = {'\0'};
-        SourceDataQueueNetworkingLimitsValue networkLimits = sourceData->getNetworkLimits();
+        SourceDataQueueNetworkingLimitsValue networkLimits = sourceData->GetNetworkLimits();
         Format::ParseBytesToHumanString(this->type == NBT_DOWNLOAD ? networkLimits.byteDownloadLimit : networkLimits.byteUploadLimit, maxStr, sizeof(maxStr), false, true, false);
         this->printLimits("0B", maxStr);
         this->refreshStrValue("0000 B/s", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
@@ -23,8 +23,8 @@ bool LGFXScreenDashboardResumeEntityNetUsedBandWidth::refresh(bool force)
 {
     uint64_t currentTimestamp = 0;
     // bool changed = false;
-    SourceDataQueueNetworkingLimitsValue networkLimitsData = this->sourceData->getNetworkLimits();
-    SourceDataQueueNetworkingValue networkData = this->type == NBT_DOWNLOAD ? this->sourceData->getCurrentNetworkDownload() : this->sourceData->getCurrentNetworkUpload();
+    SourceDataQueueNetworkingLimitsValue networkLimitsData = this->sourceData->GetNetworkLimits();
+    SourceDataQueueNetworkingValue networkData = this->type == NBT_DOWNLOAD ? this->sourceData->GetCurrentNetworkDownload() : this->sourceData->GetCurrentNetworkUpload();
     if (networkData.timestamp != this->timestamp || force)
     {
         uint64_t currentValue = networkData.currentBandwidthBytesPerSecond;

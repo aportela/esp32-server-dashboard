@@ -163,7 +163,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
             if (sscanf(tokenWithValue, "usage_idle=%f", &usageIdle) == 1)
             {
                 float cpu_usage = usageIdle < 100 ? 100.0f - usageIdle : 100;
-                MQTTTelegrafSource::instance->sourceData->setCurrentCPULoad(cpu_usage, currentMessageTimestamp);
+                MQTTTelegrafSource::instance->sourceData->SetCurrentCPULoad(cpu_usage, currentMessageTimestamp);
             }
             else
             {
@@ -191,7 +191,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
                 {
                     if (sscanf(tokenWithValue, "total=%" PRIu64 "i", &totalBytes) == 1)
                     {
-                        MQTTTelegrafSource::instance->sourceData->setCurrentUsedMemory(usedBytes, totalBytes, currentMessageTimestamp);
+                        MQTTTelegrafSource::instance->sourceData->SetCurrentUsedMemory(usedBytes, totalBytes, currentMessageTimestamp);
                     }
                     else
                     {
@@ -230,7 +230,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
                 float temp = 0;
                 if (sscanf(tokenWithValue, "temp_input=%f", &temp) == 1)
                 {
-                    MQTTTelegrafSource::instance->sourceData->setCurrentCPUTemperature(temp, currentMessageTimestamp);
+                    MQTTTelegrafSource::instance->sourceData->SetCurrentCPUTemperature(temp, currentMessageTimestamp);
                 }
                 else
                 {
@@ -260,7 +260,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
             float temp = 0;
             if (sscanf(tokenWithValue, "temp=%f", &temp) == 1)
             {
-                MQTTTelegrafSource::instance->sourceData->setCurrentCPUTemperature(temp, currentMessageTimestamp);
+                MQTTTelegrafSource::instance->sourceData->SetCurrentCPUTemperature(temp, currentMessageTimestamp);
             }
             else
             {
@@ -285,7 +285,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
             // https://answers.microsoft.com/en-us/windows/forum/all/fast-startup-doesnt-break-power-cycle/07bd6bf8-dd24-4c77-b911-17df89c74eb3
             if (sscanf(tokenWithValue, "uptime=%" PRIu64 "i", &uptime) == 1)
             {
-                MQTTTelegrafSource::instance->sourceData->setCurrentUptime(uptime, currentMessageTimestamp);
+                MQTTTelegrafSource::instance->sourceData->SetCurrentUptime(uptime, currentMessageTimestamp);
             }
             else
             {
@@ -313,7 +313,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
                 uint64_t bytesRecv = 0;
                 if (sscanf(tokenWithValue, "bytes_recv=%" PRIu64 "i", &bytesRecv) == 1)
                 {
-                    MQTTTelegrafSource::instance->sourceData->setCurrentNetworkDownload(bytesRecv, currentMessageTimestamp);
+                    MQTTTelegrafSource::instance->sourceData->SetCurrentNetworkDownload(bytesRecv, currentMessageTimestamp);
                 }
                 else
                 {
@@ -333,7 +333,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
                 uint64_t bytesSent = 0;
                 if (sscanf(tokenWithValue, "bytes_sent=%" PRIu64 "i", &bytesSent) == 1)
                 {
-                    MQTTTelegrafSource::instance->sourceData->setCurrentNetworkUpload(bytesSent, currentMessageTimestamp);
+                    MQTTTelegrafSource::instance->sourceData->SetCurrentNetworkUpload(bytesSent, currentMessageTimestamp);
                 }
                 else
                 {

@@ -32,18 +32,18 @@ LGFXScreenDashboardResume::LGFXScreenDashboardResume(LovyanGFX *display, SourceD
             this->cpuLoadBlock = new LGFXScreenDashboardResumeEntityCPULoad(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 0);
             this->usedMemoryBlock = new LGFXScreenDashboardResumeEntityUsedMemory(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 1);
             this->cpuTemperatureBlock = new LGFXScreenDashboardResumeEntityCPUTemperature(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 2);
-            if (sourceData->hasFixedNetworkingLimits())
+            if (sourceData->HasFixedNetworkingLimits())
             {
                 this->networkDownloadBandwidthBlock = new LGFXScreenDashboardResumeEntityNetUsedBandWidth(NBT_DOWNLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 3);
                 this->networkUploadBandwidthBlock = new LGFXScreenDashboardResumeEntityNetUsedBandWidth(NBT_UPLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 4);
             }
             else
             {
-                sourceData->setNetworkLimits(0, 0);
+                sourceData->SetNetworkLimits(0, 0);
                 this->networkDownloadBandwidthBlock = new LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth(NBT_DOWNLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 3);
                 this->networkUploadBandwidthBlock = new LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth(NBT_UPLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 4);
             }
-            sourceData->getHostname(this->hostname, sizeof(this->hostname));
+            sourceData->GetHostname(this->hostname, sizeof(this->hostname));
             this->refresh(true);
         }
     }
@@ -117,7 +117,7 @@ bool LGFXScreenDashboardResume::refreshBottomCommonData(bool forceDrawAll)
 #else
 #endif // DEBUG_FPS
 
-    SourceDataQueueUptimeValue data = this->currentSourceData->getCurrentUptime();
+    SourceDataQueueUptimeValue data = this->currentSourceData->GetCurrentUptime();
     if (data.seconds > 0)
     {
         char str[sizeof(this->previousUptimeStr)];
