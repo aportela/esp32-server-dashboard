@@ -146,7 +146,7 @@ void onWifiConnectionStatusChanged(bool connected)
         if (strlen(mqttTelegrafURI) > 0 && strlen(mqttTelegrafGlobalTopic) > 0)
         {
             char WiFiMacAddress[32] = {'\0'};
-            WiFiManager::getMacAddress(WiFiMacAddress, sizeof(WiFiMacAddress));
+            WiFiManager::GetMacAddress(WiFiMacAddress, sizeof(WiFiMacAddress));
             mqttTelegrafSRC = new MQTTTelegrafSource(sourceData, mqttTelegrafURI, WiFiMacAddress, mqttTelegrafGlobalTopic, networkInterfaceId, mqttUsername, mqttPassword);
         }
 #endif // SOURCE_MQTT_TELEGRAF
@@ -260,11 +260,11 @@ void onReceivedSerialCommand(int8_t commandIndex, const char *value)
         break;
     case CUSTOM_SERIAL_COMMAND_INDEX_CONNECT_WIFI:
         Serial.println("Serial command received: connect WiFi");
-        WiFiManager::connect(false);
+        WiFiManager::Connect(false);
         break;
     case CUSTOM_SERIAL_COMMAND_INDEX_DISCONNECT_WIFI:
         Serial.println("Serial command received: disconnect WiFi");
-        WiFiManager::disconnect();
+        WiFiManager::Disconnect();
         break;
     case CUSTOM_SERIAL_COMMAND_INDEX_SET_WIFI_SSID:
         if (value && strlen(value))
@@ -618,9 +618,9 @@ void setup()
     char WiFiPassword[WiFiManager::MAX_PASSWORD_LENGTH + 1];
     settings->getWIFIPassword(WiFiPassword, sizeof(WiFiPassword));
 
-    WiFiManager::onConnectionStatusChanged(onWifiConnectionStatusChanged);
-    WiFiManager::setCredentials(WiFiSSID, WiFiPassword);
-    WiFiManager::connect(true);
+    WiFiManager::OnConnectionStatusChanged(onWifiConnectionStatusChanged);
+    WiFiManager::SetCredentials(WiFiSSID, WiFiPassword);
+    WiFiManager::Connect(true);
 
     sourceData = new SourceData(true, settings->getMaxDownloadBandwidthBytes(), settings->getMaxUploadBandwidthBytes());
     char hostname[SourceData::MAX_HOSTNAME_LENGTH + 1];
@@ -645,7 +645,7 @@ void loop()
 {
     // SerialManager::loop();
     SerialManager::Loop(CUSTOM_SERIAL_COMMANDS, CUSTOM_SERIAL_COMMAND_COUNT, onReceivedSerialCommand);
-    WiFiManager::loop();
+    WiFiManager::Loop();
 #ifdef SOURCE_DUMMY
     dummySRC->refresh(SOURCE_DUMMY_UPDATES_EVERY_MS);
 #endif // SOURCE_DUMMY

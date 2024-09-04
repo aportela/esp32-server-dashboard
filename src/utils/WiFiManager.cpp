@@ -1,19 +1,20 @@
 #include "WiFiManager.hpp"
+#include <cstring>
 
 namespace aportela::microcontroller::utils
 {
     WiFiManagerConnectionCallback WiFiManager::connectionCallback = nullptr;
-    char WiFiManager::WiFiSSID[SSID_CHAR_ARR_LENGTH] = {'\0'};
-    char WiFiManager::WiFiPassword[PASSWORD_CHAR_ARR_LENGTH] = {'\0'};
+    char WiFiManager::wiFiSSID[SSID_CHAR_ARR_LENGTH] = {'\0'};
+    char WiFiManager::wiFiPassword[PASSWORD_CHAR_ARR_LENGTH] = {'\0'};
     bool WiFiManager::tryingConnection = false;
     bool WiFiManager::validConnection = false;
     bool WiFiManager::reconnect = false;
     char WiFiManager::macAddress[MAC_ADDRESS_CHAR_ARR_LENGTH] = {'\0'};
     char WiFiManager::ipAddress[IP_ADDRESS_CHAR_ARR_LENGTH] = {'\0'};
     long WiFiManager::signalStrength = -91;
-    WiFiSignalQuality WiFiManager::signalQuality = WiFiSignalQuality_NONE;
+    WIFI_SIGNAL_QUALITY WiFiManager::signalQuality = WIFI_SIGNAL_QUALITY_NONE;
 
-    void WiFiManager::onConnectionStatusChanged(WiFiManagerConnectionCallback callback)
+    void WiFiManager::OnConnectionStatusChanged(WiFiManagerConnectionCallback callback)
     {
         if (callback != nullptr)
         {
@@ -21,28 +22,28 @@ namespace aportela::microcontroller::utils
         }
     }
 
-    void WiFiManager::setCredentials(const char *ssid, const char *password)
+    void WiFiManager::SetCredentials(const char *ssid, const char *password)
     {
         WiFiManager::validConnection = false;
-        strncpy(WiFiManager::WiFiSSID, ssid, sizeof(WiFiManager::WiFiSSID));
-        strncpy(WiFiManager::WiFiPassword, password, sizeof(WiFiManager::WiFiPassword));
+        std::snprintf(WiFiManager::wiFiSSID, sizeof(WiFiManager::wiFiSSID), ssid);
+        std::snprintf(WiFiManager::wiFiPassword, sizeof(WiFiManager::wiFiPassword), password);
     }
 
-    void WiFiManager::connect(bool reconnectIfLost)
+    void WiFiManager::Connect(bool reconnectIfLost)
     {
         WiFiManager::reconnect = reconnectIfLost;
         if (!WiFiManager::tryingConnection)
         {
-            if (strlen(WiFiManager::WiFiSSID) > 0)
+            if (strlen(WiFiManager::wiFiSSID) > 0)
             {
                 WiFi.mode(WIFI_STA);
-                WiFi.begin(WiFiManager::WiFiSSID, WiFiManager::WiFiPassword);
+                WiFi.begin(WiFiManager::wiFiSSID, WiFiManager::wiFiPassword);
                 WiFiManager::tryingConnection = true;
             }
         }
     }
 
-    void WiFiManager::disconnect(void)
+    void WiFiManager::Disconnect(void)
     {
         if (WiFiManager::tryingConnection || WiFi.status() == WL_CONNECTED)
         {
@@ -50,22 +51,22 @@ namespace aportela::microcontroller::utils
         }
         WiFiManager::validConnection = false;
         WiFiManager::tryingConnection = false;
-        std::sprintf(WiFiManager::macAddress, "");
-        std::sprintf(WiFiManager::ipAddress, "");
+        std::snprintf(WiFiManager::macAddress, sizeof(WiFiManager::macAddress), "");
+        std::snprintf(WiFiManager::ipAddress, sizeof(WiFiManager::ipAddress), "");
         WiFiManager::signalStrength = -91;
-        WiFiManager::signalQuality = WiFiSignalQuality_NONE;
+        WiFiManager::signalQuality = WIFI_SIGNAL_QUALITY_NONE;
         if (WiFiManager::connectionCallback != nullptr)
         {
             WiFiManager::connectionCallback(false);
         }
     }
 
-    bool WiFiManager::isConnected(void)
+    bool WiFiManager::IsConnected(void)
     {
         return (WiFi.status() == WL_CONNECTED);
     }
 
-    void WiFiManager::loop(void)
+    void WiFiManager::Loop(void)
     {
         if (WiFiManager::tryingConnection)
         {
@@ -75,9 +76,9 @@ namespace aportela::microcontroller::utils
             {
                 uint8_t mac[6];
                 WiFi.macAddress(mac);
-                std::sprintf(WiFiManager::macAddress, "%02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+                std::snprintf(WiFiManager::macAddress, sizeof(WiFiManager::macAddress), "%02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
                 IPAddress ip = WiFi.localIP();
-                std::sprintf(WiFiManager::ipAddress, "%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
+                std::snprintf(WiFiManager::ipAddress, sizeof(WiFiManager::ipAddress), "%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
                 WiFiManager::tryingConnection = false;
                 WiFiManager::validConnection = true; // allow future re-connections to this network
                 if (WiFiManager::connectionCallback != nullptr)
@@ -98,51 +99,51 @@ namespace aportela::microcontroller::utils
         }
     }
 
-    void WiFiManager::getSSID(char *buffer, size_t buffer_size)
+    void WiFiManager::GetSSID(char *buffer, size_t bufferSize)
     {
-        strncpy(buffer, WiFiManager::WiFiSSID, buffer_size);
+        strncpy(buffer, WiFiManager::wiFiSSID, bufferSize);
     }
 
-    void WiFiManager::getMacAddress(char *buffer, size_t buffer_size)
+    void WiFiManager::GetMacAddress(char *buffer, size_t bufferSize)
     {
-        strncpy(buffer, WiFiManager::macAddress, buffer_size);
+        strncpy(buffer, WiFiManager::macAddress, bufferSize);
     }
 
-    void WiFiManager::getIPAddress(char *buffer, size_t buffer_size)
+    void WiFiManager::GetIPAddress(char *buffer, size_t bufferSize)
     {
-        strncpy(buffer, WiFiManager::ipAddress, buffer_size);
+        strncpy(buffer, WiFiManager::ipAddress, bufferSize);
     }
 
-    long WiFiManager::getSignalStrength(void)
+    long WiFiManager::GetSignalStrength(void)
     {
         return (WiFi.RSSI());
     }
 
-    WiFiSignalQuality WiFiManager::convertToSignalQuality(long signalStrength)
+    WIFI_SIGNAL_QUALITY WiFiManager::ConvertToSignalQuality(long signalStrength)
     {
         if (signalStrength < -90)
         {
-            return (WiFiSignalQuality_NONE);
+            return (WIFI_SIGNAL_QUALITY_NONE);
         }
         else if (signalStrength < -80)
         {
-            return (WiFiSignalQuality_WORST);
+            return (WIFI_SIGNAL_QUALITY_WORST);
         }
         else if (signalStrength < -70)
         {
-            return (WiFiSignalQuality_BAD);
+            return (WIFI_SIGNAL_QUALITY_BAD);
         }
         else if (signalStrength < -67)
         {
-            return (WiFiSignalQuality_NORMAL);
+            return (WIFI_SIGNAL_QUALITY_NORMAL);
         }
         else if (signalStrength < -30)
         {
-            return (WiFiSignalQuality_GOOD);
+            return (WIFI_SIGNAL_QUALITY_GOOD);
         }
         else
         {
-            return (WiFiSignalQuality_BEST);
+            return (WIFI_SIGNAL_QUALITY_BEST);
         }
     }
 }
