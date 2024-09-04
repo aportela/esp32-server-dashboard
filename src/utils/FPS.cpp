@@ -7,14 +7,14 @@ namespace aportela::microcontroller::utils
   uint64_t FPS::lastTime = 0;
   uint16_t FPS::fps = 0;
 
-  void FPS::init(void)
+  void FPS::Init(void)
   {
     FPS::frameCount = 0;
     FPS::lastTime = 0;
     FPS::fps = 0;
   }
 
-  void FPS::loop(uint16_t limit)
+  void FPS::Loop(uint16_t limit)
   {
     uint64_t currentTime = millis();
     uint64_t elapsedTime = currentTime - FPS::lastTime;
@@ -30,7 +30,7 @@ namespace aportela::microcontroller::utils
     }
   }
 
-  uint16_t FPS::getFPS(void)
+  uint16_t FPS::GetFPS(void)
   {
     return (FPS::fps);
   }

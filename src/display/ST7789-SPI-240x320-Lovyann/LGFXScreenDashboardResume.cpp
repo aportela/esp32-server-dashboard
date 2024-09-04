@@ -26,7 +26,7 @@ LGFXScreenDashboardResume::LGFXScreenDashboardResume(LovyanGFX *display, SourceD
         if (display != nullptr)
         {
 #ifdef DEBUG_FPS
-            FPS::init();
+            FPS::Init();
 #endif // DEBUG_FPS
             this->cpuLoadBlock = new LGFXScreenDashboardResumeEntityCPULoad(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 0);
             this->usedMemoryBlock = new LGFXScreenDashboardResumeEntityUsedMemory(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 1);
@@ -102,7 +102,7 @@ bool LGFXScreenDashboardResume::refreshBottomCommonData(bool forceDrawAll)
 #endif
     }
 #ifdef DEBUG_FPS
-    uint16_t currentFPS = FPS::getFPS();
+    uint16_t currentFPS = FPS::GetFPS();
     if (forceDrawAll || currentFPS != this->previousFPS)
     {
         this->parentDisplay->setFont(SCREEN_BOTTOM_COMMON_TEXTDATA_FONT);

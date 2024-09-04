@@ -52,7 +52,7 @@ LGFXScreenInfo::LGFXScreenInfo(LovyanGFX *display) : LGFXScreen(display)
 {
     if (display != nullptr)
     {
-        FPS::init();
+        FPS::Init();
         // top title
         this->parentDisplay->setFont(SCREEN_TITLE_FONT);
         this->parentDisplay->setTextSize(SCREEN_TITLE_FONT_SIZE);
@@ -225,7 +225,7 @@ bool LGFXScreenInfo::refreshCommonData(bool forceDrawAll)
         this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_X_OFFSET, 200);
         this->parentDisplay->print(" FPS ");
     }
-    uint16_t currentFPS = FPS::getFPS();
+    uint16_t currentFPS = FPS::GetFPS();
     if (forceDrawAll || this->previousFPS != currentFPS)
     {
         this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_VALUE_X_OFFSET, 200);

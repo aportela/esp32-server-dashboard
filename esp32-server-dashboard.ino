@@ -656,7 +656,7 @@ void loop()
         screen->toggleScreen();
     }
     screen->refresh();
-    FPS::loop(999);
+    FPS::Loop(999);
 #endif // DISPLAY_DRIVER_LOVYANN_ST7789
     yield();
 }
