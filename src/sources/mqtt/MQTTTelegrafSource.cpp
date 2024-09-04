@@ -94,7 +94,7 @@ bool MQTTTelegrafSource::getPayloadTokenWithValue(const char *payload, const cha
         return (false);
     }
     char pattern[strlen(tokenName) + 3];
-    snprintf(pattern, sizeof(pattern), "%s=", tokenName);
+    std::snprintf(pattern, sizeof(pattern), "%s=", tokenName);
     char *token = strtok(newStr, separator);
     while (token != NULL)
     {
@@ -305,7 +305,7 @@ void MQTTTelegrafSource::onMessageReceived(const char *topic, const char *payloa
     {
         // search for interface id (telegraf can send data for multiple network interfaces)
         char payloadSearchStr[10 + MAX_NETWORK_INTERFACE_ID_LENGTH] = {'\0'};
-        snprintf(payloadSearchStr, sizeof(payloadSearchStr), "interface=%s", MQTTTelegrafSource::networkInterfaceId);
+        std::snprintf(payloadSearchStr, sizeof(payloadSearchStr), "interface=%s", MQTTTelegrafSource::networkInterfaceId);
         if (strstr(payload, payloadSearchStr))
         {
             if (MQTTTelegrafSource::getPayloadTokenWithValue(cleanPayloadPtr, ",", "bytes_recv", tokenWithValue, sizeof(tokenWithValue)))

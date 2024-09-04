@@ -1,5 +1,6 @@
 #include "LGFXScreenDashboardResumeEntityCPUTemperature.hpp"
 #include "../../utils/Format.hpp"
+#include <cstdio>
 
 using namespace aportela::microcontroller::utils;
 
@@ -8,9 +9,9 @@ LGFXScreenDashboardResumeEntityCPUTemperature::LGFXScreenDashboardResumeEntityCP
     if (this->parentDisplay != nullptr)
     {
         char minStr[5] = {'\0'};
-        snprintf(minStr, sizeof(minStr), "%dC", (int8_t)MIN_CPU_TEMPERATURE);
+        std::snprintf(minStr, sizeof(minStr), "%dC", (int8_t)MIN_CPU_TEMPERATURE);
         char maxStr[5] = {'\0'};
-        snprintf(maxStr, sizeof(maxStr), "%03dC", (int8_t)MAX_CPU_TEMPERATURE);
+        std::snprintf(maxStr, sizeof(maxStr), "%03dC", (int8_t)MAX_CPU_TEMPERATURE);
         this->printLimits(minStr, maxStr);
         // this is used for init default value and printing the char "C" (on refresh only print value without char "%" to speed up things)
         this->refreshStrValue("000.00C", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
