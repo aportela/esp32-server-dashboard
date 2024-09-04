@@ -8,15 +8,14 @@
 
 namespace aportela::microcontroller::utils
 {
-
     typedef void (*SerialCommandCallback)(int8_t commandIndex, const char *value);
 
     class SerialManager
     {
     public:
         static const uint32_t DEFAULT_SPEED = 9600;
-        static void init(uint32_t speed);
-        static void loop(const char *commands[], size_t numCommands, SerialCommandCallback callback);
+        static void Init(uint32_t speed);
+        static void Loop(const char *commands[], size_t numCommands, SerialCommandCallback callback);
     };
 }
 

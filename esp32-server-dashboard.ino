@@ -605,7 +605,7 @@ void onReceivedSerialCommand(int8_t commandIndex, const char *value)
 void setup()
 {
     //  TODO: default info screen if no valid settings found
-    SerialManager::init(SerialManager::DEFAULT_SPEED);
+    SerialManager::Init(SerialManager::DEFAULT_SPEED);
     Serial.println("Starting esp32-server-dashboard");
 
     settings = new CustomSettings();
@@ -644,7 +644,7 @@ void setup()
 void loop()
 {
     // SerialManager::loop();
-    SerialManager::loop(CUSTOM_SERIAL_COMMANDS, CUSTOM_SERIAL_COMMAND_COUNT, onReceivedSerialCommand);
+    SerialManager::Loop(CUSTOM_SERIAL_COMMANDS, CUSTOM_SERIAL_COMMAND_COUNT, onReceivedSerialCommand);
     WiFiManager::loop();
 #ifdef SOURCE_DUMMY
     dummySRC->refresh(SOURCE_DUMMY_UPDATES_EVERY_MS);

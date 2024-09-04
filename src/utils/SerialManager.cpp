@@ -3,7 +3,7 @@
 
 namespace aportela::microcontroller::utils
 {
-    void SerialManager::init(uint32_t speed)
+    void SerialManager::Init(uint32_t speed)
     {
         Serial.begin(speed);
         while (!Serial)
@@ -13,7 +13,7 @@ namespace aportela::microcontroller::utils
         }
     }
 
-    void SerialManager::loop(const char *commands[], size_t numCommands, SerialCommandCallback callback)
+    void SerialManager::Loop(const char *commands[], size_t numCommands, SerialCommandCallback callback)
     {
         while (Serial.available() > 0)
         {
