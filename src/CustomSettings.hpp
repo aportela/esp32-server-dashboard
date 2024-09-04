@@ -12,38 +12,38 @@ public:
     CustomSettings();
     ~CustomSettings();
 
-    void getWIFISSID(char *ssid, size_t count);
-    bool setWIFISSID(const char *ssid);
-    void getWIFIPassword(char *password, size_t count);
-    bool setWIFIPassword(const char *password);
+    void GetWIFISSID(char *ssid, size_t count);
+    bool SetWIFISSID(const char *ssid);
+    void GetWIFIPassword(char *password, size_t count);
+    bool SetWIFIPassword(const char *password);
 
-    void getMQTTTelegrafURI(char *uri, size_t count);
-    bool setMQTTTelegrafURI(const char *uri);
+    void GetMQTTTelegrafURI(char *uri, size_t count);
+    bool SetMQTTTelegrafURI(const char *uri);
 
-    void getMQTTUsername(char *username, size_t count);
-    bool setMQTTUsername(const char *username);
-    void getMQTTPassword(char *password, size_t count);
-    bool setMQTTPassword(const char *password);
-    void getMQTTTelegrafGlobalTopic(char *topic, size_t count);
-    bool setMQTTTelegrafGlobalTopic(const char *topic);
+    void GetMQTTUsername(char *username, size_t count);
+    bool SetMQTTUsername(const char *username);
+    void GetMQTTPassword(char *password, size_t count);
+    bool SetMQTTPassword(const char *password);
+    void GetMQTTTelegrafGlobalTopic(char *topic, size_t count);
+    bool SetMQTTTelegrafGlobalTopic(const char *topic);
 
-    uint64_t getMaxDownloadBandwidthBytes();
-    bool setMaxDownloadBandwidthBytes(uint64_t totalBytes = 0);
+    uint64_t GetMaxDownloadBandwidthBytes();
+    bool SetMaxDownloadBandwidthBytes(uint64_t totalBytes = 0);
 
-    uint64_t getMaxUploadBandwidthBytes();
-    bool setMaxUploadBandwidthBytes(uint64_t totalBytes = 0);
+    uint64_t GetMaxUploadBandwidthBytes();
+    bool SetMaxUploadBandwidthBytes(uint64_t totalBytes = 0);
 
-    void getNetworkInterfaceId(char *id, size_t count);
-    bool setNetworkInterfaceId(const char *id);
+    void GetNetworkInterfaceId(char *id, size_t count);
+    bool SetNetworkInterfaceId(const char *id);
 
-    void getHostname(char *name, size_t count);
-    bool setHostname(const char *name);
+    void GetHostname(char *name, size_t count);
+    bool SetHostname(const char *name);
 
-    bool getScreenMirrorFlipVertical();
-    bool setScreenMirrorFlipVertical(bool mirrorFlipVertical = false);
+    bool GetScreenMirrorFlipVertical();
+    bool SetScreenMirrorFlipVertical(bool mirrorFlipVertical = false);
 
-    ScreenType getDefaultScreen(ScreenType defaultScreen = ST_NONE);
-    bool setDefaultScreen(ScreenType defaultScreen);
+    ScreenType GetDefaultScreen(ScreenType defaultScreen = ST_NONE);
+    bool SetDefaultScreen(ScreenType defaultScreen);
 };
 
 #endif // ESP32_SERVER_DASHBOARD_CUSTOM_SETTINGS_H

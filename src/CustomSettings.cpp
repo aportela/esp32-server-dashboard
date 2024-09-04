@@ -25,12 +25,12 @@ CustomSettings::~CustomSettings(void)
 {
 }
 
-void CustomSettings::getWIFISSID(char *ssid, size_t count)
+void CustomSettings::GetWIFISSID(char *ssid, size_t count)
 {
     this->GetStringValue(KEY_WIFI_SSID, ssid, count);
 }
 
-bool CustomSettings::setWIFISSID(const char *ssid)
+bool CustomSettings::SetWIFISSID(const char *ssid)
 {
     if (strlen(ssid) > 0)
     {
@@ -42,12 +42,12 @@ bool CustomSettings::setWIFISSID(const char *ssid)
     }
 }
 
-void CustomSettings::getWIFIPassword(char *password, size_t count)
+void CustomSettings::GetWIFIPassword(char *password, size_t count)
 {
     this->GetStringValue(KEY_WIFI_PASSWORD, password, count);
 }
 
-bool CustomSettings::setWIFIPassword(const char *password)
+bool CustomSettings::SetWIFIPassword(const char *password)
 {
     if (strlen(password) > 0)
     {
@@ -59,12 +59,12 @@ bool CustomSettings::setWIFIPassword(const char *password)
     }
 }
 
-void CustomSettings::getMQTTTelegrafURI(char *uri, size_t count)
+void CustomSettings::GetMQTTTelegrafURI(char *uri, size_t count)
 {
     this->GetStringValue(KEY_MQTT_TELEGRAF_URI, uri, count);
 }
 
-bool CustomSettings::setMQTTTelegrafURI(const char *uri)
+bool CustomSettings::SetMQTTTelegrafURI(const char *uri)
 {
     if (strlen(uri) > 0)
     {
@@ -76,12 +76,12 @@ bool CustomSettings::setMQTTTelegrafURI(const char *uri)
     }
 }
 
-void CustomSettings::getMQTTUsername(char *username, size_t count)
+void CustomSettings::GetMQTTUsername(char *username, size_t count)
 {
     this->GetStringValue(KEY_MQTT_USERNAME, username, count);
 }
 
-bool CustomSettings::setMQTTUsername(const char *username)
+bool CustomSettings::SetMQTTUsername(const char *username)
 {
     if (strlen(username) > 0)
     {
@@ -93,12 +93,12 @@ bool CustomSettings::setMQTTUsername(const char *username)
     }
 }
 
-void CustomSettings::getMQTTPassword(char *password, size_t count)
+void CustomSettings::GetMQTTPassword(char *password, size_t count)
 {
     this->GetStringValue(KEY_MQTT_PASSWORD, password, count);
 }
 
-bool CustomSettings::setMQTTPassword(const char *password)
+bool CustomSettings::SetMQTTPassword(const char *password)
 {
     if (strlen(password) > 0)
     {
@@ -110,12 +110,12 @@ bool CustomSettings::setMQTTPassword(const char *password)
     }
 }
 
-void CustomSettings::getMQTTTelegrafGlobalTopic(char *topic, size_t count)
+void CustomSettings::GetMQTTTelegrafGlobalTopic(char *topic, size_t count)
 {
     this->GetStringValue(KEY_MQTT_TELEGRAF_GLOBAL_TOPIC, topic, count);
 }
 
-bool CustomSettings::setMQTTTelegrafGlobalTopic(const char *topic)
+bool CustomSettings::SetMQTTTelegrafGlobalTopic(const char *topic)
 {
     if (strlen(topic) > 0)
     {
@@ -127,12 +127,12 @@ bool CustomSettings::setMQTTTelegrafGlobalTopic(const char *topic)
     }
 }
 
-uint64_t CustomSettings::getMaxDownloadBandwidthBytes()
+uint64_t CustomSettings::GetMaxDownloadBandwidthBytes()
 {
     return (this->GetBigUnsignedIntegerValue(KEY_TOTAL_DOWNLOAD_BANDWIDTH_BYTES, 0));
 }
 
-bool CustomSettings::setMaxDownloadBandwidthBytes(uint64_t totalBytes)
+bool CustomSettings::SetMaxDownloadBandwidthBytes(uint64_t totalBytes)
 {
     if (totalBytes > 0)
     {
@@ -144,12 +144,12 @@ bool CustomSettings::setMaxDownloadBandwidthBytes(uint64_t totalBytes)
     }
 }
 
-uint64_t CustomSettings::getMaxUploadBandwidthBytes()
+uint64_t CustomSettings::GetMaxUploadBandwidthBytes()
 {
     return (this->GetBigUnsignedIntegerValue(KEY_TOTAL_UPLOAD_BANDWIDTH_BYTES, 0));
 }
 
-bool CustomSettings::setMaxUploadBandwidthBytes(uint64_t totalBytes)
+bool CustomSettings::SetMaxUploadBandwidthBytes(uint64_t totalBytes)
 {
     if (totalBytes > 0)
     {
@@ -161,12 +161,12 @@ bool CustomSettings::setMaxUploadBandwidthBytes(uint64_t totalBytes)
     }
 }
 
-void CustomSettings::getNetworkInterfaceId(char *id, size_t count)
+void CustomSettings::GetNetworkInterfaceId(char *id, size_t count)
 {
     this->GetStringValue(KEY_NET_IFACE_ID, id, count);
 }
 
-bool CustomSettings::setNetworkInterfaceId(const char *id)
+bool CustomSettings::SetNetworkInterfaceId(const char *id)
 {
     if (strlen(id) > 0)
     {
@@ -178,12 +178,12 @@ bool CustomSettings::setNetworkInterfaceId(const char *id)
     }
 }
 
-void CustomSettings::getHostname(char *name, size_t count)
+void CustomSettings::GetHostname(char *name, size_t count)
 {
     this->GetStringValue(KEY_HOSTNAME, name, count);
 }
 
-bool CustomSettings::setHostname(const char *name)
+bool CustomSettings::SetHostname(const char *name)
 {
     if (strlen(name) > 0)
     {
@@ -195,12 +195,12 @@ bool CustomSettings::setHostname(const char *name)
     }
 }
 
-bool CustomSettings::getScreenMirrorFlipVertical()
+bool CustomSettings::GetScreenMirrorFlipVertical()
 {
     return (this->GetBoolValue(KEY_SCREEN_MIRROR_FLIP_VERTICAL, false));
 }
 
-bool CustomSettings::setScreenMirrorFlipVertical(bool mirrorFlipVertical)
+bool CustomSettings::SetScreenMirrorFlipVertical(bool mirrorFlipVertical)
 {
     if (mirrorFlipVertical)
     {
@@ -212,12 +212,12 @@ bool CustomSettings::setScreenMirrorFlipVertical(bool mirrorFlipVertical)
     }
 }
 
-ScreenType CustomSettings::getDefaultScreen(ScreenType defaultScreen)
+ScreenType CustomSettings::GetDefaultScreen(ScreenType defaultScreen)
 {
     return ((enum ScreenType)this->GetSmallUnsignedIntegerValue(DEFAULT_SCREEN, (uint8_t)defaultScreen));
 }
 
-bool CustomSettings::setDefaultScreen(ScreenType defaultScreen)
+bool CustomSettings::SetDefaultScreen(ScreenType defaultScreen)
 {
     if (defaultScreen != ST_NONE)
     {
