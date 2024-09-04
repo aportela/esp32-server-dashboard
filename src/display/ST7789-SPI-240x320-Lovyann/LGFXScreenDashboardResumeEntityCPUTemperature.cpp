@@ -12,9 +12,9 @@ LGFXScreenDashboardResumeEntityCPUTemperature::LGFXScreenDashboardResumeEntityCP
         std::snprintf(minStr, sizeof(minStr), "%dC", (int8_t)MIN_CPU_TEMPERATURE);
         char maxStr[5] = {'\0'};
         std::snprintf(maxStr, sizeof(maxStr), "%03dC", (int8_t)MAX_CPU_TEMPERATURE);
-        this->printLimits(minStr, maxStr);
+        this->PrintLimits(minStr, maxStr);
         // this is used for init default value and printing the char "C" (on refresh only print value without char "%" to speed up things)
-        this->refreshStrValue("000.00C", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
+        this->RefreshStrValue("000.00C", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
     }
 }
 
@@ -22,14 +22,14 @@ LGFXScreenDashboardResumeEntityCPUTemperature::~LGFXScreenDashboardResumeEntityC
 {
 }
 
-bool LGFXScreenDashboardResumeEntityCPUTemperature::refresh(bool force)
+bool LGFXScreenDashboardResumeEntityCPUTemperature::Refresh(bool force)
 {
     SourceDataQueueCPUTemperatureValue data = this->sourceData->GetCurrentCPUTemperature();
     if ((data.timestamp != 0 && data.timestamp != this->timestamp) || force)
     {
         this->timestamp = data.timestamp;
-        uint8_t mapped100 = this->mapFloatValueFrom0To100(data.celsious, MIN_CPU_TEMPERATURE, MAX_CPU_TEMPERATURE);
-        uint16_t currentGradientColor = (mapped100 != this->previousMappedValue) ? this->getGradientColorFrom0To100(mapped100) : this->previousGradientcolor;
+        uint8_t mapped100 = this->MapFloatValueFrom0To100(data.celsious, MIN_CPU_TEMPERATURE, MAX_CPU_TEMPERATURE);
+        uint16_t currentGradientColor = (mapped100 != this->previousMappedValue) ? this->GetGradientColorFrom0To100(mapped100) : this->previousGradientcolor;
         this->previousMappedValue = mapped100;
         this->previousGradientcolor = currentGradientColor;
         if (data.celsious != this->value || force)
@@ -37,10 +37,10 @@ bool LGFXScreenDashboardResumeEntityCPUTemperature::refresh(bool force)
             char strValue[7] = {'\0'};
             // 3 chars for integer part (left zero padded) + 1 char for decimal point + 2 chars for decimals
             Format::ParseFloatToString(data.celsious, strValue, sizeof(strValue), 2, 6);
-            this->refreshStrValue(strValue, currentGradientColor, LGFX_SCR_DRE_FONT_BG_COLOR);
+            this->RefreshStrValue(strValue, currentGradientColor, LGFX_SCR_DRE_FONT_BG_COLOR);
             this->value = data.celsious;
         }
-        this->refreshSprite(mapped100, currentGradientColor, true);
+        this->RefreshSprite(mapped100, currentGradientColor, true);
         return (true);
     }
     else

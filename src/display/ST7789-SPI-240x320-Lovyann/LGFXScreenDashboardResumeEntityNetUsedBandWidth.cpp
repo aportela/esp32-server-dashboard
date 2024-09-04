@@ -10,8 +10,8 @@ LGFXScreenDashboardResumeEntityNetUsedBandWidth::LGFXScreenDashboardResumeEntity
         char maxStr[8] = {'\0'};
         SourceDataQueueNetworkingLimitsValue networkLimits = sourceData->GetNetworkLimits();
         Format::ParseBytesToHumanString(this->type == NBT_DOWNLOAD ? networkLimits.byteDownloadLimit : networkLimits.byteUploadLimit, maxStr, sizeof(maxStr), false, true, false);
-        this->printLimits("0B", maxStr);
-        this->refreshStrValue("0000 B/s", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
+        this->PrintLimits("0B", maxStr);
+        this->RefreshStrValue("0000 B/s", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
     }
 }
 
@@ -19,7 +19,7 @@ LGFXScreenDashboardResumeEntityNetUsedBandWidth::~LGFXScreenDashboardResumeEntit
 {
 }
 
-bool LGFXScreenDashboardResumeEntityNetUsedBandWidth::refresh(bool force)
+bool LGFXScreenDashboardResumeEntityNetUsedBandWidth::Refresh(bool force)
 {
     uint64_t currentTimestamp = 0;
     // bool changed = false;
@@ -29,8 +29,8 @@ bool LGFXScreenDashboardResumeEntityNetUsedBandWidth::refresh(bool force)
     {
         uint64_t currentValue = networkData.currentBandwidthBytesPerSecond;
         this->timestamp = networkData.timestamp;
-        uint8_t mapped100 = this->type == NBT_DOWNLOAD ? this->mapUint64ValueFrom0To100(currentValue, 0, networkLimitsData.byteDownloadLimit) : this->mapUint64ValueFrom0To100(currentValue, 0, networkLimitsData.byteUploadLimit);
-        uint16_t currentGradientColor = (mapped100 != this->previousMappedValue) ? this->getGradientColorFrom0To100(mapped100) : this->previousGradientcolor;
+        uint8_t mapped100 = this->type == NBT_DOWNLOAD ? this->MapUint64ValueFrom0To100(currentValue, 0, networkLimitsData.byteDownloadLimit) : this->MapUint64ValueFrom0To100(currentValue, 0, networkLimitsData.byteUploadLimit);
+        uint16_t currentGradientColor = (mapped100 != this->previousMappedValue) ? this->GetGradientColorFrom0To100(mapped100) : this->previousGradientcolor;
         this->previousMappedValue = mapped100;
         this->previousGradientcolor = currentGradientColor;
         if (currentValue != this->value || force)
@@ -38,10 +38,10 @@ bool LGFXScreenDashboardResumeEntityNetUsedBandWidth::refresh(bool force)
             char strValue[24] = {'\0'};
             Format::ParseBytesToHumanString(currentValue, strValue, sizeof(strValue), true, true, true);
             strcat(strValue, "  ");
-            this->refreshStrValue(strValue, currentGradientColor, LGFX_SCR_DRE_FONT_BG_COLOR);
+            this->RefreshStrValue(strValue, currentGradientColor, LGFX_SCR_DRE_FONT_BG_COLOR);
             this->value = currentValue;
         }
-        this->refreshSprite(mapped100, currentGradientColor, true);
+        this->RefreshSprite(mapped100, currentGradientColor, true);
         return (true);
     }
     else

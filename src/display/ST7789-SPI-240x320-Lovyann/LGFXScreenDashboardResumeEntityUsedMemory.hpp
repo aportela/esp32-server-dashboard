@@ -14,7 +14,7 @@ private:
 public:
     LGFXScreenDashboardResumeEntityUsedMemory(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset);
     ~LGFXScreenDashboardResumeEntityUsedMemory();
-    bool refresh(bool force = false) override;
+    bool Refresh(bool force = false) override;
 };
 
 #endif // ESP32_SERVER_DASHBOARD_LGFX_SCREEN_DASHBOARD_RESUME_ENTITY_USED_MEMORY_H

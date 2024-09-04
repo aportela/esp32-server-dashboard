@@ -12,8 +12,8 @@ LGFXScreenDashboardResumeEntity::LGFXScreenDashboardResumeEntity(LovyanGFX *disp
         this->parentDisplay = display;
         this->previousMappedValue = 0;
         this->previousGradientcolor = INIT_GRADIENT_COLOR;
-        this->initGraph();
-        this->printTitle(title);
+        this->InitGraph();
+        this->PrintTitle(title);
     }
     if (sourceData != nullptr)
     {
@@ -32,7 +32,7 @@ LGFXScreenDashboardResumeEntity::~LGFXScreenDashboardResumeEntity()
     this->parentDisplay = nullptr;
 }
 
-void LGFXScreenDashboardResumeEntity::initGraph(void)
+void LGFXScreenDashboardResumeEntity::InitGraph(void)
 {
     this->graphSprite = new lgfx::LGFX_Sprite(this->parentDisplay);
     this->graphSprite->createSprite(width, height);
@@ -45,7 +45,7 @@ void LGFXScreenDashboardResumeEntity::initGraph(void)
     this->parentDisplay->drawFastHLine(this->xOffset, this->yOffset, (this->width + 4), GRAPH_AXIS_COLOR);
 }
 
-void LGFXScreenDashboardResumeEntity::printTitle(const char *title)
+void LGFXScreenDashboardResumeEntity::PrintTitle(const char *title)
 {
     this->parentDisplay->setFont(LGFX_SCR_DRE_FONT);
     this->parentDisplay->setTextSize(LGFX_SCR_DRE_FONT_SIZE);
@@ -54,7 +54,7 @@ void LGFXScreenDashboardResumeEntity::printTitle(const char *title)
     this->parentDisplay->print(title);
 }
 
-void LGFXScreenDashboardResumeEntity::printLimits(const char *low, const char *high)
+void LGFXScreenDashboardResumeEntity::PrintLimits(const char *low, const char *high)
 {
     this->parentDisplay->setFont(LGFX_SCR_DRE_SMALL_FONT);
     this->parentDisplay->setTextSize(LGFX_SCR_DRE_SMALL_FONT_SIZE);
@@ -65,17 +65,17 @@ void LGFXScreenDashboardResumeEntity::printLimits(const char *low, const char *h
     this->parentDisplay->print(low);
 }
 
-void LGFXScreenDashboardResumeEntity::clearSprite(void)
+void LGFXScreenDashboardResumeEntity::ClearSprite(void)
 {
     this->graphSprite->fillSprite(GRAPH_BG_COLOR);
 }
 
-void LGFXScreenDashboardResumeEntity::dumpSprite(void)
+void LGFXScreenDashboardResumeEntity::DumpSprite(void)
 {
     this->graphSprite->pushSprite(this->xOffset + 2, this->yOffset + 2);
 }
 
-void LGFXScreenDashboardResumeEntity::refreshSprite(uint8_t mapped100Value, int32_t color, bool dump)
+void LGFXScreenDashboardResumeEntity::RefreshSprite(uint8_t mapped100Value, int32_t color, bool dump)
 {
     uint8_t mappedGraphValue = map(mapped100Value, 0, 100, 0, this->height);
     // create graph animation moving sprite to left 1 pixel
@@ -89,7 +89,7 @@ void LGFXScreenDashboardResumeEntity::refreshSprite(uint8_t mapped100Value, int3
     }
 }
 
-void LGFXScreenDashboardResumeEntity::refreshStrValue(const char *strValue, int32_t color, int32_t background)
+void LGFXScreenDashboardResumeEntity::RefreshStrValue(const char *strValue, int32_t color, int32_t background)
 {
     this->parentDisplay->setFont(LGFX_SCR_DRE_FONT);
     this->parentDisplay->setTextSize(LGFX_SCR_DRE_FONT_SIZE);
@@ -98,12 +98,12 @@ void LGFXScreenDashboardResumeEntity::refreshStrValue(const char *strValue, int3
     this->parentDisplay->print(strValue);
 }
 
-uint8_t LGFXScreenDashboardResumeEntity::mapFloatValueFrom0To100(float value, float minValue, float maxValue)
+uint8_t LGFXScreenDashboardResumeEntity::MapFloatValueFrom0To100(float value, float minValue, float maxValue)
 {
     return (map((int32_t)value, (int32_t)minValue, (int32_t)maxValue, 0, 100));
 }
 
-uint8_t LGFXScreenDashboardResumeEntity::mapUint64ValueFrom0To100(uint64_t value, uint64_t minValue, uint64_t maxValue)
+uint8_t LGFXScreenDashboardResumeEntity::MapUint64ValueFrom0To100(uint64_t value, uint64_t minValue, uint64_t maxValue)
 {
     if (minValue == maxValue)
     {
@@ -123,7 +123,7 @@ uint8_t LGFXScreenDashboardResumeEntity::mapUint64ValueFrom0To100(uint64_t value
     }
 }
 
-uint16_t LGFXScreenDashboardResumeEntity::getGradientColorFrom0To100(uint8_t value)
+uint16_t LGFXScreenDashboardResumeEntity::GetGradientColorFrom0To100(uint8_t value)
 {
     value = constrain(value, 0, 100);
     // blue -> green
