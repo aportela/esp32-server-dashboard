@@ -26,8 +26,8 @@ MQTTTelegrafSource::MQTTTelegrafSource(SourceData *sourceData, const char *uri, 
     Serial.println("topic: ");
     Serial.println(topic);
 #endif
-    MQTT::onMessageReceived(MQTTTelegrafSource::onMessageReceived);
-    MQTT::init(clientId, uri, topic, username, password);
+    MQTT::OnMessageReceived(MQTTTelegrafSource::onMessageReceived);
+    MQTT::Init(clientId, uri, topic, username, password);
     MQTTTelegrafSource::generateTopic(topic, MQTTTelegrafSource::cpuTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/cpu");
     MQTTTelegrafSource::generateTopic(topic, MQTTTelegrafSource::memoryTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/mem");
     MQTTTelegrafSource::generateTopic(topic, MQTTTelegrafSource::sensorsTopic, sizeof(MQTTTelegrafSource::cpuTopic), "/sensors");
@@ -54,6 +54,7 @@ MQTTTelegrafSource::~MQTTTelegrafSource()
 {
     if (MQTTTelegrafSource::instance != nullptr)
     {
+        MQTT::Destroy();
         MQTTTelegrafSource::instance = nullptr;
     }
 }

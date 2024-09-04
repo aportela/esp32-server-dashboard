@@ -14,14 +14,15 @@ namespace aportela::microcontroller::utils
     {
     private:
         static esp_mqtt_client_handle_t client;
+        static esp_mqtt_client_config_t mqtt_cfg;
         static MQTTMessageReceivedCallback messageReceivedCallback;
-        static void event_handler(void *handler_args, esp_event_base_t event_base, int32_t event_id, void *event_data);
         static char topic[MAX_MQTT_TOPIC_LENGTH];
+        static void EventHandler(void *handlerArgs, esp_event_base_t eventBase, int32_t eventId, void *eventData);
 
     public:
-        static void init(const char *id, const char *uri, const char *topic, const char *username = nullptr, const char *password = nullptr);
-        static void destroy(void);
-        static void onMessageReceived(MQTTMessageReceivedCallback callback);
+        static void Init(const char *id, const char *uri, const char *topic, const char *username = nullptr, const char *password = nullptr);
+        static void Destroy(void);
+        static void OnMessageReceived(MQTTMessageReceivedCallback callback);
     };
 }
 

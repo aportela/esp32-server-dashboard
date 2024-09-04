@@ -1,32 +1,31 @@
 #include "MQTT.hpp"
 #include <cstring>
-#include <Arduino.h>
 
 namespace aportela::microcontroller::utils
 {
+    esp_mqtt_client_handle_t MQTT::client = nullptr;
+    esp_mqtt_client_config_t MQTT::mqtt_cfg = {};
+    MQTTMessageReceivedCallback MQTT::messageReceivedCallback = nullptr;
     char MQTT::topic[256] = {'\0'};
 
-    esp_mqtt_client_handle_t MQTT::client = nullptr;
-    MQTTMessageReceivedCallback MQTT::messageReceivedCallback = nullptr;
-
-    void MQTT::init(const char *id, const char *uri, const char *topic, const char *username, const char *password)
+    void MQTT::Init(const char *id, const char *uri, const char *topic, const char *username, const char *password)
     {
-        esp_mqtt_client_config_t mqtt_cfg = {};
+
         if (username != nullptr && strlen(username) > 0 && password != nullptr && strlen(password) > 0)
         {
-            mqtt_cfg.credentials.username = strdup(username);
-            mqtt_cfg.credentials.authentication.password = strdup(password);
+            MQTT::mqtt_cfg.credentials.username = strdup(username);
+            MQTT::mqtt_cfg.credentials.authentication.password = strdup(password);
         }
-        mqtt_cfg.credentials.client_id = strdup(id);
-        mqtt_cfg.broker.address.uri = strdup(uri);
-        MQTT::client = esp_mqtt_client_init(&mqtt_cfg);
-        esp_mqtt_client_register_event(MQTT::client, (esp_mqtt_event_id_t)ESP_EVENT_ANY_ID, MQTT::event_handler, NULL);
+        MQTT::mqtt_cfg.credentials.client_id = strdup(id);
+        MQTT::mqtt_cfg.broker.address.uri = strdup(uri);
+        MQTT::client = esp_mqtt_client_init(&MQTT::mqtt_cfg);
+        esp_mqtt_client_register_event(MQTT::client, (esp_mqtt_event_id_t)ESP_EVENT_ANY_ID, MQTT::EventHandler, NULL);
         esp_mqtt_client_start(MQTT::client);
         memcpy(MQTT::topic, topic, strlen(topic));
         MQTT::topic[strlen(topic)] = '\0';
     }
 
-    void MQTT::destroy(void)
+    void MQTT::Destroy(void)
     {
         if (client != nullptr)
         {
@@ -37,16 +36,16 @@ namespace aportela::microcontroller::utils
         MQTT::messageReceivedCallback = nullptr;
     }
 
-    void MQTT::onMessageReceived(MQTTMessageReceivedCallback callback)
+    void MQTT::OnMessageReceived(MQTTMessageReceivedCallback callback)
     {
         MQTT::messageReceivedCallback = callback;
     }
 
-    void MQTT::event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data)
+    void MQTT::EventHandler(void *handlerArgs, esp_event_base_t eventBase, int32_t eventId, void *eventData)
     {
-        esp_mqtt_event_handle_t event = (esp_mqtt_event_handle_t)event_data;
+        esp_mqtt_event_handle_t event = (esp_mqtt_event_handle_t)eventData;
         esp_mqtt_client_handle_t client = event->client;
-        switch ((esp_mqtt_event_id_t)event_id)
+        switch ((esp_mqtt_event_id_t)eventId)
         {
         case MQTT_EVENT_CONNECTED:
             esp_mqtt_client_subscribe(client, MQTT::topic, 0);
