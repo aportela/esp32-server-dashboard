@@ -33,13 +33,13 @@ private:
 
     char hostname[SourceData::MAX_HOSTNAME_LENGTH + 1] = {'\0'};
 
-    bool refreshBottomCommonData(bool forceDrawAll);
+    bool RefreshBottomCommonData(bool forceDrawAll);
     uint16_t uptimeValueXOffset = 0;
 
 public:
     LGFXScreenDashboardResume(LovyanGFX *display, SourceData *sourceData);
     ~LGFXScreenDashboardResume();
-    bool refresh(bool force = false) override;
+    bool Refresh(bool force = false) override;
 };
 
 #endif // ESP32_SERVER_DASHBOARD_LGFX_SCREEN_DASHBOARD_RESUME_H

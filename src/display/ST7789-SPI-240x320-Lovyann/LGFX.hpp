@@ -19,17 +19,17 @@ private:
 
     LGFXScreen *currentScreen = nullptr;
 
-    void deleteCurrentScreen(void);
+    void DeleteCurrentScreen(void);
 
 public:
     LGFX(uint8_t PIN_SDA, uint8_t PIN_SCL, uint8_t PIN_CS, uint8_t PIN_DC, uint8_t PIN_RST, uint16_t width, uint16_t height, uint8_t rotation);
     ~LGFX();
-    void setSourceData(SourceData *src);
-    void initScreen(SCREEN_TYPE scr);
-    SCREEN_TYPE getCurrentScreenType(void);
-    bool flipToScreen(SCREEN_TYPE scr);
-    bool toggleScreen(void);
-    bool refresh(void);
+    void SetSourceData(SourceData *src);
+    void InitScreen(SCREEN_TYPE scr);
+    SCREEN_TYPE GetCurrentScreenType(void);
+    bool FlipToScreen(SCREEN_TYPE scr);
+    bool ToggleScreen(void);
+    bool Refresh(void);
 };
 
 #endif // ESP32_SERVER_DASHBOARD_LGFX_H

@@ -425,7 +425,7 @@ void onReceivedSerialCommand(int8_t commandIndex, const char *value)
     case CUSTOM_SERIAL_COMMAND_INDEX_TOGGLE_SCREEN:
         if (screen != nullptr)
         {
-            screen->toggleScreen();
+            screen->ToggleScreen();
         }
         break;
     case CUSTOM_SERIAL_COMMAND_INDEX_SET_MAX_DOWNLOAD_BYTES_BANDWITH:
@@ -632,8 +632,8 @@ void setup()
 #endif // SOURCE_DUMMY
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     screen = new LGFX(PIN_SDA, PIN_SCL, PIN_CS, PIN_DC, PIN_RST, DISPLAY_DRIVER_LOVYANN_ST7789_WIDTH, DISPLAY_DRIVER_LOVYANN_ST7789_HEIGHT, !screenMirrorFlipVertical ? DISPLAY_DRIVER_LOVYANN_ST7789_ROTATION : DISPLAY_DRIVER_LOVYANN_ST7789_ROTATION_MIRROR_FLIP_VERTICAL);
-    screen->setSourceData(sourceData);
-    screen->initScreen(settings->GetDefaultScreen(SCREEN_TYPE_INFO));
+    screen->SetSourceData(sourceData);
+    screen->InitScreen(settings->GetDefaultScreen(SCREEN_TYPE_INFO));
 #endif // DISPLAY_DRIVER_LOVYANN_ST7789
     button = new Bounce2::Button();
     button->attach(PIN_BUTTON_SW, INPUT_PULLUP);
@@ -653,9 +653,9 @@ void loop()
     button->update();
     if (button->pressed())
     {
-        screen->toggleScreen();
+        screen->ToggleScreen();
     }
-    screen->refresh();
+    screen->Refresh();
     FPS::Loop(999);
 #endif // DISPLAY_DRIVER_LOVYANN_ST7789
     yield();

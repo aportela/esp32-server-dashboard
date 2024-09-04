@@ -60,12 +60,12 @@ LGFX::~LGFX()
     this->sourceData = nullptr;
 }
 
-void LGFX::setSourceData(SourceData *src)
+void LGFX::SetSourceData(SourceData *src)
 {
     this->sourceData = src;
 }
 
-void LGFX::initScreen(SCREEN_TYPE screenType)
+void LGFX::InitScreen(SCREEN_TYPE screenType)
 {
     switch (screenType)
     {
@@ -89,7 +89,7 @@ void LGFX::initScreen(SCREEN_TYPE screenType)
     }
 }
 
-void LGFX::deleteCurrentScreen(void)
+void LGFX::DeleteCurrentScreen(void)
 {
     if (this->currentScreenType != SCREEN_TYPE_NONE)
     {
@@ -102,17 +102,17 @@ void LGFX::deleteCurrentScreen(void)
     }
 }
 
-SCREEN_TYPE LGFX::getCurrentScreenType(void)
+SCREEN_TYPE LGFX::GetCurrentScreenType(void)
 {
     return (this->currentScreenType);
 }
 
-bool LGFX::flipToScreen(SCREEN_TYPE screenType)
+bool LGFX::FlipToScreen(SCREEN_TYPE screenType)
 {
     if (screenType != this->currentScreenType)
     {
-        this->deleteCurrentScreen();
-        this->initScreen(screenType);
+        this->DeleteCurrentScreen();
+        this->InitScreen(screenType);
         return (true);
     }
     else
@@ -121,28 +121,28 @@ bool LGFX::flipToScreen(SCREEN_TYPE screenType)
     }
 }
 
-bool LGFX::toggleScreen(void)
+bool LGFX::ToggleScreen(void)
 {
     bool success = false;
-    switch (this->getCurrentScreenType())
+    switch (this->GetCurrentScreenType())
     {
     case SCREEN_TYPE_INFO:
-        success = this->flipToScreen(SCREEN_TYPE_DASHBOARD_REALTIME_GRAPHS);
+        success = this->FlipToScreen(SCREEN_TYPE_DASHBOARD_REALTIME_GRAPHS);
         break;
     case SCREEN_TYPE_DASHBOARD_REALTIME_GRAPHS:
-        success = this->flipToScreen(SCREEN_TYPE_INFO);
+        success = this->FlipToScreen(SCREEN_TYPE_INFO);
         break;
     }
     return (success);
 }
 
-bool LGFX::refresh(void)
+bool LGFX::Refresh(void)
 {
     if (this->currentScreenType != SCREEN_TYPE_NONE)
     {
         if (this->currentScreen != nullptr)
         {
-            return (this->currentScreen->refresh(false));
+            return (this->currentScreen->Refresh(false));
         }
         else
         {

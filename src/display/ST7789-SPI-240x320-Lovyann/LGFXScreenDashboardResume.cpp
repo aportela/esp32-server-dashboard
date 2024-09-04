@@ -44,7 +44,7 @@ LGFXScreenDashboardResume::LGFXScreenDashboardResume(LovyanGFX *display, SourceD
                 this->networkUploadBandwidthBlock = new LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth(NBT_UPLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 4);
             }
             sourceData->GetHostname(this->hostname, sizeof(this->hostname));
-            this->refresh(true);
+            this->Refresh(true);
         }
     }
 }
@@ -79,7 +79,7 @@ LGFXScreenDashboardResume::~LGFXScreenDashboardResume()
     this->currentSourceData = nullptr;
 }
 
-bool LGFXScreenDashboardResume::refreshBottomCommonData(bool forceDrawAll)
+bool LGFXScreenDashboardResume::RefreshBottomCommonData(bool forceDrawAll)
 {
     bool changed = forceDrawAll;
     if (forceDrawAll)
@@ -136,7 +136,7 @@ bool LGFXScreenDashboardResume::refreshBottomCommonData(bool forceDrawAll)
     return (changed);
 }
 
-bool LGFXScreenDashboardResume::refresh(bool force)
+bool LGFXScreenDashboardResume::Refresh(bool force)
 {
     if (this->parentDisplay != nullptr)
     {
@@ -150,7 +150,7 @@ bool LGFXScreenDashboardResume::refresh(bool force)
             bool r5 = this->networkUploadBandwidthBlock->refresh(false);
             refreshed = r1 || r2 || r3 || r4 || r5;
         }
-        return (this->refreshBottomCommonData(force) || refreshed);
+        return (this->RefreshBottomCommonData(force) || refreshed);
     }
     else
     {

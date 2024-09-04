@@ -62,7 +62,7 @@ LGFXScreenInfo::LGFXScreenInfo(LovyanGFX *display) : LGFXScreen(display)
         this->parentDisplay->println(SCREEN_TITLE_TEXT);
 
         this->wasConnected = WiFiManager::IsConnected();
-        this->refresh(true);
+        this->Refresh(true);
     }
 }
 
@@ -71,7 +71,7 @@ LGFXScreenInfo::~LGFXScreenInfo()
     this->parentDisplay = nullptr;
 }
 
-void LGFXScreenInfo::refreshWIFILogo(void)
+void LGFXScreenInfo::RefreshWIFILogo(void)
 {
     this->parentDisplay->fillRect(SCREEN_WIFI_LOGO_RECT_X_OFFSET, SCREEN_WIFI_LOGO_RECT_Y_OFFSET, SCREEN_WIFI_LOGO_RECT_WIDTH, SCREEN_WIFI_LOGO_RECT_HEIGHT, WiFiManager::IsConnected() ? SCREEN_WIFI_LOGO_BG_COLOR_CONNECTED : SCREEN_WIFI_LOGO_BG_COLOR_DISCONNECTED);
     this->parentDisplay->setFont(SCREEN_WIFI_LOGO_FONT);
@@ -81,7 +81,7 @@ void LGFXScreenInfo::refreshWIFILogo(void)
     this->parentDisplay->print(SCREEN_WIFI_LOGO_TEXT);
 }
 
-void LGFXScreenInfo::refreshWIFISignalStrength(void)
+void LGFXScreenInfo::RefreshWIFISignalStrength(void)
 {
     this->parentDisplay->setFont(SCREEN_WIFI_SIGNAL_STRENGTH_FONT);
     this->parentDisplay->setTextSize(SCREEN_WIFI_SIGNAL_STRENGTH_FONT_SIZE);
@@ -97,7 +97,7 @@ void LGFXScreenInfo::refreshWIFISignalStrength(void)
     }
 }
 
-void LGFXScreenInfo::refreshWIFISignalLevelBars(void)
+void LGFXScreenInfo::RefreshWIFISignalLevelBars(void)
 {
     int colors[TOTAL_WIFI_SIGNAL_LEVEL_BARS];
     if (WiFiManager::IsConnected())
@@ -177,11 +177,11 @@ void LGFXScreenInfo::refreshWIFISignalLevelBars(void)
     }
 }
 
-void LGFXScreenInfo::refreshWIFIData(bool forceDrawAll)
+void LGFXScreenInfo::RefreshWIFIData(bool forceDrawAll)
 {
-    WiFiManager::GetSSID(this->WIFISSID, sizeof(this->WIFISSID));
-    WiFiManager::GetMacAddress(this->WIFIMacAddress, sizeof(this->WIFIMacAddress));
-    WiFiManager::GetIPAddress(this->WIFIIPAddress, sizeof(this->WIFIIPAddress));
+    WiFiManager::GetSSID(this->wiFiSSID, sizeof(this->wiFiSSID));
+    WiFiManager::GetMacAddress(this->wiFiMacAddress, sizeof(this->wiFiMacAddress));
+    WiFiManager::GetIPAddress(this->wiFiIPAddress, sizeof(this->wiFiIPAddress));
     this->parentDisplay->setFont(SCREEN_COMMON_TEXTDATA_FONT);
     this->parentDisplay->setTextSize(SCREEN_COMMON_TEXTDATA_FONT_SIZE);
     this->parentDisplay->setTextColor(SCREEN_COMMON_TEXTDATA_COLOR, SCREEN_COMMON_TEXTDATA_BG_COLOR);
@@ -191,24 +191,24 @@ void LGFXScreenInfo::refreshWIFIData(bool forceDrawAll)
         this->parentDisplay->print("SSID ");
     }
     this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_VALUE_X_OFFSET, 100);
-    this->parentDisplay->printf("%s", this->WIFISSID);
+    this->parentDisplay->printf("%s", this->wiFiSSID);
     if (forceDrawAll)
     {
         this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_X_OFFSET, 120);
         this->parentDisplay->print(" MAC ");
     }
     this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_VALUE_X_OFFSET, 120);
-    this->parentDisplay->print(this->WIFIMacAddress);
+    this->parentDisplay->print(this->wiFiMacAddress);
     if (forceDrawAll)
     {
         this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_X_OFFSET, 140);
         this->parentDisplay->print("  IP ");
     }
     this->parentDisplay->setCursor(SCREEN_COMMON_TEXTDATA_FIELD_VALUE_X_OFFSET, 140);
-    this->parentDisplay->printf("%s", this->WIFIIPAddress);
+    this->parentDisplay->printf("%s", this->wiFiIPAddress);
 }
 
-bool LGFXScreenInfo::refreshCommonData(bool forceDrawAll)
+bool LGFXScreenInfo::RefreshCommonData(bool forceDrawAll)
 {
     bool changed = forceDrawAll;
     this->parentDisplay->setFont(SCREEN_COMMON_TEXTDATA_FONT);
@@ -250,71 +250,71 @@ bool LGFXScreenInfo::refreshCommonData(bool forceDrawAll)
     return (changed);
 }
 
-bool LGFXScreenInfo::refresh(bool force)
+bool LGFXScreenInfo::Refresh(bool force)
 {
     if (this->parentDisplay != nullptr)
     {
         bool changed = force;
-        this->WIFILogoChanged = false;
-        this->WIFISignalStrengthChanged = false;
-        this->WIFISignalLevelBarsChanged = false;
-        this->WIFIDataChanged = false;
+        this->wiFiLogoChanged = false;
+        this->wiFiSignalStrengthChanged = false;
+        this->wiFiSignalLevelBarsChanged = false;
+        this->wiFiDataChanged = false;
 
         bool isConnected = WiFiManager::IsConnected();
         if (!force)
         {
             if (this->wasConnected != isConnected)
             {
-                this->WIFILogoChanged = true;
-                this->WIFISignalStrengthChanged = true;
-                this->WIFISignalLevelBarsChanged = true;
-                this->WIFIDataChanged = true;
+                this->wiFiLogoChanged = true;
+                this->wiFiSignalStrengthChanged = true;
+                this->wiFiSignalLevelBarsChanged = true;
+                this->wiFiDataChanged = true;
             }
-            else if (isConnected && (strlen(this->WIFISSID) == 0 || strlen(this->WIFIIPAddress) == 0 || strlen(this->WIFIMacAddress) == 0))
+            else if (isConnected && (strlen(this->wiFiSSID) == 0 || strlen(this->wiFiIPAddress) == 0 || strlen(this->wiFiMacAddress) == 0))
             {
                 // UGLY: I think there is a "timming" bug that not assign ssid/address on some connected networks so every time that connected status found if no
                 // data is assigned try to refresh
-                this->WIFIDataChanged = true;
+                this->wiFiDataChanged = true;
                 changed = true;
             }
         }
         long currentWiFiSignalStrength = WiFiManager::GetSignalStrength();
         if (this->previousWiFiSignalStrength != currentWiFiSignalStrength)
         {
-            this->WIFISignalStrengthChanged = true;
+            this->wiFiSignalStrengthChanged = true;
             changed = true;
         }
         WIFI_SIGNAL_QUALITY currentWIFI_SIGNAL_QUALITY = WiFiManager::ConvertToSignalQuality(currentWiFiSignalStrength);
         if (this->previousWIFI_SIGNAL_QUALITY != currentWIFI_SIGNAL_QUALITY)
         {
-            this->WIFISignalLevelBarsChanged = true;
+            this->wiFiSignalLevelBarsChanged = true;
             changed = true;
         }
         this->wasConnected = isConnected;
         this->previousWiFiSignalStrength = currentWiFiSignalStrength;
         this->previousWIFI_SIGNAL_QUALITY = currentWIFI_SIGNAL_QUALITY;
 
-        if (force || this->WIFILogoChanged)
+        if (force || this->wiFiLogoChanged)
         {
-            this->refreshWIFILogo();
+            this->RefreshWIFILogo();
         }
 
-        if (force || this->WIFISignalStrengthChanged)
+        if (force || this->wiFiSignalStrengthChanged)
         {
-            this->refreshWIFISignalStrength();
+            this->RefreshWIFISignalStrength();
         }
 
-        if (force || this->WIFISignalLevelBarsChanged)
+        if (force || this->wiFiSignalLevelBarsChanged)
         {
-            this->refreshWIFISignalLevelBars();
+            this->RefreshWIFISignalLevelBars();
         }
 
-        if (force || this->WIFIDataChanged)
+        if (force || this->wiFiDataChanged)
         {
-            this->refreshWIFIData(force);
+            this->RefreshWIFIData(force);
         }
 
-        return (this->refreshCommonData(force) || changed);
+        return (this->RefreshCommonData(force) || changed);
     }
     else
     {

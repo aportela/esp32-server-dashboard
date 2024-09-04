@@ -12,7 +12,7 @@ protected:
 public:
     LGFXScreen(LovyanGFX *display);
     ~LGFXScreen();
-    virtual bool refresh(bool force = false) = 0;
+    virtual bool Refresh(bool force = false) = 0;
 };
 
 #endif // ESP32_SERVER_DASHBOARD_LGFX_SCREEN_H
