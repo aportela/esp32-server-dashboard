@@ -49,7 +49,7 @@ bool screenMirrorFlipVertical = false;
 #endif // DISPLAY_DRIVER_LOVYANN_ST7789
 
 // #define SOURCE_DUMMY // this is for testing source with random values (debug)
-#define SOURCE_MQTT_TELEGRAF // this is telegraf source via mqtt protocol (production)
+#define SOURCE_MQTT_TELEGRAF // this is for telegraf source via mqtt protocol (production)
 
 #include "src/CustomSettings.hpp"
 #include "src/utils/WiFiManager.hpp"
@@ -647,7 +647,7 @@ void loop()
     SerialManager::Loop(CUSTOM_SERIAL_COMMANDS, CUSTOM_SERIAL_COMMAND_COUNT, onReceivedSerialCommand);
     WiFiManager::Loop();
 #ifdef SOURCE_DUMMY
-    dummySRC->refresh(SOURCE_DUMMY_UPDATES_EVERY_MS);
+    dummySRC->Refresh(SOURCE_DUMMY_UPDATES_EVERY_MS);
 #endif // SOURCE_DUMMY
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     button->update();

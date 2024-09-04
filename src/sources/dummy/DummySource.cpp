@@ -12,7 +12,7 @@ DummySource::~DummySource()
 {
 }
 
-void DummySource::refresh(uint16_t milliSeconds)
+void DummySource::Refresh(uint16_t milliSeconds)
 {
     uint64_t currentMillis = millis();
     bool allowRefresh = milliSeconds == 0 || ((currentMillis - this->lastEllapsedMillis) >= milliSeconds);

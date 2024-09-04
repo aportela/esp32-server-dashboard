@@ -13,7 +13,7 @@ public:
     DummySource(SourceData *sourceData);
     ~DummySource();
 
-    void refresh(uint16_t milliSeconds = 0);
+    void Refresh(uint16_t milliSeconds = 0);
 };
 
 #endif // ESP32_SERVER_DASHBOARD_DUMMY_SOURCE_H
