@@ -1,6 +1,5 @@
 #include "Format.hpp"
 #include <string.h>
-#include <Arduino.h>
 #include <inttypes.h>
 
 #define BYTE_UNITS_SIZE 7 // next const arrays size
