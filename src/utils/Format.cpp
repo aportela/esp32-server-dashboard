@@ -42,49 +42,46 @@ namespace aportela::microcontroller::utils
         }
     }
 
-    void Format::millisToHumanStr(uint64_t millis_diff, char *buffer, size_t bufferSize)
+    void Format::millisToHumanStr(uint64_t millisDiff, char *buffer, size_t bufferSize)
     {
-        static const uint64_t millis_in_second = 1000;
-        static const uint64_t millis_in_minute = millis_in_second * 60;
-        static const uint64_t millis_in_hour = millis_in_minute * 60;
-        static const uint64_t millis_in_day = millis_in_hour * 24;
-        static const uint64_t millis_in_month = millis_in_day * 30;
-        static const uint64_t millis_in_year = millis_in_day * 365;
-
+        static const uint64_t totalMillisInSecond = 1000;
+        static const uint64_t totalMillisInMinute = totalMillisInSecond * 60;
+        static const uint64_t totalMillisInHour = totalMillisInMinute * 60;
+        static const uint64_t totalMillisInDay = totalMillisInHour * 24;
+        static const uint64_t totalMillisInMonth = totalMillisInDay * 30;
+        static const uint64_t totalMillisInYear = totalMillisInDay * 365;
         double time = 0.0;
         const char *unit = "";
-
-        if (millis_diff >= millis_in_year)
+        if (millisDiff >= totalMillisInYear)
         {
-            time = (double)millis_diff / millis_in_year;
+            time = (double)millisDiff / totalMillisInYear;
             unit = (time >= 2) ? "years" : "year";
         }
-        else if (millis_diff >= millis_in_month)
+        else if (millisDiff >= totalMillisInMonth)
         {
-            time = (double)millis_diff / millis_in_month;
+            time = (double)millisDiff / totalMillisInMonth;
             unit = (time >= 2) ? "months" : "month";
         }
-        else if (millis_diff >= millis_in_day)
+        else if (millisDiff >= totalMillisInDay)
         {
-            time = (double)millis_diff / millis_in_day;
+            time = (double)millisDiff / totalMillisInDay;
             unit = (time >= 2) ? "days" : "day";
         }
-        else if (millis_diff >= millis_in_hour)
+        else if (millisDiff >= totalMillisInHour)
         {
-            time = (double)millis_diff / millis_in_hour;
+            time = (double)millisDiff / totalMillisInHour;
             unit = (time >= 2) ? "hours" : "hour";
         }
-        else if (millis_diff >= millis_in_minute)
+        else if (millisDiff >= totalMillisInMinute)
         {
-            time = (double)millis_diff / millis_in_minute;
+            time = (double)millisDiff / totalMillisInMinute;
             unit = (time >= 2) ? "mins" : "min";
         }
         else
         {
-            time = (double)millis_diff / millis_in_second;
+            time = (double)millisDiff / totalMillisInSecond;
             unit = (time >= 2) ? "secs" : "sec";
         }
-
         std::snprintf(buffer, bufferSize, "%.1f %s", time, unit);
     }
 }
