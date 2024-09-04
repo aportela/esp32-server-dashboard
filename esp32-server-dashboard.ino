@@ -177,7 +177,7 @@ void onReceivedSerialCommand(int8_t commandIndex, const char *value)
         break;
     case CUSTOM_SERIAL_COMMAND_INDEX_CLEAR_SETTINGS:
         Serial.println("Serial command received: reset settings");
-        settings->clear();
+        settings->Clear();
         Serial.println("Settings cleared. Reboot REQUIRED");
         break;
     case CUSTOM_SERIAL_COMMAND_INDEX_EXPORT_SETTINGS:

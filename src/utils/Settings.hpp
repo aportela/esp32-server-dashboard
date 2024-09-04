@@ -17,25 +17,25 @@ namespace aportela::microcontroller::utils
         Preferences *preferences;
         char nameSpace[SETTINGS_NAMESPACE_ARR_LENGTH];
 
-        bool getBoolValue(const char *key, bool defaultValue = false);
-        bool setBoolValue(const char *key, bool value = false);
-        int8_t getSmallSignedIntegerValue(const char *key, int8_t defaultValue = 0);
-        bool setSmallSignedIntegerValue(const char *key, int8_t value = 0);
-        int8_t getSmallUnsignedIntegerValue(const char *key, uint8_t defaultValue = 0);
-        bool setSmallUnsignedIntegerValue(const char *key, uint8_t value = 0);
-        uint64_t getBigUnsignedIntegerValue(const char *key, uint64_t defaultValue = 0);
-        bool setBigUnsigedIntegerValue(const char *key, uint64_t value = 0);
-        float getFloatValue(const char *key, float defaultValue = 0.0f);
-        bool setFloatValue(const char *key, float value = 0.0f);
-        void getStringValue(const char *key, char *value, size_t count);
-        bool setStringValue(const char *key, const char *value);
-        bool deleteKey(const char *key);
+        bool GetBoolValue(const char *key, bool defaultValue = false);
+        bool SetBoolValue(const char *key, bool value = false);
+        int8_t GetSmallSignedIntegerValue(const char *key, int8_t defaultValue = 0);
+        bool SetSmallSignedIntegerValue(const char *key, int8_t value = 0);
+        int8_t GetSmallUnsignedIntegerValue(const char *key, uint8_t defaultValue = 0);
+        bool SetSmallUnsignedIntegerValue(const char *key, uint8_t value = 0);
+        uint64_t GetBigUnsignedIntegerValue(const char *key, uint64_t defaultValue = 0);
+        bool SetBigUnsigedIntegerValue(const char *key, uint64_t value = 0);
+        float GetFloatValue(const char *key, float defaultValue = 0.0f);
+        bool SetFloatValue(const char *key, float value = 0.0f);
+        void GetStringValue(const char *key, char *value, size_t count);
+        bool SetStringValue(const char *key, const char *value);
+        bool DeleteKey(const char *key);
 
     public:
         Settings(const char *nameSpace);
         ~Settings();
 
-        bool clear(void);
+        bool Clear(void);
     };
 }
 

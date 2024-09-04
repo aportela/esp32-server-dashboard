@@ -27,204 +27,204 @@ CustomSettings::~CustomSettings(void)
 
 void CustomSettings::getWIFISSID(char *ssid, size_t count)
 {
-    this->getStringValue(KEY_WIFI_SSID, ssid, count);
+    this->GetStringValue(KEY_WIFI_SSID, ssid, count);
 }
 
 bool CustomSettings::setWIFISSID(const char *ssid)
 {
     if (strlen(ssid) > 0)
     {
-        return (this->setStringValue(KEY_WIFI_SSID, ssid));
+        return (this->SetStringValue(KEY_WIFI_SSID, ssid));
     }
     else
     {
-        return (this->deleteKey(KEY_WIFI_SSID));
+        return (this->DeleteKey(KEY_WIFI_SSID));
     }
 }
 
 void CustomSettings::getWIFIPassword(char *password, size_t count)
 {
-    this->getStringValue(KEY_WIFI_PASSWORD, password, count);
+    this->GetStringValue(KEY_WIFI_PASSWORD, password, count);
 }
 
 bool CustomSettings::setWIFIPassword(const char *password)
 {
     if (strlen(password) > 0)
     {
-        return (this->setStringValue(KEY_WIFI_PASSWORD, password));
+        return (this->SetStringValue(KEY_WIFI_PASSWORD, password));
     }
     else
     {
-        return (this->deleteKey(KEY_WIFI_PASSWORD));
+        return (this->DeleteKey(KEY_WIFI_PASSWORD));
     }
 }
 
 void CustomSettings::getMQTTTelegrafURI(char *uri, size_t count)
 {
-    this->getStringValue(KEY_MQTT_TELEGRAF_URI, uri, count);
+    this->GetStringValue(KEY_MQTT_TELEGRAF_URI, uri, count);
 }
 
 bool CustomSettings::setMQTTTelegrafURI(const char *uri)
 {
     if (strlen(uri) > 0)
     {
-        return (this->setStringValue(KEY_MQTT_TELEGRAF_URI, uri));
+        return (this->SetStringValue(KEY_MQTT_TELEGRAF_URI, uri));
     }
     else
     {
-        return (this->deleteKey(KEY_MQTT_TELEGRAF_URI));
+        return (this->DeleteKey(KEY_MQTT_TELEGRAF_URI));
     }
 }
 
 void CustomSettings::getMQTTUsername(char *username, size_t count)
 {
-    this->getStringValue(KEY_MQTT_USERNAME, username, count);
+    this->GetStringValue(KEY_MQTT_USERNAME, username, count);
 }
 
 bool CustomSettings::setMQTTUsername(const char *username)
 {
     if (strlen(username) > 0)
     {
-        return (this->setStringValue(KEY_MQTT_USERNAME, username));
+        return (this->SetStringValue(KEY_MQTT_USERNAME, username));
     }
     else
     {
-        return (this->deleteKey(KEY_MQTT_USERNAME));
+        return (this->DeleteKey(KEY_MQTT_USERNAME));
     }
 }
 
 void CustomSettings::getMQTTPassword(char *password, size_t count)
 {
-    this->getStringValue(KEY_MQTT_PASSWORD, password, count);
+    this->GetStringValue(KEY_MQTT_PASSWORD, password, count);
 }
 
 bool CustomSettings::setMQTTPassword(const char *password)
 {
     if (strlen(password) > 0)
     {
-        return (this->setStringValue(KEY_MQTT_PASSWORD, password));
+        return (this->SetStringValue(KEY_MQTT_PASSWORD, password));
     }
     else
     {
-        return (this->deleteKey(KEY_MQTT_PASSWORD));
+        return (this->DeleteKey(KEY_MQTT_PASSWORD));
     }
 }
 
 void CustomSettings::getMQTTTelegrafGlobalTopic(char *topic, size_t count)
 {
-    this->getStringValue(KEY_MQTT_TELEGRAF_GLOBAL_TOPIC, topic, count);
+    this->GetStringValue(KEY_MQTT_TELEGRAF_GLOBAL_TOPIC, topic, count);
 }
 
 bool CustomSettings::setMQTTTelegrafGlobalTopic(const char *topic)
 {
     if (strlen(topic) > 0)
     {
-        return (this->setStringValue(KEY_MQTT_TELEGRAF_GLOBAL_TOPIC, topic));
+        return (this->SetStringValue(KEY_MQTT_TELEGRAF_GLOBAL_TOPIC, topic));
     }
     else
     {
-        return (this->deleteKey(KEY_MQTT_TELEGRAF_GLOBAL_TOPIC));
+        return (this->DeleteKey(KEY_MQTT_TELEGRAF_GLOBAL_TOPIC));
     }
 }
 
 uint64_t CustomSettings::getMaxDownloadBandwidthBytes()
 {
-    return (this->getBigUnsignedIntegerValue(KEY_TOTAL_DOWNLOAD_BANDWIDTH_BYTES, 0));
+    return (this->GetBigUnsignedIntegerValue(KEY_TOTAL_DOWNLOAD_BANDWIDTH_BYTES, 0));
 }
 
 bool CustomSettings::setMaxDownloadBandwidthBytes(uint64_t totalBytes)
 {
     if (totalBytes > 0)
     {
-        return (this->setBigUnsigedIntegerValue(KEY_TOTAL_DOWNLOAD_BANDWIDTH_BYTES, totalBytes));
+        return (this->SetBigUnsigedIntegerValue(KEY_TOTAL_DOWNLOAD_BANDWIDTH_BYTES, totalBytes));
     }
     else
     {
-        return (this->deleteKey(KEY_TOTAL_DOWNLOAD_BANDWIDTH_BYTES));
+        return (this->DeleteKey(KEY_TOTAL_DOWNLOAD_BANDWIDTH_BYTES));
     }
 }
 
 uint64_t CustomSettings::getMaxUploadBandwidthBytes()
 {
-    return (this->getBigUnsignedIntegerValue(KEY_TOTAL_UPLOAD_BANDWIDTH_BYTES, 0));
+    return (this->GetBigUnsignedIntegerValue(KEY_TOTAL_UPLOAD_BANDWIDTH_BYTES, 0));
 }
 
 bool CustomSettings::setMaxUploadBandwidthBytes(uint64_t totalBytes)
 {
     if (totalBytes > 0)
     {
-        return (this->setBigUnsigedIntegerValue(KEY_TOTAL_UPLOAD_BANDWIDTH_BYTES, totalBytes));
+        return (this->SetBigUnsigedIntegerValue(KEY_TOTAL_UPLOAD_BANDWIDTH_BYTES, totalBytes));
     }
     else
     {
-        return (this->deleteKey(KEY_TOTAL_UPLOAD_BANDWIDTH_BYTES));
+        return (this->DeleteKey(KEY_TOTAL_UPLOAD_BANDWIDTH_BYTES));
     }
 }
 
 void CustomSettings::getNetworkInterfaceId(char *id, size_t count)
 {
-    this->getStringValue(KEY_NET_IFACE_ID, id, count);
+    this->GetStringValue(KEY_NET_IFACE_ID, id, count);
 }
 
 bool CustomSettings::setNetworkInterfaceId(const char *id)
 {
     if (strlen(id) > 0)
     {
-        return (this->setStringValue(KEY_NET_IFACE_ID, id));
+        return (this->SetStringValue(KEY_NET_IFACE_ID, id));
     }
     else
     {
-        return (this->deleteKey(KEY_NET_IFACE_ID));
+        return (this->DeleteKey(KEY_NET_IFACE_ID));
     }
 }
 
 void CustomSettings::getHostname(char *name, size_t count)
 {
-    this->getStringValue(KEY_HOSTNAME, name, count);
+    this->GetStringValue(KEY_HOSTNAME, name, count);
 }
 
 bool CustomSettings::setHostname(const char *name)
 {
     if (strlen(name) > 0)
     {
-        return (this->setStringValue(KEY_HOSTNAME, name));
+        return (this->SetStringValue(KEY_HOSTNAME, name));
     }
     else
     {
-        return (this->deleteKey(KEY_HOSTNAME));
+        return (this->DeleteKey(KEY_HOSTNAME));
     }
 }
 
 bool CustomSettings::getScreenMirrorFlipVertical()
 {
-    return (this->getBoolValue(KEY_SCREEN_MIRROR_FLIP_VERTICAL, false));
+    return (this->GetBoolValue(KEY_SCREEN_MIRROR_FLIP_VERTICAL, false));
 }
 
 bool CustomSettings::setScreenMirrorFlipVertical(bool mirrorFlipVertical)
 {
     if (mirrorFlipVertical)
     {
-        return (this->setBoolValue(KEY_SCREEN_MIRROR_FLIP_VERTICAL, mirrorFlipVertical));
+        return (this->SetBoolValue(KEY_SCREEN_MIRROR_FLIP_VERTICAL, mirrorFlipVertical));
     }
     else
     {
-        return (this->deleteKey(KEY_SCREEN_MIRROR_FLIP_VERTICAL));
+        return (this->DeleteKey(KEY_SCREEN_MIRROR_FLIP_VERTICAL));
     }
 }
 
 ScreenType CustomSettings::getDefaultScreen(ScreenType defaultScreen)
 {
-    return ((enum ScreenType)this->getSmallUnsignedIntegerValue(DEFAULT_SCREEN, (uint8_t)defaultScreen));
+    return ((enum ScreenType)this->GetSmallUnsignedIntegerValue(DEFAULT_SCREEN, (uint8_t)defaultScreen));
 }
 
 bool CustomSettings::setDefaultScreen(ScreenType defaultScreen)
 {
     if (defaultScreen != ST_NONE)
     {
-        return (this->setSmallUnsignedIntegerValue(DEFAULT_SCREEN, (uint8_t)defaultScreen));
+        return (this->SetSmallUnsignedIntegerValue(DEFAULT_SCREEN, (uint8_t)defaultScreen));
     }
     else
     {
-        return (this->deleteKey(DEFAULT_SCREEN));
+        return (this->DeleteKey(DEFAULT_SCREEN));
     }
 }

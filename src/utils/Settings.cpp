@@ -20,7 +20,7 @@ namespace aportela::microcontroller::utils
         }
     }
 
-    bool Settings::getBoolValue(const char *key, bool defaultValue)
+    bool Settings::GetBoolValue(const char *key, bool defaultValue)
     {
         if (this->preferences != nullptr && this->preferences->begin(this->nameSpace, false))
         {
@@ -38,7 +38,7 @@ namespace aportela::microcontroller::utils
         }
     }
 
-    bool Settings::setBoolValue(const char *key, bool value)
+    bool Settings::SetBoolValue(const char *key, bool value)
     {
         if (this->preferences != nullptr && this->preferences->begin(this->nameSpace, false))
         {
@@ -52,7 +52,7 @@ namespace aportela::microcontroller::utils
         }
     }
 
-    int8_t Settings::getSmallSignedIntegerValue(const char *key, int8_t defaultValue)
+    int8_t Settings::GetSmallSignedIntegerValue(const char *key, int8_t defaultValue)
     {
         if (this->preferences != nullptr && this->preferences->begin(this->nameSpace, false))
         {
@@ -70,7 +70,7 @@ namespace aportela::microcontroller::utils
         }
     }
 
-    bool Settings::setSmallSignedIntegerValue(const char *key, int8_t value)
+    bool Settings::SetSmallSignedIntegerValue(const char *key, int8_t value)
     {
         if (this->preferences != nullptr && this->preferences->begin(this->nameSpace, false))
         {
@@ -84,7 +84,7 @@ namespace aportela::microcontroller::utils
         }
     }
 
-    int8_t Settings::getSmallUnsignedIntegerValue(const char *key, uint8_t defaultValue)
+    int8_t Settings::GetSmallUnsignedIntegerValue(const char *key, uint8_t defaultValue)
     {
         if (this->preferences != nullptr && this->preferences->begin(this->nameSpace, false))
         {
@@ -102,7 +102,7 @@ namespace aportela::microcontroller::utils
         }
     }
 
-    bool Settings::setSmallUnsignedIntegerValue(const char *key, uint8_t value)
+    bool Settings::SetSmallUnsignedIntegerValue(const char *key, uint8_t value)
     {
         if (this->preferences != nullptr && this->preferences->begin(this->nameSpace, false))
         {
@@ -116,7 +116,7 @@ namespace aportela::microcontroller::utils
         }
     }
 
-    uint64_t Settings::getBigUnsignedIntegerValue(const char *key, uint64_t defaultValue)
+    uint64_t Settings::GetBigUnsignedIntegerValue(const char *key, uint64_t defaultValue)
     {
         if (this->preferences != nullptr && this->preferences->begin(this->nameSpace, false))
         {
@@ -134,7 +134,7 @@ namespace aportela::microcontroller::utils
         }
     }
 
-    bool Settings::setBigUnsigedIntegerValue(const char *key, uint64_t value)
+    bool Settings::SetBigUnsigedIntegerValue(const char *key, uint64_t value)
     {
         if (this->preferences != nullptr && this->preferences->begin(this->nameSpace, false))
         {
@@ -148,7 +148,7 @@ namespace aportela::microcontroller::utils
         }
     }
 
-    float Settings::getFloatValue(const char *key, float defaultValue)
+    float Settings::GetFloatValue(const char *key, float defaultValue)
     {
         if (this->preferences != nullptr && this->preferences->begin(this->nameSpace, false))
         {
@@ -166,7 +166,7 @@ namespace aportela::microcontroller::utils
         }
     }
 
-    bool Settings::setFloatValue(const char *key, float value)
+    bool Settings::SetFloatValue(const char *key, float value)
     {
         if (this->preferences != nullptr && this->preferences->begin(this->nameSpace, false))
         {
@@ -180,7 +180,7 @@ namespace aportela::microcontroller::utils
         }
     }
 
-    void Settings::getStringValue(const char *key, char *value, size_t count)
+    void Settings::GetStringValue(const char *key, char *value, size_t count)
     {
         if (this->preferences != nullptr && this->preferences->begin(this->nameSpace, false))
         {
@@ -199,7 +199,7 @@ namespace aportela::microcontroller::utils
         }
     }
 
-    bool Settings::setStringValue(const char *key, const char *value)
+    bool Settings::SetStringValue(const char *key, const char *value)
     {
         if (this->preferences != nullptr && this->preferences->begin(this->nameSpace, false))
         {
@@ -213,7 +213,7 @@ namespace aportela::microcontroller::utils
         }
     }
 
-    bool Settings::deleteKey(const char *key)
+    bool Settings::DeleteKey(const char *key)
     {
         if (this->preferences != nullptr && this->preferences->begin(this->nameSpace, false))
         {
@@ -232,7 +232,7 @@ namespace aportela::microcontroller::utils
         }
     }
 
-    bool Settings::clear(void)
+    bool Settings::Clear(void)
     {
         if (this->preferences != nullptr && this->preferences->begin(this->nameSpace, false))
         {
