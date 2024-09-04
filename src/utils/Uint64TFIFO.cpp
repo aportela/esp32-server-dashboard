@@ -29,27 +29,27 @@ namespace aportela::microcontroller::utils
         }
     }
 
-    void Uint64TFIFO::shiftLeft(void)
+    void Uint64TFIFO::ShiftLeft(void)
     {
         this->head = (this->head + 1) % this->size;
     }
 
-    size_t Uint64TFIFO::getSize(void)
+    size_t Uint64TFIFO::GetSize(void)
     {
         return (this->size);
     }
 
-    size_t Uint64TFIFO::getCount(void)
+    size_t Uint64TFIFO::GetCount(void)
     {
         return (this->count);
     }
 
-    size_t Uint64TFIFO::getHead(void)
+    size_t Uint64TFIFO::GetHead(void)
     {
         return (this->head);
     }
 
-    uint64_t Uint64TFIFO::getValueAt(size_t index)
+    uint64_t Uint64TFIFO::GetValueAt(size_t index)
     {
         if (index >= this->count)
         {
@@ -61,7 +61,7 @@ namespace aportela::microcontroller::utils
         }
     }
 
-    uint64_t Uint64TFIFO::getLastValue(void)
+    uint64_t Uint64TFIFO::GetLastValue(void)
     {
         if (this->values != nullptr && this->count > 0)
         {
@@ -73,7 +73,7 @@ namespace aportela::microcontroller::utils
         }
     }
 
-    uint64_t Uint64TFIFO::getMaxValue(void)
+    uint64_t Uint64TFIFO::GetMaxValue(void)
     {
         if (this->values != nullptr && this->count > 0)
         {
@@ -95,7 +95,7 @@ namespace aportela::microcontroller::utils
         }
     }
 
-    bool Uint64TFIFO::push(uint64_t value)
+    bool Uint64TFIFO::Push(uint64_t value)
     {
         if (this->values != nullptr)
         {
@@ -106,7 +106,7 @@ namespace aportela::microcontroller::utils
             }
             else
             {
-                this->shiftLeft();
+                this->ShiftLeft();
                 this->values[(this->head + this->size - 1) % this->size] = value;
             }
             return (true);
