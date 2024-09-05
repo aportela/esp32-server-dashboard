@@ -183,7 +183,7 @@ void onReceivedSerialCommand(int8_t commandIndex, const char *value)
     case CUSTOM_SERIAL_COMMAND_INDEX_EXPORT_SETTINGS:
         Serial.println("Serial command received: export settings");
         Serial.println("# EXPORTED SETTINGS BEGIN");
-        Serial.println(CUSTOM_SERIAL_COMMANDS[CUSTOM_SERIAL_COMMAND_INDEX_EXPORT_SETTINGS]);
+        Serial.println(CUSTOM_SERIAL_COMMANDS[CUSTOM_SERIAL_COMMAND_INDEX_CLEAR_SETTINGS]);
         settings->GetWIFISSID(str, sizeof(str));
         if (strlen(str) > 0)
         {
