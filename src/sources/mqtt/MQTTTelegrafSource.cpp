@@ -162,7 +162,7 @@ void MQTTTelegrafSource::OnMessageReceived(const char *topic, const char *payloa
             float usageIdle = 0.0;
             if (sscanf(tokenWithValue, "usage_idle=%f", &usageIdle) == 1)
             {
-                float cpu_usage = usageIdle < 100 ? 100.0f - usageIdle : 100;
+                float cpu_usage = usageIdle <= 100 ? 100.0f - usageIdle : 0;
                 MQTTTelegrafSource::instance->sourceData->SetCurrentCPULoad(cpu_usage, currentMessageTimestamp);
             }
             else
