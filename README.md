@@ -127,4 +127,9 @@ Configuration is done via serial sending string commands. Any serial terminal so
 | SET_DEFAULT_SCREEN              | <screen>   | Save "INFO" as default screen            | **SET_DEFAULT_SCREEN 1**                                 |
 |                                 | <screen>   | Save "DASHBOARD" as default screen       | **SET_DEFAULT_SCREEN 2**                                 |
 
+#### NOTES:
+
+- Clear MQTT username/password configuration values if your mqtt server/broker do not require authentication
+- Clear max download/upload bytes bandwidth configuration values to using "dynamic scales" (auto grow/resize)
+
 ## Working screenshots / photos
