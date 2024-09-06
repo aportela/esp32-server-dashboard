@@ -8,7 +8,7 @@
 
 Any **SPI** display that is supported by the driver **ST7789V** with a resolution of **240x320**
 
-I'm using displays like these (the cost is about 3.5 euros):
+I'm using displays like these: [front]() | [back]() (the cost is about 3.5 euros):
 
 ### Microcontroller
 
@@ -16,9 +16,9 @@ In theory you should be able to use any esp32 as long as it has enough pins
 
 I'm using these two:
 
-ESP32 WROOM
+ESP32-WROOM-32D: [front]() | [back]()
 
-ESP32-C3 SuperMini
+ESP32-C3 SuperMini: [front]() | [back]()
 
 ### Switch / Button
 
