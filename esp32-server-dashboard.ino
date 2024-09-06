@@ -34,7 +34,7 @@
 #define PIN_SDA 23
 #define PIN_SCL 18
 
-#error TODO_ENCODER_PINS
+#define PIN_BUTTON_SW 16
 
 #else
 #error UNSUPPORTED_MODEL
