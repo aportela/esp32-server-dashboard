@@ -2,7 +2,7 @@
 
 ## Introduction
 
-A small project to display in real time some statistics (cpu/memory/temperature/network bandwidth usage) of the system on my servers while I was getting started in microcontroller programming.
+A small project to display in real time some statistics (cpu/memory/temperature/network bandwidth usage) of the system (using telegraf to collect data & mqtt to transport messages) on my servers while I was getting started in microcontroller programming.
 
 ## Supported hardware
 
@@ -21,12 +21,12 @@ In theory you should be able to use any esp32 as long as it has enough pins
 
 I'm using these two:
 
-ESP32-WROOM-32D:
+ESP32-WROOM-32D (the cost is about 4 euros):
 
 <img src="https://github.com/user-attachments/assets/32d537b2-a7ee-48ea-b386-2d484f4e1792" width="150" alt="front" />
 <img src="https://github.com/user-attachments/assets/44905c15-85be-4a14-82b4-89ff0571282d" width="185" alt="pinout" />
 
-ESP32-C3 SuperMini:
+ESP32-C3 SuperMini (the cost is about 2 euros):
 
 <img src="https://github.com/user-attachments/assets/55c3a8f9-fd53-4444-91f7-219cf6f70d87" width="224" alt="front" />
 <img src="https://github.com/user-attachments/assets/d10aa28f-d15f-4f76-9b0d-2c3fa63a687d" width="100" alt="back" />
