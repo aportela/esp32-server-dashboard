@@ -2,7 +2,7 @@
 
 ## Introduction
 
-A small project to display in real time some statistics (cpu/memory/temperature/network bandwidth usage) of the system (using telegraf to collect data & mqtt to transport messages) on my servers while I was getting started in microcontroller programming.
+A small project to display in real time stats (cpu/memory/temperature/network bandwidth usage) of the system (using telegraf to collect data & mqtt to transport messages) on my servers while I was getting started in microcontroller programming.
 
 ## Supported hardware
 
@@ -92,7 +92,7 @@ Arduino IDE required libraries:
 
 ### Telegraf
 
-Sample of **telegraf.conf** file using sample interval = 1s
+Configuration file (**telegraf.conf**) file using data collection interval = 1s
 
 ```
 [global_tags]
@@ -196,9 +196,9 @@ Configuration is done via serial sending string commands. Any serial terminal so
 
 ## Working screenshots / photos
 
-<img src="https://github.com/user-attachments/assets/baf19f9b-25b6-4e35-a8fd-df9bde0e4b76" width="400" alt="front" />
-<img src="https://github.com/user-attachments/assets/7c8c8f43-0513-4fd8-a013-28c0942908a7" width="400" alt="back" />
-<img src="https://github.com/user-attachments/assets/c15abe16-92fa-49a4-8b5f-bc6f7a91d519" width="400" alt="mounted info screens" />
-<img src="https://github.com/user-attachments/assets/32fa1f35-790d-4064-8349-2522e529c434" width="400" alt="mounted dashboard screens" />
-<img src="https://github.com/user-attachments/assets/872e95f5-7a2e-43ea-80d9-61fec984987c" width="400" alt="dashboard view" />
-<img src="https://github.com/user-attachments/assets/6a5c7708-3229-4724-87d5-83b9e114a6df" width="400" alt="info view" />
+<img src="https://github.com/user-attachments/assets/80b8c9d7-9a19-48ca-8666-64d6b4916eb6" width="400" alt="front" />
+<img src="https://github.com/user-attachments/assets/96fe35ef-6684-4bc2-a7de-d487f830032d" width="400" alt="back" />
+<img src="https://github.com/user-attachments/assets/a9fe69d1-ba4f-44a1-9da7-592133bb7946" width="400" alt="mounted info screens" />
+<img src="https://github.com/user-attachments/assets/5b09ed09-5b3a-4f2f-8699-2b766188d886" width="400" alt="mounted dashboard screens" />
+<img src="https://github.com/user-attachments/assets/5d25049c-14d9-4898-9be4-448c936971bd" width="400" alt="dashboard view" />
+<img src="https://github.com/user-attachments/assets/aab87baa-0ce6-44a4-9beb-0d1dafc8224b" width="400" alt="info view" />
