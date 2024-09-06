@@ -80,6 +80,7 @@ Arduino IDE Board setup:
 Arduino IDE required libraries:
 
 - [LovyanGFX by lovyan03](https://github.com/lovyan03/LovyanGFX) (ST7789V display driver)
+- [Bounce2 by Thomas Ouellet Fredericks](https://github.com/thomasfredericks/Bounce2) (Debouncing library for Arduino and Wiring)
 
 ## Configuration
 
@@ -91,6 +92,39 @@ Arduino IDE required libraries:
 
 ### Microcontroller
 
-Configuration is done via serial
+Configuration is done via serial sending string commands. Any serial terminal software like putty or Arduino IDE serial monitor console can be used
+
+| Command                         | Param      | Description                              | Example                                         |
+| ------------------------------- | ---------- | ---------------------------------------- | ----------------------------------------------- |
+| REBOOT                          |            | Reboot device                            | **REBOOT**                                      |
+| CLEAR_SETTINGS                  |            | Remove all device settings               | **CLEAR_SETTINGS**                              |
+| EXPORT_SETTINGS                 |            | Export all device settings               | **EXPORT_SETTINGS**                             |
+| CONNECT_WIFI                    |            | Connect (manually) to WIFI               | **CONNECT_WIFI**                                |
+| DISCONNECT_WIFI                 |            | Disconnect (manually) to WIFI            | **DISCONNECT_WIFI**                             |
+| SET_WIFI_SSID                   | <ssid>     | Save WIFI SSID                           | **SET_WIFI_SSID myssid**                        |
+|                                 |            | Clear WIFI SSID                          | **SET_WIFI_SSID**                               |
+| SET_WIFI_PASSWORD               | <password> | Save WIFI password                       | **SET_WIFI_PASSWORD secret**                    |
+|                                 |            | Clear WIFI password                      | **SET_WIFI_PASSWORD**                           |
+| SET_MQTT_TELEGRAF_URI           | <uri>      | Save MQTT uri                            | **SET_MQTT_TELEGRAF_URI http://**               |
+|                                 |            | Clear MQTT uri                           | **SET_MQTT_TELEGRAF_URI**                       |
+| SET_MQTT_USERNAME               | <username> | Save MQTT username                       | **SET_MQTT_USERNAME foobar**                    |
+|                                 |            | Clear MQTT username                      | **SET_MQTT_USERNAME**                           |
+| SET_MQTT_PASSWORD               | <password> | Save MQTT password                       | **SET_MQTT_PASSWORD secret**                    |
+|                                 |            | Clear MQTT password                      | **SET_MQTT_PASSWORD**                           |
+| SET_MQTT_TELEGRAF_GLOBAL_TOPIC  | <topic>    | Save MQTT topic                          | **SET_MQTT_TELEGRAF_GLOBAL_TOPIC topic**        |
+|                                 |            | Clear MQTT topic                         | **SET_MQTT_TELEGRAF_GLOBAL_TOPIC**              |
+| TOGGLE_SCREEN                   |            | Change screen (info/dashboard)           | **TOGGLE_SCREEN**                               |
+| SET_MAX_DOWNLOAD_BYTES_BANDWITH | <bytes>    | Save net download graph fixed max scale  | **SET_MAX_DOWNLOAD_BYTES_BANDWITH 10737418240** |
+|                                 |            | Clear net download graph fixed max scale | **SET_MAX_DOWNLOAD_BYTES_BANDWITH**             |
+| SET_MAX_UPLOAD_BYTES_BANDWITH   | <bytes>    | Save net upload graph fixed max scale    | **SET_MAX_UPLOAD_BYTES_BANDWITH 10737418240**   |
+|                                 |            | Clear net upload graph fixed max scale   | **SET_MAX_UPLOAD_BYTES_BANDWITH**               |
+| SET_NETWORK_INTERFACE_ID        | <iface>    | Save network interface id                | **SET_NETWORK_INTERFACE_ID enp1s0**             |
+|                                 |            | Clear network interface id               | **SET_NETWORK_INTERFACE_ID**                    |
+| SET_HOSTNAME                    | <hostname> | Save hostname                            | **SET_HOSTNAME localhost**                      |
+|                                 |            | Clear hostname                           | **SET_HOSTNAME localhost**                      |
+| SET_SCREEN_MIRROR_FLIP_VERTICAL | <bool>     | Save screen mirror orientation           | **SET_SCREEN_MIRROR_FLIP_VERTICAL true**        |
+|                                 | <bool>     | Clear screen mirror orientation          | **SET_SCREEN_MIRROR_FLIP_VERTICAL false**       |
+| SET_DEFAULT_SCREEN              | <screen>   | Save "INFO" as default screen            | **SET_DEFAULT_SCREEN 1**                        |
+|                                 | <screen>   | Save "DASHBOARD" as default screen       | **SET_DEFAULT_SCREEN 2**                        |
 
 ## Working screenshots / photos
