@@ -8,7 +8,11 @@
 
 Any **SPI** display that is supported by the driver **ST7789V** with a resolution of **240x320**
 
-I'm using displays like these: [front](https://github.com/user-attachments/assets/83cdd284-0a36-4b31-b1f5-8871a9defa79) | [back](https://github.com/user-attachments/assets/6a91112b-fccb-408f-8608-26e1bab05a36) (the cost is about 3.5 euros):
+I'm using displays like these (the cost is about 3.5 euros):
+
+<img src="https://github.com/user-attachments/assets/83cdd284-0a36-4b31-b1f5-8871a9defa79" width="100" />
+<img src="https://github.com/user-attachments/assets/6a91112b-fccb-408f-8608-26e1bab05a36" width="100" />
+
 
 ### Microcontroller
 
