@@ -134,9 +134,9 @@ Configuration is done via serial sending string commands. Any serial terminal so
 
 ## Working screenshots / photos
 
-<img src="https://github.com/user-attachments/assets/baf19f9b-25b6-4e35-a8fd-df9bde0e4b76" width="500" alt="front" />
-<img src="https://github.com/user-attachments/assets/7c8c8f43-0513-4fd8-a013-28c0942908a7" width="500" alt="back" />
-<img src="https://github.com/user-attachments/assets/c15abe16-92fa-49a4-8b5f-bc6f7a91d519" width="500" alt="mounted info screens" />
-<img src="https://github.com/user-attachments/assets/32fa1f35-790d-4064-8349-2522e529c434" width="500" alt="mounted dashboard screens" />
-<img src="https://github.com/user-attachments/assets/872e95f5-7a2e-43ea-80d9-61fec984987c" width="500" alt="dashboard view" />
-<img src="https://github.com/user-attachments/assets/6a5c7708-3229-4724-87d5-83b9e114a6df" width="500" alt="info view" />
+<img src="https://github.com/user-attachments/assets/baf19f9b-25b6-4e35-a8fd-df9bde0e4b76" width="450" alt="front" />
+<img src="https://github.com/user-attachments/assets/7c8c8f43-0513-4fd8-a013-28c0942908a7" width="450" alt="back" />
+<img src="https://github.com/user-attachments/assets/c15abe16-92fa-49a4-8b5f-bc6f7a91d519" width="450" alt="mounted info screens" />
+<img src="https://github.com/user-attachments/assets/32fa1f35-790d-4064-8349-2522e529c434" width="450" alt="mounted dashboard screens" />
+<img src="https://github.com/user-attachments/assets/872e95f5-7a2e-43ea-80d9-61fec984987c" width="450" alt="dashboard view" />
+<img src="https://github.com/user-attachments/assets/6a5c7708-3229-4724-87d5-83b9e114a6df" width="450" alt="info view" />
