@@ -2,6 +2,8 @@
 
 ## Introduction
 
+A small project to display in real time some statistics (cpu/memory/temperature/network bandwidth usage) of the system on my servers while I was getting started in microcontroller programming.
+
 ## Supported hardware
 
 ### Display
