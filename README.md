@@ -36,9 +36,33 @@ Any button / switch will work
 
 ## Install (Hardware)
 
-### ESP32 WROOM
+### ESP32-WROOM-32D
 
-### ESP32-C3 Supermini
+| ESP32-WROOM-32D | ST7789V |
+| --------------- | ------- |
+| PIN 5           | CS      |
+| PIN 4           | RST     |
+| PIN 2           | DC      |
+| PIN 23          | SDA     |
+| PIN 18          | SCL     |
+| GND             | GND     |
+| 3.3V            | VCC     |
+
+Switch/button contacts are connected to ESP32-C3 SuperMini PIN 16 and GND
+
+### ESP32-C3 SuperMini
+
+| ESP32-C3 SuperMini | ST7789V |
+| ------------------ | ------- |
+| PIN 5              | CS      |
+| PIN 9              | RST     |
+| PIN 8              | DC      |
+| PIN 6              | SDA     |
+| PIN 4              | SCL     |
+| GND                | GND     |
+| 3.3V               | VCC     |
+
+Switch/button contacts are connected to ESP32-C3 SuperMini PIN 10 and GND
 
 ## Install (Software)
 
@@ -48,7 +72,7 @@ Services:
 
 Arduino IDE Board setup:
 
-- ESP32 WROOM: **ESP32-WROOM-DA Module**
+- ESP32-WROOM-32D: **ESP32-WROOM-DA Module**
 
 - ESP32-C3 SuperMini **ESP32C3 Dev Module**
   - Tools => **USB CDC On Boot** => "**Enabled**" (required for serial communication)
