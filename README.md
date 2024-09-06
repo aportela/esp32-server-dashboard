@@ -90,6 +90,66 @@ Arduino IDE required libraries:
 
 ### Telegraf
 
+Sample of **telegraf.conf** file using sample interval = 1s
+
+```
+[global_tags]
+[agent]
+  interval = "1s"
+  round_interval = true
+  metric_batch_size = 1000
+  metric_buffer_limit = 10000
+  collection_jitter = "0s"
+  flush_interval = "1s"
+  flush_jitter = "0s"
+  precision = "0s"
+  hostname = ""
+  omit_hostname = false
+
+[[outputs.mqtt]]
+servers = ["192.168.1.1:1883", ]
+topic = "telegraf/{{ .Hostname }}/{{ .PluginName }}"
+username = "mqtt_username"
+password = "mqtt_password"
+
+[[inputs.cpu]]
+  percpu = false
+  totalcpu = true
+  collect_cpu_time = false
+  report_active = false
+  core_tags = false
+
+[[inputs.mem]]
+
+[[inputs.system]]
+
+[[inputs.net]]
+
+interfaces = ["enp1s0"]
+
+# lm-sensors package required for linux systems
+[[inputs.sensors]]
+
+# uncomment this for using with windows (WARNING: telegraf must be run as administrator)
+#[[inputs.temp]]
+
+# uncomment this for using with OPNSense/FreeBSD systems
+#[[inputs.exec]]
+# commands = [
+#   "sh /usr/local/etc/telegraf-scripts/cputemp-sensors-by-package.sh",
+# ]
+# timeout = "5s"
+# data_format = "influx"
+
+```
+
+Also, this is my script (/usr/local/etc/telegraf-scripts/cputemp-sensors-by-package.sh) for getting/parsing cpu temperatures on OPNSense
+
+```
+#!/bin/sh
+sysctl hw.acpi.thermal.tz0.temperature | sed 's/hw\.acpi\.thermal\.tz0\.temperature: /sensors,feature=package_id_0 temp_input=/;s/.$//'
+```
+
 ### Microcontroller
 
 Configuration is done via serial sending string commands. Any serial terminal software like putty or Arduino IDE serial monitor console can be used
