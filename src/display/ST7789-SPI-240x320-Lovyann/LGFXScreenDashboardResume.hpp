@@ -18,12 +18,6 @@ private:
     LGFXScreenDashboardResumeEntityNetUsedBandWidth *networkDownloadBandwidthBlock = nullptr;
     LGFXScreenDashboardResumeEntityNetUsedBandWidth *networkUploadBandwidthBlock = nullptr;
 
-    uint64_t lastCPUTimestamp = 0;
-    uint64_t lastMemoryTimestamp = 0;
-    uint64_t lastCPUTemperatureTimestamp = 0;
-    uint64_t lastDownloadTimestamp = 0;
-    uint64_t lastUploadTimestamp = 0;
-
     SourceData *currentSourceData;
 
     uint16_t previousFPS = 0;
