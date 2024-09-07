@@ -3,7 +3,9 @@
 #include <cstring>
 #include "../SizesAndOffsets-320x240.hpp"
 #include "../../utils/WiFiManager.hpp"
+#ifdef DEBUG_FPS
 #include "../../utils/FPS.hpp"
+#endif // DEBUG_FPS
 #include "../../utils/Format.hpp"
 
 #define METER_GRAPH_WIDTH 185
