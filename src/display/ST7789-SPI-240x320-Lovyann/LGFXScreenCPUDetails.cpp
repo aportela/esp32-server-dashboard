@@ -1,7 +1,7 @@
 #include "LGFXScreenCPUDetails.hpp"
-#include <inttypes.h>
-#include <cstring>
-
+#ifdef DEBUG_FPS
+#include "../../utils/FPS.hpp"
+#endif // DEBUG_FPS
 #define METER_GRAPH_WIDTH 185
 #define METER_GRAPH_HEIGHT 34
 #define METER_GRAPH_BG_COLOR TFT_BLACK
@@ -19,10 +19,10 @@ LGFXScreenCPUDetails::LGFXScreenCPUDetails(LovyanGFX *display, SourceData *sourc
             FPS::Init();
 #endif // DEBUG_FPS
             this->cpuLoadBlock1 = new LGFXScreenDashboardResumeEntityCPULoad(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 0);
-            this->cpuLoadBlock2 = new LGFXScreenDashboardResumeEntityCPULoad(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 0);
-            this->cpuLoadBlock3 = new LGFXScreenDashboardResumeEntityCPULoad(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 0);
-            this->cpuLoadBlock4 = new LGFXScreenDashboardResumeEntityCPULoad(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 0);
-            this->cpuLoadBlock5 = new LGFXScreenDashboardResumeEntityCPULoad(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 0);
+            this->cpuLoadBlock2 = new LGFXScreenDashboardResumeEntityCPULoad(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 1);
+            this->cpuLoadBlock3 = new LGFXScreenDashboardResumeEntityCPULoad(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 2);
+            this->cpuLoadBlock4 = new LGFXScreenDashboardResumeEntityCPULoad(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 3);
+            this->cpuLoadBlock5 = new LGFXScreenDashboardResumeEntityCPULoad(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 4);
             this->Refresh(true);
         }
     }
