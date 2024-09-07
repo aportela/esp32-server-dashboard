@@ -5,11 +5,14 @@
 #include <cstring>
 #include "../utils/Format.hpp"
 
+#define MIN_CPU_USAGE_LIMIT_VALUE 0
+#define MAX_CPU_USAGE_LIMIT_VALUE 100
+
 SourceData::SourceData(bool truncateOverflows, uint64_t totalNetworkDownloadBandwidthLimit, uint64_t totalNetworkUploadBandwidthLimit)
 {
     uint64_t currentTimestamp = millis();
     this->truncateOverflows = truncateOverflows;
-    this->cpuLoadQueue = xQueueCreate(1, sizeof(SourceDataQueueCPULoadValue));
+    this->cpuLoadQueue = xQueueCreate(1, sizeof(SourceDataQueueCPUValues));
     this->usedMemoryQueue = xQueueCreate(1, sizeof(SourceDataQueueUsedMemoryValue));
     this->cpuTemperatureQueue = xQueueCreate(1, sizeof(SourceDataQueueCPUTemperatureValue));
     this->systemUptimeQueue = xQueueCreate(1, sizeof(SourceDataQueueUptimeValue));
@@ -63,56 +66,98 @@ void SourceData::GetHostname(char *hostname, size_t count)
 
 // CPU LOAD
 
-SourceDataQueueCPULoadValue SourceData::GetCurrentCPULoad(void)
+SourceDataQueueCPUValues SourceData::GetCurrentCPUData(void)
 {
-    SourceDataQueueCPULoadValue data = {0.0f, 0};
+    SourceDataQueueCPUValues data = {0.0f, 0};
     if (this->cpuLoadQueue != NULL)
     {
         if (xQueuePeek(this->cpuLoadQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
         {
             data.loadPercent = 0.0f;
+            data.usageSystem = 0.0f;
+            data.usageUser = 0.0f;
+            data.usageIddle = 0.0f;
+            data.usageNice = 0.0f;
+            data.usageIOWait = 0.0f;
+            data.usageIRQ = 0.0f;
+            data.usageSoftIRQ = 0.0f;
+            data.usageGuest = 0.0f;
+            data.usageGuestNice = 0.0f;
+            data.usageSteal = 0.0f;
             data.timestamp = 0;
         }
     }
     else
     {
         data.loadPercent = 0.0f;
+        data.usageSystem = 0.0f;
+        data.usageUser = 0.0f;
+        data.usageIddle = 0.0f;
+        data.usageNice = 0.0f;
+        data.usageIOWait = 0.0f;
+        data.usageIRQ = 0.0f;
+        data.usageSoftIRQ = 0.0f;
+        data.usageGuest = 0.0f;
+        data.usageGuestNice = 0.0f;
+        data.usageSteal = 0.0f;
         data.timestamp = 0;
     }
     return (data);
 }
 
-bool SourceData::SetCurrentCPULoad(float loadPercent, uint64_t timestamp)
+bool SourceData::SetCurrentCPUData(float loadPercent, float usageSystem, float usageUser, float usageIddle, float usageNice, float usageIOWait, float usageIRQ, float usageSoftIRQ, float usageGuest, float usageGuestNice, float usageSteal, uint64_t timestamp)
 {
     if (this->cpuLoadQueue != NULL)
     {
-        SourceDataQueueCPULoadValue data = this->GetCurrentCPULoad();
-        if (loadPercent != data.loadPercent)
+        SourceDataQueueCPUValues data = this->GetCurrentCPUData();
+        if (loadPercent != data.loadPercent || usageSystem != data.usageSystem || usageUser != data.usageUser || usageIddle != data.usageIddle || usageNice != data.usageNice || usageIOWait != data.usageIOWait || usageIRQ != data.usageIRQ || usageSoftIRQ != data.usageSoftIRQ || usageGuest != data.usageGuest || usageGuestNice != data.usageGuestNice ||
+            usageSteal != data.usageSteal)
         {
-            if (loadPercent >= MIN_CPU_LOAD && loadPercent <= MAX_CPU_LOAD)
+
+            if (!truncateOverflows)
             {
-                data.loadPercent = loadPercent;
-                data.timestamp = timestamp;
-                return (xQueueOverwrite(this->cpuLoadQueue, &data) == pdPASS);
-            }
-            else if (truncateOverflows)
-            {
-                if (loadPercent < MIN_CPU_LOAD)
+                if (
+                    loadPercent < MIN_CPU_USAGE_LIMIT_VALUE || loadPercent > MAX_CPU_USAGE_LIMIT_VALUE ||
+                    usageSystem < MIN_CPU_USAGE_LIMIT_VALUE || usageSystem > MAX_CPU_USAGE_LIMIT_VALUE ||
+                    usageUser < MIN_CPU_USAGE_LIMIT_VALUE || usageUser > MAX_CPU_USAGE_LIMIT_VALUE ||
+                    usageIddle < MIN_CPU_USAGE_LIMIT_VALUE || usageIddle > MAX_CPU_USAGE_LIMIT_VALUE ||
+                    usageNice < MIN_CPU_USAGE_LIMIT_VALUE || usageNice > MAX_CPU_USAGE_LIMIT_VALUE ||
+                    usageIOWait < MIN_CPU_USAGE_LIMIT_VALUE || usageIOWait > MAX_CPU_USAGE_LIMIT_VALUE ||
+                    usageIRQ < MIN_CPU_USAGE_LIMIT_VALUE || usageIRQ > MAX_CPU_USAGE_LIMIT_VALUE ||
+                    usageSoftIRQ < MIN_CPU_USAGE_LIMIT_VALUE || usageSoftIRQ > MAX_CPU_USAGE_LIMIT_VALUE ||
+                    usageGuest < MIN_CPU_USAGE_LIMIT_VALUE || usageGuest > MAX_CPU_USAGE_LIMIT_VALUE ||
+                    usageGuestNice < MIN_CPU_USAGE_LIMIT_VALUE || usageGuestNice > MAX_CPU_USAGE_LIMIT_VALUE ||
+                    usageSteal < MIN_CPU_USAGE_LIMIT_VALUE || usageSteal > MAX_CPU_USAGE_LIMIT_VALUE)
                 {
-                    data.loadPercent = MIN_CPU_LOAD;
-                    data.timestamp = timestamp;
-                    return (xQueueOverwrite(this->cpuLoadQueue, &data) == pdPASS);
-                }
-                else if (loadPercent > MAX_CPU_LOAD)
-                {
-                    data.loadPercent = MAX_CPU_LOAD;
-                    data.timestamp = timestamp;
-                    return (xQueueOverwrite(this->cpuLoadQueue, &data) == pdPASS);
+                    return (false);
                 }
             }
             else
             {
-                return (false);
+                data.loadPercent = loadPercent < MIN_CPU_USAGE_LIMIT_VALUE ? MIN_CPU_USAGE_LIMIT_VALUE : loadPercent > MAX_CPU_USAGE_LIMIT_VALUE ? MAX_CPU_USAGE_LIMIT_VALUE
+                                                                                                                                                 : loadPercent;
+                data.usageSystem = usageSystem < MIN_CPU_USAGE_LIMIT_VALUE ? MIN_CPU_USAGE_LIMIT_VALUE : usageSystem > MAX_CPU_USAGE_LIMIT_VALUE ? MAX_CPU_USAGE_LIMIT_VALUE
+                                                                                                                                                 : usageSystem;
+                data.usageUser = usageUser < MIN_CPU_USAGE_LIMIT_VALUE ? MIN_CPU_USAGE_LIMIT_VALUE : usageUser > MAX_CPU_USAGE_LIMIT_VALUE ? MAX_CPU_USAGE_LIMIT_VALUE
+                                                                                                                                           : usageUser;
+                data.usageIddle = usageIddle < MIN_CPU_USAGE_LIMIT_VALUE ? MIN_CPU_USAGE_LIMIT_VALUE : usageIddle > MAX_CPU_USAGE_LIMIT_VALUE ? MAX_CPU_USAGE_LIMIT_VALUE
+                                                                                                                                              : usageIddle;
+                data.usageNice = usageNice < MIN_CPU_USAGE_LIMIT_VALUE ? MIN_CPU_USAGE_LIMIT_VALUE : usageNice > MAX_CPU_USAGE_LIMIT_VALUE ? MAX_CPU_USAGE_LIMIT_VALUE
+                                                                                                                                           : usageNice;
+                data.usageIOWait = usageIOWait < MIN_CPU_USAGE_LIMIT_VALUE ? MIN_CPU_USAGE_LIMIT_VALUE : usageIOWait > MAX_CPU_USAGE_LIMIT_VALUE ? MAX_CPU_USAGE_LIMIT_VALUE
+                                                                                                                                                 : usageIOWait;
+                data.usageIRQ = usageIRQ < MIN_CPU_USAGE_LIMIT_VALUE ? MIN_CPU_USAGE_LIMIT_VALUE : usageIRQ > MAX_CPU_USAGE_LIMIT_VALUE ? MAX_CPU_USAGE_LIMIT_VALUE
+                                                                                                                                        : usageIRQ;
+                data.usageSoftIRQ = usageSoftIRQ < MIN_CPU_USAGE_LIMIT_VALUE ? MIN_CPU_USAGE_LIMIT_VALUE : usageSoftIRQ > MAX_CPU_USAGE_LIMIT_VALUE ? MAX_CPU_USAGE_LIMIT_VALUE
+                                                                                                                                                    : usageSoftIRQ;
+                data.usageGuest = usageGuest < MIN_CPU_USAGE_LIMIT_VALUE ? MIN_CPU_USAGE_LIMIT_VALUE : usageGuest > MAX_CPU_USAGE_LIMIT_VALUE ? MAX_CPU_USAGE_LIMIT_VALUE
+                                                                                                                                              : usageGuest;
+                data.usageGuestNice = usageGuestNice < MIN_CPU_USAGE_LIMIT_VALUE ? MIN_CPU_USAGE_LIMIT_VALUE : usageGuestNice > MAX_CPU_USAGE_LIMIT_VALUE ? MAX_CPU_USAGE_LIMIT_VALUE
+                                                                                                                                                          : usageGuestNice;
+                data.usageSteal = usageSteal < MIN_CPU_USAGE_LIMIT_VALUE ? MIN_CPU_USAGE_LIMIT_VALUE : usageSteal > MAX_CPU_USAGE_LIMIT_VALUE ? MAX_CPU_USAGE_LIMIT_VALUE
+                                                                                                                                              : usageSteal;
+                data.timestamp = timestamp;
+                return (xQueueOverwrite(this->cpuLoadQueue, &data) == pdPASS);
             }
         }
         else
