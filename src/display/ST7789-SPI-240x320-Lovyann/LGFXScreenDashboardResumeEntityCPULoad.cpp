@@ -7,7 +7,7 @@ using namespace aportela::microcontroller::utils;
 const char *CPU_LABELS[]{
     "CPU LOAD",
     "CPU SYSTEM",
-    "CPU USER"
+    "CPU USER",
     "CPU IDLE",
     "CPU NICE",
     "CPU IOWAIT",
@@ -18,7 +18,7 @@ const char *CPU_LABELS[]{
     "CPU STEAL",
 };
 
-LGFXScreenDashboardResumeEntityCPULoad::LGFXScreenDashboardResumeEntityCPULoad(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset, CPU_USAGE_TYPE cpuUsageType) : LGFXScreenDashboardResumeEntity(display, sourceData, width, height, xOffset, yOffset, CPU_LABELS[(int)cpuUsageType])
+LGFXScreenDashboardResumeEntityCPULoad::LGFXScreenDashboardResumeEntityCPULoad(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset, CPU_USAGE_TYPE cpuUsageType) : LGFXScreenDashboardResumeEntity(display, sourceData, width, height, xOffset, yOffset, CPU_LABELS[(uint8_t)cpuUsageType])
 {
     this->cpuUsageType = cpuUsageType;
     if (this->parentDisplay != nullptr)
