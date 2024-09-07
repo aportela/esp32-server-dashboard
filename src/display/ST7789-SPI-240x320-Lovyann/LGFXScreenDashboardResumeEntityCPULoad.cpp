@@ -6,6 +6,16 @@ using namespace aportela::microcontroller::utils;
 
 const char *CPU_LABELS[]{
     "CPU LOAD",
+    "CPU SYSTEM",
+    "CPU USER"
+    "CPU IDLE",
+    "CPU NICE",
+    "CPU IOWAIT",
+    "CPU IRQ",
+    "CPU SOFT IRQ",
+    "CPU GUEST",
+    "CPU GUEST NICE",
+    "CPU STEAL",
 };
 
 LGFXScreenDashboardResumeEntityCPULoad::LGFXScreenDashboardResumeEntityCPULoad(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset, CPU_USAGE_TYPE cpuUsageType) : LGFXScreenDashboardResumeEntity(display, sourceData, width, height, xOffset, yOffset, CPU_LABELS[(int)cpuUsageType])
@@ -37,6 +47,36 @@ bool LGFXScreenDashboardResumeEntityCPULoad::Refresh(bool force)
         {
         case CPU_USAGE_TYPE_CPU_LOAD:
             cpuUsageValue = data.loadPercent;
+            break;
+        case CPU_USAGE_TYPE_CPU_SYSTEM:
+            cpuUsageValue = data.usageSystem;
+            break;
+        case CPU_USAGE_TYPE_CPU_USER:
+            cpuUsageValue = data.usageUser;
+            break;
+        case CPU_USAGE_TYPE_CPU_IDLE:
+            cpuUsageValue = data.usageIdle;
+            break;
+        case CPU_USAGE_TYPE_CPU_NICE:
+            cpuUsageValue = data.usageNice;
+            break;
+        case CPU_USAGE_TYPE_CPU_IOWAIT:
+            cpuUsageValue = data.usageIOWait;
+            break;
+        case CPU_USAGE_TYPE_CPU_IRQ:
+            cpuUsageValue = data.usageIRQ;
+            break;
+        case CPU_USAGE_TYPE_CPU_SOFT_IRQ:
+            cpuUsageValue = data.usageSoftIRQ;
+            break;
+        case CPU_USAGE_TYPE_CPU_GUEST:
+            cpuUsageValue = data.usageGuest;
+            break;
+        case CPU_USAGE_TYPE_CPU_GUEST_NICE:
+            cpuUsageValue = data.usageGuestNice;
+            break;
+        case CPU_USAGE_TYPE_CPU_STEAL:
+            cpuUsageValue = data.usageSteal;
             break;
         }
         this->timestamp = data.timestamp;
