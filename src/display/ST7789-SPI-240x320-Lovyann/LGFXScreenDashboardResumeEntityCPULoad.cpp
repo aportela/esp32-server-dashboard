@@ -4,7 +4,11 @@
 
 using namespace aportela::microcontroller::utils;
 
-LGFXScreenDashboardResumeEntityCPULoad::LGFXScreenDashboardResumeEntityCPULoad(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset, CPU_USAGE_TYPE cpuUsageType) : LGFXScreenDashboardResumeEntity(display, sourceData, width, height, xOffset, yOffset, "CPU LOAD")
+const char *CPU_LABELS[]{
+    "CPU LOAD",
+};
+
+LGFXScreenDashboardResumeEntityCPULoad::LGFXScreenDashboardResumeEntityCPULoad(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset, CPU_USAGE_TYPE cpuUsageType) : LGFXScreenDashboardResumeEntity(display, sourceData, width, height, xOffset, yOffset, CPU_LABELS[(int)cpuUsageType])
 {
     this->cpuUsageType = cpuUsageType;
     if (this->parentDisplay != nullptr)
