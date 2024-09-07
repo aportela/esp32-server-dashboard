@@ -12,8 +12,8 @@
 
 // these are my custom/valid pin values for a ST7789 display on some esp32 models
 
-// #define ESP32_WROOM
-#define ESP32_C3_SUPER_MINI
+#define ESP32_WROOM
+// #define ESP32_C3_SUPER_MINI
 
 #ifdef ESP32_C3_SUPER_MINI
 // ESP32 C3 SUPER MINI
@@ -626,10 +626,10 @@ void setup()
     char hostname[SourceData::MAX_HOSTNAME_LENGTH + 1];
     settings->GetHostname(hostname, sizeof(hostname));
     sourceData->SetHostname(hostname);
-
 #ifdef SOURCE_DUMMY
     dummySRC = new DummySource(sourceData);
 #endif // SOURCE_DUMMY
+
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     screen = new LGFX(PIN_SDA, PIN_SCL, PIN_CS, PIN_DC, PIN_RST, DISPLAY_DRIVER_LOVYANN_ST7789_WIDTH, DISPLAY_DRIVER_LOVYANN_ST7789_HEIGHT, !screenMirrorFlipVertical ? DISPLAY_DRIVER_LOVYANN_ST7789_ROTATION : DISPLAY_DRIVER_LOVYANN_ST7789_ROTATION_MIRROR_FLIP_VERTICAL);
     screen->SetSourceData(sourceData);
@@ -643,7 +643,6 @@ void setup()
 
 void loop()
 {
-    // SerialManager::loop();
     SerialManager::Loop(CUSTOM_SERIAL_COMMANDS, CUSTOM_SERIAL_COMMAND_COUNT, onReceivedSerialCommand);
     WiFiManager::Loop();
 #ifdef SOURCE_DUMMY

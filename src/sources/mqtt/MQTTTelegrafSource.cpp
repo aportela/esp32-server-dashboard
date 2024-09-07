@@ -157,25 +157,177 @@ void MQTTTelegrafSource::OnMessageReceived(const char *topic, const char *payloa
     char tokenWithValue[255] = {'\0'};
     if (strcmp(topic, MQTTTelegrafSource::cpuTopic) == 0 && strncmp(payload, "cpu,cpu=cpu-total", 17) == 0)
     {
-        if (MQTTTelegrafSource::GetPayloadTokenWithValue(cleanPayloadPtr, ",", "usage_idle", tokenWithValue, sizeof(tokenWithValue)))
+        float usageSystem = 0.0f;
+        float usageUser = 0.0f;
+        float usageIdle = 0.0f;
+        float usageNice = 0.0f;
+        float usageIOWait = 0.0f;
+        float usageIRQ = 0.0f;
+        float usageSoftIRQ = 0.0f;
+        float usageGuest = 0.0f;
+        float usageGuestNice = 0.0f;
+        float usageSteal = 0.0f;
+        char *tmpPayload = strdup(cleanPayloadPtr);
+        uint8_t totalValidTokens = 0;
+        if (tmpPayload != NULL)
         {
-            float usageIdle = 0.0;
-            if (sscanf(tokenWithValue, "usage_idle=%f", &usageIdle) == 1)
+            char *token = strtok(tmpPayload, ",");
+            while (token != NULL)
             {
-                float cpu_usage = usageIdle <= 100 ? 100.0f - usageIdle : 0;
-                MQTTTelegrafSource::instance->sourceData->SetCurrentCPULoad(cpu_usage, currentMessageTimestamp);
-            }
-            else
-            {
+                if (strncmp(token, "usage_system=", strlen("usage_system=")) == 0)
+                {
+                    if (!sscanf(token, "usage_system=%f", &usageSystem) == 1)
+                    {
 #ifdef DEBUG_MQTT_TELEGRAF
-                Serial.println("Error parsing CPU usage idle value (read error)");
+                        Serial.println("Error parsing CPU usage system value (read error)");
 #endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "usage_user=", strlen("usage_user=")) == 0)
+                {
+                    if (!sscanf(token, "usage_user=%f", &usageUser) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing CPU usage user value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "usage_idle=", strlen("usage_idle=")) == 0)
+                {
+                    if (!sscanf(token, "usage_idle=%f", &usageIdle) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing CPU usage idle value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "usage_nice=", strlen("usage_nice=")) == 0)
+                {
+                    if (!sscanf(token, "usage_nice=%f", &usageNice) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing CPU usage nice value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "usage_iowait=", strlen("usage_iowait=")) == 0)
+                {
+                    if (!sscanf(token, "usage_iowait=%f", &usageIOWait) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing CPU usage iowait value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "usage_irq=", strlen("usage_irq=")) == 0)
+                {
+                    if (!sscanf(token, "usage_irq=%f", &usageIRQ) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing CPU usage irq value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "usage_softirq=", strlen("usage_softirq=")) == 0)
+                {
+                    if (!sscanf(token, "usage_softirq=%f", &usageSoftIRQ) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing CPU usage soft irq value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "usage_guest=", strlen("usage_guest=")) == 0)
+                {
+                    if (!sscanf(token, "usage_guest=%f", &usageGuest) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing CPU usage guest value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "usage_guest_nice=", strlen("usage_guest_nice=")) == 0)
+                {
+                    if (!sscanf(token, "usage_guest_nice=%f", &usageGuestNice) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing CPU usage guest nice value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "usage_steal=", strlen("usage_steal=")) == 0)
+                {
+                    if (!sscanf(token, "usage_steal=%f", &usageSteal) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing CPU usage steal value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                token = strtok(NULL, ",");
             }
+            free(tmpPayload);
+        }
+        if (totalValidTokens == 10)
+        {
+            MQTTTelegrafSource::instance->sourceData->SetCurrentCPUData(
+                usageIdle <= 100 ? 100.0f - usageIdle : 0,
+                usageSystem,
+                usageUser,
+                usageIdle,
+                usageNice,
+                usageIOWait,
+                usageIRQ,
+                usageSoftIRQ,
+                usageGuest,
+                usageGuestNice,
+                usageSteal,
+                currentMessageTimestamp);
         }
         else
         {
 #ifdef DEBUG_MQTT_TELEGRAF
-            Serial.println("Error parsing CPU usage idle value (token not found)");
+            Serial.printf("Error parsing CPU usage values (tokens found: %d of %d)\n", totalValidTokens, 10);
 #endif
         }
     }
