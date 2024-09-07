@@ -20,10 +20,10 @@
 
 typedef struct SourceDataQueueCPUValues
 {
-    float loadPercent; // value is equal to => 100 - usageIddle
+    float loadPercent; // value is equal to => 100 - usageIdle
     float usageSystem;
     float usageUser;
-    float usageIddle;
+    float usageIdle;
     float usageNice;
     float usageIOWait;
     float usageIRQ;
@@ -97,7 +97,7 @@ public:
     // CPU LOAD
 
     SourceDataQueueCPUValues GetCurrentCPUData(void);
-    bool SetCurrentCPUData(float loadPercent, float usageSystem, float usageUser, float usageIddle, float usageNice, float usageIOWait, float usageIRQ, float usageSoftIRQ, float usageGuest, float usageGuestNice, float usageSteal, uint64_t timestamp);
+    bool SetCurrentCPUData(float loadPercent, float usageSystem, float usageUser, float usageIdle, float usageNice, float usageIOWait, float usageIRQ, float usageSoftIRQ, float usageGuest, float usageGuestNice, float usageSteal, uint64_t timestamp);
 
     // MEMORY
 

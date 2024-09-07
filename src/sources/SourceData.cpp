@@ -76,7 +76,7 @@ SourceDataQueueCPUValues SourceData::GetCurrentCPUData(void)
             data.loadPercent = 0.0f;
             data.usageSystem = 0.0f;
             data.usageUser = 0.0f;
-            data.usageIddle = 0.0f;
+            data.usageIdle = 0.0f;
             data.usageNice = 0.0f;
             data.usageIOWait = 0.0f;
             data.usageIRQ = 0.0f;
@@ -92,7 +92,7 @@ SourceDataQueueCPUValues SourceData::GetCurrentCPUData(void)
         data.loadPercent = 0.0f;
         data.usageSystem = 0.0f;
         data.usageUser = 0.0f;
-        data.usageIddle = 0.0f;
+        data.usageIdle = 0.0f;
         data.usageNice = 0.0f;
         data.usageIOWait = 0.0f;
         data.usageIRQ = 0.0f;
@@ -105,12 +105,12 @@ SourceDataQueueCPUValues SourceData::GetCurrentCPUData(void)
     return (data);
 }
 
-bool SourceData::SetCurrentCPUData(float loadPercent, float usageSystem, float usageUser, float usageIddle, float usageNice, float usageIOWait, float usageIRQ, float usageSoftIRQ, float usageGuest, float usageGuestNice, float usageSteal, uint64_t timestamp)
+bool SourceData::SetCurrentCPUData(float loadPercent, float usageSystem, float usageUser, float usageIdle, float usageNice, float usageIOWait, float usageIRQ, float usageSoftIRQ, float usageGuest, float usageGuestNice, float usageSteal, uint64_t timestamp)
 {
     if (this->cpuLoadQueue != NULL)
     {
         SourceDataQueueCPUValues data = this->GetCurrentCPUData();
-        if (loadPercent != data.loadPercent || usageSystem != data.usageSystem || usageUser != data.usageUser || usageIddle != data.usageIddle || usageNice != data.usageNice || usageIOWait != data.usageIOWait || usageIRQ != data.usageIRQ || usageSoftIRQ != data.usageSoftIRQ || usageGuest != data.usageGuest || usageGuestNice != data.usageGuestNice ||
+        if (loadPercent != data.loadPercent || usageSystem != data.usageSystem || usageUser != data.usageUser || usageIdle != data.usageIdle || usageNice != data.usageNice || usageIOWait != data.usageIOWait || usageIRQ != data.usageIRQ || usageSoftIRQ != data.usageSoftIRQ || usageGuest != data.usageGuest || usageGuestNice != data.usageGuestNice ||
             usageSteal != data.usageSteal)
         {
 
@@ -120,7 +120,7 @@ bool SourceData::SetCurrentCPUData(float loadPercent, float usageSystem, float u
                     loadPercent < MIN_CPU_USAGE_LIMIT_VALUE || loadPercent > MAX_CPU_USAGE_LIMIT_VALUE ||
                     usageSystem < MIN_CPU_USAGE_LIMIT_VALUE || usageSystem > MAX_CPU_USAGE_LIMIT_VALUE ||
                     usageUser < MIN_CPU_USAGE_LIMIT_VALUE || usageUser > MAX_CPU_USAGE_LIMIT_VALUE ||
-                    usageIddle < MIN_CPU_USAGE_LIMIT_VALUE || usageIddle > MAX_CPU_USAGE_LIMIT_VALUE ||
+                    usageIdle < MIN_CPU_USAGE_LIMIT_VALUE || usageIdle > MAX_CPU_USAGE_LIMIT_VALUE ||
                     usageNice < MIN_CPU_USAGE_LIMIT_VALUE || usageNice > MAX_CPU_USAGE_LIMIT_VALUE ||
                     usageIOWait < MIN_CPU_USAGE_LIMIT_VALUE || usageIOWait > MAX_CPU_USAGE_LIMIT_VALUE ||
                     usageIRQ < MIN_CPU_USAGE_LIMIT_VALUE || usageIRQ > MAX_CPU_USAGE_LIMIT_VALUE ||
@@ -140,8 +140,8 @@ bool SourceData::SetCurrentCPUData(float loadPercent, float usageSystem, float u
                                                                                                                                                  : usageSystem;
                 data.usageUser = usageUser < MIN_CPU_USAGE_LIMIT_VALUE ? MIN_CPU_USAGE_LIMIT_VALUE : usageUser > MAX_CPU_USAGE_LIMIT_VALUE ? MAX_CPU_USAGE_LIMIT_VALUE
                                                                                                                                            : usageUser;
-                data.usageIddle = usageIddle < MIN_CPU_USAGE_LIMIT_VALUE ? MIN_CPU_USAGE_LIMIT_VALUE : usageIddle > MAX_CPU_USAGE_LIMIT_VALUE ? MAX_CPU_USAGE_LIMIT_VALUE
-                                                                                                                                              : usageIddle;
+                data.usageIdle = usageIdle < MIN_CPU_USAGE_LIMIT_VALUE ? MIN_CPU_USAGE_LIMIT_VALUE : usageIdle > MAX_CPU_USAGE_LIMIT_VALUE ? MAX_CPU_USAGE_LIMIT_VALUE
+                                                                                                                                           : usageIdle;
                 data.usageNice = usageNice < MIN_CPU_USAGE_LIMIT_VALUE ? MIN_CPU_USAGE_LIMIT_VALUE : usageNice > MAX_CPU_USAGE_LIMIT_VALUE ? MAX_CPU_USAGE_LIMIT_VALUE
                                                                                                                                            : usageNice;
                 data.usageIOWait = usageIOWait < MIN_CPU_USAGE_LIMIT_VALUE ? MIN_CPU_USAGE_LIMIT_VALUE : usageIOWait > MAX_CPU_USAGE_LIMIT_VALUE ? MAX_CPU_USAGE_LIMIT_VALUE
