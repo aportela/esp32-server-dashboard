@@ -15,7 +15,7 @@ enum CPU_USAGE_TYPE
     CPU_USAGE_TYPE_CPU_SOFT_IRQ = 7,
     CPU_USAGE_TYPE_CPU_GUEST = 8,
     CPU_USAGE_TYPE_CPU_GUEST_NICE = 9,
-    CPU_USAGE_TYPE_CPU_STEAL 10,
+    CPU_USAGE_TYPE_CPU_STEAL = 10,
 };
 
 class LGFXScreenDashboardResumeEntityCPULoad : public LGFXScreenDashboardResumeEntity
