@@ -18,6 +18,7 @@
 #define MIN_CPU_TEMPERATURE 0.0f
 #define MAX_CPU_TEMPERATURE 100.0f
 
+// TODO: https://github.com/influxdata/telegraf/blob/master/plugins/inputs/cpu/README.md
 typedef struct SourceDataQueueCPUValues
 {
     float loadPercent; // value is equal to => 100 - usageIdle
@@ -109,6 +110,7 @@ class SourceData
 {
 private:
     char hostname[HOSTNAME_ARR_LENGTH] = {'\0'};
+    // TODO: REMOVE, ALWAYS SAVE ORIGINAL DATA => TRUNCATE ON EXTERNAL CALLS
     bool truncateOverflows = false;
     bool fixedNetworkingLimits = false;
 

@@ -176,20 +176,88 @@ bool SourceData::SetCurrentCPUData(float loadPercent, float usageSystem, float u
 
 SourceDataQueueUsedMemoryValue SourceData::GetCurrentUsedMemory(void)
 {
-    SourceDataQueueUsedMemoryValue data = {0, 0, 0};
+    SourceDataQueueUsedMemoryValue data = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     if (this->usedMemoryQueue != NULL)
     {
         if (xQueuePeek(this->usedMemoryQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
         {
-            data.used = 0;
+            data.active = 0;
+            data.available = 0;
+            data.availablePercent = 0;
+            data.buffered = 0;
+            data.cached = 0;
+            data.commitLimit = 0;
+            data.committedAs = 0;
+            data.dirty = 0;
+            data.free = 0;
+            data.highFree = 0;
+            data.highTotal = 0;
+            data.hugePagesFree = 0;
+            data.hugePageSize = 0;
+            data.hugePagesTotal = 0;
+            data.inactive = 0;
+            data.laundry = 0;
+            data.lowFree = 0;
+            data.lowTotal = 0;
+            data.mapped = 0;
+            data.pageTables = 0;
+            data.shared = 0;
+            data.slab = 0;
+            data.sreclaimable = 0;
+            data.sunreclaim = 0;
+            data.swapCached = 0;
+            data.swapFree = 0;
+            data.swapTotal = 0;
             data.total = 0;
+            data.used = 0;
+            data.usedPercent = 0;
+            data.vmallocChunk = 0;
+            data.vmallocTotal = 0;
+            data.vmallocUsed = 0;
+            data.wired = 0;
+            data.writeBack = 0;
+            data.writeBackTmp = 0;
             data.timestamp = 0;
         }
     }
     else
     {
-        data.used = 0;
+        data.active = 0;
+        data.available = 0;
+        data.availablePercent = 0;
+        data.buffered = 0;
+        data.cached = 0;
+        data.commitLimit = 0;
+        data.committedAs = 0;
+        data.dirty = 0;
+        data.free = 0;
+        data.highFree = 0;
+        data.highTotal = 0;
+        data.hugePagesFree = 0;
+        data.hugePageSize = 0;
+        data.hugePagesTotal = 0;
+        data.inactive = 0;
+        data.laundry = 0;
+        data.lowFree = 0;
+        data.lowTotal = 0;
+        data.mapped = 0;
+        data.pageTables = 0;
+        data.shared = 0;
+        data.slab = 0;
+        data.sreclaimable = 0;
+        data.sunreclaim = 0;
+        data.swapCached = 0;
+        data.swapFree = 0;
+        data.swapTotal = 0;
         data.total = 0;
+        data.used = 0;
+        data.usedPercent = 0;
+        data.vmallocChunk = 0;
+        data.vmallocTotal = 0;
+        data.vmallocUsed = 0;
+        data.wired = 0;
+        data.writeBack = 0;
+        data.writeBackTmp = 0;
         data.timestamp = 0;
     }
     return (data);
@@ -284,7 +352,73 @@ bool SourceData::SetCurrentMemoryData(
     uint64_t writeBackTmp,
     uint64_t timestamp)
 {
-    return (true);
+    if (this->usedMemoryQueue != NULL)
+    {
+        SourceDataQueueUsedMemoryValue data = this->GetCurrentUsedMemory();
+        if (active != data.active; available != data.available || availablePercent != data.availablePercent || buffered != data.buffered || cached != data.cached || commitLimit != data.commitLimit ||
+                                   committedAs != data.committedAs || dirty != data.dirty || free != data.free || highFree != data.highFree || highTotal != data.highTotal || hugePagesFree != data.hugePagesFree ||
+                                   hugePageSize != data.hugePageSize || hugePagesTotal != data.hugePagesTotal || inactive != data.inactive || laundry != data.laundry || lowFree != data.lowFree ||
+                                   lowTotal != data.lowTotal || mapped != data.mapped || pageTables != data.pageTables || shared != data.shared || slab != data.slab || sreclaimable != data.sreclaimable ||
+                                   sunreclaim != data.sunreclaim || swapCached != data.swapCached || swapFree != data.swapFree || swapTotal != data.swapTotal || total != data.total || used != data.used ||
+                                   usedPercent != data.usedPercent || vmallocChunk != data.vmallocChunk || vmallocTotal != data.vmallocTotal || vmallocUsed != data.vmallocUsed || wired != data.wired ||
+                                   writeBack != data.writeBack || writeBackTmp != data.writeBackTmp)
+        {
+            if (!truncateOverflows)
+            {
+                return (false);
+            }
+            else
+            {
+                data.active = active;
+                data.available = available;
+                data.availablePercent = availablePercent;
+                data.buffered = buffered;
+                data.cached = cached;
+                data.commitLimit = commitLimit;
+                data.committedAs = committedAs;
+                data.dirty = dirty;
+                data.free = free;
+                data.highFree = highFree;
+                data.highTotal = highTotal;
+                data.hugePagesFree = hugePagesFree;
+                data.hugePageSize = hugePageSize;
+                data.hugePagesTotal = hugePagesTotal;
+                data.inactive = inactive;
+                data.laundry = laundry;
+                data.lowFree = lowFree;
+                data.lowTotal = lowTotal;
+                data.mapped = mapped;
+                data.pageTables = pageTables;
+                data.shared = shared;
+                data.slab = slab;
+                data.sreclaimable = sreclaimable;
+                data.sunreclaim = sunreclaim;
+                data.swapCached = swapCached;
+                data.swapFree = swapFree;
+                data.swapTotal = swapTotal;
+                data.total = total;
+                data.used = used;
+                data.usedPercent = usedPercent;
+                data.vmallocChunk = vmallocChunk;
+                data.vmallocTotal = vmallocTotal;
+                data.vmallocUsed = vmallocUsed;
+                data.wired = wired;
+                data.writeBack = writeBack;
+                data.writeBackTmp = writeBackTmp;
+                data.timestamp = timestamp;
+                return (xQueueOverwrite(this->usedMemoryQueue, &data) == pdPASS);
+            }
+        }
+        else
+        {
+            data.timestamp = timestamp;
+            return (xQueueOverwrite(this->usedMemoryQueue, &data) == pdPASS);
+        }
+    }
+    else
+    {
+        return (false);
+    }
 }
 
 // CPU TEMPERATURE
