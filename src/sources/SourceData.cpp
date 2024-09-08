@@ -181,15 +181,15 @@ SourceDataQueueUsedMemoryValue SourceData::GetCurrentUsedMemory(void)
     {
         if (xQueuePeek(this->usedMemoryQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
         {
-            data.usedBytes = 0;
-            data.totalBytes = 0;
+            data.used = 0;
+            data.total = 0;
             data.timestamp = 0;
         }
     }
     else
     {
-        data.usedBytes = 0;
-        data.totalBytes = 0;
+        data.used = 0;
+        data.total = 0;
         data.timestamp = 0;
     }
     return (data);
@@ -200,16 +200,16 @@ bool SourceData::SetCurrentUsedMemory(uint64_t usedBytes, uint64_t totalBytes, u
     if (this->usedMemoryQueue)
     {
         SourceDataQueueUsedMemoryValue data = this->GetCurrentUsedMemory();
-        if (totalBytes != data.totalBytes)
+        if (totalBytes != data.total)
         {
-            data.totalBytes = totalBytes;
+            data.total = totalBytes;
             data.timestamp = timestamp;
         }
-        if (usedBytes != data.usedBytes)
+        if (usedBytes != data.used)
         {
-            if (usedBytes >= 0 && usedBytes <= data.totalBytes)
+            if (usedBytes >= 0 && usedBytes <= data.total)
             {
-                data.usedBytes = usedBytes;
+                data.used = usedBytes;
                 data.timestamp = timestamp;
                 return (xQueueOverwrite(this->usedMemoryQueue, &data) == pdPASS);
             }
@@ -217,13 +217,13 @@ bool SourceData::SetCurrentUsedMemory(uint64_t usedBytes, uint64_t totalBytes, u
             {
                 if (usedBytes < 0)
                 {
-                    data.usedBytes = 0;
+                    data.used = 0;
                     data.timestamp = timestamp;
                     return (xQueueOverwrite(this->usedMemoryQueue, &data) == pdPASS);
                 }
-                else if (usedBytes > data.totalBytes)
+                else if (usedBytes > data.total)
                 {
-                    data.usedBytes = data.totalBytes;
+                    data.used = data.total;
                     data.timestamp = timestamp;
                     return (xQueueOverwrite(this->usedMemoryQueue, &data) == pdPASS);
                 }
@@ -243,6 +243,48 @@ bool SourceData::SetCurrentUsedMemory(uint64_t usedBytes, uint64_t totalBytes, u
     {
         return (false);
     }
+}
+
+bool SourceData::SetCurrentMemoryData(
+    uint64_t active,
+    uint64_t available,
+    float availablePercent,
+    uint64_t buffered,
+    uint64_t cached,
+    uint64_t commitLimit,
+    uint64_t committedAs,
+    uint64_t dirty,
+    uint64_t free,
+    uint64_t highFree,
+    uint64_t highTotal,
+    uint64_t hugePagesFree,
+    uint64_t hugePageSize,
+    uint64_t hugePagesTotal,
+    uint64_t inactive,
+    uint64_t laundry,
+    uint64_t lowFree,
+    uint64_t lowTotal,
+    uint64_t mapped,
+    uint64_t pageTables,
+    uint64_t shared,
+    uint64_t slab,
+    uint64_t sreclaimable,
+    uint64_t sunreclaim,
+    uint64_t swapCached,
+    uint64_t swapFree,
+    uint64_t swapTotal,
+    uint64_t total,
+    uint64_t used,
+    float usedPercent,
+    uint64_t vmallocChunk,
+    uint64_t vmallocTotal,
+    uint64_t vmallocUsed,
+    uint64_t wired,
+    uint64_t writeBack,
+    uint64_t writeBackTmp,
+    uint64_t timestamp)
+{
+    return (true);
 }
 
 // CPU TEMPERATURE

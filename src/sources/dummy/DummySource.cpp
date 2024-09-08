@@ -36,19 +36,19 @@ void DummySource::Refresh(uint16_t milliSeconds)
         this->sourceData->SetCurrentCPUData(cpuLoadValue, 0, cpuLoadValue, 100 - cpuLoadValue, 0, 0, 0, 0, 0, 0, 0, currentMillis);
 
         SourceDataQueueUsedMemoryValue memoryData = this->sourceData->GetCurrentUsedMemory();
-        uint64_t changedMemoryBytes = random(memoryData.totalBytes / 1024, memoryData.totalBytes / 20);
+        uint64_t changedMemoryBytes = random(memoryData.total / 1024, memoryData.total / 20);
         if (random(0, 20) % 2 == 0)
         {
-            if (memoryData.usedBytes < memoryData.totalBytes - changedMemoryBytes)
+            if (memoryData.used < memoryData.total - changedMemoryBytes)
             {
-                memoryData.usedBytes += changedMemoryBytes;
+                memoryData.used += changedMemoryBytes;
             }
         }
-        else if (memoryData.usedBytes > changedMemoryBytes)
+        else if (memoryData.used > changedMemoryBytes)
         {
-            memoryData.usedBytes -= changedMemoryBytes;
+            memoryData.used -= changedMemoryBytes;
         }
-        this->sourceData->SetCurrentUsedMemory(memoryData.usedBytes, memoryData.totalBytes, currentMillis);
+        this->sourceData->SetCurrentUsedMemory(memoryData.used, memoryData.total, currentMillis);
 
         SourceDataQueueCPUTemperatureValue cpuTemperatureData = this->sourceData->GetCurrentCPUTemperature();
         if (random(0, 20) % 2 == 0)
