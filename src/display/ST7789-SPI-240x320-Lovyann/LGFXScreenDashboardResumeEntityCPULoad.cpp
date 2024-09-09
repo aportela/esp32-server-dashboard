@@ -40,7 +40,8 @@ LGFXScreenDashboardResumeEntityCPULoad::~LGFXScreenDashboardResumeEntityCPULoad(
 
 bool LGFXScreenDashboardResumeEntityCPULoad::Refresh(bool force)
 {
-    SourceDataQueueCPUValues data = this->sourceData->GetCurrentCPUData();
+    SourceDataQueueCPUValues data;
+    this->sourceData->GetCurrentCPUData(data);
     if ((data.timestamp != 0 && data.timestamp != this->timestamp) || force)
     {
         float cpuUsageValue = 0.0f;

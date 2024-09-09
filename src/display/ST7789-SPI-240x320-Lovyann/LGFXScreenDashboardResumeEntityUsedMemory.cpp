@@ -56,7 +56,8 @@ LGFXScreenDashboardResumeEntityUsedMemory::~LGFXScreenDashboardResumeEntityUsedM
 
 bool LGFXScreenDashboardResumeEntityUsedMemory::Refresh(bool force)
 {
-    SourceDataQueueUsedMemoryValues data = this->sourceData->GetCurrentMemoryData();
+    SourceDataQueueUsedMemoryValues data;
+    this->sourceData->GetCurrentMemoryData(data);
     if ((data.timestamp != 0 && data.timestamp != this->timestamp) || force)
     {
         this->timestamp = data.timestamp;

@@ -16,11 +16,11 @@ SourceData::SourceData(bool truncateOverflows, uint64_t totalNetworkDownloadBand
     this->usedMemoryQueue = xQueueCreate(1, sizeof(SourceDataQueueUsedMemoryValues));
     this->cpuTemperatureQueue = xQueueCreate(1, sizeof(SourceDataQueueCPUTemperatureValue));
     this->systemUptimeQueue = xQueueCreate(1, sizeof(SourceDataQueueUptimeValue));
-    this->networkingDownloadQueue = xQueueCreate(1, sizeof(SourceDataQueueNetworkingValue));
-    this->networkingUploadQueue = xQueueCreate(1, sizeof(SourceDataQueueNetworkingValue));
+    this->networkingQueue = xQueueCreate(1, sizeof(SourceDataQueueNetworkingValue));
     this->networkingLimitsQueue = xQueueCreate(1, sizeof(SourceDataQueueNetworkingLimitsValue));
     this->fixedNetworkingLimits = totalNetworkDownloadBandwidthLimit > 0 && totalNetworkUploadBandwidthLimit > 0;
-    this->SetNetworkLimits(totalNetworkDownloadBandwidthLimit, totalNetworkUploadBandwidthLimit);
+    SourceDataQueueNetworkingLimitsValue networkingLimits = {totalNetworkDownloadBandwidthLimit, totalNetworkUploadBandwidthLimit};
+    this->SetNetworkLimits(networkingLimits);
 }
 
 SourceData::~SourceData()
@@ -29,8 +29,7 @@ SourceData::~SourceData()
     vQueueDelete(this->usedMemoryQueue);
     vQueueDelete(this->cpuTemperatureQueue);
     vQueueDelete(this->systemUptimeQueue);
-    vQueueDelete(this->networkingDownloadQueue);
-    vQueueDelete(this->networkingUploadQueue);
+    vQueueDelete(this->networkingQueue);
     vQueueDelete(this->networkingLimitsQueue);
 }
 
@@ -66,301 +65,70 @@ void SourceData::GetHostname(char *hostname, size_t count)
 
 // CPU LOAD
 
-SourceDataQueueCPUValues SourceData::GetCurrentCPUData(void)
+bool SourceData::GetCurrentCPUData(SourceDataQueueCPUValues &currentData)
 {
-    SourceDataQueueCPUValues data;
-    if (this->cpuLoadQueue != nullptr)
-    {
-        if (xQueuePeek(this->cpuLoadQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
-        {
-        }
-    }
-    return (data);
+    return (this->cpuLoadQueue != nullptr && xQueuePeek(this->cpuLoadQueue, &currentData, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS);
 }
 
 bool SourceData::SetCurrentCPUData(SourceDataQueueCPUValues currentData)
 {
-    if (this->cpuLoadQueue != NULL)
-    {
-        return (xQueueOverwrite(this->cpuLoadQueue, &currentData) == pdPASS);
-    }
-    else
-    {
-        return (false);
-    }
+    return (this->cpuLoadQueue != nullptr && xQueueOverwrite(this->cpuLoadQueue, &currentData) == pdPASS);
 }
 
 // MEMORY
 
-SourceDataQueueUsedMemoryValues SourceData::GetCurrentMemoryData(void)
+bool SourceData::GetCurrentMemoryData(SourceDataQueueUsedMemoryValues &currentData)
 {
-    SourceDataQueueUsedMemoryValues data;
-    if (this->usedMemoryQueue != nullptr)
-    {
-        if (xQueuePeek(this->usedMemoryQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
-        {
-        }
-    }
-    return (data);
+    return (this->usedMemoryQueue != nullptr && xQueuePeek(this->usedMemoryQueue, &currentData, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS);
 }
 
-bool SourceData::SetCurrentMemoryData(
-    SourceDataQueueUsedMemoryValues currentData)
+bool SourceData::SetCurrentMemoryData(SourceDataQueueUsedMemoryValues currentData)
 {
-    if (this->usedMemoryQueue != nullptr)
-    {
-        SourceDataQueueUsedMemoryValues data = this->GetCurrentMemoryData();
-        data = currentData;
-        return (xQueueOverwrite(this->usedMemoryQueue, &data) == pdPASS);
-    }
-    else
-    {
-        return (false);
-    }
+    return (this->usedMemoryQueue != nullptr && xQueueOverwrite(this->usedMemoryQueue, &currentData) == pdPASS);
 }
 
 // CPU TEMPERATURE
 
-SourceDataQueueCPUTemperatureValue SourceData::GetCurrentCPUTemperature(void)
+bool SourceData::GetCurrentCPUTemperature(SourceDataQueueCPUTemperatureValue &currentData)
 {
-    SourceDataQueueCPUTemperatureValue data;
-    if (this->cpuTemperatureQueue != NULL)
-    {
-        if (xQueuePeek(this->cpuTemperatureQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
-        {
-            data.celsious = 0.0f;
-            data.timestamp = 0;
-        }
-    }
-    else
-    {
-        data.celsious = 0.0f;
-        data.timestamp = 0;
-    }
-    return (data);
+    return (this->cpuTemperatureQueue != nullptr && xQueuePeek(this->cpuTemperatureQueue, &currentData, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS);
 }
 
-bool SourceData::SetCurrentCPUTemperature(float celsious, uint64_t timestamp)
+bool SourceData::SetCurrentCPUTemperature(SourceDataQueueCPUTemperatureValue currentData)
 {
-    if (this->cpuTemperatureQueue != NULL)
-    {
-        SourceDataQueueCPUTemperatureValue data = this->GetCurrentCPUTemperature();
-        if (celsious != data.celsious)
-        {
-            if (celsious >= MIN_CPU_TEMPERATURE && celsious <= MAX_CPU_TEMPERATURE)
-            {
-                data.celsious = celsious;
-                data.timestamp = timestamp;
-                return (xQueueOverwrite(this->cpuTemperatureQueue, &data) == pdPASS);
-            }
-            else if (truncateOverflows)
-            {
-                if (celsious < MIN_CPU_TEMPERATURE)
-                {
-                    data.celsious = MIN_CPU_TEMPERATURE;
-                    data.timestamp = timestamp;
-                    return (xQueueOverwrite(this->cpuTemperatureQueue, &data) == pdPASS);
-                }
-                else if (celsious > MAX_CPU_TEMPERATURE)
-                {
-                    data.celsious = MAX_CPU_TEMPERATURE;
-                    data.timestamp = timestamp;
-                    return (xQueueOverwrite(this->cpuTemperatureQueue, &data) == pdPASS);
-                }
-            }
-            else
-            {
-                return (false);
-            }
-        }
-        else
-        {
-            data.timestamp = timestamp;
-            return (xQueueOverwrite(this->cpuTemperatureQueue, &data) == pdPASS);
-        }
-    }
-    else
-    {
-        return (false);
-    }
+    return (this->cpuTemperatureQueue != nullptr && xQueueOverwrite(this->cpuTemperatureQueue, &currentData) == pdPASS);
 }
 
 // SYSTEM
 
-SourceDataQueueUptimeValue SourceData::GetCurrentUptime(void)
+bool SourceData::GetCurrentUptime(SourceDataQueueUptimeValue &currentData)
 {
-    SourceDataQueueUptimeValue data;
-    if (this->systemUptimeQueue != NULL)
-    {
-        if (xQueuePeek(this->systemUptimeQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
-        {
-            data.seconds = 0;
-            data.timestamp = 0;
-        }
-    }
-    else
-    {
-        data.seconds = 0;
-        data.timestamp = 0;
-    }
-    return (data);
+    return (this->systemUptimeQueue != nullptr && xQueuePeek(this->systemUptimeQueue, &currentData, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS);
 }
 
-bool SourceData::SetCurrentUptime(uint64_t seconds, uint64_t timestamp)
+bool SourceData::SetCurrentUptime(SourceDataQueueUptimeValue currentData)
 {
-    if (this->systemUptimeQueue != NULL)
-    {
-        SourceDataQueueUptimeValue data = this->GetCurrentUptime();
-        if (seconds != data.seconds)
-        {
-            data.seconds = seconds;
-            data.timestamp = timestamp;
-            return (xQueueOverwrite(this->systemUptimeQueue, &data) == pdPASS);
-        }
-        else
-        {
-            data.timestamp = timestamp;
-            return (xQueueOverwrite(this->systemUptimeQueue, &data) == pdPASS);
-        }
-    }
-    else
-    {
-        return (false);
-    }
+    return (this->systemUptimeQueue != nullptr && xQueueOverwrite(this->systemUptimeQueue, &currentData) == pdPASS);
 }
 
 // NET COMMON
 
-SourceDataQueueNetworkingLimitsValue SourceData::GetNetworkLimits(void)
+bool SourceData::GetNetworkLimits(SourceDataQueueNetworkingLimitsValue &currentData)
 {
-    SourceDataQueueNetworkingLimitsValue data;
-    if (this->networkingLimitsQueue != NULL)
-    {
-        if (xQueuePeek(this->networkingLimitsQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
-        {
-            data.byteDownloadLimit = 0;
-            data.byteUploadLimit = 0;
-        }
-    }
-    else
-    {
-        data.byteDownloadLimit = 0;
-        data.byteUploadLimit = 0;
-    }
-    return (data);
+    return (this->networkingLimitsQueue != nullptr && xQueuePeek(this->networkingLimitsQueue, &currentData, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS);
 }
 
-bool SourceData::SetNetworkLimits(uint64_t byteDownloadLimit, uint64_t byteUploadLimit)
+bool SourceData::SetNetworkLimits(SourceDataQueueNetworkingLimitsValue currentData)
 {
-    if (this->networkingLimitsQueue != NULL)
-    {
-        SourceDataQueueNetworkingLimitsValue data = {byteDownloadLimit, byteUploadLimit};
-        return (xQueueOverwrite(this->networkingLimitsQueue, &data) == pdPASS);
-    }
-    else
-    {
-        return (false);
-    }
+    return (this->networkingLimitsQueue != nullptr && xQueueOverwrite(this->networkingLimitsQueue, &currentData) == pdPASS);
 }
 
-SourceDataQueueNetworkingValue SourceData::GetCurrentNetworkDownload(void)
+bool SourceData::GetCurrentNetwork(SourceDataQueueNetworkingValue &currentData)
 {
-    SourceDataQueueNetworkingValue data;
-    if (this->networkingDownloadQueue != NULL)
-    {
-        if (xQueuePeek(this->networkingDownloadQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
-        {
-            data.totalBytesTransfered = 0;
-            data.currentBandwidthBytesPerSecond = 0;
-            data.timestamp = 0;
-        }
-    }
-    else
-    {
-        data.totalBytesTransfered = 0;
-        data.currentBandwidthBytesPerSecond = 0;
-        data.timestamp = 0;
-    }
-    return (data);
+    return (this->networkingQueue != nullptr && xQueuePeek(this->networkingQueue, &currentData, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS);
 }
 
-bool SourceData::SetCurrentNetworkDownload(uint64_t totalBytes, uint64_t timestamp)
+bool SourceData::SetCurrentNetwork(SourceDataQueueNetworkingValue currentData)
 {
-    if (this->networkingDownloadQueue)
-    {
-        SourceDataQueueNetworkingValue data = this->GetCurrentNetworkDownload();
-        if (totalBytes != data.totalBytesTransfered)
-        {
-            uint64_t diffBytes = totalBytes - data.totalBytesTransfered;
-            float diffSeconds = (timestamp - data.timestamp) / 1000.0;
-            data.currentBandwidthBytesPerSecond = diffSeconds > 0 ? diffBytes / diffSeconds : 0;
-            data.totalBytesTransfered = totalBytes;
-            data.timestamp = timestamp;
-            return (xQueueOverwrite(this->networkingDownloadQueue, &data) == pdPASS);
-        }
-        else if (timestamp != data.timestamp)
-        {
-            data.timestamp = timestamp;
-            return (xQueueOverwrite(this->networkingDownloadQueue, &data) == pdPASS);
-        }
-        else
-        {
-            return (false);
-        }
-    }
-    else
-    {
-        return (false);
-    }
-}
-
-SourceDataQueueNetworkingValue SourceData::GetCurrentNetworkUpload(void)
-{
-    SourceDataQueueNetworkingValue data;
-    if (this->networkingUploadQueue != NULL)
-    {
-        if (xQueuePeek(this->networkingUploadQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
-        {
-            data.totalBytesTransfered = 0;
-            data.currentBandwidthBytesPerSecond = 0;
-            data.timestamp = 0;
-        }
-    }
-    else
-    {
-        data.totalBytesTransfered = 0;
-        data.currentBandwidthBytesPerSecond = 0;
-        data.timestamp = 0;
-    }
-    return (data);
-}
-
-bool SourceData::SetCurrentNetworkUpload(uint64_t totalBytes, uint64_t timestamp)
-{
-    if (this->networkingUploadQueue)
-    {
-        SourceDataQueueNetworkingValue data = this->GetCurrentNetworkUpload();
-        if (totalBytes != data.totalBytesTransfered)
-        {
-            uint64_t diffBytes = totalBytes - data.totalBytesTransfered;
-            float diffSeconds = (timestamp - data.timestamp) / 1000.0;
-            data.currentBandwidthBytesPerSecond = diffSeconds > 0 ? diffBytes / diffSeconds : 0;
-            data.totalBytesTransfered = totalBytes;
-            data.timestamp = timestamp;
-            return (xQueueOverwrite(this->networkingUploadQueue, &data) == pdPASS);
-        }
-        else if (timestamp != data.timestamp)
-        {
-            data.timestamp = timestamp;
-            return (xQueueOverwrite(this->networkingUploadQueue, &data) == pdPASS);
-        }
-        else
-        {
-            return (false);
-        }
-    }
-    else
-    {
-        return (false);
-    }
+    return (this->networkingQueue != nullptr && xQueueOverwrite(this->networkingQueue, &currentData) == pdPASS);
 }

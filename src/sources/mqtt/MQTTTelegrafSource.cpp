@@ -168,7 +168,7 @@ void MQTTTelegrafSource::OnMessageReceived(const char *topic, const char *payloa
             {
                 if (strncmp(token, "usage_user=", strlen("usage_user=")) == 0)
                 {
-                    if (sscanf(token, "usage_user =%f", &currentData.usageUser) == 1)
+                    if (sscanf(token, "usage_user=%f", &currentData.usageUser) == 1)
                     {
                         totalValidTokens++;
                     }
@@ -824,10 +824,11 @@ void MQTTTelegrafSource::OnMessageReceived(const char *topic, const char *payloa
         {
             if (MQTTTelegrafSource::GetPayloadTokenWithValue(cleanPayloadPtr, ",", "temp_input", tokenWithValue, sizeof(tokenWithValue)))
             {
-                float temp = 0;
-                if (sscanf(tokenWithValue, "temp_input=%f", &temp) == 1)
+                SourceDataQueueCPUTemperatureValue currentData;
+                currentData.timestamp = currentMessageTimestamp;
+                if (sscanf(tokenWithValue, "temp_input=%f", &currentData.celsious) == 1)
                 {
-                    MQTTTelegrafSource::instance->sourceData->SetCurrentCPUTemperature(temp, currentMessageTimestamp);
+                    MQTTTelegrafSource::instance->sourceData->SetCurrentCPUTemperature(currentData);
                 }
                 else
                 {
@@ -854,10 +855,11 @@ void MQTTTelegrafSource::OnMessageReceived(const char *topic, const char *payloa
     {
         if (MQTTTelegrafSource::GetPayloadTokenWithValue(cleanPayloadPtr, ",", "temp", tokenWithValue, sizeof(tokenWithValue)))
         {
-            float temp = 0;
-            if (sscanf(tokenWithValue, "temp=%f", &temp) == 1)
+            SourceDataQueueCPUTemperatureValue currentData;
+            currentData.timestamp = currentMessageTimestamp;
+            if (sscanf(tokenWithValue, "temp=%f", &currentData.celsious) == 1)
             {
-                MQTTTelegrafSource::instance->sourceData->SetCurrentCPUTemperature(temp, currentMessageTimestamp);
+                MQTTTelegrafSource::instance->sourceData->SetCurrentCPUTemperature(currentData);
             }
             else
             {
@@ -877,12 +879,13 @@ void MQTTTelegrafSource::OnMessageReceived(const char *topic, const char *payloa
     {
         if (MQTTTelegrafSource::GetPayloadTokenWithValue(cleanPayloadPtr, ",", "uptime", tokenWithValue, sizeof(tokenWithValue)))
         {
-            uint64_t uptime = 0;
+            SourceDataQueueUptimeValue currentData;
+            currentData.timestamp = currentMessageTimestamp;
             // WARNING: (BEFORE REPORTING BUG) WINDOWS REPORTS "INVALID" UPTIME IF YOU ARE USING "FAST STARTUP" SO IF YOUR SERVER UPTIME SEEMS TO BE WRONG CHECK IF YOU HAVE THIS FEATURE ENABLED
             // https://answers.microsoft.com/en-us/windows/forum/all/fast-startup-doesnt-break-power-cycle/07bd6bf8-dd24-4c77-b911-17df89c74eb3
-            if (sscanf(tokenWithValue, "uptime=%" PRIu64, &uptime) == 1)
+            if (sscanf(tokenWithValue, "uptime=%" PRIu64, &currentData.seconds) == 1)
             {
-                MQTTTelegrafSource::instance->sourceData->SetCurrentUptime(uptime, currentMessageTimestamp);
+                MQTTTelegrafSource::instance->sourceData->SetCurrentUptime(currentData);
             }
             else
             {
@@ -905,44 +908,145 @@ void MQTTTelegrafSource::OnMessageReceived(const char *topic, const char *payloa
         std::snprintf(payloadSearchStr, sizeof(payloadSearchStr), "interface=%s", MQTTTelegrafSource::networkInterfaceId);
         if (strstr(payload, payloadSearchStr))
         {
-            if (MQTTTelegrafSource::GetPayloadTokenWithValue(cleanPayloadPtr, ",", "bytes_recv", tokenWithValue, sizeof(tokenWithValue)))
+            SourceDataQueueNetworkingValue currentData;
+            currentData.timestamp = currentMessageTimestamp;
+            uint8_t totalValidTokens = 0;
+            char *tmpPayload = strdup(cleanPayloadPtr);
+            if (tmpPayload != NULL)
             {
-                uint64_t bytesRecv = 0;
-                if (sscanf(tokenWithValue, "bytes_recv=%" PRIu64, &bytesRecv) == 1)
+                char *token = strtok(tmpPayload, ",");
+                while (token != NULL)
                 {
-                    MQTTTelegrafSource::instance->sourceData->SetCurrentNetworkDownload(bytesRecv, currentMessageTimestamp);
-                }
-                else
-                {
+                    if (strncmp(token, "bytes_sent=", strlen("bytes_sent=")) == 0)
+                    {
+                        if (sscanf(token, "bytes_sent=%" PRIu64, &currentData.bytesSent) == 1)
+                        {
+                            totalValidTokens++;
+                        }
+                        else
+                        {
 #ifdef DEBUG_MQTT_TELEGRAF
-                    Serial.println("Error parsing network received bytes value (read eror)");
+                            Serial.println("Error parsing network bytes sent value (read error)");
 #endif
+                        }
+                    }
+                    else if (strncmp(token, "bytes_recv=", strlen("bytes_recv=")) == 0)
+                    {
+                        if (sscanf(token, "bytes_recv=%" PRIu64, &currentData.bytesRecv) == 1)
+                        {
+                            totalValidTokens++;
+                        }
+                        else
+                        {
+#ifdef DEBUG_MQTT_TELEGRAF
+                            Serial.println("Error parsing network bytes recv value (read error)");
+#endif
+                        }
+                    }
+                    else if (strncmp(token, "packets_sent=", strlen("packets_sent=")) == 0)
+                    {
+                        if (sscanf(token, "packets_sent=%" PRIu64, &currentData.packetsSent) == 1)
+                        {
+                            totalValidTokens++;
+                        }
+                        else
+                        {
+#ifdef DEBUG_MQTT_TELEGRAF
+                            Serial.println("Error parsing network packets sent value (read error)");
+#endif
+                        }
+                    }
+                    else if (strncmp(token, "packets_recv=", strlen("packets_recv=")) == 0)
+                    {
+                        if (sscanf(token, "packets_recv=%" PRIu64, &currentData.packetsRecv) == 1)
+                        {
+                            totalValidTokens++;
+                        }
+                        else
+                        {
+#ifdef DEBUG_MQTT_TELEGRAF
+                            Serial.println("Error parsing network packets recv value (read error)");
+#endif
+                        }
+                    }
+                    else if (strncmp(token, "err_in=", strlen("err_in=")) == 0)
+                    {
+                        if (sscanf(token, "err_in=%" PRIu64, &currentData.errIn) == 1)
+                        {
+                            totalValidTokens++;
+                        }
+                        else
+                        {
+#ifdef DEBUG_MQTT_TELEGRAF
+                            Serial.println("Error parsing network err in value (read error)");
+#endif
+                        }
+                    }
+                    else if (strncmp(token, "err_out=", strlen("err_out=")) == 0)
+                    {
+                        if (sscanf(token, "err_out=%" PRIu64, &currentData.errOut) == 1)
+                        {
+                            totalValidTokens++;
+                        }
+                        else
+                        {
+#ifdef DEBUG_MQTT_TELEGRAF
+                            Serial.println("Error parsing network err out value (read error)");
+#endif
+                        }
+                    }
+                    else if (strncmp(token, "drop_in=", strlen("drop_in=")) == 0)
+                    {
+                        if (sscanf(token, "drop_in=%" PRIu64, &currentData.dropIn) == 1)
+                        {
+                            totalValidTokens++;
+                        }
+                        else
+                        {
+#ifdef DEBUG_MQTT_TELEGRAF
+                            Serial.println("Error parsing network drop in value (read error)");
+#endif
+                        }
+                    }
+                    else if (strncmp(token, "drop_out=", strlen("drop_out=")) == 0)
+                    {
+                        if (sscanf(token, "drop_out=%" PRIu64, &currentData.dropOut) == 1)
+                        {
+                            totalValidTokens++;
+                        }
+                        else
+                        {
+#ifdef DEBUG_MQTT_TELEGRAF
+                            Serial.println("Error parsing network drop out value (read error)");
+#endif
+                        }
+                    }
+                    else if (strncmp(token, "speed=", strlen("speed=")) == 0)
+                    {
+                        if (sscanf(token, "speed=%" PRIu64, &currentData.speed) == 1)
+                        {
+                            totalValidTokens++;
+                        }
+                        else
+                        {
+#ifdef DEBUG_MQTT_TELEGRAF
+                            Serial.println("Error parsing network speed value (read error)");
+#endif
+                        }
+                    }
+
+                    token = strtok(NULL, ",");
                 }
+                free(tmpPayload);
+            }
+            if (totalValidTokens > 0)
+            {
+                MQTTTelegrafSource::instance->sourceData->SetCurrentNetwork(currentData);
             }
             else
             {
 #ifdef DEBUG_MQTT_TELEGRAF
-                Serial.println("Error parsing network received bytes value (token not found)");
-#endif
-            }
-            if (MQTTTelegrafSource::GetPayloadTokenWithValue(cleanPayloadPtr, ",", "bytes_sent", tokenWithValue, sizeof(tokenWithValue)))
-            {
-                uint64_t bytesSent = 0;
-                if (sscanf(tokenWithValue, "bytes_sent=%" PRIu64, &bytesSent) == 1)
-                {
-                    MQTTTelegrafSource::instance->sourceData->SetCurrentNetworkUpload(bytesSent, currentMessageTimestamp);
-                }
-                else
-                {
-#ifdef DEBUG_MQTT_TELEGRAF
-                    Serial.println("Error parsing network sent bytes value (read error)");
-#endif
-                }
-            }
-            else
-            {
-#ifdef DEBUG_MQTT_TELEGRAF
-                Serial.println("Error parsing network sent bytes value (token not found)");
+                Serial.printf("Error parsing network values (tokens found: %d of %d)\n", totalValidTokens, 10);
 #endif
             }
         }

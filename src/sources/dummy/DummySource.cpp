@@ -18,9 +18,9 @@ void DummySource::Refresh(uint16_t milliSeconds)
     bool allowRefresh = milliSeconds == 0 || ((currentMillis - this->lastEllapsedMillis) >= milliSeconds);
     if (allowRefresh)
     {
-        SourceDataQueueCPUValues cpuData = this->sourceData->GetCurrentCPUData();
         // TODO
         /*
+        SourceDataQueueCPUValues cpuData = this->sourceData->GetCurrentCPUData();
         uint8_t rnd = random(0, 100);
         if (rnd > 90)
         {
@@ -34,7 +34,6 @@ void DummySource::Refresh(uint16_t milliSeconds)
         {
             cpuLoadValue = random(MIN_CPU_LOAD, (MAX_CPU_LOAD / 10) * 100);
         }
-        */
         cpuData.timestamp = currentMillis;
         this->sourceData->SetCurrentCPUData(cpuData);
 
@@ -71,19 +70,20 @@ void DummySource::Refresh(uint16_t milliSeconds)
 
         SourceDataQueueNetworkingLimitsValue netLimits = this->sourceData->GetNetworkLimits();
 
-        SourceDataQueueNetworkingValue netDownData = this->sourceData->GetCurrentNetworkDownload();
+        SourceDataQueueNetworkingValue netDownData = this->sourceData->GetCurrentNetwork();
         if (netLimits.byteDownloadLimit == 0)
         {
             netLimits.byteDownloadLimit = 1048576;
         }
         this->sourceData->SetCurrentNetworkDownload(netDownData.totalBytesTransfered + (random(1024, random(0, 100) > 95 ? netLimits.byteDownloadLimit : netLimits.byteDownloadLimit / 200)), currentMillis);
 
-        SourceDataQueueNetworkingValue netUpData = this->sourceData->GetCurrentNetworkUpload();
+        SourceDataQueueNetworkingValue netUpData = this->sourceData->GetCurrentNetwork();
         if (netLimits.byteUploadLimit == 0)
         {
             netLimits.byteUploadLimit = 1048576;
         }
         this->sourceData->SetCurrentNetworkUpload(netUpData.totalBytesTransfered + (random(1024, random(0, 100) > 95 ? netLimits.byteUploadLimit : netLimits.byteUploadLimit / 200)), currentMillis);
+        */
 
         this->lastEllapsedMillis = currentMillis;
     }

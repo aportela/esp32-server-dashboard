@@ -41,7 +41,8 @@ LGFXScreenDashboardResume::LGFXScreenDashboardResume(LovyanGFX *display, SourceD
             }
             else
             {
-                sourceData->SetNetworkLimits(0, 0);
+                SourceDataQueueNetworkingLimitsValue networkingLimits;
+                sourceData->SetNetworkLimits(networkingLimits);
                 this->networkDownloadBandwidthBlock = new LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth(NBT_DOWNLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 3);
                 this->networkUploadBandwidthBlock = new LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth(NBT_UPLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 4);
             }
@@ -119,7 +120,8 @@ bool LGFXScreenDashboardResume::RefreshBottomCommonData(bool forceDrawAll)
 #else
 #endif // DEBUG_FPS
 
-    SourceDataQueueUptimeValue data = this->currentSourceData->GetCurrentUptime();
+    SourceDataQueueUptimeValue data;
+    this->currentSourceData->GetCurrentUptime(data);
     if (data.seconds > 0)
     {
         char str[sizeof(this->previousUptimeStr)];
