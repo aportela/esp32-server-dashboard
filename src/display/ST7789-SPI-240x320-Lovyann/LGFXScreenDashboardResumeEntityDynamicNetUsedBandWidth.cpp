@@ -31,7 +31,7 @@ bool LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth::Refresh(bool force)
     this->sourceData->GetCurrentNetwork(networkData);
     if (networkData.timestamp != this->timestamp || force)
     {
-        uint64_t diffBytes = this->type == NBT_DOWNLOAD ? (networkData.bytesRecv - this->previousBytesRecv) : (networkData.bytesSent - this->previousBytesSent);
+        uint64_t diffBytes = this->type == NET_BANDWIDTH_TYPE_DOWNLOAD ? (networkData.bytesRecv - this->previousBytesRecv) : (networkData.bytesSent - this->previousBytesSent);
         float diffSeconds = (networkData.timestamp - this->timestamp) / 1000.0;
         uint64_t currentValue = diffSeconds > 0 ? diffBytes / diffSeconds : 0;
         this->previousBytesRecv = networkData.bytesRecv;
@@ -76,7 +76,7 @@ bool LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth::Refresh(bool force)
                     char strValue[sizeof(this->oldStrValue)] = {'\0'};
                     Format::ParseBytesToHumanString(this->dynamicScaleValuesFIFO->GetValueAt(index), strValue, sizeof(strValue), true, true, true);
                     strcat(strValue, "  ");
-                    if (type == NBT_DOWNLOAD)
+                    if (type == NET_BANDWIDTH_TYPE_DOWNLOAD)
                     {
                         Serial.printf("DOWN: %s\n", strValue);
                     }

@@ -5,8 +5,8 @@
 
 enum NetBandwidthType
 {
-    NBT_DOWNLOAD,
-    NBT_UPLOAD
+    NET_BANDWIDTH_TYPE_DOWNLOAD,
+    NET_BANDWIDTH_TYPE_UPLOAD
 };
 
 class LGFXScreenDashboardResumeEntityNetUsedBandWidth : public LGFXScreenDashboardResumeEntity
