@@ -176,132 +176,132 @@ void MQTTTelegrafSource::OnMessageReceived(const char *topic, const char *payloa
             {
                 if (strncmp(token, "usage_system=", strlen("usage_system=")) == 0)
                 {
-                    if (!sscanf(token, "usage_system=%f", &usageSystem) == 1)
+                    if (sscanf(token, "usage_system=%f", &usageSystem) == 1)
+                    {
+                        totalValidTokens++;
+                    }
+                    else
                     {
 #ifdef DEBUG_MQTT_TELEGRAF
                         Serial.println("Error parsing CPU usage system value (read error)");
 #endif
                     }
-                    else
-                    {
-                        totalValidTokens++;
-                    }
                 }
                 else if (strncmp(token, "usage_user=", strlen("usage_user=")) == 0)
                 {
-                    if (!sscanf(token, "usage_user=%f", &usageUser) == 1)
+                    if (sscanf(token, "usage_user=%f", &usageUser) == 1)
+                    {
+                        totalValidTokens++;
+                    }
+                    else
                     {
 #ifdef DEBUG_MQTT_TELEGRAF
                         Serial.println("Error parsing CPU usage user value (read error)");
 #endif
                     }
-                    else
-                    {
-                        totalValidTokens++;
-                    }
                 }
                 else if (strncmp(token, "usage_idle=", strlen("usage_idle=")) == 0)
                 {
-                    if (!sscanf(token, "usage_idle=%f", &usageIdle) == 1)
+                    if (sscanf(token, "usage_idle=%f", &usageIdle) == 1)
+                    {
+                        totalValidTokens++;
+                    }
+                    else
                     {
 #ifdef DEBUG_MQTT_TELEGRAF
                         Serial.println("Error parsing CPU usage idle value (read error)");
 #endif
                     }
-                    else
-                    {
-                        totalValidTokens++;
-                    }
                 }
                 else if (strncmp(token, "usage_nice=", strlen("usage_nice=")) == 0)
                 {
-                    if (!sscanf(token, "usage_nice=%f", &usageNice) == 1)
+                    if (sscanf(token, "usage_nice=%f", &usageNice) == 1)
+                    {
+                        totalValidTokens++;
+                    }
+                    else
                     {
 #ifdef DEBUG_MQTT_TELEGRAF
                         Serial.println("Error parsing CPU usage nice value (read error)");
 #endif
                     }
-                    else
-                    {
-                        totalValidTokens++;
-                    }
                 }
                 else if (strncmp(token, "usage_iowait=", strlen("usage_iowait=")) == 0)
                 {
-                    if (!sscanf(token, "usage_iowait=%f", &usageIOWait) == 1)
+                    if (sscanf(token, "usage_iowait=%f", &usageIOWait) == 1)
+                    {
+                        totalValidTokens++;
+                    }
+                    else
                     {
 #ifdef DEBUG_MQTT_TELEGRAF
                         Serial.println("Error parsing CPU usage iowait value (read error)");
 #endif
                     }
-                    else
-                    {
-                        totalValidTokens++;
-                    }
                 }
                 else if (strncmp(token, "usage_irq=", strlen("usage_irq=")) == 0)
                 {
-                    if (!sscanf(token, "usage_irq=%f", &usageIRQ) == 1)
+                    if (sscanf(token, "usage_irq=%f", &usageIRQ) == 1)
+                    {
+                        totalValidTokens++;
+                    }
+                    else
                     {
 #ifdef DEBUG_MQTT_TELEGRAF
                         Serial.println("Error parsing CPU usage irq value (read error)");
 #endif
                     }
-                    else
-                    {
-                        totalValidTokens++;
-                    }
                 }
                 else if (strncmp(token, "usage_softirq=", strlen("usage_softirq=")) == 0)
                 {
-                    if (!sscanf(token, "usage_softirq=%f", &usageSoftIRQ) == 1)
+                    if (sscanf(token, "usage_softirq=%f", &usageSoftIRQ) == 1)
+                    {
+                        totalValidTokens++;
+                    }
+                    else
                     {
 #ifdef DEBUG_MQTT_TELEGRAF
                         Serial.println("Error parsing CPU usage soft irq value (read error)");
 #endif
                     }
-                    else
-                    {
-                        totalValidTokens++;
-                    }
                 }
                 else if (strncmp(token, "usage_guest=", strlen("usage_guest=")) == 0)
                 {
-                    if (!sscanf(token, "usage_guest=%f", &usageGuest) == 1)
+                    if (sscanf(token, "usage_guest=%f", &usageGuest) == 1)
+                    {
+                        totalValidTokens++;
+                    }
+                    else
                     {
 #ifdef DEBUG_MQTT_TELEGRAF
                         Serial.println("Error parsing CPU usage guest value (read error)");
 #endif
                     }
-                    else
-                    {
-                        totalValidTokens++;
-                    }
                 }
                 else if (strncmp(token, "usage_guest_nice=", strlen("usage_guest_nice=")) == 0)
                 {
-                    if (!sscanf(token, "usage_guest_nice=%f", &usageGuestNice) == 1)
+                    if (sscanf(token, "usage_guest_nice=%f", &usageGuestNice) == 1)
+                    {
+                        totalValidTokens++;
+                    }
+                    else
                     {
 #ifdef DEBUG_MQTT_TELEGRAF
                         Serial.println("Error parsing CPU usage guest nice value (read error)");
 #endif
                     }
-                    else
-                    {
-                        totalValidTokens++;
-                    }
                 }
                 else if (strncmp(token, "usage_steal=", strlen("usage_steal=")) == 0)
                 {
-                    if (!sscanf(token, "usage_steal=%f", &usageSteal) == 1)
+                    if (sscanf(token, "usage_steal=%f", &usageSteal) == 1)
+                    {
+                        totalValidTokens++;
+                    }
+                    else
                     {
 #ifdef DEBUG_MQTT_TELEGRAF
                         Serial.println("Error parsing CPU usage steal value (read error)");
 #endif
-                    }
-                    else
-                    {
-                        totalValidTokens++;
                     }
                 }
                 token = strtok(NULL, ",");
