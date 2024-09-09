@@ -78,66 +78,11 @@ SourceDataQueueCPUValues SourceData::GetCurrentCPUData(void)
     return (data);
 }
 
-bool SourceData::SetCurrentCPUData(float loadPercent, float usageSystem, float usageUser, float usageIdle, float usageNice, float usageIOWait, float usageIRQ, float usageSoftIRQ, float usageGuest, float usageGuestNice, float usageSteal, uint64_t timestamp)
+bool SourceData::SetCurrentCPUData(SourceDataQueueCPUValues currentData)
 {
     if (this->cpuLoadQueue != NULL)
     {
-        SourceDataQueueCPUValues data = this->GetCurrentCPUData();
-        if (loadPercent != data.loadPercent || usageSystem != data.usageSystem || usageUser != data.usageUser || usageIdle != data.usageIdle || usageNice != data.usageNice || usageIOWait != data.usageIOWait || usageIRQ != data.usageIRQ || usageSoftIRQ != data.usageSoftIRQ || usageGuest != data.usageGuest || usageGuestNice != data.usageGuestNice ||
-            usageSteal != data.usageSteal)
-        {
-
-            if (!truncateOverflows)
-            {
-                if (
-                    loadPercent < MIN_CPU_USAGE_LIMIT_VALUE || loadPercent > MAX_CPU_USAGE_LIMIT_VALUE ||
-                    usageSystem < MIN_CPU_USAGE_LIMIT_VALUE || usageSystem > MAX_CPU_USAGE_LIMIT_VALUE ||
-                    usageUser < MIN_CPU_USAGE_LIMIT_VALUE || usageUser > MAX_CPU_USAGE_LIMIT_VALUE ||
-                    usageIdle < MIN_CPU_USAGE_LIMIT_VALUE || usageIdle > MAX_CPU_USAGE_LIMIT_VALUE ||
-                    usageNice < MIN_CPU_USAGE_LIMIT_VALUE || usageNice > MAX_CPU_USAGE_LIMIT_VALUE ||
-                    usageIOWait < MIN_CPU_USAGE_LIMIT_VALUE || usageIOWait > MAX_CPU_USAGE_LIMIT_VALUE ||
-                    usageIRQ < MIN_CPU_USAGE_LIMIT_VALUE || usageIRQ > MAX_CPU_USAGE_LIMIT_VALUE ||
-                    usageSoftIRQ < MIN_CPU_USAGE_LIMIT_VALUE || usageSoftIRQ > MAX_CPU_USAGE_LIMIT_VALUE ||
-                    usageGuest < MIN_CPU_USAGE_LIMIT_VALUE || usageGuest > MAX_CPU_USAGE_LIMIT_VALUE ||
-                    usageGuestNice < MIN_CPU_USAGE_LIMIT_VALUE || usageGuestNice > MAX_CPU_USAGE_LIMIT_VALUE ||
-                    usageSteal < MIN_CPU_USAGE_LIMIT_VALUE || usageSteal > MAX_CPU_USAGE_LIMIT_VALUE)
-                {
-                    return (false);
-                }
-            }
-            else
-            {
-                data.loadPercent = loadPercent < MIN_CPU_USAGE_LIMIT_VALUE ? MIN_CPU_USAGE_LIMIT_VALUE : loadPercent > MAX_CPU_USAGE_LIMIT_VALUE ? MAX_CPU_USAGE_LIMIT_VALUE
-                                                                                                                                                 : loadPercent;
-                data.usageSystem = usageSystem < MIN_CPU_USAGE_LIMIT_VALUE ? MIN_CPU_USAGE_LIMIT_VALUE : usageSystem > MAX_CPU_USAGE_LIMIT_VALUE ? MAX_CPU_USAGE_LIMIT_VALUE
-                                                                                                                                                 : usageSystem;
-                data.usageUser = usageUser < MIN_CPU_USAGE_LIMIT_VALUE ? MIN_CPU_USAGE_LIMIT_VALUE : usageUser > MAX_CPU_USAGE_LIMIT_VALUE ? MAX_CPU_USAGE_LIMIT_VALUE
-                                                                                                                                           : usageUser;
-                data.usageIdle = usageIdle < MIN_CPU_USAGE_LIMIT_VALUE ? MIN_CPU_USAGE_LIMIT_VALUE : usageIdle > MAX_CPU_USAGE_LIMIT_VALUE ? MAX_CPU_USAGE_LIMIT_VALUE
-                                                                                                                                           : usageIdle;
-                data.usageNice = usageNice < MIN_CPU_USAGE_LIMIT_VALUE ? MIN_CPU_USAGE_LIMIT_VALUE : usageNice > MAX_CPU_USAGE_LIMIT_VALUE ? MAX_CPU_USAGE_LIMIT_VALUE
-                                                                                                                                           : usageNice;
-                data.usageIOWait = usageIOWait < MIN_CPU_USAGE_LIMIT_VALUE ? MIN_CPU_USAGE_LIMIT_VALUE : usageIOWait > MAX_CPU_USAGE_LIMIT_VALUE ? MAX_CPU_USAGE_LIMIT_VALUE
-                                                                                                                                                 : usageIOWait;
-                data.usageIRQ = usageIRQ < MIN_CPU_USAGE_LIMIT_VALUE ? MIN_CPU_USAGE_LIMIT_VALUE : usageIRQ > MAX_CPU_USAGE_LIMIT_VALUE ? MAX_CPU_USAGE_LIMIT_VALUE
-                                                                                                                                        : usageIRQ;
-                data.usageSoftIRQ = usageSoftIRQ < MIN_CPU_USAGE_LIMIT_VALUE ? MIN_CPU_USAGE_LIMIT_VALUE : usageSoftIRQ > MAX_CPU_USAGE_LIMIT_VALUE ? MAX_CPU_USAGE_LIMIT_VALUE
-                                                                                                                                                    : usageSoftIRQ;
-                data.usageGuest = usageGuest < MIN_CPU_USAGE_LIMIT_VALUE ? MIN_CPU_USAGE_LIMIT_VALUE : usageGuest > MAX_CPU_USAGE_LIMIT_VALUE ? MAX_CPU_USAGE_LIMIT_VALUE
-                                                                                                                                              : usageGuest;
-                data.usageGuestNice = usageGuestNice < MIN_CPU_USAGE_LIMIT_VALUE ? MIN_CPU_USAGE_LIMIT_VALUE : usageGuestNice > MAX_CPU_USAGE_LIMIT_VALUE ? MAX_CPU_USAGE_LIMIT_VALUE
-                                                                                                                                                          : usageGuestNice;
-                data.usageSteal = usageSteal < MIN_CPU_USAGE_LIMIT_VALUE ? MIN_CPU_USAGE_LIMIT_VALUE : usageSteal > MAX_CPU_USAGE_LIMIT_VALUE ? MAX_CPU_USAGE_LIMIT_VALUE
-                                                                                                                                              : usageSteal;
-                data.timestamp = timestamp;
-                return (xQueueOverwrite(this->cpuLoadQueue, &data) == pdPASS);
-            }
-        }
-        else
-        {
-            data.timestamp = timestamp;
-            return (xQueueOverwrite(this->cpuLoadQueue, &data) == pdPASS);
-        }
+        return (xQueueOverwrite(this->cpuLoadQueue, &currentData) == pdPASS);
     }
     else
     {
@@ -178,7 +123,7 @@ bool SourceData::SetCurrentMemoryData(
 
 SourceDataQueueCPUTemperatureValue SourceData::GetCurrentCPUTemperature(void)
 {
-    SourceDataQueueCPUTemperatureValue data = {0.0f, 0};
+    SourceDataQueueCPUTemperatureValue data;
     if (this->cpuTemperatureQueue != NULL)
     {
         if (xQueuePeek(this->cpuTemperatureQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
@@ -244,7 +189,7 @@ bool SourceData::SetCurrentCPUTemperature(float celsious, uint64_t timestamp)
 
 SourceDataQueueUptimeValue SourceData::GetCurrentUptime(void)
 {
-    SourceDataQueueUptimeValue data = {0, 0};
+    SourceDataQueueUptimeValue data;
     if (this->systemUptimeQueue != NULL)
     {
         if (xQueuePeek(this->systemUptimeQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
@@ -288,7 +233,7 @@ bool SourceData::SetCurrentUptime(uint64_t seconds, uint64_t timestamp)
 
 SourceDataQueueNetworkingLimitsValue SourceData::GetNetworkLimits(void)
 {
-    SourceDataQueueNetworkingLimitsValue data = {0, 0};
+    SourceDataQueueNetworkingLimitsValue data;
     if (this->networkingLimitsQueue != NULL)
     {
         if (xQueuePeek(this->networkingLimitsQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
@@ -309,7 +254,7 @@ bool SourceData::SetNetworkLimits(uint64_t byteDownloadLimit, uint64_t byteUploa
 {
     if (this->networkingLimitsQueue != NULL)
     {
-        SourceDataQueueUptimeValue data = {byteDownloadLimit, byteUploadLimit};
+        SourceDataQueueNetworkingLimitsValue data = {byteDownloadLimit, byteUploadLimit};
         return (xQueueOverwrite(this->networkingLimitsQueue, &data) == pdPASS);
     }
     else
@@ -320,7 +265,7 @@ bool SourceData::SetNetworkLimits(uint64_t byteDownloadLimit, uint64_t byteUploa
 
 SourceDataQueueNetworkingValue SourceData::GetCurrentNetworkDownload(void)
 {
-    SourceDataQueueNetworkingValue data = {0, 0, 0};
+    SourceDataQueueNetworkingValue data;
     if (this->networkingDownloadQueue != NULL)
     {
         if (xQueuePeek(this->networkingDownloadQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
@@ -371,7 +316,7 @@ bool SourceData::SetCurrentNetworkDownload(uint64_t totalBytes, uint64_t timesta
 
 SourceDataQueueNetworkingValue SourceData::GetCurrentNetworkUpload(void)
 {
-    SourceDataQueueNetworkingValue data = {0, 0, 0};
+    SourceDataQueueNetworkingValue data;
     if (this->networkingUploadQueue != NULL)
     {
         if (xQueuePeek(this->networkingUploadQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)

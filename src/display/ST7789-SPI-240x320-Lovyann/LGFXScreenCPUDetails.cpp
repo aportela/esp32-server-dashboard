@@ -18,11 +18,11 @@ LGFXScreenCPUDetails::LGFXScreenCPUDetails(LovyanGFX *display, SourceData *sourc
 #ifdef DEBUG_FPS
             FPS::Init();
 #endif // DEBUG_FPS
-            this->cpuLoadBlock1 = new LGFXScreenDashboardResumeEntityCPULoad(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 0, CPU_USAGE_TYPE_CPU_LOAD);
-            this->cpuLoadBlock2 = new LGFXScreenDashboardResumeEntityCPULoad(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 1, CPU_USAGE_TYPE_CPU_SYSTEM);
-            this->cpuLoadBlock3 = new LGFXScreenDashboardResumeEntityCPULoad(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 2, CPU_USAGE_TYPE_CPU_USER);
-            this->cpuLoadBlock4 = new LGFXScreenDashboardResumeEntityCPULoad(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 3, CPU_USAGE_TYPE_CPU_IOWAIT);
-            this->cpuLoadBlock5 = new LGFXScreenDashboardResumeEntityCPULoad(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 4, CPU_USAGE_TYPE_CPU_IDLE);
+            this->cpuLoadBlock1 = new LGFXScreenDashboardResumeEntityCPULoad(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 0, CPU_USAGE_TYPE_LOAD);
+            this->cpuLoadBlock2 = new LGFXScreenDashboardResumeEntityCPULoad(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 1, CPU_USAGE_TYPE_SYSTEM);
+            this->cpuLoadBlock3 = new LGFXScreenDashboardResumeEntityCPULoad(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 2, CPU_USAGE_TYPE_USER);
+            this->cpuLoadBlock4 = new LGFXScreenDashboardResumeEntityCPULoad(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 3, CPU_USAGE_TYPE_IOWAIT);
+            this->cpuLoadBlock5 = new LGFXScreenDashboardResumeEntityCPULoad(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 4, CPU_USAGE_TYPE_IDLE);
             this->Refresh(true);
         }
     }

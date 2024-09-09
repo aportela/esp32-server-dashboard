@@ -1,4 +1,3 @@
-
 #ifndef ESP32_SERVER_DASHBOARD_SOURCE_DATA_H
 #define ESP32_SERVER_DASHBOARD_SOURCE_DATA_H
 
@@ -21,19 +20,30 @@
 // TODO: https://github.com/influxdata/telegraf/blob/master/plugins/inputs/cpu/README.md
 struct SourceDataQueueCPUValues
 {
-    float loadPercent; // value is equal to => 100 - usageIdle
-    float usageSystem;
-    float usageUser;
-    float usageIdle;
-    float usageNice;
-    float usageIOWait;
-    float usageIRQ;
-    float usageSoftIRQ;
-    float usageGuest;
-    float usageGuestNice;
-    float usageSteal;
+    float timeUser = 0.0f;
+    float timeSystem = 0.0f;
+    float timeIdle = 0.0f;
+    float timeActive = 0.0f;
+    float timeNice = 0.0f;
+    float timeIOWait = 0.0f;
+    float timeIRQ = 0.0f;
+    float timeSoftIRQ = 0.0f;
+    float timeSteal = 0.0f;
+    float timeGuest = 0.0f;
+    float timeGuestNice = 0.0f;
+    float usageUser = 0.0f;
+    float usageSystem = 0.0f;
+    float usageIdle = 0.0f;
+    float usageActive = 0.0f;
+    float usageNice = 0.0f;
+    float usageIOWait = 0.0f;
+    float usageIRQ = 0.0f;
+    float usageSoftIRQ = 0.0f;
+    float usageSteal = 0.0f;
+    float usageGuest = 0.0f;
+    float usageGuestNice = 0.0f;
 
-    uint64_t timestamp;
+    uint64_t timestamp = 0;
 
     SourceDataQueueCPUValues() = default;
 };
@@ -84,29 +94,42 @@ struct SourceDataQueueUsedMemoryValues
     SourceDataQueueUsedMemoryValues() = default;
 };
 
-typedef struct SourceDataQueueCPUTemperatureValue
+struct SourceDataQueueCPUTemperatureValue
 {
-    float celsious;
-    uint64_t timestamp;
+    float celsious = 0.0f;
+
+    uint64_t timestamp = 0;
+
+    SourceDataQueueCPUTemperatureValue() = default;
 };
 
-typedef struct SourceDataQueueUptimeValue
+struct SourceDataQueueUptimeValue
 {
-    uint64_t seconds;
-    uint64_t timestamp;
+    uint64_t seconds = 0;
+
+    uint64_t timestamp = 0;
+
+    SourceDataQueueUptimeValue() = default;
 };
 
-typedef struct SourceDataQueueNetworkingValue
+struct SourceDataQueueNetworkingValue
 {
-    uint64_t totalBytesTransfered;
-    uint64_t currentBandwidthBytesPerSecond;
-    uint64_t timestamp;
+    uint64_t totalBytesTransfered = 0;
+    uint64_t currentBandwidthBytesPerSecond = 0;
+
+    uint64_t timestamp = 0;
+
+    SourceDataQueueNetworkingValue() = default;
 };
 
-typedef struct SourceDataQueueNetworkingLimitsValue
+struct SourceDataQueueNetworkingLimitsValue
 {
-    uint64_t byteDownloadLimit;
-    uint64_t byteUploadLimit;
+    uint64_t byteDownloadLimit = 0;
+    uint64_t byteUploadLimit = 0;
+
+    SourceDataQueueNetworkingLimitsValue() = default;
+    SourceDataQueueNetworkingLimitsValue(uint64_t downloadLimit, uint64_t uploadLimit)
+        : byteDownloadLimit(downloadLimit), byteUploadLimit(uploadLimit) {}
 };
 
 #define HOSTNAME_ARR_LENGTH 17
@@ -141,7 +164,7 @@ public:
     // CPU LOAD
 
     SourceDataQueueCPUValues GetCurrentCPUData(void);
-    bool SetCurrentCPUData(float loadPercent, float usageSystem, float usageUser, float usageIdle, float usageNice, float usageIOWait, float usageIRQ, float usageSoftIRQ, float usageGuest, float usageGuestNice, float usageSteal, uint64_t timestamp);
+    bool SetCurrentCPUData(SourceDataQueueCPUValues currentData);
 
     // MEMORY
 

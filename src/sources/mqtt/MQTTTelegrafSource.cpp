@@ -157,39 +157,18 @@ void MQTTTelegrafSource::OnMessageReceived(const char *topic, const char *payloa
     char tokenWithValue[255] = {'\0'};
     if (strcmp(topic, MQTTTelegrafSource::cpuTopic) == 0 && strncmp(payload, "cpu,cpu=cpu-total", 17) == 0)
     {
-        float usageSystem = 0.0f;
-        float usageUser = 0.0f;
-        float usageIdle = 0.0f;
-        float usageNice = 0.0f;
-        float usageIOWait = 0.0f;
-        float usageIRQ = 0.0f;
-        float usageSoftIRQ = 0.0f;
-        float usageGuest = 0.0f;
-        float usageGuestNice = 0.0f;
-        float usageSteal = 0.0f;
-        char *tmpPayload = strdup(cleanPayloadPtr);
+        SourceDataQueueCPUValues currentData;
+        currentData.timestamp = currentMessageTimestamp;
         uint8_t totalValidTokens = 0;
+        char *tmpPayload = strdup(cleanPayloadPtr);
         if (tmpPayload != NULL)
         {
             char *token = strtok(tmpPayload, ",");
             while (token != NULL)
             {
-                if (strncmp(token, "usage_system=", strlen("usage_system=")) == 0)
+                if (strncmp(token, "usage_user=", strlen("usage_user=")) == 0)
                 {
-                    if (sscanf(token, "usage_system=%f", &usageSystem) == 1)
-                    {
-                        totalValidTokens++;
-                    }
-                    else
-                    {
-#ifdef DEBUG_MQTT_TELEGRAF
-                        Serial.println("Error parsing CPU usage system value (read error)");
-#endif
-                    }
-                }
-                else if (strncmp(token, "usage_user=", strlen("usage_user=")) == 0)
-                {
-                    if (sscanf(token, "usage_user=%f", &usageUser) == 1)
+                    if (sscanf(token, "usage_user =%f", &currentData.usageUser) == 1)
                     {
                         totalValidTokens++;
                     }
@@ -200,9 +179,22 @@ void MQTTTelegrafSource::OnMessageReceived(const char *topic, const char *payloa
 #endif
                     }
                 }
+                else if (strncmp(token, "usage_system=", strlen("usage_system=")) == 0)
+                {
+                    if (sscanf(token, "usage_system=%f", &currentData.usageSystem) == 1)
+                    {
+                        totalValidTokens++;
+                    }
+                    else
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing CPU usage system value (read error)");
+#endif
+                    }
+                }
                 else if (strncmp(token, "usage_idle=", strlen("usage_idle=")) == 0)
                 {
-                    if (sscanf(token, "usage_idle=%f", &usageIdle) == 1)
+                    if (sscanf(token, "usage_idle=%f", &currentData.usageIdle) == 1)
                     {
                         totalValidTokens++;
                     }
@@ -213,9 +205,22 @@ void MQTTTelegrafSource::OnMessageReceived(const char *topic, const char *payloa
 #endif
                     }
                 }
+                else if (strncmp(token, "usage_active=", strlen("usage_active=")) == 0)
+                {
+                    if (sscanf(token, "usage_active=%f", &currentData.usageActive) == 1)
+                    {
+                        totalValidTokens++;
+                    }
+                    else
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing CPU usage active value (read error)");
+#endif
+                    }
+                }
                 else if (strncmp(token, "usage_nice=", strlen("usage_nice=")) == 0)
                 {
-                    if (sscanf(token, "usage_nice=%f", &usageNice) == 1)
+                    if (sscanf(token, "usage_nice=%f", &currentData.usageNice) == 1)
                     {
                         totalValidTokens++;
                     }
@@ -228,7 +233,7 @@ void MQTTTelegrafSource::OnMessageReceived(const char *topic, const char *payloa
                 }
                 else if (strncmp(token, "usage_iowait=", strlen("usage_iowait=")) == 0)
                 {
-                    if (sscanf(token, "usage_iowait=%f", &usageIOWait) == 1)
+                    if (sscanf(token, "usage_iowait=%f", &currentData.usageIOWait) == 1)
                     {
                         totalValidTokens++;
                     }
@@ -241,7 +246,7 @@ void MQTTTelegrafSource::OnMessageReceived(const char *topic, const char *payloa
                 }
                 else if (strncmp(token, "usage_irq=", strlen("usage_irq=")) == 0)
                 {
-                    if (sscanf(token, "usage_irq=%f", &usageIRQ) == 1)
+                    if (sscanf(token, "usage_irq=%f", &currentData.usageIRQ) == 1)
                     {
                         totalValidTokens++;
                     }
@@ -254,7 +259,7 @@ void MQTTTelegrafSource::OnMessageReceived(const char *topic, const char *payloa
                 }
                 else if (strncmp(token, "usage_softirq=", strlen("usage_softirq=")) == 0)
                 {
-                    if (sscanf(token, "usage_softirq=%f", &usageSoftIRQ) == 1)
+                    if (sscanf(token, "usage_softirq=%f", &currentData.usageSoftIRQ) == 1)
                     {
                         totalValidTokens++;
                     }
@@ -265,9 +270,22 @@ void MQTTTelegrafSource::OnMessageReceived(const char *topic, const char *payloa
 #endif
                     }
                 }
+                else if (strncmp(token, "usage_steal=", strlen("usage_steal=")) == 0)
+                {
+                    if (sscanf(token, "usage_steal=%f", &currentData.usageSteal) == 1)
+                    {
+                        totalValidTokens++;
+                    }
+                    else
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing CPU usage steal value (read error)");
+#endif
+                    }
+                }
                 else if (strncmp(token, "usage_guest=", strlen("usage_guest=")) == 0)
                 {
-                    if (sscanf(token, "usage_guest=%f", &usageGuest) == 1)
+                    if (sscanf(token, "usage_guest=%f", &currentData.usageGuest) == 1)
                     {
                         totalValidTokens++;
                     }
@@ -280,7 +298,7 @@ void MQTTTelegrafSource::OnMessageReceived(const char *topic, const char *payloa
                 }
                 else if (strncmp(token, "usage_guest_nice=", strlen("usage_guest_nice=")) == 0)
                 {
-                    if (sscanf(token, "usage_guest_nice=%f", &usageGuestNice) == 1)
+                    if (sscanf(token, "usage_guest_nice=%f", &currentData.usageGuestNice) == 1)
                     {
                         totalValidTokens++;
                     }
@@ -291,38 +309,13 @@ void MQTTTelegrafSource::OnMessageReceived(const char *topic, const char *payloa
 #endif
                     }
                 }
-                else if (strncmp(token, "usage_steal=", strlen("usage_steal=")) == 0)
-                {
-                    if (sscanf(token, "usage_steal=%f", &usageSteal) == 1)
-                    {
-                        totalValidTokens++;
-                    }
-                    else
-                    {
-#ifdef DEBUG_MQTT_TELEGRAF
-                        Serial.println("Error parsing CPU usage steal value (read error)");
-#endif
-                    }
-                }
                 token = strtok(NULL, ",");
             }
             free(tmpPayload);
         }
-        if (totalValidTokens == 10)
+        if (totalValidTokens > 0)
         {
-            MQTTTelegrafSource::instance->sourceData->SetCurrentCPUData(
-                usageIdle <= 100 ? 100.0f - usageIdle : 0,
-                usageSystem,
-                usageUser,
-                usageIdle,
-                usageNice,
-                usageIOWait,
-                usageIRQ,
-                usageSoftIRQ,
-                usageGuest,
-                usageGuestNice,
-                usageSteal,
-                currentMessageTimestamp);
+            MQTTTelegrafSource::instance->sourceData->SetCurrentCPUData(currentData);
         }
         else
         {

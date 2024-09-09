@@ -18,7 +18,9 @@ void DummySource::Refresh(uint16_t milliSeconds)
     bool allowRefresh = milliSeconds == 0 || ((currentMillis - this->lastEllapsedMillis) >= milliSeconds);
     if (allowRefresh)
     {
-        float cpuLoadValue = 0.0f;
+        SourceDataQueueCPUValues cpuData = this->sourceData->GetCurrentCPUData();
+        // TODO
+        /*
         uint8_t rnd = random(0, 100);
         if (rnd > 90)
         {
@@ -32,8 +34,9 @@ void DummySource::Refresh(uint16_t milliSeconds)
         {
             cpuLoadValue = random(MIN_CPU_LOAD, (MAX_CPU_LOAD / 10) * 100);
         }
-        cpuLoadValue /= 100.0f;
-        this->sourceData->SetCurrentCPUData(cpuLoadValue, 0, cpuLoadValue, 100 - cpuLoadValue, 0, 0, 0, 0, 0, 0, 0, currentMillis);
+        */
+        cpuData.timestamp = currentMillis;
+        this->sourceData->SetCurrentCPUData(cpuData);
 
         SourceDataQueueUsedMemoryValues memoryData = this->sourceData->GetCurrentMemoryData();
         uint64_t changedMemoryBytes = random(memoryData.total / 1024, memoryData.total / 20);
