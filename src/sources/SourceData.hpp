@@ -37,46 +37,49 @@ typedef struct SourceDataQueueCPUValues
 };
 
 // https://github.com/influxdata/telegraf/blob/master/plugins/inputs/mem/README.md
-typedef struct SourceDataQueueUsedMemoryValue
-{
-    uint64_t active;
-    uint64_t available;
-    float availablePercent;
-    uint64_t buffered;
-    uint64_t cached;
-    uint64_t commitLimit;
-    uint64_t committedAs;
-    uint64_t dirty;
-    uint64_t free;
-    uint64_t highFree;
-    uint64_t highTotal;
-    uint64_t hugePagesFree;
-    uint64_t hugePageSize;
-    uint64_t hugePagesTotal;
-    uint64_t inactive;
-    uint64_t laundry;
-    uint64_t lowFree;
-    uint64_t lowTotal;
-    uint64_t mapped;
-    uint64_t pageTables;
-    uint64_t shared;
-    uint64_t slab;
-    uint64_t sreclaimable;
-    uint64_t sunreclaim;
-    uint64_t swapCached;
-    uint64_t swapFree;
-    uint64_t swapTotal;
-    uint64_t total;
-    uint64_t used;
-    float usedPercent;
-    uint64_t vmallocChunk;
-    uint64_t vmallocTotal;
-    uint64_t vmallocUsed;
-    uint64_t wired;
-    uint64_t writeBack;
-    uint64_t writeBackTmp;
 
-    uint64_t timestamp;
+struct SourceDataQueueUsedMemoryValues
+{
+    uint64_t active = 0;
+    uint64_t available = 0;
+    float availablePercent = 0.0f;
+    uint64_t buffered = 0;
+    uint64_t cached = 0;
+    uint64_t commitLimit = 0;
+    uint64_t committedAs = 0;
+    uint64_t dirty = 0;
+    uint64_t free = 0;
+    uint64_t highFree = 0;
+    uint64_t highTotal = 0;
+    uint64_t hugePagesFree = 0;
+    uint64_t hugePageSize = 0;
+    uint64_t hugePagesTotal = 0;
+    uint64_t inactive = 0;
+    uint64_t laundry = 0;
+    uint64_t lowFree = 0;
+    uint64_t lowTotal = 0;
+    uint64_t mapped = 0;
+    uint64_t pageTables = 0;
+    uint64_t shared = 0;
+    uint64_t slab = 0;
+    uint64_t sreclaimable = 0;
+    uint64_t sunreclaim = 0;
+    uint64_t swapCached = 0;
+    uint64_t swapFree = 0;
+    uint64_t swapTotal = 0;
+    uint64_t total = 0;
+    uint64_t used = 0;
+    float usedPercent = 0.0f;
+    uint64_t vmallocChunk = 0;
+    uint64_t vmallocTotal = 0;
+    uint64_t vmallocUsed = 0;
+    uint64_t wired = 0;
+    uint64_t writeBack = 0;
+    uint64_t writeBackTmp = 0;
+
+    uint64_t timestamp = 0;
+
+    SourceDataQueueUsedMemoryValues() = default;
 };
 
 typedef struct SourceDataQueueCPUTemperatureValue
@@ -140,46 +143,8 @@ public:
 
     // MEMORY
 
-    SourceDataQueueUsedMemoryValue GetCurrentUsedMemory(void);
-    bool SetCurrentUsedMemory(uint64_t usedBytes, uint64_t totalBytes, uint64_t timestamp);
-    bool SetCurrentMemoryData(
-        uint64_t active,
-        uint64_t available,
-        float availablePercent,
-        uint64_t buffered,
-        uint64_t cached,
-        uint64_t commitLimit,
-        uint64_t committedAs,
-        uint64_t dirty,
-        uint64_t free,
-        uint64_t highFree,
-        uint64_t highTotal,
-        uint64_t hugePagesFree,
-        uint64_t hugePageSize,
-        uint64_t hugePagesTotal,
-        uint64_t inactive,
-        uint64_t laundry,
-        uint64_t lowFree,
-        uint64_t lowTotal,
-        uint64_t mapped,
-        uint64_t pageTables,
-        uint64_t shared,
-        uint64_t slab,
-        uint64_t sreclaimable,
-        uint64_t sunreclaim,
-        uint64_t swapCached,
-        uint64_t swapFree,
-        uint64_t swapTotal,
-        uint64_t total,
-        uint64_t used,
-        float usedPercent,
-        uint64_t vmallocChunk,
-        uint64_t vmallocTotal,
-        uint64_t vmallocUsed,
-        uint64_t wired,
-        uint64_t writeBack,
-        uint64_t writeBackTmp,
-        uint64_t timestamp);
+    SourceDataQueueUsedMemoryValues GetCurrentMemoryData(void);
+    bool SetCurrentMemoryData(SourceDataQueueUsedMemoryValues currentData);
 
     // CPU TEMPERATURE
 

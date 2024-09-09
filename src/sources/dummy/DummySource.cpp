@@ -5,7 +5,7 @@ DummySource::DummySource(SourceData *sourceData) : Source(sourceData)
 {
     randomSeed(analogRead(0) ^ (micros() * esp_random()));
     this->lastEllapsedMillis = millis();
-    this->sourceData->SetCurrentUsedMemory(34359738368 / 10, 34359738368, this->lastEllapsedMillis); // total memory = 32 Gbytes
+    // this->sourceData->SetCurrentMemoryData(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 34359738368, 34359738368 / 10, 0, 0, 0, 0, 0, 0, 0, this->lastEllapsedMillis); // total memory = 32 Gbytes
 }
 
 DummySource::~DummySource()
@@ -35,7 +35,7 @@ void DummySource::Refresh(uint16_t milliSeconds)
         cpuLoadValue /= 100.0f;
         this->sourceData->SetCurrentCPUData(cpuLoadValue, 0, cpuLoadValue, 100 - cpuLoadValue, 0, 0, 0, 0, 0, 0, 0, currentMillis);
 
-        SourceDataQueueUsedMemoryValue memoryData = this->sourceData->GetCurrentUsedMemory();
+        SourceDataQueueUsedMemoryValues memoryData = this->sourceData->GetCurrentMemoryData();
         uint64_t changedMemoryBytes = random(memoryData.total / 1024, memoryData.total / 20);
         if (random(0, 20) % 2 == 0)
         {
@@ -48,8 +48,8 @@ void DummySource::Refresh(uint16_t milliSeconds)
         {
             memoryData.used -= changedMemoryBytes;
         }
-        this->sourceData->SetCurrentUsedMemory(memoryData.used, memoryData.total, currentMillis);
-
+        memoryData.timestamp = currentMillis;
+        this->sourceData->SetCurrentMemoryData(memoryData);
         SourceDataQueueCPUTemperatureValue cpuTemperatureData = this->sourceData->GetCurrentCPUTemperature();
         if (random(0, 20) % 2 == 0)
         {

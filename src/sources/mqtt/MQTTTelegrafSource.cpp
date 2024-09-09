@@ -333,45 +333,499 @@ void MQTTTelegrafSource::OnMessageReceived(const char *topic, const char *payloa
     }
     else if (strcmp(topic, MQTTTelegrafSource::memoryTopic) == 0)
     {
-        if (MQTTTelegrafSource::GetPayloadTokenWithValue(cleanPayloadPtr, ",", "used", tokenWithValue, sizeof(tokenWithValue)))
+        /*
+        SourceDataQueueUsedMemoryValues currentData;
+        currentData.timestamp = currentMessageTimestamp;
+        uint8_t totalValidTokens = 0;
+        char *tmpPayload = strdup(cleanPayloadPtr);
+        if (tmpPayload != NULL)
         {
-            uint64_t usedBytes = 0;
-            if (sscanf(tokenWithValue, "used=%" PRIu64 "i", &usedBytes) == 1)
+            char *token = strtok(tmpPayload, ",");
+            while (token != NULL)
             {
-                uint64_t totalBytes = 0;
-                if (MQTTTelegrafSource::GetPayloadTokenWithValue(cleanPayloadPtr, ",", "total", tokenWithValue, sizeof(tokenWithValue)))
+                if (strncmp(token, "active=", strlen("active=")) == 0)
                 {
-                    if (sscanf(tokenWithValue, "total=%" PRIu64 "i", &totalBytes) == 1)
+                    if (!sscanf(token, "active=%" PRIu64 "i", &currentData.active) == 1)
                     {
-                        MQTTTelegrafSource::instance->sourceData->SetCurrentUsedMemory(usedBytes, totalBytes, currentMessageTimestamp);
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage active value (read error)");
+#endif
                     }
                     else
                     {
-#ifdef DEBUG_MQTT_TELEGRAF
-                        Serial.println("Error parsing MEM total value (read error)");
-#endif
+                        totalValidTokens++;
                     }
                 }
-                else
+                else if (strncmp(token, "available=", strlen("available=")) == 0)
                 {
+                    if (!sscanf(token, "available=%" PRIu64 "i", &currentData.available) == 1)
+                    {
 #ifdef DEBUG_MQTT_TELEGRAF
-                    Serial.println("Error parsing MEM total value (token not found)");
+                        Serial.println("Error parsing memory usage available value (read error)");
 #endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "available_percent=", strlen("available_percent=")) == 0)
+                {
+                    if (!sscanf(token, "available_percent=%f", &currentData.availablePercent) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage available percent value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "buffered=", strlen("buffered=")) == 0)
+                {
+                    if (!sscanf(token, "buffered=%" PRIu64 "i", &currentData.buffered) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage buffered value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "cached=", strlen("cached=")) == 0)
+                {
+                    if (!sscanf(token, "cached=%" PRIu64 "i", &currentData.cached) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage cached value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "commit_limit=", strlen("commit_limit=")) == 0)
+                {
+                    if (!sscanf(token, "commit_limit=%" PRIu64 "i", &currentData.commitLimit) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage commit limit value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "committed_as=", strlen("committed_as=")) == 0)
+                {
+                    if (!sscanf(token, "committed_as=%" PRIu64 "i", &currentData.committedAs) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage committed as value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "dirty=", strlen("dirty=")) == 0)
+                {
+                    if (!sscanf(token, "dirty=%" PRIu64 "i", &currentData.dirty) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage dirty value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "free=", strlen("free=")) == 0)
+                {
+                    if (!sscanf(token, "free=%" PRIu64 "i", &currentData.free) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage free value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "high_free=", strlen("high_free=")) == 0)
+                {
+                    if (!sscanf(token, "high_free=%" PRIu64 "i", &currentData.highFree) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage high free value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "high_total=", strlen("high_total=")) == 0)
+                {
+                    if (!sscanf(token, "high_total=%" PRIu64 "i", &currentData.highTotal) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage high total value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "huge_pages_free=", strlen("huge_pages_free=")) == 0)
+                {
+                    if (!sscanf(token, "huge_pages_free=%" PRIu64 "i", &currentData.hugePagesFree) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage huge pages free value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "huge_page_size=", strlen("huge_page_size=")) == 0)
+                {
+                    if (!sscanf(token, "huge_page_size=%" PRIu64 "i", &currentData.hugePageSize) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage huge page size value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "huge_pages_total=", strlen("huge_pages_total=")) == 0)
+                {
+                    if (!sscanf(token, "huge_pages_total=%" PRIu64 "i", &currentData.hugePagesTotal) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage huge pages total value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "inactive=", strlen("inactive=")) == 0)
+                {
+                    if (!sscanf(token, "inactive=%" PRIu64 "i", &currentData.inactive) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage inactive value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "laundry=", strlen("laundry=")) == 0)
+                {
+                    if (!sscanf(token, "laundry=%" PRIu64 "i", &currentData.laundry) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage laundry value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "low_free=", strlen("low_free=")) == 0)
+                {
+                    if (!sscanf(token, "low_free=%" PRIu64 "i", &currentData.lowFree) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage low free value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "low_total=", strlen("low_total=")) == 0)
+                {
+                    if (!sscanf(token, "low_total=%" PRIu64 "i", &currentData.lowTotal) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage low total value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "mapped=", strlen("mapped=")) == 0)
+                {
+                    if (!sscanf(token, "mapped=%" PRIu64 "i", &currentData.mapped) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage mapped value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "page_tables=", strlen("page_tables=")) == 0)
+                {
+                    if (!sscanf(token, "page_tables=%" PRIu64 "i", &currentData.pageTables) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage page tables value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "shared=", strlen("shared=")) == 0)
+                {
+                    if (!sscanf(token, "shared=%" PRIu64 "i", &currentData.shared) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage shared value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "slab=", strlen("slab=")) == 0)
+                {
+                    if (!sscanf(token, "slab=%" PRIu64 "i", &currentData.slab) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage slab value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "sreclaimable=", strlen("sreclaimable=")) == 0)
+                {
+                    if (!sscanf(token, "sreclaimable=%" PRIu64 "i", &currentData.sreclaimable) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage sreclaimable value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "sunreclaim=", strlen("sunreclaim=")) == 0)
+                {
+                    if (!sscanf(token, "sunreclaim=%" PRIu64 "i", &currentData.sunreclaim) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage sunreclaim value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "swap_cached=", strlen("swap_cached=")) == 0)
+                {
+                    if (!sscanf(token, "swap_cached=%" PRIu64 "i", &currentData.swapCached) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage swap cached value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "swap_free=", strlen("swap_free=")) == 0)
+                {
+                    if (!sscanf(token, "swap_free=%" PRIu64 "i", &currentData.swapFree) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage swap free value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "swap_total=", strlen("swap_total=")) == 0)
+                {
+                    if (!sscanf(token, "swap_total=%" PRIu64 "i", &currentData.swapTotal) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage swap total value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "total=", strlen("total=")) == 0)
+                {
+                    if (!sscanf(token, "total=%" PRIu64 "i", &currentData.total) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage total value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "used=", strlen("used=")) == 0)
+                {
+                    if (!sscanf(token, "used=%" PRIu64 "i", &currentData.used) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage used value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "used_percent=", strlen("used_percent=")) == 0)
+                {
+                    if (!sscanf(token, "used_percent=%f", &currentData.usedPercent) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage used percent value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "vmalloc_chunk=", strlen("vmalloc_chunk=")) == 0)
+                {
+                    if (!sscanf(token, "vmalloc_chunk=%" PRIu64 "i", &currentData.vmallocChunk) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage vmalloc chunk value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "vmalloc_total=", strlen("vmalloc_total=")) == 0)
+                {
+                    if (!sscanf(token, "vmalloc_total=%" PRIu64 "i", &currentData.vmallocTotal) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage vmalloc total value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "vmalloc_used=", strlen("vmalloc_used=")) == 0)
+                {
+                    if (!sscanf(token, "vmalloc_used=%" PRIu64 "i", &currentData.vmallocUsed) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage vmalloc used value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "wired=", strlen("wired=")) == 0)
+                {
+                    if (!sscanf(token, "wired=%" PRIu64 "i", &currentData.wired) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage wired value (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "write_back=", strlen("write_back=")) == 0)
+                {
+                    if (!sscanf(token, "write_back=%" PRIu64 "i", &currentData.writeBack) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage write back (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
+                }
+                else if (strncmp(token, "write_back_tmp=", strlen("write_back_tmp=")) == 0)
+                {
+                    if (!sscanf(token, "write_back_tmp=%" PRIu64 "i", &currentData.writeBackTmp) == 1)
+                    {
+#ifdef DEBUG_MQTT_TELEGRAF
+                        Serial.println("Error parsing memory usage write back tmp (read error)");
+#endif
+                    }
+                    else
+                    {
+                        totalValidTokens++;
+                    }
                 }
             }
-            else
-            {
-#ifdef DEBUG_MQTT_TELEGRAF
-                Serial.println("Error parsing MEM used value (read error)");
-#endif
-            }
+            token = strtok(NULL, ",");
+            free(tmpPayload);
+        }
+        if (totalValidTokens > 0)
+        {
+            MQTTTelegrafSource::instance->sourceData->SetCurrentMemoryData(currentData);
         }
         else
         {
 #ifdef DEBUG_MQTT_TELEGRAF
-            Serial.println("Error parsing MEM used value (token not found)");
+            Serial.printf("Error parsing memory usage values (tokens found: %d of %d)\n", totalValidTokens, 10);
 #endif
         }
+        */
     }
     else if (strcmp(topic, MQTTTelegrafSource::sensorsTopic) == 0)
     {
