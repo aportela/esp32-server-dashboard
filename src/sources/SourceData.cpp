@@ -68,39 +68,12 @@ void SourceData::GetHostname(char *hostname, size_t count)
 
 SourceDataQueueCPUValues SourceData::GetCurrentCPUData(void)
 {
-    SourceDataQueueCPUValues data = {0.0f, 0};
-    if (this->cpuLoadQueue != NULL)
+    SourceDataQueueCPUValues data;
+    if (this->cpuLoadQueue != nullptr)
     {
         if (xQueuePeek(this->cpuLoadQueue, &data, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS)
         {
-            data.loadPercent = 0.0f;
-            data.usageSystem = 0.0f;
-            data.usageUser = 0.0f;
-            data.usageIdle = 0.0f;
-            data.usageNice = 0.0f;
-            data.usageIOWait = 0.0f;
-            data.usageIRQ = 0.0f;
-            data.usageSoftIRQ = 0.0f;
-            data.usageGuest = 0.0f;
-            data.usageGuestNice = 0.0f;
-            data.usageSteal = 0.0f;
-            data.timestamp = 0;
         }
-    }
-    else
-    {
-        data.loadPercent = 0.0f;
-        data.usageSystem = 0.0f;
-        data.usageUser = 0.0f;
-        data.usageIdle = 0.0f;
-        data.usageNice = 0.0f;
-        data.usageIOWait = 0.0f;
-        data.usageIRQ = 0.0f;
-        data.usageSoftIRQ = 0.0f;
-        data.usageGuest = 0.0f;
-        data.usageGuestNice = 0.0f;
-        data.usageSteal = 0.0f;
-        data.timestamp = 0;
     }
     return (data);
 }
