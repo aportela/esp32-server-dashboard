@@ -189,8 +189,7 @@ SourceDataQueueUsedMemoryValues SourceData::GetCurrentMemoryData(void)
 bool SourceData::SetCurrentMemoryData(
     SourceDataQueueUsedMemoryValues currentData)
 {
-    return (false);
-    if (this->usedMemoryQueue != NULL)
+    if (this->usedMemoryQueue != nullptr)
     {
         SourceDataQueueUsedMemoryValues data = this->GetCurrentMemoryData();
         data = currentData;
