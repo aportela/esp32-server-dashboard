@@ -19,7 +19,7 @@
 #define MAX_CPU_TEMPERATURE 100.0f
 
 // TODO: https://github.com/influxdata/telegraf/blob/master/plugins/inputs/cpu/README.md
-typedef struct SourceDataQueueCPUValues
+struct SourceDataQueueCPUValues
 {
     float loadPercent; // value is equal to => 100 - usageIdle
     float usageSystem;
@@ -34,6 +34,8 @@ typedef struct SourceDataQueueCPUValues
     float usageSteal;
 
     uint64_t timestamp;
+
+    SourceDataQueueCPUValues() = default;
 };
 
 // https://github.com/influxdata/telegraf/blob/master/plugins/inputs/mem/README.md
