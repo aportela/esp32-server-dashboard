@@ -43,14 +43,6 @@ bool LGFXScreenDashboardResumeEntityNetUsedBandWidth::Refresh(bool force)
         {
             char strValue[24] = {'\0'};
             Format::ParseBytesToHumanString(currentValue, strValue, sizeof(strValue), true, true, true);
-            if (type == NET_BANDWIDTH_TYPE_DOWNLOAD)
-            {
-                Serial.printf("DOWN: %s\n", strValue);
-            }
-            else
-            {
-                Serial.printf("UP: %s\n", strValue);
-            }
             strcat(strValue, "  ");
             this->RefreshStrValue(strValue, currentGradientColor, LGFX_SCR_DRE_FONT_BG_COLOR);
             this->value = currentValue;
