@@ -114,9 +114,6 @@ struct SourceDataQueueUptimeValue
 
 struct SourceDataQueueNetworkingValue
 {
-    uint64_t totalBytesTransfered = 0;
-    uint64_t currentBandwidthBytesPerSecond = 0;
-
     uint64_t bytesSent = 0;
     uint64_t bytesRecv = 0;
     uint64_t packetsSent = 0;
