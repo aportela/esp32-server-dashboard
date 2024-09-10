@@ -149,8 +149,8 @@ private:
     bool truncateOverflows = false;
     bool fixedNetworkingLimits = false;
 
-    QueueHandle_t cpuLoadQueue;
-    QueueHandle_t usedMemoryQueue;
+    QueueHandle_t cpuQueue;
+    QueueHandle_t memoryQueue;
     QueueHandle_t cpuTemperatureQueue;
     QueueHandle_t systemUptimeQueue;
     QueueHandle_t networkingQueue;

@@ -12,8 +12,8 @@ SourceData::SourceData(bool truncateOverflows, uint64_t totalNetworkDownloadBand
 {
     uint64_t currentTimestamp = millis();
     this->truncateOverflows = truncateOverflows;
-    this->cpuLoadQueue = xQueueCreate(1, sizeof(SourceDataQueueCPUValues));
-    this->usedMemoryQueue = xQueueCreate(1, sizeof(SourceDataQueueUsedMemoryValues));
+    this->cpuQueue = xQueueCreate(1, sizeof(SourceDataQueueCPUValues));
+    this->memoryQueue = xQueueCreate(1, sizeof(SourceDataQueueUsedMemoryValues));
     this->cpuTemperatureQueue = xQueueCreate(1, sizeof(SourceDataQueueCPUTemperatureValue));
     this->systemUptimeQueue = xQueueCreate(1, sizeof(SourceDataQueueUptimeValue));
     this->networkingQueue = xQueueCreate(1, sizeof(SourceDataQueueNetworkingValue));
@@ -25,8 +25,8 @@ SourceData::SourceData(bool truncateOverflows, uint64_t totalNetworkDownloadBand
 
 SourceData::~SourceData()
 {
-    vQueueDelete(this->cpuLoadQueue);
-    vQueueDelete(this->usedMemoryQueue);
+    vQueueDelete(this->cpuQueue);
+    vQueueDelete(this->memoryQueue);
     vQueueDelete(this->cpuTemperatureQueue);
     vQueueDelete(this->systemUptimeQueue);
     vQueueDelete(this->networkingQueue);
@@ -67,24 +67,24 @@ void SourceData::GetHostname(char *hostname, size_t count)
 
 bool SourceData::GetCurrentCPUData(SourceDataQueueCPUValues &currentData)
 {
-    return (this->cpuLoadQueue != nullptr && xQueuePeek(this->cpuLoadQueue, &currentData, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS);
+    return (this->cpuQueue != nullptr && xQueuePeek(this->cpuQueue, &currentData, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS);
 }
 
 bool SourceData::SetCurrentCPUData(SourceDataQueueCPUValues currentData)
 {
-    return (this->cpuLoadQueue != nullptr && xQueueOverwrite(this->cpuLoadQueue, &currentData) == pdPASS);
+    return (this->cpuQueue != nullptr && xQueueOverwrite(this->cpuQueue, &currentData) == pdPASS);
 }
 
 // MEMORY
 
 bool SourceData::GetCurrentMemoryData(SourceDataQueueUsedMemoryValues &currentData)
 {
-    return (this->usedMemoryQueue != nullptr && xQueuePeek(this->usedMemoryQueue, &currentData, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS);
+    return (this->memoryQueue != nullptr && xQueuePeek(this->memoryQueue, &currentData, pdMS_TO_TICKS(QUEUE_PEEK_MS_TO_TICKS_TIMEOUT)) != pdPASS);
 }
 
 bool SourceData::SetCurrentMemoryData(SourceDataQueueUsedMemoryValues currentData)
 {
-    return (this->usedMemoryQueue != nullptr && xQueueOverwrite(this->usedMemoryQueue, &currentData) == pdPASS);
+    return (this->memoryQueue != nullptr && xQueueOverwrite(this->memoryQueue, &currentData) == pdPASS);
 }
 
 // CPU TEMPERATURE
