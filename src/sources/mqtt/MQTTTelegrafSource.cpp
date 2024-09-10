@@ -113,19 +113,11 @@ bool MQTTTelegrafSource::GetPayloadTokenWithValue(const char *payload, const cha
     return (false);
 }
 
-void MQTTTelegrafSource::OnMessageReceived(const char *topic, const char *payload)
+uint64_t MQTTTelegrafSource::GetPayloadTimestamp(const char *payload)
 {
-#ifdef DEBUG_MQTT_TELEGRAF
-    Serial.print("Topic:");
-    Serial.println(topic);
-    Serial.print("Message:");
-    Serial.println(payload);
-#endif
-    uint64_t currentMessageTimestamp = millis(); // by default use current esp32 timestamp (failover for payload timestamp parse errors)
-    // parse timestamp
-    size_t payloadLength = strlen(payload);
+    uint64_t timestamp = 0;
     const char *lastSpaceSubStr = strrchr(payload, ' ');
-    if (lastSpaceSubStr == NULL || lastSpaceSubStr == payload + payloadLength - 1)
+    if (lastSpaceSubStr == NULL || lastSpaceSubStr == payload + strlen(payload) - 1)
     {
 #ifdef DEBUG_MQTT_TELEGRAF
         Serial.println("Error parsing payload timestamp");
@@ -138,7 +130,7 @@ void MQTTTelegrafSource::OnMessageReceived(const char *topic, const char *payloa
         if (payloadTimestamp > 0)
         {
             // set real payload timestamp
-            currentMessageTimestamp = payloadTimestamp / 1000000;
+            timestamp = payloadTimestamp / 1000000;
         }
         else
         {
@@ -147,20 +139,82 @@ void MQTTTelegrafSource::OnMessageReceived(const char *topic, const char *payloa
 #endif
         }
     }
+    return (timestamp);
+}
 
-    // remove start payload unrequired data (input type, host)
-    char *cleanPayloadPtr = strchr(payload, ' ');
-    if (cleanPayloadPtr != NULL)
+void MQTTTelegrafSource::GetPayloadTokens(const char *payload, char *buffer, size_t bufferSize)
+{
+    const char *lastSpace = nullptr;        // Posición del último espacio real encontrado
+    const char *penultimateSpace = nullptr; // Posición del penúltimo espacio real encontrado
+    bool escape = false;
+
+    // Recorrer la cadena de entrada
+    for (const char *p = payload; *p != '\0'; ++p)
     {
-        cleanPayloadPtr = cleanPayloadPtr + 1;
+        if (*p == '\\' && !escape)
+        {
+            // Detectamos una barra invertida, activar bandera de escape
+            escape = true;
+        }
+        else
+        {
+            if (*p == ' ' && !escape)
+            {
+                // Encontramos un espacio real (no escapado)
+                penultimateSpace = lastSpace; // Actualizar el penúltimo espacio encontrado
+                lastSpace = p;                // Actualizar el último espacio encontrado
+            }
+            else
+            {
+                escape = false; // Resetear bandera de escape después de cualquier otro carácter
+            }
+        }
     }
+
+    // Determinar la posición de inicio del penúltimo token
+    const char *penultimateTokenStart = (penultimateSpace != nullptr) ? penultimateSpace + 1 : payload;
+    const char *penultimateTokenEnd = (lastSpace != nullptr) ? lastSpace : payload + strlen(payload);
+
+    // Copiar el penúltimo token en el buffer proporcionado
+    if (bufferSize > 0)
+    {
+        size_t tokenLength = penultimateTokenEnd - penultimateTokenStart;
+        size_t copyLength = (tokenLength < bufferSize - 1) ? tokenLength : bufferSize - 1;
+        strncpy(buffer, penultimateTokenStart, copyLength);
+        buffer[copyLength] = '\0'; // Asegurar que el buffer esté terminado en nulo
+    }
+}
+
+void MQTTTelegrafSource::OnMessageReceived(const char *topic, const char *payload)
+{
+#ifdef DEBUG_MQTT_TELEGRAF
+    Serial.print("Topic:");
+    Serial.println(topic);
+    Serial.print("Message:");
+    Serial.println(payload);
+#endif
+    uint64_t currentMessageTimestamp = MQTTTelegrafSource::GetPayloadTimestamp(payload);
+    // by default use current esp32 timestamp (failover for payload timestamp parse errors)
+    if (currentMessageTimestamp == 0)
+    {
+        currentMessageTimestamp = millis();
+    }
+    char cleanPayload[strlen(payload)] = {'\0'};
+    // this method is used because payload can have escaped whitespaces (ex: interface=Ethernet\ 10G\ (SFP+))
+    // and token split with strok do not work as spected so we need to parse raw payload & get "values relevant" substring
+    // NOTE: this will IGNORE all tokens before escaped whitespaces but for this code works fine because on the received
+    // payload key=value required tokens always are at the end, before timestamp
+    // example: net,host=WINDOWS,interface=Ethernet\ 10G\ (SFP+) bytes_sent=40845899802i,bytes_recv=357515820769i,packets_recv=308742870i,drop_in=62i,speed=-1i,packets_sent=115628425i,err_in=62i,err_out=0i,drop_out=0i 1725955392000000000
+    // (I only want from bytes_sent=... to end)
+    MQTTTelegrafSource::GetPayloadTokens(payload, cleanPayload, sizeof(cleanPayload));
+    // remove start payload unrequired data (input type, host)
     char tokenWithValue[255] = {'\0'};
     if (strcmp(topic, MQTTTelegrafSource::cpuTopic) == 0 && strncmp(payload, "cpu,cpu=cpu-total", 17) == 0)
     {
         SourceDataQueueCPUValues currentData;
         currentData.timestamp = currentMessageTimestamp;
         uint8_t totalValidTokens = 0;
-        char *tmpPayload = strdup(cleanPayloadPtr);
+        char *tmpPayload = strdup(cleanPayload);
         if (tmpPayload != NULL)
         {
             char *token = strtok(tmpPayload, ",");
@@ -329,7 +383,7 @@ void MQTTTelegrafSource::OnMessageReceived(const char *topic, const char *payloa
         SourceDataQueueUsedMemoryValues currentData;
         currentData.timestamp = currentMessageTimestamp;
         uint8_t totalValidTokens = 0;
-        char *tmpPayload = strdup(cleanPayloadPtr);
+        char *tmpPayload = strdup(cleanPayload);
         if (tmpPayload != NULL)
         {
             char *token = strtok(tmpPayload, ",");
@@ -822,7 +876,7 @@ void MQTTTelegrafSource::OnMessageReceived(const char *topic, const char *payloa
     {
         if (MQTTTelegrafSource::GetPayloadTokenWithValue(payload, ",", "feature", tokenWithValue, sizeof(tokenWithValue)) && strncmp(tokenWithValue, "feature=package_id_0", 20) == 0)
         {
-            if (MQTTTelegrafSource::GetPayloadTokenWithValue(cleanPayloadPtr, ",", "temp_input", tokenWithValue, sizeof(tokenWithValue)))
+            if (MQTTTelegrafSource::GetPayloadTokenWithValue(cleanPayload, ",", "temp_input", tokenWithValue, sizeof(tokenWithValue)))
             {
                 SourceDataQueueCPUTemperatureValue currentData;
                 currentData.timestamp = currentMessageTimestamp;
@@ -853,7 +907,7 @@ void MQTTTelegrafSource::OnMessageReceived(const char *topic, const char *payloa
     }
     else if (strcmp(topic, MQTTTelegrafSource::temperatureTopic) == 0)
     {
-        if (MQTTTelegrafSource::GetPayloadTokenWithValue(cleanPayloadPtr, ",", "temp", tokenWithValue, sizeof(tokenWithValue)))
+        if (MQTTTelegrafSource::GetPayloadTokenWithValue(cleanPayload, ",", "temp", tokenWithValue, sizeof(tokenWithValue)))
         {
             SourceDataQueueCPUTemperatureValue currentData;
             currentData.timestamp = currentMessageTimestamp;
@@ -877,7 +931,7 @@ void MQTTTelegrafSource::OnMessageReceived(const char *topic, const char *payloa
     }
     else if (strcmp(topic, MQTTTelegrafSource::systemTopic) == 0)
     {
-        if (MQTTTelegrafSource::GetPayloadTokenWithValue(cleanPayloadPtr, ",", "uptime", tokenWithValue, sizeof(tokenWithValue)))
+        if (MQTTTelegrafSource::GetPayloadTokenWithValue(cleanPayload, ",", "uptime", tokenWithValue, sizeof(tokenWithValue)))
         {
             SourceDataQueueUptimeValue currentData;
             currentData.timestamp = currentMessageTimestamp;
@@ -911,7 +965,7 @@ void MQTTTelegrafSource::OnMessageReceived(const char *topic, const char *payloa
             SourceDataQueueNetworkingValue currentData;
             currentData.timestamp = currentMessageTimestamp;
             uint8_t totalValidTokens = 0;
-            char *tmpPayload = strdup(cleanPayloadPtr);
+            char *tmpPayload = strdup(cleanPayload);
             if (tmpPayload != NULL)
             {
                 char *token = strtok(tmpPayload, ",");
