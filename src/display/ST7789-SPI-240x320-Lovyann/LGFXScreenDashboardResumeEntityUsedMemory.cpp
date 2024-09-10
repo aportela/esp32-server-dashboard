@@ -139,7 +139,7 @@ bool LGFXScreenDashboardResumeEntityUsedMemory::Refresh(bool force)
                 Format::ParseBytesToHumanString(this->totalValue, maxStr, sizeof(maxStr), false, true, false);
                 this->PrintLimits("0B", maxStr);
             }
-            memUsageValue = data.dirty;
+            memUsageValue = data.free;
             break;
         case MEMORY_USAGE_TYPE_INACTIVE:
             if (this->totalValue != data.total)
