@@ -5,7 +5,7 @@ DummySource::DummySource(SourceData *sourceData) : Source(sourceData)
 {
     randomSeed(analogRead(0) ^ (micros() * esp_random()));
     this->lastEllapsedMillis = millis();
-    this->sourceData->SetCurrentUsedMemory(34359738368 / 10, 34359738368, this->lastEllapsedMillis); // total memory = 32 Gbytes
+    // this->sourceData->SetCurrentMemoryData(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 34359738368, 34359738368 / 10, 0, 0, 0, 0, 0, 0, 0, this->lastEllapsedMillis); // total memory = 32 Gbytes
 }
 
 DummySource::~DummySource()
@@ -18,7 +18,9 @@ void DummySource::Refresh(uint16_t milliSeconds)
     bool allowRefresh = milliSeconds == 0 || ((currentMillis - this->lastEllapsedMillis) >= milliSeconds);
     if (allowRefresh)
     {
-        float cpuLoadValue = 0.0f;
+        // TODO
+        /*
+        SourceDataQueueCPUValues cpuData = this->sourceData->GetCurrentCPUData();
         uint8_t rnd = random(0, 100);
         if (rnd > 90)
         {
@@ -32,24 +34,24 @@ void DummySource::Refresh(uint16_t milliSeconds)
         {
             cpuLoadValue = random(MIN_CPU_LOAD, (MAX_CPU_LOAD / 10) * 100);
         }
-        cpuLoadValue /= 100.0f;
-        this->sourceData->SetCurrentCPUData(cpuLoadValue, 0, cpuLoadValue, 100 - cpuLoadValue, 0, 0, 0, 0, 0, 0, 0, currentMillis);
+        cpuData.timestamp = currentMillis;
+        this->sourceData->SetCurrentCPUData(cpuData);
 
-        SourceDataQueueUsedMemoryValue memoryData = this->sourceData->GetCurrentUsedMemory();
-        uint64_t changedMemoryBytes = random(memoryData.totalBytes / 1024, memoryData.totalBytes / 20);
+        SourceDataQueueUsedMemoryValues memoryData = this->sourceData->GetCurrentMemoryData();
+        uint64_t changedMemoryBytes = random(memoryData.total / 1024, memoryData.total / 20);
         if (random(0, 20) % 2 == 0)
         {
-            if (memoryData.usedBytes < memoryData.totalBytes - changedMemoryBytes)
+            if (memoryData.used < memoryData.total - changedMemoryBytes)
             {
-                memoryData.usedBytes += changedMemoryBytes;
+                memoryData.used += changedMemoryBytes;
             }
         }
-        else if (memoryData.usedBytes > changedMemoryBytes)
+        else if (memoryData.used > changedMemoryBytes)
         {
-            memoryData.usedBytes -= changedMemoryBytes;
+            memoryData.used -= changedMemoryBytes;
         }
-        this->sourceData->SetCurrentUsedMemory(memoryData.usedBytes, memoryData.totalBytes, currentMillis);
-
+        memoryData.timestamp = currentMillis;
+        this->sourceData->SetCurrentMemoryData(memoryData);
         SourceDataQueueCPUTemperatureValue cpuTemperatureData = this->sourceData->GetCurrentCPUTemperature();
         if (random(0, 20) % 2 == 0)
         {
@@ -68,19 +70,20 @@ void DummySource::Refresh(uint16_t milliSeconds)
 
         SourceDataQueueNetworkingLimitsValue netLimits = this->sourceData->GetNetworkLimits();
 
-        SourceDataQueueNetworkingValue netDownData = this->sourceData->GetCurrentNetworkDownload();
+        SourceDataQueueNetworkingValue netDownData = this->sourceData->GetCurrentNetwork();
         if (netLimits.byteDownloadLimit == 0)
         {
             netLimits.byteDownloadLimit = 1048576;
         }
         this->sourceData->SetCurrentNetworkDownload(netDownData.totalBytesTransfered + (random(1024, random(0, 100) > 95 ? netLimits.byteDownloadLimit : netLimits.byteDownloadLimit / 200)), currentMillis);
 
-        SourceDataQueueNetworkingValue netUpData = this->sourceData->GetCurrentNetworkUpload();
+        SourceDataQueueNetworkingValue netUpData = this->sourceData->GetCurrentNetwork();
         if (netLimits.byteUploadLimit == 0)
         {
             netLimits.byteUploadLimit = 1048576;
         }
         this->sourceData->SetCurrentNetworkUpload(netUpData.totalBytesTransfered + (random(1024, random(0, 100) > 95 ? netLimits.byteUploadLimit : netLimits.byteUploadLimit / 200)), currentMillis);
+        */
 
         this->lastEllapsedMillis = currentMillis;
     }

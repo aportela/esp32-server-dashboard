@@ -6,16 +6,17 @@ using namespace aportela::microcontroller::utils;
 
 const char *CPU_LABELS[]{
     "CPU LOAD",
-    "CPU SYSTEM",
     "CPU USER",
+    "CPU SYSTEM",
     "CPU IDLE",
+    "CPU ACTIVE",
     "CPU NICE",
     "CPU IOWAIT",
     "CPU IRQ",
     "CPU SOFT IRQ",
+    "CPU STEAL",
     "CPU GUEST",
     "CPU GUEST NICE",
-    "CPU STEAL",
 };
 
 LGFXScreenDashboardResumeEntityCPULoad::LGFXScreenDashboardResumeEntityCPULoad(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset, CPU_USAGE_TYPE cpuUsageType) : LGFXScreenDashboardResumeEntity(display, sourceData, width, height, xOffset, yOffset, CPU_LABELS[(uint8_t)cpuUsageType])
@@ -39,44 +40,48 @@ LGFXScreenDashboardResumeEntityCPULoad::~LGFXScreenDashboardResumeEntityCPULoad(
 
 bool LGFXScreenDashboardResumeEntityCPULoad::Refresh(bool force)
 {
-    SourceDataQueueCPUValues data = this->sourceData->GetCurrentCPUData();
+    SourceDataQueueCPUValues data;
+    this->sourceData->GetCurrentCPUData(data);
     if ((data.timestamp != 0 && data.timestamp != this->timestamp) || force)
     {
         float cpuUsageValue = 0.0f;
         switch (this->cpuUsageType)
         {
-        case CPU_USAGE_TYPE_CPU_LOAD:
-            cpuUsageValue = data.loadPercent;
+        case CPU_USAGE_TYPE_LOAD:
+            cpuUsageValue = data.usageIdle <= 100.0f ? 100.0f - data.usageIdle : 0.0f;
             break;
-        case CPU_USAGE_TYPE_CPU_SYSTEM:
-            cpuUsageValue = data.usageSystem;
-            break;
-        case CPU_USAGE_TYPE_CPU_USER:
+        case CPU_USAGE_TYPE_USER:
             cpuUsageValue = data.usageUser;
             break;
-        case CPU_USAGE_TYPE_CPU_IDLE:
+        case CPU_USAGE_TYPE_SYSTEM:
+            cpuUsageValue = data.usageSystem;
+            break;
+        case CPU_USAGE_TYPE_IDLE:
             cpuUsageValue = data.usageIdle;
             break;
-        case CPU_USAGE_TYPE_CPU_NICE:
+        case CPU_USAGE_TYPE_ACTIVE:
+            cpuUsageValue = data.usageActive;
+            break;
+        case CPU_USAGE_TYPE_NICE:
             cpuUsageValue = data.usageNice;
             break;
-        case CPU_USAGE_TYPE_CPU_IOWAIT:
+        case CPU_USAGE_TYPE_IOWAIT:
             cpuUsageValue = data.usageIOWait;
             break;
-        case CPU_USAGE_TYPE_CPU_IRQ:
+        case CPU_USAGE_TYPE_IRQ:
             cpuUsageValue = data.usageIRQ;
             break;
-        case CPU_USAGE_TYPE_CPU_SOFT_IRQ:
+        case CPU_USAGE_TYPE_SOFT_IRQ:
             cpuUsageValue = data.usageSoftIRQ;
             break;
-        case CPU_USAGE_TYPE_CPU_GUEST:
+        case CPU_USAGE_TYPE_STEAL:
+            cpuUsageValue = data.usageSteal;
+            break;
+        case CPU_USAGE_TYPE_GUEST:
             cpuUsageValue = data.usageGuest;
             break;
-        case CPU_USAGE_TYPE_CPU_GUEST_NICE:
+        case CPU_USAGE_TYPE_GUEST_NICE:
             cpuUsageValue = data.usageGuestNice;
-            break;
-        case CPU_USAGE_TYPE_CPU_STEAL:
-            cpuUsageValue = data.usageSteal;
             break;
         }
         this->timestamp = data.timestamp;

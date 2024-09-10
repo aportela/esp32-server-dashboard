@@ -22,6 +22,8 @@ private:
     static MQTTTelegrafSource *instance;
     static bool GenerateTopic(const char *baseTopic, char *buffer, size_t bufferSize, const char *suffix);
     static bool GetPayloadTokenWithValue(const char *payload, const char *separator, const char *tokenName, char *buffer, size_t bufferSize);
+    static uint64_t GetPayloadTimestamp(const char *payload);
+    static void GetPayloadTokens(const char *payload, char *buffer, size_t bufferSize);
     static void OnMessageReceived(const char *topic, const char *payload);
 
 public:

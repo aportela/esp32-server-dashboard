@@ -2,6 +2,7 @@
 #include "LGFXScreenInfo.hpp"
 #include "LGFXScreenDashboardResume.hpp"
 #include "LGFXScreenCPUDetails.hpp"
+#include "LGFXScreenMemoryDetails.hpp"
 #include "../../sources/dummy/DummySource.hpp"
 #include "../../utils/Format.hpp"
 #include "../../utils/FPS.hpp"
@@ -91,6 +92,13 @@ void LGFX::InitScreen(SCREEN_TYPE screenType)
         }
         this->currentScreenType = screenType;
         break;
+    case SCREEN_TYPE_MEMORY_DETAILS:
+        if (this->currentScreen == nullptr)
+        {
+            this->currentScreen = new LGFXScreenMemoryDetails(this, this->sourceData);
+        }
+        this->currentScreenType = screenType;
+        break;
     case SCREEN_TYPE_NONE:
     default:
         break;
@@ -141,6 +149,9 @@ bool LGFX::ToggleScreen(void)
         success = this->FlipToScreen(SCREEN_TYPE_CPU_DETAILS);
         break;
     case SCREEN_TYPE_CPU_DETAILS:
+        success = this->FlipToScreen(SCREEN_TYPE_MEMORY_DETAILS);
+        break;
+    case SCREEN_TYPE_MEMORY_DETAILS:
         success = this->FlipToScreen(SCREEN_TYPE_INFO);
         break;
     }
