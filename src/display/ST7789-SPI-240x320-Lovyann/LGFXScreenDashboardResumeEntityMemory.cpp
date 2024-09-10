@@ -1,4 +1,4 @@
-#include "LGFXScreenDashboardResumeEntityUsedMemory.hpp"
+#include "LGFXScreenDashboardResumeEntityMemory.hpp"
 #include "../../utils/Format.hpp"
 
 using namespace aportela::microcontroller::utils;
@@ -40,7 +40,7 @@ const char *MEMORY_LABELS[]{
     "MEM WRITEBACK TMP",
 };
 
-LGFXScreenDashboardResumeEntityUsedMemory::LGFXScreenDashboardResumeEntityUsedMemory(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset, MEMORY_USAGE_TYPE memoryUsageType) : LGFXScreenDashboardResumeEntity(display, sourceData, width, height, xOffset, yOffset, MEMORY_LABELS[(uint8_t)memoryUsageType])
+LGFXScreenDashboardResumeEntityMemory::LGFXScreenDashboardResumeEntityMemory(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset, MEMORY_USAGE_TYPE memoryUsageType) : LGFXScreenDashboardResumeEntity(display, sourceData, width, height, xOffset, yOffset, MEMORY_LABELS[(uint8_t)memoryUsageType])
 {
     this->memoryUsageType = memoryUsageType;
     if (this->parentDisplay != nullptr)
@@ -50,11 +50,11 @@ LGFXScreenDashboardResumeEntityUsedMemory::LGFXScreenDashboardResumeEntityUsedMe
     }
 }
 
-LGFXScreenDashboardResumeEntityUsedMemory::~LGFXScreenDashboardResumeEntityUsedMemory()
+LGFXScreenDashboardResumeEntityMemory::~LGFXScreenDashboardResumeEntityMemory()
 {
 }
 
-bool LGFXScreenDashboardResumeEntityUsedMemory::Refresh(bool force)
+bool LGFXScreenDashboardResumeEntityMemory::Refresh(bool force)
 {
     SourceDataQueueUsedMemoryValues data;
     this->sourceData->GetCurrentMemoryData(data);

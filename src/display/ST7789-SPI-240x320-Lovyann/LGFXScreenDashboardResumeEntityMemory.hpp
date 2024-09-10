@@ -41,7 +41,7 @@ enum MEMORY_USAGE_TYPE
     // MEMORY_USAGE_TYPE_WRITEBACK_TMP = 33,
 };
 
-class LGFXScreenDashboardResumeEntityUsedMemory : public LGFXScreenDashboardResumeEntity
+class LGFXScreenDashboardResumeEntityMemory : public LGFXScreenDashboardResumeEntity
 {
 private:
     uint64_t timestamp = 0;
@@ -51,8 +51,8 @@ private:
     MEMORY_USAGE_TYPE memoryUsageType = MEMORY_USAGE_TYPE_USED;
 
 public:
-    LGFXScreenDashboardResumeEntityUsedMemory(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset, MEMORY_USAGE_TYPE memoryUsageType = MEMORY_USAGE_TYPE_USED);
-    ~LGFXScreenDashboardResumeEntityUsedMemory();
+    LGFXScreenDashboardResumeEntityMemory(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset, MEMORY_USAGE_TYPE memoryUsageType = MEMORY_USAGE_TYPE_USED);
+    ~LGFXScreenDashboardResumeEntityMemory();
     bool Refresh(bool force = false) override;
 };
 

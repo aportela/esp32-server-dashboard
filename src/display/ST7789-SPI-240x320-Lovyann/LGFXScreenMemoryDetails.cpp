@@ -18,11 +18,11 @@ LGFXScreenMemoryDetails::LGFXScreenMemoryDetails(LovyanGFX *display, SourceData 
 #ifdef DEBUG_FPS
             FPS::Init();
 #endif // DEBUG_FPS
-            this->memoryBlock1 = new LGFXScreenDashboardResumeEntityUsedMemory(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 0, MEMORY_USAGE_TYPE_USED);
-            this->memoryBlock2 = new LGFXScreenDashboardResumeEntityUsedMemory(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 1, MEMORY_USAGE_TYPE_FREE);
-            this->memoryBlock3 = new LGFXScreenDashboardResumeEntityUsedMemory(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 2, MEMORY_USAGE_TYPE_AVAILABLE);
-            this->memoryBlock4 = new LGFXScreenDashboardResumeEntityUsedMemory(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 3, MEMORY_USAGE_TYPE_BUFFERED);
-            this->memoryBlock5 = new LGFXScreenDashboardResumeEntityUsedMemory(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 4, MEMORY_USAGE_TYPE_CACHED);
+            this->memoryBlock1 = new LGFXScreenDashboardResumeEntityMemory(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 0, MEMORY_USAGE_TYPE_USED);
+            this->memoryBlock2 = new LGFXScreenDashboardResumeEntityMemory(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 1, MEMORY_USAGE_TYPE_FREE);
+            this->memoryBlock3 = new LGFXScreenDashboardResumeEntityMemory(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 2, MEMORY_USAGE_TYPE_AVAILABLE);
+            this->memoryBlock4 = new LGFXScreenDashboardResumeEntityMemory(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 3, MEMORY_USAGE_TYPE_BUFFERED);
+            this->memoryBlock5 = new LGFXScreenDashboardResumeEntityMemory(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 4, MEMORY_USAGE_TYPE_CACHED);
             this->Refresh(true);
         }
     }

@@ -3,7 +3,7 @@
 
 #include "LGFXScreen.hpp"
 #include "LGFXScreenDashboardResumeEntityCPU.hpp"
-#include "LGFXScreenDashboardResumeEntityUsedMemory.hpp"
+#include "LGFXScreenDashboardResumeEntityMemory.hpp"
 #include "LGFXScreenDashboardResumeEntityCPUTemperature.hpp"
 #include "LGFXScreenDashboardResumeEntityNetUsedBandWidth.hpp"
 #include "LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth.hpp"
@@ -13,7 +13,7 @@ class LGFXScreenDashboardResume : public LGFXScreen
 {
 private:
     LGFXScreenDashboardResumeEntityCPU *cpuLoadBlock = nullptr;
-    LGFXScreenDashboardResumeEntityUsedMemory *usedMemoryBlock = nullptr;
+    LGFXScreenDashboardResumeEntityMemory *usedMemoryBlock = nullptr;
     LGFXScreenDashboardResumeEntityCPUTemperature *cpuTemperatureBlock = nullptr;
     LGFXScreenDashboardResumeEntityNetUsedBandWidth *networkDownloadBandwidthBlock = nullptr;
     LGFXScreenDashboardResumeEntityNetUsedBandWidth *networkUploadBandwidthBlock = nullptr;
