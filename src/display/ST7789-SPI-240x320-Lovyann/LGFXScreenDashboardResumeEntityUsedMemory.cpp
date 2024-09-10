@@ -108,17 +108,6 @@ bool LGFXScreenDashboardResumeEntityUsedMemory::Refresh(bool force)
             }
             memUsageValue = data.cached;
             break;
-        case MEMORY_USAGE_TYPE_USED:
-            if (this->totalValue != data.total)
-            {
-                this->totalValue = data.total;
-                // redraw limits
-                char maxStr[6] = {'\0'};
-                Format::ParseBytesToHumanString(this->totalValue, maxStr, sizeof(maxStr), false, true, false);
-                this->PrintLimits("0B", maxStr);
-            }
-            memUsageValue = data.used;
-            break;
         case MEMORY_USAGE_TYPE_DIRTY:
             if (this->totalValue != data.total)
             {
@@ -206,6 +195,17 @@ bool LGFXScreenDashboardResumeEntityUsedMemory::Refresh(bool force)
                 this->PrintLimits("0B", maxStr);
             }
             memUsageValue = data.swapFree;
+            break;
+        case MEMORY_USAGE_TYPE_USED:
+            if (this->totalValue != data.total)
+            {
+                this->totalValue = data.total;
+                // redraw limits
+                char maxStr[6] = {'\0'};
+                Format::ParseBytesToHumanString(this->totalValue, maxStr, sizeof(maxStr), false, true, false);
+                this->PrintLimits("0B", maxStr);
+            }
+            memUsageValue = data.used;
             break;
         default:
             break;
