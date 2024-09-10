@@ -19,7 +19,7 @@ enum CPU_USAGE_TYPE
     CPU_USAGE_TYPE_GUEST_NICE = 11,
 };
 
-class LGFXScreenDashboardResumeEntityCPULoad : public LGFXScreenDashboardResumeEntity
+class LGFXScreenDashboardResumeEntityCPU : public LGFXScreenDashboardResumeEntity
 {
 private:
     uint64_t timestamp = 0;
@@ -27,8 +27,8 @@ private:
     CPU_USAGE_TYPE cpuUsageType = CPU_USAGE_TYPE_LOAD;
 
 public:
-    LGFXScreenDashboardResumeEntityCPULoad(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset, CPU_USAGE_TYPE cpuUsageType = CPU_USAGE_TYPE_LOAD);
-    ~LGFXScreenDashboardResumeEntityCPULoad();
+    LGFXScreenDashboardResumeEntityCPU(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset, CPU_USAGE_TYPE cpuUsageType = CPU_USAGE_TYPE_LOAD);
+    ~LGFXScreenDashboardResumeEntityCPU();
     bool Refresh(bool force = false) override;
 };
 

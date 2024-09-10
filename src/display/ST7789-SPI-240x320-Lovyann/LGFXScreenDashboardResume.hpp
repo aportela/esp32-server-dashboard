@@ -2,7 +2,7 @@
 #define ESP32_SERVER_DASHBOARD_LGFX_SCREEN_DASHBOARD_RESUME_H
 
 #include "LGFXScreen.hpp"
-#include "LGFXScreenDashboardResumeEntityCPULoad.hpp"
+#include "LGFXScreenDashboardResumeEntityCPU.hpp"
 #include "LGFXScreenDashboardResumeEntityUsedMemory.hpp"
 #include "LGFXScreenDashboardResumeEntityCPUTemperature.hpp"
 #include "LGFXScreenDashboardResumeEntityNetUsedBandWidth.hpp"
@@ -12,7 +12,7 @@
 class LGFXScreenDashboardResume : public LGFXScreen
 {
 private:
-    LGFXScreenDashboardResumeEntityCPULoad *cpuLoadBlock = nullptr;
+    LGFXScreenDashboardResumeEntityCPU *cpuLoadBlock = nullptr;
     LGFXScreenDashboardResumeEntityUsedMemory *usedMemoryBlock = nullptr;
     LGFXScreenDashboardResumeEntityCPUTemperature *cpuTemperatureBlock = nullptr;
     LGFXScreenDashboardResumeEntityNetUsedBandWidth *networkDownloadBandwidthBlock = nullptr;

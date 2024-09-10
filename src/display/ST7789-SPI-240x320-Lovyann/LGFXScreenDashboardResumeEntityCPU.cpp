@@ -1,4 +1,4 @@
-#include "LGFXScreenDashboardResumeEntityCPULoad.hpp"
+#include "LGFXScreenDashboardResumeEntityCPU.hpp"
 #include "../../utils/Format.hpp"
 #include <cstdio>
 
@@ -19,7 +19,7 @@ const char *CPU_LABELS[]{
     "CPU GUEST NICE",
 };
 
-LGFXScreenDashboardResumeEntityCPULoad::LGFXScreenDashboardResumeEntityCPULoad(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset, CPU_USAGE_TYPE cpuUsageType) : LGFXScreenDashboardResumeEntity(display, sourceData, width, height, xOffset, yOffset, CPU_LABELS[(uint8_t)cpuUsageType])
+LGFXScreenDashboardResumeEntityCPU::LGFXScreenDashboardResumeEntityCPU(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset, CPU_USAGE_TYPE cpuUsageType) : LGFXScreenDashboardResumeEntity(display, sourceData, width, height, xOffset, yOffset, CPU_LABELS[(uint8_t)cpuUsageType])
 {
     this->cpuUsageType = cpuUsageType;
     if (this->parentDisplay != nullptr)
@@ -34,11 +34,11 @@ LGFXScreenDashboardResumeEntityCPULoad::LGFXScreenDashboardResumeEntityCPULoad(L
     }
 }
 
-LGFXScreenDashboardResumeEntityCPULoad::~LGFXScreenDashboardResumeEntityCPULoad()
+LGFXScreenDashboardResumeEntityCPU::~LGFXScreenDashboardResumeEntityCPU()
 {
 }
 
-bool LGFXScreenDashboardResumeEntityCPULoad::Refresh(bool force)
+bool LGFXScreenDashboardResumeEntityCPU::Refresh(bool force)
 {
     SourceDataQueueCPUValues data;
     this->sourceData->GetCurrentCPUData(data);

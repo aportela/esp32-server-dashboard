@@ -2,17 +2,17 @@
 #define ESP32_SERVER_DASHBOARD_LGFX_SCREEN_CPU_DETAILS_H
 
 #include "LGFXScreen.hpp"
-#include "LGFXScreenDashboardResumeEntityCPULoad.hpp"
+#include "LGFXScreenDashboardResumeEntityCPU.hpp"
 #include "../../sources/SourceData.hpp"
 
 class LGFXScreenCPUDetails : public LGFXScreen
 {
 private:
-    LGFXScreenDashboardResumeEntityCPULoad *cpuLoadBlock1 = nullptr;
-    LGFXScreenDashboardResumeEntityCPULoad *cpuLoadBlock2 = nullptr;
-    LGFXScreenDashboardResumeEntityCPULoad *cpuLoadBlock3 = nullptr;
-    LGFXScreenDashboardResumeEntityCPULoad *cpuLoadBlock4 = nullptr;
-    LGFXScreenDashboardResumeEntityCPULoad *cpuLoadBlock5 = nullptr;
+    LGFXScreenDashboardResumeEntityCPU *cpuLoadBlock1 = nullptr;
+    LGFXScreenDashboardResumeEntityCPU *cpuLoadBlock2 = nullptr;
+    LGFXScreenDashboardResumeEntityCPU *cpuLoadBlock3 = nullptr;
+    LGFXScreenDashboardResumeEntityCPU *cpuLoadBlock4 = nullptr;
+    LGFXScreenDashboardResumeEntityCPU *cpuLoadBlock5 = nullptr;
 
     SourceData *currentSourceData;
 
