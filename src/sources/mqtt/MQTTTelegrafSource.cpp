@@ -207,8 +207,7 @@ void MQTTTelegrafSource::OnMessageReceived(const char *topic, const char *payloa
     // example: net,host=WINDOWS,interface=Ethernet\ 10G\ (SFP+) bytes_sent=40845899802i,bytes_recv=357515820769i,packets_recv=308742870i,drop_in=62i,speed=-1i,packets_sent=115628425i,err_in=62i,err_out=0i,drop_out=0i 1725955392000000000
     // (I only want from bytes_sent=... to end)
     MQTTTelegrafSource::GetPayloadTokens(payload, cleanPayload, sizeof(cleanPayload));
-    // remove start payload unrequired data (input type, host)
-    char tokenWithValue[255] = {'\0'};
+    char tokenWithValue[strlen(payload)] = {'\0'};
     if (strcmp(topic, MQTTTelegrafSource::cpuTopic) == 0 && strncmp(payload, "cpu,cpu=cpu-total", 17) == 0)
     {
         SourceDataQueueCPUValues currentData;
