@@ -109,21 +109,13 @@ void LGFX::InitScreen(SCREEN_TYPE screenType)
     case SCREEN_TYPE_DASHBOARD_REALTIME_GRAPHS:
         if (this->currentScreen == nullptr)
         {
-            this->currentScreen = new LGFXScreenDashboardResume(this, this->sourceData);
-        }
-        this->currentScreenType = screenType;
-        break;
-    case SCREEN_TYPE_CPU_DETAILS:
-        if (this->currentScreen == nullptr)
-        {
-            this->currentScreen = new LGFXScreenCPUDetails(this, this->sourceData);
-        }
-        this->currentScreenType = screenType;
-        break;
-    case SCREEN_TYPE_MEMORY_DETAILS:
-        if (this->currentScreen == nullptr)
-        {
-            this->currentScreen = new LGFXScreenMemoryDetails(this, this->sourceData);
+            DASHBOARD_ITEM_TYPE items[DASHBOARD_ITEM_COUNT] = {
+                (DASHBOARD_ITEM_TYPE)this->dashboardsItems[this->currentDashboardIndex][0],
+                (DASHBOARD_ITEM_TYPE)this->dashboardsItems[this->currentDashboardIndex][1],
+                (DASHBOARD_ITEM_TYPE)this->dashboardsItems[this->currentDashboardIndex][2],
+                (DASHBOARD_ITEM_TYPE)this->dashboardsItems[this->currentDashboardIndex][3],
+                (DASHBOARD_ITEM_TYPE)this->dashboardsItems[this->currentDashboardIndex][4]};
+            this->currentScreen = new LGFXScreenDashboardResume(this, this->sourceData, this->currentDashboardIndex, items);
         }
         this->currentScreenType = screenType;
         break;
@@ -156,7 +148,24 @@ bool LGFX::FlipToScreen(SCREEN_TYPE screenType)
     if (screenType != this->currentScreenType)
     {
         this->DeleteCurrentScreen();
+        this->currentDashboardIndex = 0;
         this->InitScreen(screenType);
+        return (true);
+    }
+    else if (screenType == SCREEN_TYPE_DASHBOARD_REALTIME_GRAPHS)
+    {
+        this->DeleteCurrentScreen();
+        if (this->currentDashboardIndex < this->dashboardCount - 1)
+        {
+            // toggle between available dashboards
+            this->currentDashboardIndex++;
+            this->InitScreen(screenType);
+        }
+        else
+        {
+            // if current dashboard is last, return to info screen
+            this->InitScreen(SCREEN_TYPE_INFO);
+        }
         return (true);
     }
     else
@@ -174,13 +183,14 @@ bool LGFX::ToggleScreen(void)
         success = this->FlipToScreen(SCREEN_TYPE_DASHBOARD_REALTIME_GRAPHS);
         break;
     case SCREEN_TYPE_DASHBOARD_REALTIME_GRAPHS:
-        success = this->FlipToScreen(SCREEN_TYPE_CPU_DETAILS);
-        break;
-    case SCREEN_TYPE_CPU_DETAILS:
-        success = this->FlipToScreen(SCREEN_TYPE_MEMORY_DETAILS);
-        break;
-    case SCREEN_TYPE_MEMORY_DETAILS:
-        success = this->FlipToScreen(SCREEN_TYPE_INFO);
+        if (this->currentDashboardIndex < this->dashboardCount)
+        {
+            success = this->FlipToScreen(SCREEN_TYPE_DASHBOARD_REALTIME_GRAPHS);
+        }
+        else
+        {
+            success = this->FlipToScreen(SCREEN_TYPE_INFO);
+        }
         break;
     }
     return (success);

@@ -21,31 +21,82 @@
 
 // #define DEBUG_FPS // If defined, this will replace bottom hostname info with "FPS" counter (used only to "bench" & DEBUG_FPS optimizations)
 
-LGFXScreenDashboardResume::LGFXScreenDashboardResume(LovyanGFX *display, SourceData *sourceData) : LGFXScreen(display)
+LGFXScreenDashboardResume::LGFXScreenDashboardResume(LovyanGFX *display, SourceData *sourceData, const uint8_t dashboardIndex, const DASHBOARD_ITEM_TYPE items[DASHBOARD_ITEM_COUNT]) : LGFXScreen(display)
 {
     if (sourceData != nullptr)
     {
         this->currentSourceData = sourceData;
+        this->dashboardIndex = dashboardIndex;
         if (display != nullptr)
         {
 #ifdef DEBUG_FPS
             FPS::Init();
 #endif // DEBUG_FPS
-            this->cpuLoadBlock = new LGFXScreenDashboardResumeEntityCPU(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 0, CPU_USAGE_TYPE_LOAD);
-            this->usedMemoryBlock = new LGFXScreenDashboardResumeEntityMemory(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 1, MEMORY_USAGE_TYPE_USED);
-            this->cpuTemperatureBlock = new LGFXScreenDashboardResumeEntityCPUTemperature(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 2);
-            if (sourceData->HasFixedNetworkingLimits())
-            {
-                this->networkDownloadBandwidthBlock = new LGFXScreenDashboardResumeEntityNetUsedBandWidth(NET_BANDWIDTH_TYPE_DOWNLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 3);
-                this->networkUploadBandwidthBlock = new LGFXScreenDashboardResumeEntityNetUsedBandWidth(NET_BANDWIDTH_TYPE_UPLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 4);
-            }
-            else
+
+            if (
+                items[0] == DASHBOARD_ITEM_TYPE_NETWORK_INTERFACE_DOWNLOAD_BANDWIDTH || items[0] == DASHBOARD_ITEM_TYPE_NETWORK_INTERFACE_UPLOAD_BANDWIDTH ||
+                items[1] == DASHBOARD_ITEM_TYPE_NETWORK_INTERFACE_DOWNLOAD_BANDWIDTH || items[1] == DASHBOARD_ITEM_TYPE_NETWORK_INTERFACE_UPLOAD_BANDWIDTH ||
+                items[2] == DASHBOARD_ITEM_TYPE_NETWORK_INTERFACE_DOWNLOAD_BANDWIDTH || items[2] == DASHBOARD_ITEM_TYPE_NETWORK_INTERFACE_UPLOAD_BANDWIDTH ||
+                items[3] == DASHBOARD_ITEM_TYPE_NETWORK_INTERFACE_DOWNLOAD_BANDWIDTH || items[3] == DASHBOARD_ITEM_TYPE_NETWORK_INTERFACE_UPLOAD_BANDWIDTH ||
+                items[4] == DASHBOARD_ITEM_TYPE_NETWORK_INTERFACE_DOWNLOAD_BANDWIDTH || items[4] == DASHBOARD_ITEM_TYPE_NETWORK_INTERFACE_UPLOAD_BANDWIDTH)
             {
                 SourceDataQueueNetworkingLimitsValue networkingLimits;
                 sourceData->SetNetworkLimits(networkingLimits);
-                this->networkDownloadBandwidthBlock = new LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth(NET_BANDWIDTH_TYPE_DOWNLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 3);
-                this->networkUploadBandwidthBlock = new LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth(NET_BANDWIDTH_TYPE_UPLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 4);
+                // TODO: WARNING DO NOT WORK WITH FIXED & NOT FIXED
             }
+            switch (items[0])
+            {
+            case DASHBOARD_ITEM_TYPE_CPU_LOAD:
+            default:
+                this->block1 = new LGFXScreenDashboardResumeEntityCPU(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 0, CPU_USAGE_TYPE_LOAD);
+                break;
+            }
+            switch (items[1])
+            {
+            case DASHBOARD_ITEM_TYPE_MEM_USED:
+            default:
+                this->block2 = new LGFXScreenDashboardResumeEntityMemory(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 1, MEMORY_USAGE_TYPE_USED);
+                break;
+            }
+            switch (items[2])
+            {
+            case DASHBOARD_ITEM_TYPE_CPU_TEMPERATURE:
+            default:
+                this->block3 = new LGFXScreenDashboardResumeEntityCPUTemperature(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 2);
+                break;
+            }
+            /*
+            switch (items[3])
+            {
+            case DASHBOARD_ITEM_TYPE_NETWORK_INTERFACE_DOWNLOAD_BANDWIDTH:
+                this->block4 = new LGFXScreenDashboardResumeEntityNetUsedBandWidth(NET_BANDWIDTH_TYPE_DOWNLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 3);
+                break;
+            case DASHBOARD_ITEM_TYPE_NETWORK_INTERFACE_DOWNLOAD_DYNAMIC_BANDWIDTH:
+                this->block4 = new LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth(NET_BANDWIDTH_TYPE_DOWNLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 3);
+                break;
+            case DASHBOARD_ITEM_TYPE_NETWORK_INTERFACE_UPLOAD_BANDWIDTH:
+                this->block4 = new LGFXScreenDashboardResumeEntityNetUsedBandWidth(NET_BANDWIDTH_TYPE_UPLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 3);
+                break;
+            case DASHBOARD_ITEM_TYPE_NETWORK_INTERFACE_UPLOAD_DYNAMIC_BANDWIDTH:
+                this->block4 = new LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth(NET_BANDWIDTH_TYPE_UPLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 3);
+                break;
+            }
+            switch (items[4])
+            {
+            case DASHBOARD_ITEM_TYPE_NETWORK_INTERFACE_DOWNLOAD_BANDWIDTH:
+                this->block5 = new LGFXScreenDashboardResumeEntityNetUsedBandWidth(NET_BANDWIDTH_TYPE_DOWNLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 4);
+                break;
+            case DASHBOARD_ITEM_TYPE_NETWORK_INTERFACE_DOWNLOAD_DYNAMIC_BANDWIDTH:
+                this->block5 = new LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth(NET_BANDWIDTH_TYPE_DOWNLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 4);
+                break;
+            case DASHBOARD_ITEM_TYPE_NETWORK_INTERFACE_UPLOAD_BANDWIDTH:
+                this->block5 = new LGFXScreenDashboardResumeEntityNetUsedBandWidth(NET_BANDWIDTH_TYPE_UPLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 4);
+                break;
+            case DASHBOARD_ITEM_TYPE_NETWORK_INTERFACE_UPLOAD_DYNAMIC_BANDWIDTH:
+                this->block5 = new LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth(NET_BANDWIDTH_TYPE_UPLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 4);
+                break;
+            }
+            */
             sourceData->GetHostname(this->hostname, sizeof(this->hostname));
             this->Refresh(true);
         }
@@ -54,30 +105,30 @@ LGFXScreenDashboardResume::LGFXScreenDashboardResume(LovyanGFX *display, SourceD
 
 LGFXScreenDashboardResume::~LGFXScreenDashboardResume()
 {
-    if (this->cpuLoadBlock != nullptr)
+    if (this->block1 != nullptr)
     {
-        delete this->cpuLoadBlock;
-        this->cpuLoadBlock = nullptr;
+        delete this->block1;
+        this->block1 = nullptr;
     }
-    if (this->usedMemoryBlock != nullptr)
+    if (this->block2 != nullptr)
     {
-        delete this->usedMemoryBlock;
-        this->usedMemoryBlock = nullptr;
+        delete this->block2;
+        this->block2 = nullptr;
     }
-    if (this->cpuTemperatureBlock != nullptr)
+    if (this->block3 != nullptr)
     {
-        delete this->cpuTemperatureBlock;
-        this->cpuTemperatureBlock = nullptr;
+        delete this->block3;
+        this->block3 = nullptr;
     }
-    if (this->networkDownloadBandwidthBlock != nullptr)
+    if (this->block4 != nullptr)
     {
-        delete this->networkDownloadBandwidthBlock;
-        this->networkDownloadBandwidthBlock = nullptr;
+        delete this->block4;
+        this->block4 = nullptr;
     }
-    if (this->networkUploadBandwidthBlock != nullptr)
+    if (this->block5 != nullptr)
     {
-        delete this->networkUploadBandwidthBlock;
-        this->networkUploadBandwidthBlock = nullptr;
+        delete this->block5;
+        this->block5 = nullptr;
     }
     this->currentSourceData = nullptr;
 }
@@ -149,12 +200,12 @@ bool LGFXScreenDashboardResume::Refresh(bool force)
         bool refreshed = false;
         if (this->currentSourceData != nullptr)
         {
-            bool r1 = this->cpuLoadBlock->Refresh(false);
-            bool r2 = this->usedMemoryBlock->Refresh(false);
-            bool r3 = this->cpuTemperatureBlock->Refresh(false);
-            bool r4 = this->networkDownloadBandwidthBlock->Refresh(false);
-            bool r5 = this->networkUploadBandwidthBlock->Refresh(false);
-            refreshed = r1 || r2 || r3 || r4 || r5;
+            bool r1 = this->block1->Refresh(false);
+            bool r2 = this->block2->Refresh(false);
+            bool r3 = this->block3->Refresh(false);
+            // bool r4 = this->block4->Refresh(false);
+            // bool r5 = this->block5->Refresh(false);
+            refreshed = r1 || r2 || r3; // || r4 || r5;
         }
         return (this->RefreshBottomCommonData(force) || refreshed);
     }
