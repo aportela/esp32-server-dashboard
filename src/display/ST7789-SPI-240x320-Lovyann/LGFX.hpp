@@ -8,9 +8,6 @@
 #include "../../sources/SourceData.hpp"
 #include "../DashboardItemType.hpp"
 
-#define MAX_DASHBOARDS 3
-#define DASHBOARD_ITEM_COUNT 5
-
 class LGFX : public lgfx::LGFX_Device
 {
 private:
