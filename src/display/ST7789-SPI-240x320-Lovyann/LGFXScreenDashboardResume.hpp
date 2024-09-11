@@ -29,6 +29,7 @@ private:
 
     bool RefreshBottomCommonData(bool forceDrawAll);
     uint16_t uptimeValueXOffset = 0;
+    uint8_t dashboardIndex = 0;
 
 public:
     LGFXScreenDashboardResume(LovyanGFX *display, SourceData *sourceData);
