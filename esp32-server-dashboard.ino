@@ -57,6 +57,8 @@ bool screenMirrorFlipVertical = false;
 #include "src/utils/Format.hpp"
 #include "src/utils/FPS.hpp"
 #include "src/sources/SourceData.hpp"
+#include "src/display/DashboardItemType.hpp"
+
 #ifdef SOURCE_DUMMY
 #define SOURCE_DUMMY_UPDATES_EVERY_MS 0 // random data will be refreshed (on method refresh call) every nn milliseconds (0 = no delay)
 #include "src/sources/dummy/DummySource.hpp"
@@ -634,6 +636,9 @@ void setup()
     screen = new LGFX(PIN_SDA, PIN_SCL, PIN_CS, PIN_DC, PIN_RST, DISPLAY_DRIVER_LOVYANN_ST7789_WIDTH, DISPLAY_DRIVER_LOVYANN_ST7789_HEIGHT, !screenMirrorFlipVertical ? DISPLAY_DRIVER_LOVYANN_ST7789_ROTATION : DISPLAY_DRIVER_LOVYANN_ST7789_ROTATION_MIRROR_FLIP_VERTICAL);
     screen->SetSourceData(sourceData);
     screen->InitScreen(settings->GetDefaultScreen(SCREEN_TYPE_INFO));
+    screen->setDashboardCount(1);
+    DASHBOARD_ITEM_TYPE dashboardItems[5] = {DASHBOARD_ITEM_TYPE_CPU_LOAD, DASHBOARD_ITEM_TYPE_MEM_USED, DASHBOARD_ITEM_TYPE_CPU_TEMPERATURE, DASHBOARD_ITEM_TYPE_NETWORK_INTERFACE_DOWNLOAD_DYNAMIC_BANDWIDTH, DASHBOARD_ITEM_TYPE_NETWORK_INTERFACE_UPLOAD_DYNAMIC_BANDWIDTH};
+    screen->SetDashboardItems(0, dashboardItems);
 #endif // DISPLAY_DRIVER_LOVYANN_ST7789
     button = new Bounce2::Button();
     button->attach(PIN_BUTTON_SW, INPUT_PULLUP);

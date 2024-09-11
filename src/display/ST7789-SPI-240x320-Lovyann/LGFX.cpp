@@ -6,7 +6,6 @@
 #include "../../sources/dummy/DummySource.hpp"
 #include "../../utils/Format.hpp"
 #include "../../utils/FPS.hpp"
-
 #include "../SizesAndOffsets-320x240.hpp"
 
 LGFX::LGFX(uint8_t PIN_SDA, uint8_t PIN_SCL, uint8_t PIN_CS, uint8_t PIN_DC, uint8_t PIN_RST, uint16_t width, uint16_t height, uint8_t rotation)
@@ -65,6 +64,35 @@ LGFX::~LGFX()
 void LGFX::SetSourceData(SourceData *src)
 {
     this->sourceData = src;
+}
+
+bool LGFX::setDashboardCount(uint8_t count)
+{
+    if (count < MAX_DASHBOARDS)
+    {
+        this->dashboardCount = count;
+        return (true);
+    }
+    else
+    {
+        return (false);
+    }
+}
+
+bool LGFX::SetDashboardItems(uint8_t index, const DASHBOARD_ITEM_TYPE items[DASHBOARD_ITEM_COUNT])
+{
+    if (index < this->dashboardCount)
+    {
+        for (int i = 0; i < DASHBOARD_ITEM_COUNT; i++)
+        {
+            this->dashboardsItems[index][i] = items[i];
+        }
+        return (true);
+    }
+    else
+    {
+        return (false);
+    }
 }
 
 void LGFX::InitScreen(SCREEN_TYPE screenType)
