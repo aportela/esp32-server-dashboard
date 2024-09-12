@@ -156,6 +156,8 @@ sysctl hw.acpi.thermal.tz0.temperature | sed 's/hw\.acpi\.thermal\.tz0\.temperat
 
 Configuration is done via serial sending string commands. Any serial terminal software like putty or Arduino IDE serial monitor console can be used
 
+NOTE: "clear commands" **require whitespace** (separator without value) at end, ex: clear wifi password => "SET_WIFI_PASSWORD "
+
 | Command                         | Param      | Description                              | Example                                                  |
 | ------------------------------- | ---------- | ---------------------------------------- | -------------------------------------------------------- |
 | REBOOT                          |            | Reboot device                            | **REBOOT**                                               |
