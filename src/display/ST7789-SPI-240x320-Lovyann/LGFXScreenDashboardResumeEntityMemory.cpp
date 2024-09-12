@@ -31,9 +31,8 @@ bool LGFXScreenDashboardResumeEntityMemory::Refresh(bool force)
             if (this->totalValue != data.total)
             {
                 this->totalValue = data.total;
-                // redraw limits
                 char maxStr[6] = {'\0'};
-                Format::ParseBytesToHumanString(this->totalValue, maxStr, sizeof(maxStr), false, true, false);
+                Format::ParseBytesToHumanString(this->totalValue, maxStr, sizeof(maxStr), false, true, false, KILO_BYTE_DIVISOR_1024);
                 this->PrintLimits("0B", maxStr);
             }
             memUsageValue = data.active;
@@ -44,7 +43,7 @@ bool LGFXScreenDashboardResumeEntityMemory::Refresh(bool force)
                 this->totalValue = data.total;
                 // redraw limits
                 char maxStr[6] = {'\0'};
-                Format::ParseBytesToHumanString(this->totalValue, maxStr, sizeof(maxStr), false, true, false);
+                Format::ParseBytesToHumanString(this->totalValue, maxStr, sizeof(maxStr), false, true, false, KILO_BYTE_DIVISOR_1024);
                 this->PrintLimits("0B", maxStr);
             }
             memUsageValue = data.available;
@@ -55,7 +54,7 @@ bool LGFXScreenDashboardResumeEntityMemory::Refresh(bool force)
                 this->totalValue = data.total;
                 // redraw limits
                 char maxStr[6] = {'\0'};
-                Format::ParseBytesToHumanString(this->totalValue, maxStr, sizeof(maxStr), false, true, false);
+                Format::ParseBytesToHumanString(this->totalValue, maxStr, sizeof(maxStr), false, true, false, KILO_BYTE_DIVISOR_1024);
                 this->PrintLimits("0B", maxStr);
             }
             memUsageValue = data.buffered;
@@ -66,7 +65,7 @@ bool LGFXScreenDashboardResumeEntityMemory::Refresh(bool force)
                 this->totalValue = data.total;
                 // redraw limits
                 char maxStr[6] = {'\0'};
-                Format::ParseBytesToHumanString(this->totalValue, maxStr, sizeof(maxStr), false, true, false);
+                Format::ParseBytesToHumanString(this->totalValue, maxStr, sizeof(maxStr), false, true, false, KILO_BYTE_DIVISOR_1024);
                 this->PrintLimits("0B", maxStr);
             }
             memUsageValue = data.cached;
@@ -77,7 +76,7 @@ bool LGFXScreenDashboardResumeEntityMemory::Refresh(bool force)
                 this->totalValue = data.total;
                 // redraw limits
                 char maxStr[6] = {'\0'};
-                Format::ParseBytesToHumanString(this->totalValue, maxStr, sizeof(maxStr), false, true, false);
+                Format::ParseBytesToHumanString(this->totalValue, maxStr, sizeof(maxStr), false, true, false, KILO_BYTE_DIVISOR_1024);
                 this->PrintLimits("0B", maxStr);
             }
             memUsageValue = data.dirty;
@@ -88,7 +87,7 @@ bool LGFXScreenDashboardResumeEntityMemory::Refresh(bool force)
                 this->totalValue = data.total;
                 // redraw limits
                 char maxStr[6] = {'\0'};
-                Format::ParseBytesToHumanString(this->totalValue, maxStr, sizeof(maxStr), false, true, false);
+                Format::ParseBytesToHumanString(this->totalValue, maxStr, sizeof(maxStr), false, true, false, KILO_BYTE_DIVISOR_1024);
                 this->PrintLimits("0B", maxStr);
             }
             memUsageValue = data.free;
@@ -99,7 +98,7 @@ bool LGFXScreenDashboardResumeEntityMemory::Refresh(bool force)
                 this->totalValue = data.total;
                 // redraw limits
                 char maxStr[6] = {'\0'};
-                Format::ParseBytesToHumanString(this->totalValue, maxStr, sizeof(maxStr), false, true, false);
+                Format::ParseBytesToHumanString(this->totalValue, maxStr, sizeof(maxStr), false, true, false, KILO_BYTE_DIVISOR_1024);
                 this->PrintLimits("0B", maxStr);
             }
             memUsageValue = data.inactive;
@@ -110,7 +109,7 @@ bool LGFXScreenDashboardResumeEntityMemory::Refresh(bool force)
                 this->totalValue = data.total;
                 // redraw limits
                 char maxStr[6] = {'\0'};
-                Format::ParseBytesToHumanString(this->totalValue, maxStr, sizeof(maxStr), false, true, false);
+                Format::ParseBytesToHumanString(this->totalValue, maxStr, sizeof(maxStr), false, true, false, KILO_BYTE_DIVISOR_1024);
                 this->PrintLimits("0B", maxStr);
             }
             memUsageValue = data.laundry;
@@ -121,7 +120,7 @@ bool LGFXScreenDashboardResumeEntityMemory::Refresh(bool force)
                 this->totalValue = data.total;
                 // redraw limits
                 char maxStr[6] = {'\0'};
-                Format::ParseBytesToHumanString(this->totalValue, maxStr, sizeof(maxStr), false, true, false);
+                Format::ParseBytesToHumanString(this->totalValue, maxStr, sizeof(maxStr), false, true, false, KILO_BYTE_DIVISOR_1024);
                 this->PrintLimits("0B", maxStr);
             }
             memUsageValue = data.mapped;
@@ -132,7 +131,7 @@ bool LGFXScreenDashboardResumeEntityMemory::Refresh(bool force)
                 this->totalValue = data.total;
                 // redraw limits
                 char maxStr[6] = {'\0'};
-                Format::ParseBytesToHumanString(this->totalValue, maxStr, sizeof(maxStr), false, true, false);
+                Format::ParseBytesToHumanString(this->totalValue, maxStr, sizeof(maxStr), false, true, false, KILO_BYTE_DIVISOR_1024);
                 this->PrintLimits("0B", maxStr);
             }
             memUsageValue = data.shared;
@@ -143,7 +142,7 @@ bool LGFXScreenDashboardResumeEntityMemory::Refresh(bool force)
                 this->totalValue = data.swapTotal;
                 // redraw limits
                 char maxStr[6] = {'\0'};
-                Format::ParseBytesToHumanString(this->totalValue, maxStr, sizeof(maxStr), false, true, false);
+                Format::ParseBytesToHumanString(this->totalValue, maxStr, sizeof(maxStr), false, true, false, KILO_BYTE_DIVISOR_1024);
                 this->PrintLimits("0B", maxStr);
             }
             memUsageValue = data.swapCached;
@@ -154,7 +153,7 @@ bool LGFXScreenDashboardResumeEntityMemory::Refresh(bool force)
                 this->totalValue = data.swapTotal;
                 // redraw limits
                 char maxStr[6] = {'\0'};
-                Format::ParseBytesToHumanString(this->totalValue, maxStr, sizeof(maxStr), false, true, false);
+                Format::ParseBytesToHumanString(this->totalValue, maxStr, sizeof(maxStr), false, true, false, KILO_BYTE_DIVISOR_1024);
                 this->PrintLimits("0B", maxStr);
             }
             memUsageValue = data.swapFree;
@@ -165,7 +164,7 @@ bool LGFXScreenDashboardResumeEntityMemory::Refresh(bool force)
                 this->totalValue = data.total;
                 // redraw limits
                 char maxStr[6] = {'\0'};
-                Format::ParseBytesToHumanString(this->totalValue, maxStr, sizeof(maxStr), false, true, false);
+                Format::ParseBytesToHumanString(this->totalValue, maxStr, sizeof(maxStr), false, true, false, KILO_BYTE_DIVISOR_1024);
                 this->PrintLimits("0B", maxStr);
             }
             memUsageValue = data.used;
