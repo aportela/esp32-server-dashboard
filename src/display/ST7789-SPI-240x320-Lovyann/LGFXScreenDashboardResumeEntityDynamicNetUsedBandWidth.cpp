@@ -9,7 +9,7 @@ LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth::LGFXScreenDashboardResum
 {
     if (this->parentDisplay != nullptr)
     {
-        this->PrintLimits("0B", "0001KB");
+        this->PrintLimits("0B/s", "1KB/s");
         this->RefreshStrValue("0000 B/s", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
     }
     this->dynamicScaleValuesFIFO = new Uint64TFIFO(width);

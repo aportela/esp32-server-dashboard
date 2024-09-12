@@ -93,8 +93,8 @@ const char *CUSTOM_SERIAL_COMMANDS[]{
     "SET_MQTT_PASSWORD ",
     "SET_MQTT_TELEGRAF_GLOBAL_TOPIC ",
     "TOGGLE_SCREEN",
-    "SET_MAX_DOWNLOAD_BYTES_BANDWITH ",
-    "SET_MAX_UPLOAD_BYTES_BANDWITH ",
+    "SET_MAX_DOWNLOAD_BITS_BANDWITH ",
+    "SET_MAX_UPLOAD_BITS_BANDWITH ",
     "SET_NETWORK_INTERFACE_ID ",
     "SET_HOSTNAME ",
     "SET_SCREEN_MIRROR_FLIP_VERTICAL ",
@@ -117,8 +117,8 @@ enum CUSTOM_SERIAL_COMMAND_INDEX
     CUSTOM_SERIAL_COMMAND_INDEX_SET_MQTT_PASSWORD = 9,
     CUSTOM_SERIAL_COMMAND_INDEX_SET_MQTT_TELEGRAF_GLOBAL_TOPIC = 10,
     CUSTOM_SERIAL_COMMAND_INDEX_TOGGLE_SCREEN = 11,
-    CUSTOM_SERIAL_COMMAND_INDEX_SET_MAX_DOWNLOAD_BYTES_BANDWITH = 12,
-    CUSTOM_SERIAL_COMMAND_INDEX_SET_MAX_UPLOAD_BYTES_BANDWITH = 13,
+    CUSTOM_SERIAL_COMMAND_INDEX_SET_MAX_DOWNLOAD_BITS_BANDWITH = 12,
+    CUSTOM_SERIAL_COMMAND_INDEX_SET_MAX_UPLOAD_BITS_BANDWITH = 13,
     CUSTOM_SERIAL_COMMAND_INDEX_SET_NETWORK_INTERFACE_ID = 14,
     CUSTOM_SERIAL_COMMAND_INDEX_SET_HOSTNAME = 15,
     CUSTOM_SERIAL_COMMAND_INDEX_SET_SCREEN_MIRROR_FLIP_VERTICAL = 16,
@@ -225,13 +225,13 @@ void onReceivedSerialCommand(int8_t commandIndex, const char *value)
         tmpUint64 = settings->GetMaxDownloadBandwidthBytes();
         if (tmpUint64 > 0)
         {
-            Serial.print(CUSTOM_SERIAL_COMMANDS[CUSTOM_SERIAL_COMMAND_INDEX_SET_MAX_DOWNLOAD_BYTES_BANDWITH]);
+            Serial.print(CUSTOM_SERIAL_COMMANDS[CUSTOM_SERIAL_COMMAND_INDEX_SET_MAX_DOWNLOAD_BITS_BANDWITH]);
             Serial.println(tmpUint64);
         }
         tmpUint64 = settings->GetMaxUploadBandwidthBytes();
         if (tmpUint64 > 0)
         {
-            Serial.print(CUSTOM_SERIAL_COMMANDS[CUSTOM_SERIAL_COMMAND_INDEX_SET_MAX_UPLOAD_BYTES_BANDWITH]);
+            Serial.print(CUSTOM_SERIAL_COMMANDS[CUSTOM_SERIAL_COMMAND_INDEX_SET_MAX_UPLOAD_BITS_BANDWITH]);
             Serial.println(tmpUint64);
         }
         settings->GetNetworkInterfaceId(str, sizeof(str));
@@ -430,7 +430,7 @@ void onReceivedSerialCommand(int8_t commandIndex, const char *value)
             screen->ToggleScreen();
         }
         break;
-    case CUSTOM_SERIAL_COMMAND_INDEX_SET_MAX_DOWNLOAD_BYTES_BANDWITH:
+    case CUSTOM_SERIAL_COMMAND_INDEX_SET_MAX_DOWNLOAD_BITS_BANDWITH:
         if (value && strlen(value))
         {
             Serial.printf("Serial command received: set max download bandwidth bytes (%s)\n", value);
@@ -456,7 +456,7 @@ void onReceivedSerialCommand(int8_t commandIndex, const char *value)
             }
         }
         break;
-    case CUSTOM_SERIAL_COMMAND_INDEX_SET_MAX_UPLOAD_BYTES_BANDWITH:
+    case CUSTOM_SERIAL_COMMAND_INDEX_SET_MAX_UPLOAD_BITS_BANDWITH:
         if (value && strlen(value))
         {
             Serial.printf("Serial command received: set max upload bandwidth bytes (%s)\n", value);
