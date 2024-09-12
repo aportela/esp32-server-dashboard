@@ -66,7 +66,7 @@ void LGFX::SetSourceData(SourceData *src)
 
 bool LGFX::setDashboardCount(uint8_t count)
 {
-    if (count < MAX_DASHBOARDS)
+    if (count <= MAX_DASHBOARDS)
     {
         this->dashboardCount = count;
         return (true);
