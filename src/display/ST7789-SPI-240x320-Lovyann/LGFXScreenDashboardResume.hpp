@@ -13,11 +13,7 @@
 class LGFXScreenDashboardResume : public LGFXScreen
 {
 private:
-    LGFXScreenDashboardResumeEntity *block1 = nullptr;
-    LGFXScreenDashboardResumeEntity *block2 = nullptr;
-    LGFXScreenDashboardResumeEntity *block3 = nullptr;
-    LGFXScreenDashboardResumeEntity *block4 = nullptr;
-    LGFXScreenDashboardResumeEntity *block5 = nullptr;
+    LGFXScreenDashboardResumeEntity *blocks[DASHBOARD_ITEM_COUNT] = {nullptr};
 
     SourceData *currentSourceData;
 

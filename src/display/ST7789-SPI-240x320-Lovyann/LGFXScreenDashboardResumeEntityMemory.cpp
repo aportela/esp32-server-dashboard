@@ -3,7 +3,7 @@
 
 using namespace aportela::microcontroller::utils;
 
-LGFXScreenDashboardResumeEntityMemory::LGFXScreenDashboardResumeEntityMemory(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset, DASHBOARD_ITEM_TYPE memoryUsageType) : LGFXScreenDashboardResumeEntity(display, sourceData, width, height, xOffset, yOffset, DASHBOARD_ITEM_TYPE_LABEL[(uint8_t)memoryUsageType])
+LGFXScreenDashboardResumeEntityMemory::LGFXScreenDashboardResumeEntityMemory(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset, DASHBOARD_ITEM_TYPE memoryUsageType) : LGFXScreenDashboardResumeEntity(display, sourceData, width, height, xOffset, yOffset, DASHBOARD_ITEM_TYPE_LABEL[memoryUsageType])
 {
     this->memoryUsageType = memoryUsageType;
     if (this->parentDisplay != nullptr)
