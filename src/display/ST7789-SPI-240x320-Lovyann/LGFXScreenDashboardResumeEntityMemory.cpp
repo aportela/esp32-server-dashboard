@@ -3,44 +3,7 @@
 
 using namespace aportela::microcontroller::utils;
 
-const char *MEMORY_LABELS[]{
-    "MEM ACTIVE",
-    "MEM AVAILABLE",
-    "MEM BUFFERED",
-    "MEM CACHED",
-    "MEM COMMIT LIMIT",
-    "MEM COMMITED AS",
-    "MEM DIRTY",
-    "MEM FREE",
-    "MEM HIGH FREE",
-    "MEM HIGH TOTAL",
-    "MEM HUGE PAGES FREE",
-    "MEM HUGE PAGE SIZE",
-    "MEM HUGE PAGES TOTAL",
-    "MEM INACTIVE",
-    "MEM LAUNDRY",
-    "MEM LOW FREE",
-    "MEM LOW TOTAL",
-    "MEM MAPPED",
-    "MEM PAGED TABLES",
-    "MEM SHARED",
-    "MEM SLAB",
-    "MEM SRECLAIMABLE",
-    "MEM SUNRECLAIM",
-    "MEM SWAP CACHED",
-    "MEM SWAP FREE",
-    "MEM SWAP TOTAL",
-    "MEM TOTAL",
-    "MEM USED",
-    "MEM VMALLOC_CHUNK",
-    "MEM VMALLOC_TOTAL",
-    "MEM VMALLOC_USED",
-    "MEM WIRED",
-    "MEM WRITEBACK",
-    "MEM WRITEBACK TMP",
-};
-
-LGFXScreenDashboardResumeEntityMemory::LGFXScreenDashboardResumeEntityMemory(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset, MEMORY_USAGE_TYPE memoryUsageType) : LGFXScreenDashboardResumeEntity(display, sourceData, width, height, xOffset, yOffset, MEMORY_LABELS[(uint8_t)memoryUsageType])
+LGFXScreenDashboardResumeEntityMemory::LGFXScreenDashboardResumeEntityMemory(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset, DASHBOARD_ITEM_TYPE memoryUsageType) : LGFXScreenDashboardResumeEntity(display, sourceData, width, height, xOffset, yOffset, DASHBOARD_ITEM_TYPE_LABEL[(uint8_t)memoryUsageType])
 {
     this->memoryUsageType = memoryUsageType;
     if (this->parentDisplay != nullptr)
@@ -64,7 +27,7 @@ bool LGFXScreenDashboardResumeEntityMemory::Refresh(bool force)
         uint64_t memUsageValue = 0;
         switch (this->memoryUsageType)
         {
-        case MEMORY_USAGE_TYPE_ACTIVE:
+        case DASHBOARD_ITEM_TYPE_MEM_ACTIVE:
             if (this->totalValue != data.total)
             {
                 this->totalValue = data.total;
@@ -75,7 +38,7 @@ bool LGFXScreenDashboardResumeEntityMemory::Refresh(bool force)
             }
             memUsageValue = data.active;
             break;
-        case MEMORY_USAGE_TYPE_AVAILABLE:
+        case DASHBOARD_ITEM_TYPE_MEM_AVAILABLE:
             if (this->totalValue != data.total)
             {
                 this->totalValue = data.total;
@@ -86,7 +49,7 @@ bool LGFXScreenDashboardResumeEntityMemory::Refresh(bool force)
             }
             memUsageValue = data.available;
             break;
-        case MEMORY_USAGE_TYPE_BUFFERED:
+        case DASHBOARD_ITEM_TYPE_MEM_BUFFERED:
             if (this->totalValue != data.total)
             {
                 this->totalValue = data.total;
@@ -97,7 +60,7 @@ bool LGFXScreenDashboardResumeEntityMemory::Refresh(bool force)
             }
             memUsageValue = data.buffered;
             break;
-        case MEMORY_USAGE_TYPE_CACHED:
+        case DASHBOARD_ITEM_TYPE_MEM_CACHED:
             if (this->totalValue != data.total)
             {
                 this->totalValue = data.total;
@@ -108,7 +71,7 @@ bool LGFXScreenDashboardResumeEntityMemory::Refresh(bool force)
             }
             memUsageValue = data.cached;
             break;
-        case MEMORY_USAGE_TYPE_DIRTY:
+        case DASHBOARD_ITEM_TYPE_MEM_DIRTY:
             if (this->totalValue != data.total)
             {
                 this->totalValue = data.total;
@@ -119,7 +82,7 @@ bool LGFXScreenDashboardResumeEntityMemory::Refresh(bool force)
             }
             memUsageValue = data.dirty;
             break;
-        case MEMORY_USAGE_TYPE_FREE:
+        case DASHBOARD_ITEM_TYPE_MEM_FREE:
             if (this->totalValue != data.total)
             {
                 this->totalValue = data.total;
@@ -130,7 +93,7 @@ bool LGFXScreenDashboardResumeEntityMemory::Refresh(bool force)
             }
             memUsageValue = data.free;
             break;
-        case MEMORY_USAGE_TYPE_INACTIVE:
+        case DASHBOARD_ITEM_TYPE_MEM_INACTIVE:
             if (this->totalValue != data.total)
             {
                 this->totalValue = data.total;
@@ -141,7 +104,7 @@ bool LGFXScreenDashboardResumeEntityMemory::Refresh(bool force)
             }
             memUsageValue = data.inactive;
             break;
-        case MEMORY_USAGE_TYPE_LAUNDRY:
+        case DASHBOARD_ITEM_TYPE_MEM_LAUNDRY:
             if (this->totalValue != data.total)
             {
                 this->totalValue = data.total;
@@ -152,7 +115,7 @@ bool LGFXScreenDashboardResumeEntityMemory::Refresh(bool force)
             }
             memUsageValue = data.laundry;
             break;
-        case MEMORY_USAGE_TYPE_MAPPED:
+        case DASHBOARD_ITEM_TYPE_MEM_MAPPED:
             if (this->totalValue != data.total)
             {
                 this->totalValue = data.total;
@@ -163,7 +126,7 @@ bool LGFXScreenDashboardResumeEntityMemory::Refresh(bool force)
             }
             memUsageValue = data.mapped;
             break;
-        case MEMORY_USAGE_TYPE_SHARED:
+        case DASHBOARD_ITEM_TYPE_MEM_SHARED:
             if (this->totalValue != data.total)
             {
                 this->totalValue = data.total;
@@ -174,7 +137,7 @@ bool LGFXScreenDashboardResumeEntityMemory::Refresh(bool force)
             }
             memUsageValue = data.shared;
             break;
-        case MEMORY_USAGE_TYPE_SWAP_CACHED:
+        case DASHBOARD_ITEM_TYPE_MEM_SWAP_CACHED:
             if (this->totalValue != data.swapTotal)
             {
                 this->totalValue = data.swapTotal;
@@ -185,7 +148,7 @@ bool LGFXScreenDashboardResumeEntityMemory::Refresh(bool force)
             }
             memUsageValue = data.swapCached;
             break;
-        case MEMORY_USAGE_TYPE_SWAP_FREE:
+        case DASHBOARD_ITEM_TYPE_MEM_SWAP_FREE:
             if (this->totalValue != data.swapTotal)
             {
                 this->totalValue = data.swapTotal;
@@ -196,7 +159,7 @@ bool LGFXScreenDashboardResumeEntityMemory::Refresh(bool force)
             }
             memUsageValue = data.swapFree;
             break;
-        case MEMORY_USAGE_TYPE_USED:
+        case DASHBOARD_ITEM_TYPE_MEM_USED:
             if (this->totalValue != data.total)
             {
                 this->totalValue = data.total;
@@ -208,6 +171,8 @@ bool LGFXScreenDashboardResumeEntityMemory::Refresh(bool force)
             memUsageValue = data.used;
             break;
         default:
+            // invalid mem type
+            return (false);
             break;
         }
         uint8_t mapped100 = this->MapUint64ValueFrom0To100(memUsageValue, 0, data.total);

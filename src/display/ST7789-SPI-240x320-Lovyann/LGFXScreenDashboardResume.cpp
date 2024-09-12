@@ -48,14 +48,14 @@ LGFXScreenDashboardResume::LGFXScreenDashboardResume(LovyanGFX *display, SourceD
             {
             case DASHBOARD_ITEM_TYPE_CPU_LOAD:
             default:
-                this->block1 = new LGFXScreenDashboardResumeEntityCPU(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 0, CPU_USAGE_TYPE_LOAD);
+                this->block1 = new LGFXScreenDashboardResumeEntityCPU(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 0, DASHBOARD_ITEM_TYPE_CPU_LOAD);
                 break;
             }
             switch (items[1])
             {
             case DASHBOARD_ITEM_TYPE_MEM_USED:
             default:
-                this->block2 = new LGFXScreenDashboardResumeEntityMemory(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 1, MEMORY_USAGE_TYPE_USED);
+                this->block2 = new LGFXScreenDashboardResumeEntityMemory(display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * 1, DASHBOARD_ITEM_TYPE_MEM_USED);
                 break;
             }
             switch (items[2])
@@ -203,8 +203,8 @@ bool LGFXScreenDashboardResume::Refresh(bool force)
             bool r1 = this->block1->Refresh(false);
             bool r2 = this->block2->Refresh(false);
             bool r3 = this->block3->Refresh(false);
-            // bool r4 = this->block4->Refresh(false);
-            // bool r5 = this->block5->Refresh(false);
+            //  bool r4 = this->block4->Refresh(false);
+            //  bool r5 = this->block5->Refresh(false);
             refreshed = r1 || r2 || r3; // || r4 || r5;
         }
         return (this->RefreshBottomCommonData(force) || refreshed);
