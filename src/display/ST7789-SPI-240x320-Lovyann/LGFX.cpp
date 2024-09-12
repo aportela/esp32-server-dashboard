@@ -1,8 +1,6 @@
 #include "LGFX.hpp"
 #include "LGFXScreenInfo.hpp"
 #include "LGFXScreenDashboardResume.hpp"
-#include "LGFXScreenCPUDetails.hpp"
-#include "LGFXScreenMemoryDetails.hpp"
 #include "../../sources/dummy/DummySource.hpp"
 #include "../../utils/Format.hpp"
 #include "../../utils/FPS.hpp"
