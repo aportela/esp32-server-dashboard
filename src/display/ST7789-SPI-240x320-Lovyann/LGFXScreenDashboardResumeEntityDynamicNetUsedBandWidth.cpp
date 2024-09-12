@@ -9,7 +9,7 @@ LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth::LGFXScreenDashboardResum
 {
     if (this->parentDisplay != nullptr)
     {
-        this->PrintLimits("0B", "0001KB");
+        this->PrintLimits("0B/s", "1KB/s");
         this->RefreshStrValue("0000 B/s", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
     }
     this->dynamicScaleValuesFIFO = new Uint64TFIFO(width);
@@ -59,7 +59,7 @@ bool LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth::Refresh(bool force)
         if (changeScaleRequired)
         {
             char currentStrScale[sizeof(this->oldStrValue)] = {'\0'};
-            Format::ParseBytesToHumanString(this->byteScales[this->currentByteScale], currentStrScale, sizeof(currentStrScale), true, true, false);
+            Format::ParseBytesToHumanString(this->byteScales[this->currentByteScale], currentStrScale, sizeof(currentStrScale), false, true, true, KILO_BYTE_DIVISOR_1000);
             strcat(currentStrScale, " ");
             this->PrintLimits("0B", currentStrScale);
             this->ClearSprite();
@@ -74,7 +74,7 @@ bool LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth::Refresh(bool force)
                 if (i == this->dynamicScaleValuesFIFO->GetCount() - 1 && (this->dynamicScaleValuesFIFO->GetValueAt(index) != this->value) || force)
                 {
                     char strValue[sizeof(this->oldStrValue)] = {'\0'};
-                    Format::ParseBytesToHumanString(this->dynamicScaleValuesFIFO->GetValueAt(index), strValue, sizeof(strValue), true, true, true);
+                    Format::ParseBytesToHumanString(this->dynamicScaleValuesFIFO->GetValueAt(index), strValue, sizeof(strValue), true, true, true, KILO_BYTE_DIVISOR_1000);
                     strcat(strValue, "  ");
                     this->RefreshStrValue(strValue, currentGradientColor, LGFX_SCR_DRE_FONT_BG_COLOR);
                     this->value = this->dynamicScaleValuesFIFO->GetValueAt(index);
@@ -94,7 +94,7 @@ bool LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth::Refresh(bool force)
             if (currentValue != this->value || force)
             {
                 char strValue[sizeof(this->oldStrValue)] = {'\0'};
-                Format::ParseBytesToHumanString(currentValue, strValue, sizeof(strValue), true, true, true);
+                Format::ParseBytesToHumanString(currentValue, strValue, sizeof(strValue), true, true, true, KILO_BYTE_DIVISOR_1000);
                 strcat(strValue, "  ");
                 if (strcmp(strValue, this->oldStrValue) != 0 || force)
                 {

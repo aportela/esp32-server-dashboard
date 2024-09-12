@@ -11,6 +11,9 @@ enum NetBandwidthType
 
 class LGFXScreenDashboardResumeEntityNetUsedBandWidth : public LGFXScreenDashboardResumeEntity
 {
+private:
+    SourceDataQueueNetworkingLimitsValue networkLimits;
+
 protected:
     uint64_t timestamp = 0;
     uint64_t value = 0;

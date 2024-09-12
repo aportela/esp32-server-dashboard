@@ -144,44 +144,42 @@ uint64_t MQTTTelegrafSource::GetPayloadTimestamp(const char *payload)
 
 void MQTTTelegrafSource::GetPayloadTokens(const char *payload, char *buffer, size_t bufferSize)
 {
-    const char *lastSpace = nullptr;        // Posición del último espacio real encontrado
-    const char *penultimateSpace = nullptr; // Posición del penúltimo espacio real encontrado
+    const char *lastSpace = nullptr;        // last real whitespace position pointer
+    const char *penultimateSpace = nullptr; // penultimate real whitespace position pointer
     bool escape = false;
 
-    // Recorrer la cadena de entrada
+    // foreach input string chars
     for (const char *p = payload; *p != '\0'; ++p)
     {
         if (*p == '\\' && !escape)
         {
-            // Detectamos una barra invertida, activar bandera de escape
+            // invert slash found => enable escape flag
             escape = true;
         }
         else
         {
             if (*p == ' ' && !escape)
             {
-                // Encontramos un espacio real (no escapado)
-                penultimateSpace = lastSpace; // Actualizar el penúltimo espacio encontrado
-                lastSpace = p;                // Actualizar el último espacio encontrado
+                // real whitespace found (not escaped)
+                penultimateSpace = lastSpace; // update penultimate real whitespace position pointer
+                lastSpace = p;                // update last real whitespace position pointer
             }
             else
             {
-                escape = false; // Resetear bandera de escape después de cualquier otro carácter
+                escape = false; // reset escape flag with another chars
             }
         }
     }
 
-    // Determinar la posición de inicio del penúltimo token
     const char *penultimateTokenStart = (penultimateSpace != nullptr) ? penultimateSpace + 1 : payload;
     const char *penultimateTokenEnd = (lastSpace != nullptr) ? lastSpace : payload + strlen(payload);
 
-    // Copiar el penúltimo token en el buffer proporcionado
     if (bufferSize > 0)
     {
         size_t tokenLength = penultimateTokenEnd - penultimateTokenStart;
         size_t copyLength = (tokenLength < bufferSize - 1) ? tokenLength : bufferSize - 1;
         strncpy(buffer, penultimateTokenStart, copyLength);
-        buffer[copyLength] = '\0'; // Asegurar que el buffer esté terminado en nulo
+        buffer[copyLength] = '\0';
     }
 }
 

@@ -6,6 +6,7 @@
 #include "LGFXScreen.hpp"
 #include "../ScreenType.hpp"
 #include "../../sources/SourceData.hpp"
+#include "../DashboardItemType.hpp"
 
 class LGFX : public lgfx::LGFX_Device
 {
@@ -19,12 +20,18 @@ private:
 
     LGFXScreen *currentScreen = nullptr;
 
+    uint8_t dashboardCount = 0;
+    uint8_t dashboardsItems[MAX_DASHBOARDS][DASHBOARD_ITEM_COUNT] = {0};
+    uint8_t currentDashboardIndex = 0;
+
     void DeleteCurrentScreen(void);
 
 public:
     LGFX(uint8_t PIN_SDA, uint8_t PIN_SCL, uint8_t PIN_CS, uint8_t PIN_DC, uint8_t PIN_RST, uint16_t width, uint16_t height, uint8_t rotation);
     ~LGFX();
     void SetSourceData(SourceData *src);
+    bool setDashboardCount(uint8_t count);
+    bool SetDashboardItems(uint8_t index, const DASHBOARD_ITEM_TYPE items[DASHBOARD_ITEM_COUNT]);
     void InitScreen(SCREEN_TYPE scr);
     SCREEN_TYPE GetCurrentScreenType(void);
     bool FlipToScreen(SCREEN_TYPE scr);

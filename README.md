@@ -156,6 +156,8 @@ sysctl hw.acpi.thermal.tz0.temperature | sed 's/hw\.acpi\.thermal\.tz0\.temperat
 
 Configuration is done via serial sending string commands. Any serial terminal software like putty or Arduino IDE serial monitor console can be used
 
+NOTE: "clear commands" **require whitespace** (separator without value) at end, ex: clear wifi password => "SET_WIFI_PASSWORD "
+
 | Command                         | Param      | Description                              | Example                                                  |
 | ------------------------------- | ---------- | ---------------------------------------- | -------------------------------------------------------- |
 | REBOOT                          |            | Reboot device                            | **REBOOT**                                               |
@@ -176,10 +178,10 @@ Configuration is done via serial sending string commands. Any serial terminal so
 | SET_MQTT_TELEGRAF_GLOBAL_TOPIC  | <topic>    | Save MQTT topic                          | **SET_MQTT_TELEGRAF_GLOBAL_TOPIC telegraf/myhostname/#** |
 |                                 |            | Clear MQTT topic                         | **SET_MQTT_TELEGRAF_GLOBAL_TOPIC**                       |
 | TOGGLE_SCREEN                   |            | Change screen (info/dashboard)           | **TOGGLE_SCREEN**                                        |
-| SET_MAX_DOWNLOAD_BYTES_BANDWITH | <bytes>    | Save net download graph fixed max scale  | **SET_MAX_DOWNLOAD_BYTES_BANDWITH 10737418240**          |
-|                                 |            | Clear net download graph fixed max scale | **SET_MAX_DOWNLOAD_BYTES_BANDWITH**                      |
-| SET_MAX_UPLOAD_BYTES_BANDWITH   | <bytes>    | Save net upload graph fixed max scale    | **SET_MAX_UPLOAD_BYTES_BANDWITH 10737418240**            |
-|                                 |            | Clear net upload graph fixed max scale   | **SET_MAX_UPLOAD_BYTES_BANDWITH**                        |
+| SET_MAX_DOWNLOAD_BITS_BANDWITH  | <bits>     | Save net download graph fixed max scale  | **SET_MAX_DOWNLOAD_BITS_BANDWITH 1000000000**            |
+|                                 |            | Clear net download graph fixed max scale | **SET_MAX_DOWNLOAD_BITS_BANDWITH**                       |
+| SET_MAX_UPLOAD_BITS_BANDWITH    | <bits>     | Save net upload graph fixed max scale    | **SET_MAX_UPLOAD_BITS_BANDWITH 1000000000**              |
+|                                 |            | Clear net upload graph fixed max scale   | **SET_MAX_UPLOAD_BITS_BANDWITH**                         |
 | SET_NETWORK_INTERFACE_ID        | <iface>    | Save network interface id                | **SET_NETWORK_INTERFACE_ID enp1s0**                      |
 |                                 |            | Clear network interface id               | **SET_NETWORK_INTERFACE_ID**                             |
 | SET_HOSTNAME                    | <hostname> | Save hostname                            | **SET_HOSTNAME myhostname**                              |

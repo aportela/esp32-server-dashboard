@@ -4,22 +4,7 @@
 
 using namespace aportela::microcontroller::utils;
 
-const char *CPU_LABELS[]{
-    "CPU LOAD",
-    "CPU USER",
-    "CPU SYSTEM",
-    "CPU IDLE",
-    "CPU ACTIVE",
-    "CPU NICE",
-    "CPU IOWAIT",
-    "CPU IRQ",
-    "CPU SOFT IRQ",
-    "CPU STEAL",
-    "CPU GUEST",
-    "CPU GUEST NICE",
-};
-
-LGFXScreenDashboardResumeEntityCPU::LGFXScreenDashboardResumeEntityCPU(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset, CPU_USAGE_TYPE cpuUsageType) : LGFXScreenDashboardResumeEntity(display, sourceData, width, height, xOffset, yOffset, CPU_LABELS[(uint8_t)cpuUsageType])
+LGFXScreenDashboardResumeEntityCPU::LGFXScreenDashboardResumeEntityCPU(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset, DASHBOARD_ITEM_TYPE cpuUsageType) : LGFXScreenDashboardResumeEntity(display, sourceData, width, height, xOffset, yOffset, DASHBOARD_ITEM_TYPE_LABEL[cpuUsageType])
 {
     this->cpuUsageType = cpuUsageType;
     if (this->parentDisplay != nullptr)
@@ -47,41 +32,45 @@ bool LGFXScreenDashboardResumeEntityCPU::Refresh(bool force)
         float cpuUsageValue = 0.0f;
         switch (this->cpuUsageType)
         {
-        case CPU_USAGE_TYPE_LOAD:
+        case DASHBOARD_ITEM_TYPE_CPU_LOAD:
             cpuUsageValue = data.usageIdle <= 100.0f ? 100.0f - data.usageIdle : 0.0f;
             break;
-        case CPU_USAGE_TYPE_USER:
+        case DASHBOARD_ITEM_TYPE_CPU_USER:
             cpuUsageValue = data.usageUser;
             break;
-        case CPU_USAGE_TYPE_SYSTEM:
+        case DASHBOARD_ITEM_TYPE_CPU_SYSTEM:
             cpuUsageValue = data.usageSystem;
             break;
-        case CPU_USAGE_TYPE_IDLE:
+        case DASHBOARD_ITEM_TYPE_CPU_IDLE:
             cpuUsageValue = data.usageIdle;
             break;
-        case CPU_USAGE_TYPE_ACTIVE:
+        case DASHBOARD_ITEM_TYPE_CPU_ACTIVE:
             cpuUsageValue = data.usageActive;
             break;
-        case CPU_USAGE_TYPE_NICE:
+        case DASHBOARD_ITEM_TYPE_CPU_NICE:
             cpuUsageValue = data.usageNice;
             break;
-        case CPU_USAGE_TYPE_IOWAIT:
+        case DASHBOARD_ITEM_TYPE_CPU_IOWAIT:
             cpuUsageValue = data.usageIOWait;
             break;
-        case CPU_USAGE_TYPE_IRQ:
+        case DASHBOARD_ITEM_TYPE_CPU_IRQ:
             cpuUsageValue = data.usageIRQ;
             break;
-        case CPU_USAGE_TYPE_SOFT_IRQ:
+        case DASHBOARD_ITEM_TYPE_CPU_SOFT_IRQ:
             cpuUsageValue = data.usageSoftIRQ;
             break;
-        case CPU_USAGE_TYPE_STEAL:
+        case DASHBOARD_ITEM_TYPE_CPU_STEAL:
             cpuUsageValue = data.usageSteal;
             break;
-        case CPU_USAGE_TYPE_GUEST:
+        case DASHBOARD_ITEM_TYPE_CPU_GUEST:
             cpuUsageValue = data.usageGuest;
             break;
-        case CPU_USAGE_TYPE_GUEST_NICE:
+        case DASHBOARD_ITEM_TYPE_CPU_GUEST_NICE:
             cpuUsageValue = data.usageGuestNice;
+            break;
+        default:
+            // invalid cpu usage type
+            return (false);
             break;
         }
         this->timestamp = data.timestamp;

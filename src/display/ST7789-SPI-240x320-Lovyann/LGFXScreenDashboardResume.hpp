@@ -8,15 +8,12 @@
 #include "LGFXScreenDashboardResumeEntityNetUsedBandWidth.hpp"
 #include "LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth.hpp"
 #include "../../sources/SourceData.hpp"
+#include "../DashboardItemType.hpp"
 
 class LGFXScreenDashboardResume : public LGFXScreen
 {
 private:
-    LGFXScreenDashboardResumeEntityCPU *cpuLoadBlock = nullptr;
-    LGFXScreenDashboardResumeEntityMemory *usedMemoryBlock = nullptr;
-    LGFXScreenDashboardResumeEntityCPUTemperature *cpuTemperatureBlock = nullptr;
-    LGFXScreenDashboardResumeEntityNetUsedBandWidth *networkDownloadBandwidthBlock = nullptr;
-    LGFXScreenDashboardResumeEntityNetUsedBandWidth *networkUploadBandwidthBlock = nullptr;
+    LGFXScreenDashboardResumeEntity *blocks[DASHBOARD_ITEM_COUNT] = {nullptr};
 
     SourceData *currentSourceData;
 
@@ -29,9 +26,10 @@ private:
 
     bool RefreshBottomCommonData(bool forceDrawAll);
     uint16_t uptimeValueXOffset = 0;
+    uint8_t dashboardIndex = 0;
 
 public:
-    LGFXScreenDashboardResume(LovyanGFX *display, SourceData *sourceData);
+    LGFXScreenDashboardResume(LovyanGFX *display, SourceData *sourceData, const uint8_t dashboardIndex = 0, const DASHBOARD_ITEM_TYPE items[DASHBOARD_ITEM_COUNT] = {0});
     ~LGFXScreenDashboardResume();
     bool Refresh(bool force = false) override;
 };

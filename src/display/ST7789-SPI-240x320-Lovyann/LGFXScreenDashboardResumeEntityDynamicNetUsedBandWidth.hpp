@@ -11,31 +11,31 @@ class LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth : public LGFXScreen
 private:
     char oldStrValue[24] = {'\0'};
     const uint64_t byteScales[25] = {
-        1024,        // 1 Kbyte
-        2048,        // 2 Kbytes
-        4096,        // 4 Kbtes
-        8192,        // 8 Kbytes
-        16384,       // 16 Kbytes
-        32768,       // 32 Kbytes
-        65536,       // 64 Kbytes
-        131072,      // 128 Kbytes
-        262144,      // 256 Kbytes
-        524288,      // 512 Kbytes
-        1048576,     // 1 Mbyte
-        2097152,     // 2 Mbytes
+        1024,        // 1 KByte
+        2048,        // 2 KBytes
+        4096,        // 4 KBtes
+        8192,        // 8 KBytes
+        16384,       // 16 KBytes
+        32768,       // 32 KBytes
+        65536,       // 64 KBytes
+        131072,      // 128 KBytes
+        262144,      // 256 KBytes
+        524288,      // 512 KBytes
+        1048576,     // 1 MByte
+        2097152,     // 2 MBytes
         5242880,     // 5 MBytes
-        10485760,    // 10 Mbytes
-        20971520,    // 25 Mbytes
-        52428800,    // 50 Mbytes
-        104857600,   // 100 Mbytes
-        209715200,   // 200 Mbytes
-        524288000,   // 500 Mbytes
-        1048576000,  // 1 Gbyte
-        2097152000,  // 2 Gbytes
-        5242880000,  // 5 Gbytes
-        10485760000, // 10 Gbytes
-        26214400000, // 25 Gbytes
-        52428800000, // 50 Gbytes
+        10485760,    // 10 MBytes
+        20971520,    // 25 MBytes
+        52428800,    // 50 MBytes
+        104857600,   // 100 MBytes
+        209715200,   // 200 MBytes
+        524288000,   // 500 MBytes
+        1048576000,  // 1 GByte
+        2097152000,  // 2 GBytes
+        5242880000,  // 5 GBytes
+        10485760000, // 10 GBytes
+        26214400000, // 25 GBytes
+        52428800000, // 50 GBytes
     };
     uint8_t currentByteScale = 0;
     Uint64TFIFO *dynamicScaleValuesFIFO = nullptr;

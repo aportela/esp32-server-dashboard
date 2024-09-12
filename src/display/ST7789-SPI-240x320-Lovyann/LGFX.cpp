@@ -1,12 +1,9 @@
 #include "LGFX.hpp"
 #include "LGFXScreenInfo.hpp"
 #include "LGFXScreenDashboardResume.hpp"
-#include "LGFXScreenCPUDetails.hpp"
-#include "LGFXScreenMemoryDetails.hpp"
 #include "../../sources/dummy/DummySource.hpp"
 #include "../../utils/Format.hpp"
 #include "../../utils/FPS.hpp"
-
 #include "../SizesAndOffsets-320x240.hpp"
 
 LGFX::LGFX(uint8_t PIN_SDA, uint8_t PIN_SCL, uint8_t PIN_CS, uint8_t PIN_DC, uint8_t PIN_RST, uint16_t width, uint16_t height, uint8_t rotation)
@@ -67,6 +64,35 @@ void LGFX::SetSourceData(SourceData *src)
     this->sourceData = src;
 }
 
+bool LGFX::setDashboardCount(uint8_t count)
+{
+    if (count <= MAX_DASHBOARDS)
+    {
+        this->dashboardCount = count;
+        return (true);
+    }
+    else
+    {
+        return (false);
+    }
+}
+
+bool LGFX::SetDashboardItems(uint8_t index, const DASHBOARD_ITEM_TYPE items[DASHBOARD_ITEM_COUNT])
+{
+    if (index < this->dashboardCount)
+    {
+        for (int i = 0; i < DASHBOARD_ITEM_COUNT; i++)
+        {
+            this->dashboardsItems[index][i] = items[i];
+        }
+        return (true);
+    }
+    else
+    {
+        return (false);
+    }
+}
+
 void LGFX::InitScreen(SCREEN_TYPE screenType)
 {
     switch (screenType)
@@ -81,21 +107,13 @@ void LGFX::InitScreen(SCREEN_TYPE screenType)
     case SCREEN_TYPE_DASHBOARD_REALTIME_GRAPHS:
         if (this->currentScreen == nullptr)
         {
-            this->currentScreen = new LGFXScreenDashboardResume(this, this->sourceData);
-        }
-        this->currentScreenType = screenType;
-        break;
-    case SCREEN_TYPE_CPU_DETAILS:
-        if (this->currentScreen == nullptr)
-        {
-            this->currentScreen = new LGFXScreenCPUDetails(this, this->sourceData);
-        }
-        this->currentScreenType = screenType;
-        break;
-    case SCREEN_TYPE_MEMORY_DETAILS:
-        if (this->currentScreen == nullptr)
-        {
-            this->currentScreen = new LGFXScreenMemoryDetails(this, this->sourceData);
+            DASHBOARD_ITEM_TYPE items[DASHBOARD_ITEM_COUNT] = {
+                (DASHBOARD_ITEM_TYPE)this->dashboardsItems[this->currentDashboardIndex][0],
+                (DASHBOARD_ITEM_TYPE)this->dashboardsItems[this->currentDashboardIndex][1],
+                (DASHBOARD_ITEM_TYPE)this->dashboardsItems[this->currentDashboardIndex][2],
+                (DASHBOARD_ITEM_TYPE)this->dashboardsItems[this->currentDashboardIndex][3],
+                (DASHBOARD_ITEM_TYPE)this->dashboardsItems[this->currentDashboardIndex][4]};
+            this->currentScreen = new LGFXScreenDashboardResume(this, this->sourceData, this->currentDashboardIndex, items);
         }
         this->currentScreenType = screenType;
         break;
@@ -128,7 +146,24 @@ bool LGFX::FlipToScreen(SCREEN_TYPE screenType)
     if (screenType != this->currentScreenType)
     {
         this->DeleteCurrentScreen();
+        this->currentDashboardIndex = 0;
         this->InitScreen(screenType);
+        return (true);
+    }
+    else if (screenType == SCREEN_TYPE_DASHBOARD_REALTIME_GRAPHS)
+    {
+        this->DeleteCurrentScreen();
+        if (this->currentDashboardIndex < this->dashboardCount - 1)
+        {
+            // toggle between available dashboards
+            this->currentDashboardIndex++;
+            this->InitScreen(screenType);
+        }
+        else
+        {
+            // if current dashboard is last, return to info screen
+            this->InitScreen(SCREEN_TYPE_INFO);
+        }
         return (true);
     }
     else
@@ -146,13 +181,14 @@ bool LGFX::ToggleScreen(void)
         success = this->FlipToScreen(SCREEN_TYPE_DASHBOARD_REALTIME_GRAPHS);
         break;
     case SCREEN_TYPE_DASHBOARD_REALTIME_GRAPHS:
-        success = this->FlipToScreen(SCREEN_TYPE_CPU_DETAILS);
-        break;
-    case SCREEN_TYPE_CPU_DETAILS:
-        success = this->FlipToScreen(SCREEN_TYPE_MEMORY_DETAILS);
-        break;
-    case SCREEN_TYPE_MEMORY_DETAILS:
-        success = this->FlipToScreen(SCREEN_TYPE_INFO);
+        if (this->currentDashboardIndex < this->dashboardCount)
+        {
+            success = this->FlipToScreen(SCREEN_TYPE_DASHBOARD_REALTIME_GRAPHS);
+        }
+        else
+        {
+            success = this->FlipToScreen(SCREEN_TYPE_INFO);
+        }
         break;
     }
     return (success);

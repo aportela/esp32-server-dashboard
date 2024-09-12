@@ -57,6 +57,8 @@ bool screenMirrorFlipVertical = false;
 #include "src/utils/Format.hpp"
 #include "src/utils/FPS.hpp"
 #include "src/sources/SourceData.hpp"
+#include "src/display/DashboardItemType.hpp"
+
 #ifdef SOURCE_DUMMY
 #define SOURCE_DUMMY_UPDATES_EVERY_MS 0 // random data will be refreshed (on method refresh call) every nn milliseconds (0 = no delay)
 #include "src/sources/dummy/DummySource.hpp"
@@ -91,12 +93,13 @@ const char *CUSTOM_SERIAL_COMMANDS[]{
     "SET_MQTT_PASSWORD ",
     "SET_MQTT_TELEGRAF_GLOBAL_TOPIC ",
     "TOGGLE_SCREEN",
-    "SET_MAX_DOWNLOAD_BYTES_BANDWITH ",
-    "SET_MAX_UPLOAD_BYTES_BANDWITH ",
+    "SET_MAX_DOWNLOAD_BITS_BANDWITH ",
+    "SET_MAX_UPLOAD_BITS_BANDWITH ",
     "SET_NETWORK_INTERFACE_ID ",
     "SET_HOSTNAME ",
     "SET_SCREEN_MIRROR_FLIP_VERTICAL ",
     "SET_DEFAULT_SCREEN ",
+    "SET_DASHBOARD_BLOCKS ",
 };
 
 // this is not required, but make it more "friendly" eval callback uint_8 command index responses
@@ -115,12 +118,13 @@ enum CUSTOM_SERIAL_COMMAND_INDEX
     CUSTOM_SERIAL_COMMAND_INDEX_SET_MQTT_PASSWORD = 9,
     CUSTOM_SERIAL_COMMAND_INDEX_SET_MQTT_TELEGRAF_GLOBAL_TOPIC = 10,
     CUSTOM_SERIAL_COMMAND_INDEX_TOGGLE_SCREEN = 11,
-    CUSTOM_SERIAL_COMMAND_INDEX_SET_MAX_DOWNLOAD_BYTES_BANDWITH = 12,
-    CUSTOM_SERIAL_COMMAND_INDEX_SET_MAX_UPLOAD_BYTES_BANDWITH = 13,
+    CUSTOM_SERIAL_COMMAND_INDEX_SET_MAX_DOWNLOAD_BITS_BANDWITH = 12,
+    CUSTOM_SERIAL_COMMAND_INDEX_SET_MAX_UPLOAD_BITS_BANDWITH = 13,
     CUSTOM_SERIAL_COMMAND_INDEX_SET_NETWORK_INTERFACE_ID = 14,
     CUSTOM_SERIAL_COMMAND_INDEX_SET_HOSTNAME = 15,
     CUSTOM_SERIAL_COMMAND_INDEX_SET_SCREEN_MIRROR_FLIP_VERTICAL = 16,
     CUSTOM_SERIAL_COMMAND_INDEX_SET_DEFAULT_SCREEN = 17,
+    CUSTOM_SERIAL_COMMAND_INDEX_SET_DASHBOARD_BLOCKS = 18
 };
 
 #define CUSTOM_SERIAL_COMMAND_COUNT (sizeof(CUSTOM_SERIAL_COMMANDS) / sizeof(CUSTOM_SERIAL_COMMANDS[0]))
@@ -223,13 +227,13 @@ void onReceivedSerialCommand(int8_t commandIndex, const char *value)
         tmpUint64 = settings->GetMaxDownloadBandwidthBytes();
         if (tmpUint64 > 0)
         {
-            Serial.print(CUSTOM_SERIAL_COMMANDS[CUSTOM_SERIAL_COMMAND_INDEX_SET_MAX_DOWNLOAD_BYTES_BANDWITH]);
+            Serial.print(CUSTOM_SERIAL_COMMANDS[CUSTOM_SERIAL_COMMAND_INDEX_SET_MAX_DOWNLOAD_BITS_BANDWITH]);
             Serial.println(tmpUint64);
         }
         tmpUint64 = settings->GetMaxUploadBandwidthBytes();
         if (tmpUint64 > 0)
         {
-            Serial.print(CUSTOM_SERIAL_COMMANDS[CUSTOM_SERIAL_COMMAND_INDEX_SET_MAX_UPLOAD_BYTES_BANDWITH]);
+            Serial.print(CUSTOM_SERIAL_COMMANDS[CUSTOM_SERIAL_COMMAND_INDEX_SET_MAX_UPLOAD_BITS_BANDWITH]);
             Serial.println(tmpUint64);
         }
         settings->GetNetworkInterfaceId(str, sizeof(str));
@@ -254,6 +258,19 @@ void onReceivedSerialCommand(int8_t commandIndex, const char *value)
         {
             Serial.print(CUSTOM_SERIAL_COMMANDS[CUSTOM_SERIAL_COMMAND_INDEX_SET_SCREEN_MIRROR_FLIP_VERTICAL]);
             Serial.println("true");
+        }
+        for (uint8_t dashboardIndex = 1; dashboardIndex <= MAX_DASHBOARDS; dashboardIndex++)
+        {
+            DASHBOARD_ITEM_TYPE items[DASHBOARD_ITEM_COUNT];
+            if (settings->getDashboardBlocks(dashboardIndex, items))
+            {
+                Serial.print(CUSTOM_SERIAL_COMMANDS[CUSTOM_SERIAL_COMMAND_INDEX_SET_DASHBOARD_BLOCKS]);
+                Serial.printf("%u %u,%u,%u,%u,%u\n", dashboardIndex, items[0], items[1], items[2], items[3], items[4]);
+            }
+            else
+            {
+                break;
+            }
         }
         Serial.println("REBOOT");
         Serial.println("# EXPORTED SETTINGS END");
@@ -428,7 +445,7 @@ void onReceivedSerialCommand(int8_t commandIndex, const char *value)
             screen->ToggleScreen();
         }
         break;
-    case CUSTOM_SERIAL_COMMAND_INDEX_SET_MAX_DOWNLOAD_BYTES_BANDWITH:
+    case CUSTOM_SERIAL_COMMAND_INDEX_SET_MAX_DOWNLOAD_BITS_BANDWITH:
         if (value && strlen(value))
         {
             Serial.printf("Serial command received: set max download bandwidth bytes (%s)\n", value);
@@ -454,7 +471,7 @@ void onReceivedSerialCommand(int8_t commandIndex, const char *value)
             }
         }
         break;
-    case CUSTOM_SERIAL_COMMAND_INDEX_SET_MAX_UPLOAD_BYTES_BANDWITH:
+    case CUSTOM_SERIAL_COMMAND_INDEX_SET_MAX_UPLOAD_BITS_BANDWITH:
         if (value && strlen(value))
         {
             Serial.printf("Serial command received: set max upload bandwidth bytes (%s)\n", value);
@@ -591,6 +608,58 @@ void onReceivedSerialCommand(int8_t commandIndex, const char *value)
             }
         }
         break;
+    case CUSTOM_SERIAL_COMMAND_INDEX_SET_DASHBOARD_BLOCKS:
+        if (value && strlen(value))
+        {
+            Serial.printf("Serial command received: set dashboard blocks (%s)\n", value);
+            uint8_t tmpItems[DASHBOARD_ITEM_COUNT] = {0};
+            uint8_t dashboardIndex = 1;
+#if DASHBOARD_ITEM_COUNT != 5
+#error TODO: this block only works with arrays that have same length as DASHBOARD_ITEM_COUNT
+#endif
+            if (sscanf(value, "%u %u,%u,%u,%u,%u", &dashboardIndex, &tmpItems[0], &tmpItems[1], &tmpItems[2], &tmpItems[3], &tmpItems[4]) == 6)
+            {
+                const DASHBOARD_ITEM_TYPE items[DASHBOARD_ITEM_COUNT] = {
+                    (DASHBOARD_ITEM_TYPE)tmpItems[0],
+                    (DASHBOARD_ITEM_TYPE)tmpItems[1],
+                    (DASHBOARD_ITEM_TYPE)tmpItems[2],
+                    (DASHBOARD_ITEM_TYPE)tmpItems[3],
+                    (DASHBOARD_ITEM_TYPE)tmpItems[4]};
+                if (dashboardIndex > 0 && dashboardIndex <= MAX_DASHBOARDS)
+                {
+                    if (settings->setDashboardBlocks(dashboardIndex, items))
+                    {
+                        Serial.printf("Dashboard %u blocks saved. Reboot REQUIRED\n", dashboardIndex);
+                    }
+                    else
+                    {
+                        Serial.printf("Error saving dashboard %u blocks\n", dashboardIndex);
+                    }
+                }
+                else
+                {
+                    Serial.println("Error saving dashboard blocks (invalid dashboard index)");
+                }
+            }
+            else
+            {
+                Serial.println("Error saving dashboard blocks (invalid format, format required: dashboard_index block_value1,block_value2,block_value3,block_value4,block_value5)");
+            }
+        }
+        else
+        {
+            Serial.println("Serial command received: unset dashboard blocks");
+            const DASHBOARD_ITEM_TYPE items[DASHBOARD_ITEM_COUNT] = {DASHBOARD_ITEM_TYPE_NONE, DASHBOARD_ITEM_TYPE_NONE, DASHBOARD_ITEM_TYPE_NONE, DASHBOARD_ITEM_TYPE_NONE, DASHBOARD_ITEM_TYPE_NONE};
+            if (settings->setDashboardBlocks(0, items))
+            {
+                Serial.println("Default dashboard blocks removed. Reboot REQUIRED");
+            }
+            else
+            {
+                Serial.println("Error removing default dashboard blocks");
+            }
+        }
+        break;
     case CUSTOM_SERIAL_COMMAND_INDEX_UNKNOWN:
     default:
         Serial.println("Serial command received (UNKNOWN):");
@@ -633,6 +702,35 @@ void setup()
 #ifdef DISPLAY_DRIVER_LOVYANN_ST7789
     screen = new LGFX(PIN_SDA, PIN_SCL, PIN_CS, PIN_DC, PIN_RST, DISPLAY_DRIVER_LOVYANN_ST7789_WIDTH, DISPLAY_DRIVER_LOVYANN_ST7789_HEIGHT, !screenMirrorFlipVertical ? DISPLAY_DRIVER_LOVYANN_ST7789_ROTATION : DISPLAY_DRIVER_LOVYANN_ST7789_ROTATION_MIRROR_FLIP_VERTICAL);
     screen->SetSourceData(sourceData);
+
+    uint8_t totalDashboards = 1;
+    for (uint8_t dashboardIndex = 1; dashboardIndex <= MAX_DASHBOARDS; dashboardIndex++)
+    {
+        DASHBOARD_ITEM_TYPE items[DASHBOARD_ITEM_COUNT] = {DASHBOARD_ITEM_TYPE_NONE, DASHBOARD_ITEM_TYPE_NONE, DASHBOARD_ITEM_TYPE_NONE, DASHBOARD_ITEM_TYPE_NONE, DASHBOARD_ITEM_TYPE_NONE};
+        if (settings->getDashboardBlocks(dashboardIndex, items))
+        {
+            screen->setDashboardCount(totalDashboards);
+            screen->SetDashboardItems(dashboardIndex - 1, items);
+            totalDashboards++;
+        }
+        else if (dashboardIndex == 1)
+        {
+            // first dashboard error or not defined, set default & exit
+            screen->setDashboardCount(totalDashboards);
+            items[0] = DASHBOARD_ITEM_TYPE_CPU_LOAD;
+            items[1] = DASHBOARD_ITEM_TYPE_MEM_USED;
+            items[2] = DASHBOARD_ITEM_TYPE_CPU_TEMPERATURE;
+            items[3] = DASHBOARD_ITEM_TYPE_NETWORK_INTERFACE_DOWNLOAD_BANDWIDTH;
+            items[4] = DASHBOARD_ITEM_TYPE_NETWORK_INTERFACE_UPLOAD_BANDWIDTH;
+            screen->SetDashboardItems(dashboardIndex - 1, items);
+            break;
+        }
+        else
+        {
+            // other dashboard error or not defined, exit
+            break;
+        }
+    }
     screen->InitScreen(settings->GetDefaultScreen(SCREEN_TYPE_INFO));
 #endif // DISPLAY_DRIVER_LOVYANN_ST7789
     button = new Bounce2::Button();
