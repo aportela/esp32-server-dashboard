@@ -118,7 +118,7 @@ bool LGFXScreenDashboardResume::RefreshBottomCommonData(bool forceDrawAll)
         this->parentDisplay->setTextSize(SCREEN_BOTTOM_COMMON_TEXTDATA_FONT_SIZE);
         this->parentDisplay->setTextColor(SCREEN_BOTTOM_COMMON_TEXTDATA_COLOR, SCREEN_BOTTOM_COMMON_TEXTDATA_BG_COLOR);
         this->parentDisplay->setCursor(SCREEN_BOTTOM_COMMON_TEXTDATA_X_OFFSET, SCREEN_BOTTOM_COMMON_TEXTDATA_Y_OFFSET);
-        this->parentDisplay->printf("[%d] ", this->dashboardIndex);
+        this->parentDisplay->printf("[%d] ", this->dashboardIndex + 1);
 #ifdef DEBUG_FPS
 
         this->parentDisplay->print("FPS: ");
