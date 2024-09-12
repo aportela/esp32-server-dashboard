@@ -8,8 +8,7 @@ LGFXScreenDashboardResumeEntityNetUsedBandWidth::LGFXScreenDashboardResumeEntity
     if (this->parentDisplay != nullptr)
     {
         char maxStr[8] = {'\0'};
-        SourceDataQueueNetworkingLimitsValue networkLimits;
-        sourceData->GetNetworkLimits(networkLimits);
+        sourceData->GetNetworkLimits(this->networkLimits);
         Format::ParseBytesToHumanString(this->type == NET_BANDWIDTH_TYPE_DOWNLOAD ? networkLimits.byteDownloadLimit : networkLimits.byteUploadLimit, maxStr, sizeof(maxStr), false, true, false);
         this->PrintLimits("0B", maxStr);
         this->RefreshStrValue("0000 B/s", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
@@ -23,8 +22,6 @@ LGFXScreenDashboardResumeEntityNetUsedBandWidth::~LGFXScreenDashboardResumeEntit
 bool LGFXScreenDashboardResumeEntityNetUsedBandWidth::Refresh(bool force)
 {
     uint64_t currentTimestamp = 0;
-    SourceDataQueueNetworkingLimitsValue networkLimitsData;
-    this->sourceData->GetNetworkLimits(networkLimitsData);
     SourceDataQueueNetworkingValue networkData;
     this->sourceData->GetCurrentNetwork(networkData);
     if (networkData.timestamp != this->timestamp || force)
@@ -35,7 +32,7 @@ bool LGFXScreenDashboardResumeEntityNetUsedBandWidth::Refresh(bool force)
         this->previousBytesRecv = networkData.bytesRecv;
         this->previousBytesSent = networkData.bytesSent;
         this->timestamp = networkData.timestamp;
-        uint8_t mapped100 = this->type == NET_BANDWIDTH_TYPE_DOWNLOAD ? this->MapUint64ValueFrom0To100(currentValue, 0, networkLimitsData.byteDownloadLimit) : this->MapUint64ValueFrom0To100(currentValue, 0, networkLimitsData.byteUploadLimit);
+        uint8_t mapped100 = this->type == NET_BANDWIDTH_TYPE_DOWNLOAD ? this->MapUint64ValueFrom0To100(currentValue, 0, this->networkLimits.byteDownloadLimit) : this->MapUint64ValueFrom0To100(currentValue, 0, this->networkLimits.byteUploadLimit);
         uint16_t currentGradientColor = (mapped100 != this->previousMappedValue) ? this->GetGradientColorFrom0To100(mapped100) : this->previousGradientcolor;
         this->previousMappedValue = mapped100;
         this->previousGradientcolor = currentGradientColor;
