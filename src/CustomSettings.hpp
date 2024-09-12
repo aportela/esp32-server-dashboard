@@ -3,6 +3,7 @@
 
 #include "utils/Settings.hpp"
 #include "src/display/ScreenType.hpp"
+#include "src/display/DashboardItemType.hpp"
 
 using namespace aportela::microcontroller::utils;
 
@@ -44,6 +45,9 @@ public:
 
     SCREEN_TYPE GetDefaultScreen(SCREEN_TYPE defaultScreen = SCREEN_TYPE_NONE);
     bool SetDefaultScreen(SCREEN_TYPE defaultScreen);
+
+    bool getDashboardBlocks(uint8_t index, DASHBOARD_ITEM_TYPE items[DASHBOARD_ITEM_COUNT]);
+    bool setDashboardBlocks(uint8_t index, const DASHBOARD_ITEM_TYPE items[DASHBOARD_ITEM_COUNT]);
 };
 
 #endif // ESP32_SERVER_DASHBOARD_CUSTOM_SETTINGS_H

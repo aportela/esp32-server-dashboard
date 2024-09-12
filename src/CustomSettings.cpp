@@ -15,7 +15,8 @@
 #define KEY_NET_IFACE_ID "NET_IFACE_ID"
 #define KEY_HOSTNAME "HOSTNAME"
 #define KEY_SCREEN_MIRROR_FLIP_VERTICAL "SCREEN_MIRROR"
-#define DEFAULT_SCREEN "DEFAULT_SCREEN"
+#define KEY_DEFAULT_SCREEN "DEFAULT_SCREEN"
+#define KEY_DASHBOARD_BLOCKS "DBOARD%02u_BLCKS"
 
 CustomSettings::CustomSettings() : Settings(NAMESPACE)
 {
@@ -214,17 +215,77 @@ bool CustomSettings::SetScreenMirrorFlipVertical(bool mirrorFlipVertical)
 
 SCREEN_TYPE CustomSettings::GetDefaultScreen(SCREEN_TYPE defaultScreen)
 {
-    return ((enum SCREEN_TYPE)this->GetSmallUnsignedIntegerValue(DEFAULT_SCREEN, (uint8_t)defaultScreen));
+    return ((enum SCREEN_TYPE)this->GetSmallUnsignedIntegerValue(KEY_DEFAULT_SCREEN, (uint8_t)defaultScreen));
 }
 
 bool CustomSettings::SetDefaultScreen(SCREEN_TYPE defaultScreen)
 {
     if (defaultScreen != SCREEN_TYPE_NONE)
     {
-        return (this->SetSmallUnsignedIntegerValue(DEFAULT_SCREEN, (uint8_t)defaultScreen));
+        return (this->SetSmallUnsignedIntegerValue(KEY_DEFAULT_SCREEN, (uint8_t)defaultScreen));
     }
     else
     {
-        return (this->DeleteKey(DEFAULT_SCREEN));
+        return (this->DeleteKey(KEY_DEFAULT_SCREEN));
+    }
+}
+
+bool CustomSettings::getDashboardBlocks(uint8_t index, DASHBOARD_ITEM_TYPE items[DASHBOARD_ITEM_COUNT])
+{
+#if DASHBOARD_ITEM_COUNT != 5
+#error TODO: this method only works with arrays that have same length as DASHBOARD_ITEM_COUNT
+#endif
+    for (uint8_t i = 0; i < DASHBOARD_ITEM_COUNT; i++)
+    {
+        items[i] = DASHBOARD_ITEM_TYPE_NONE;
+    }
+    uint8_t tmpItems[DASHBOARD_ITEM_COUNT] = {0};
+    char formattedKey[32] = {'\0'};
+    snprintf(formattedKey, sizeof(formattedKey), KEY_DASHBOARD_BLOCKS, index);
+    char value[255] = {'\0'};
+    this->GetStringValue(formattedKey, value, sizeof(value));
+    if (strlen(value) > 0 && sscanf(value, "%u,%u,%u,%u,%u", &tmpItems[0], &tmpItems[1], &tmpItems[2], &tmpItems[3], &tmpItems[4]) == 5)
+    {
+        for (uint8_t i = 0; i < DASHBOARD_ITEM_COUNT; i++)
+        {
+            items[i] = (DASHBOARD_ITEM_TYPE)tmpItems[i];
+        }
+        return (true);
+    }
+    else
+    {
+        return (false);
+    }
+}
+
+bool CustomSettings::setDashboardBlocks(uint8_t index, const DASHBOARD_ITEM_TYPE items[DASHBOARD_ITEM_COUNT])
+{
+#if DASHBOARD_ITEM_COUNT != 5
+#error TODO: this method only works with arrays that have same length as DASHBOARD_ITEM_COUNT
+#endif
+    char formattedKey[32] = {'\0'};
+    if (index > 0 && index < MAX_DASHBOARDS)
+    {
+        snprintf(formattedKey, sizeof(formattedKey), KEY_DASHBOARD_BLOCKS, index);
+        if (items[0] != DASHBOARD_ITEM_TYPE_NONE || items[1] != DASHBOARD_ITEM_TYPE_NONE || items[2] != DASHBOARD_ITEM_TYPE_NONE ||
+            items[3] != DASHBOARD_ITEM_TYPE_NONE || items[4] != DASHBOARD_ITEM_TYPE_NONE)
+        {
+            char value[255] = {'\0'};
+            snprintf(value, sizeof(value), "%u,%u,%u,%u,%u", items[0], items[1], items[2], items[3], items[4]);
+            return (this->SetStringValue(formattedKey, value));
+        }
+        else
+        {
+            return (this->DeleteKey(formattedKey));
+        }
+    }
+    else
+    {
+        for (uint8_t i = 0; i < DASHBOARD_ITEM_COUNT; i++)
+        {
+            snprintf(formattedKey, sizeof(formattedKey), KEY_DASHBOARD_BLOCKS, i);
+            this->DeleteKey(formattedKey);
+        }
+        return (true);
     }
 }
