@@ -4,10 +4,17 @@
 namespace aportela::microcontroller::utils
 {
 #define BYTE_UNITS_SIZE 7 // next const arrays size
+
     const char *const SHORT_BYTE_UNITS[] = {"B", "KB", "MB", "GB", "TB", "PB", "EB"};
     const char *const LONG_BYTE_UNITS[] = {"Bytes", "KBytes", "MBytes", "GBytes", "TBytes", "PBytes", "EBytes"};
     const char *const SHORT_BANDWITH_BYTE_UNITS[] = {"B/s", "KB/s", "MB/s", "GB/s", "TB/s", "PB/s", "EB/s"};
     const char *const LONG_BANDWITH_BYTE_UNITS[] = {"Bytes/seg", "KBytes/seg", "MBytes/seg", "GBytes/seg", "TBytes/seg", "PBytes/seg", "EBytes/seg"};
+
+#define BITS_UNITS_SIZE 7 // next const arrays size
+    const char *const SHORT_BIT_UNITS[] = {"b", "Kb", "Mb", "Gb", "Tb", "Pb", "Eb"};
+    const char *const LONG_BIT_UNITS[] = {"bits", "Kbits", "Mbits", "Gbits", "Tbit", "Pbits", "Ebits"};
+    const char *const SHORT_BANDWITH_BIT_UNITS[] = {"b/s", "Kb/s", "Mb/s", "Gb/s", "Tb/s", "Pb/s", "Eb/s"};
+    const char *const LONG_BANDWITH_BIT_UNITS[] = {"bits/seg", "Kbits/seg", "Mbits/seg", "Gbits/seg", "Tbits/seg", "Pbits/seg", "Ebits/seg"};
 
     void Format::ParseFloatToString(float value, char *buffer, size_t bufferSize, uint8_t decimalCount, uint8_t leftZeroPaddingToCharCount)
     {
@@ -24,6 +31,27 @@ namespace aportela::microcontroller::utils
         else
         {
             std::snprintf(buffer, bufferSize, "%s", strDecimalValue);
+        }
+    }
+
+    void Format::ParseBitsToHumanString(uint64_t bits, char *buffer, size_t bufferSize, bool zeroPadding, bool shortUnits, bool bandwidthUnits, KILO_BIT_DIVISOR kBitDivisorUnit)
+    {
+        if (bits > 0)
+        {
+            uint8_t currentUnitIndex = 0;
+            uint64_t tmpBits = bits;
+            while (tmpBits >= kBitDivisorUnit && currentUnitIndex < BITS_UNITS_SIZE - 1)
+            {
+                tmpBits /= kBitDivisorUnit;
+                currentUnitIndex++;
+            }
+            const char *bitUnitStr = (shortUnits ? (bandwidthUnits ? SHORT_BANDWITH_BIT_UNITS : SHORT_BIT_UNITS) : (bandwidthUnits ? LONG_BANDWITH_BIT_UNITS : LONG_BIT_UNITS))[currentUnitIndex];
+            std::snprintf(buffer, bufferSize, zeroPadding ? "%04" PRIu64 "%s" : "%" PRIu64 "%s", tmpBits, bitUnitStr);
+        }
+        else
+        {
+            const char *minBitUnitStr = (shortUnits ? (bandwidthUnits ? SHORT_BANDWITH_BIT_UNITS : SHORT_BIT_UNITS) : (bandwidthUnits ? LONG_BANDWITH_BIT_UNITS : LONG_BIT_UNITS))[0];
+            std::snprintf(buffer, bufferSize, zeroPadding ? "0000%s" : "0%s", minBitUnitStr);
         }
     }
 

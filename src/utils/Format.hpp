@@ -17,11 +17,18 @@ namespace aportela::microcontroller::utils
         KILO_BYTE_DIVISOR_1000 = 1000
     };
 
+    enum KILO_BIT_DIVISOR
+    {
+        KILO_BIT_DIVISOR_1024 = 1024,
+        KILO_BIT_DIVISOR_1000 = 1000
+    };
+
     class Format
     {
     private:
     public:
         static void ParseFloatToString(float value, char *buffer, size_t bufferSize, uint8_t decimalCount = 2, uint8_t leftZeroPaddingToCharCount = 0);
+        static void ParseBitsToHumanString(uint64_t bits, char *buffer, size_t bufferSize, bool zeroPadding = false, bool shortUnits = false, bool bandwidthUnits = false, KILO_BIT_DIVISOR kBitDivisorUnit = KILO_BIT_DIVISOR_1024);
         static void ParseBytesToHumanString(uint64_t bytes, char *buffer, size_t bufferSize, bool zeroPadding = false, bool shortUnits = false, bool bandwidthUnits = false, KILO_BYTE_DIVISOR kByteDivisorUnit = KILO_BYTE_DIVISOR_1024);
         static void ParseMillisToHumanString(uint64_t millisDiff, char *buffer, size_t bufferSize);
     };
