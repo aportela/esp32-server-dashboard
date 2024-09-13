@@ -720,8 +720,8 @@ void setup()
             items[0] = DASHBOARD_ITEM_TYPE_CPU_LOAD;
             items[1] = DASHBOARD_ITEM_TYPE_MEM_USED;
             items[2] = DASHBOARD_ITEM_TYPE_CPU_TEMPERATURE;
-            items[3] = DASHBOARD_ITEM_TYPE_NETWORK_INTERFACE_DOWNLOAD_BANDWIDTH;
-            items[4] = DASHBOARD_ITEM_TYPE_NETWORK_INTERFACE_UPLOAD_BANDWIDTH;
+            items[3] = DASHBOARD_ITEM_TYPE_NETWORK_INTERFACE_DOWNLOAD_DYNAMIC_BANDWIDTH;
+            items[4] = DASHBOARD_ITEM_TYPE_NETWORK_INTERFACE_UPLOAD_DYNAMIC_BANDWIDTH;
             screen->SetDashboardItems(dashboardIndex - 1, items);
             break;
         }

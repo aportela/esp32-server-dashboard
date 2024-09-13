@@ -200,7 +200,7 @@ NOTE: "clear commands" **require whitespace** (separator without value) at end, 
 
 #### CUSTOMIZE DASHBOARD CLOCKS
 
-Every dashboard / blocks are customized via serial commands. By default, there is only one dashboard (CPU LOAD, MEM USED, CPU TEMP, NET DOWN, NET UPLD) that cannot be deleted but can be modified (block exchange). Dashboard configuration must be sequential (a third one cannot be configured if the second one is not established). To delete a dashboard we only have to specify its index and values ​​0,0,0,0,0
+Every dashboard / blocks are customized via serial commands. By default, there is only one dashboard (CPU LOAD, MEM USED, CPU TEMP, DYNAMIC NET DOWN, DYNAMIC NET UPLD) that cannot be deleted but can be modified (block exchange). Dashboard configuration must be sequential (a third one cannot be configured if the second one is not established). To delete a dashboard we only have to specify its index and values ​​0,0,0,0,0
 
 If you want to add more dashboards and the current limit is not enough (currently 8, defined in src/display/DashboardItemType.hpp) you just have to modify the MAX_DASHBOARDS tag and recompile the project
 
