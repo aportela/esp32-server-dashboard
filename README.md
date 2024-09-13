@@ -206,44 +206,52 @@ If you want to add more dashboards and the current limit is not enough (currentl
 
 The list of supported block types corresponds to these values ​​(defined in the src/display/DashboardItemType.hpp file):
 
-| TYPE               | VALUE | NOTES                                                                                   |
-| ------------------ | ----- | --------------------------------------------------------------------------------------- |
-| NONE               | 0     | empty value, used for removing block                                                    |
-| CPU LOAD           | 1     |                                                                                         |
-| CPU USER           | 2     |                                                                                         |
-| CPU SYSTEM         | 3     |                                                                                         |
-| CPU IDLE           | 4     |                                                                                         |
-| CPU ACTIVE         | 5     |                                                                                         |
-| CPU NICE           | 6     |                                                                                         |
-| CPU IOWAIT         | 7     |                                                                                         |
-| CPU IRQ            | 8     |                                                                                         |
-| CPU SOFT IRQ       | 9     |                                                                                         |
-| CPU STEAL          | 10    |                                                                                         |
-| CPU GUEST          | 11    |                                                                                         |
-| CPU GUEST NICE     | 12    |                                                                                         |
-| MEM ACTIVE         | 13    |                                                                                         |
-| MEM AVAILABLE      | 14    |                                                                                         |
-| MEM BUFFERED       | 15    |                                                                                         |
-| MEM CACHED         | 16    |                                                                                         |
-| MEM DIRTY          | 17    |                                                                                         |
-| MEM FREE           | 18    |                                                                                         |
-| MEM INACTIVE       | 19    |                                                                                         |
-| MEM LAUNDRY        | 20    |                                                                                         |
-| MEM MAPPED         | 21    |                                                                                         |
-| MEM SHARED         | 22    |                                                                                         |
-| MEM SWAP CACHED    | 23    |                                                                                         |
-| MEM SWAP FREE      | 24    |                                                                                         |
-| MEM USED           | 25    |                                                                                         |
-| CPU TEMP           | 26    |                                                                                         |
-| NET DOWN           | 27    | requires having a **bit limit** set with the **SET_MAX_DOWNLOAD_BITS_BANDWITH** command |
-| NET UP             | 28    | requires having a **bit limit** set with the **SET_MAX_UPLOAD_BITS_BANDWITH** command   |
-| NET DOWN (DYNAMIC) | 29    | Y-axis automatically auto-scales with values ​​over time                                |
-| NET UP (DYNAMIC)   | 30    | Y-axis automatically auto-scales with values ​​over time                                |
+| TYPE               | VALUE | NOTES                                                                            |
+| ------------------ | ----- | -------------------------------------------------------------------------------- |
+| NONE               | 0     | empty value, used for removing block                                             |
+| CPU LOAD           | 1     |                                                                                  |
+| CPU USER           | 2     |                                                                                  |
+| CPU SYSTEM         | 3     |                                                                                  |
+| CPU IDLE           | 4     |                                                                                  |
+| CPU ACTIVE         | 5     |                                                                                  |
+| CPU NICE           | 6     |                                                                                  |
+| CPU IOWAIT         | 7     |                                                                                  |
+| CPU IRQ            | 8     |                                                                                  |
+| CPU SOFT IRQ       | 9     |                                                                                  |
+| CPU STEAL          | 10    |                                                                                  |
+| CPU GUEST          | 11    |                                                                                  |
+| CPU GUEST NICE     | 12    |                                                                                  |
+| MEM ACTIVE         | 13    |                                                                                  |
+| MEM AVAILABLE      | 14    |                                                                                  |
+| MEM BUFFERED       | 15    |                                                                                  |
+| MEM CACHED         | 16    |                                                                                  |
+| MEM DIRTY          | 17    |                                                                                  |
+| MEM FREE           | 18    |                                                                                  |
+| MEM INACTIVE       | 19    |                                                                                  |
+| MEM LAUNDRY        | 20    |                                                                                  |
+| MEM MAPPED         | 21    |                                                                                  |
+| MEM SHARED         | 22    |                                                                                  |
+| MEM SWAP CACHED    | 23    |                                                                                  |
+| MEM SWAP FREE      | 24    |                                                                                  |
+| MEM USED           | 25    |                                                                                  |
+| CPU TEMP           | 26    |                                                                                  |
+| NET DOWN           | 27    | requires having a **bit limit** set with the **SET_MAX_DOWNLOAD_BITS_BANDWITH**  |
+|                    |       | y-axis units are defined in multiples of **bits/sec** (using previous max limit) |
+|                    |       | current value units are defined in multiples of **bytes/sec**                    |
+| NET UP             | 28    | requires having a **bit limit** set with the **SET_MAX_UPLOAD_BITS_BANDWITH**    |
+|                    |       | y-axis units are defined in multiples of **bits/sec** (using previous max limit) |
+|                    |       | current value units are defined in multiples of **bytes/sec**                    |
+| NET DOWN (DYNAMIC) | 29    | y-axis automatically auto-scales with values ​​over time                         |
+|                    |       | y-axis units are defined in multiples of **bytes/sec**                           |
+|                    |       | current value units are defined in multiples of **bytes/sec**                    |
+| NET UP (DYNAMIC)   | 30    | y-axis automatically auto-scales with values ​​over time                         |
+|                    |       | y-axis units are defined in multiples of **bytes/sec**                           |
+|                    |       | current value units are defined in multiples of **bytes/sec**                    |
 
 #### NOTES:
 
 - Not all blocks are supported on all operating systems.
-- All network blocks have the limit values ​​(y-axis) set with units of bits/sec but the current value is displayed with bytes/sec. In addition, all network blocks share the same interface (support for multiple interfaces is not available at this time).
+- All network blocks share the same interface (support for multiple interfaces is not available at this time). If we do not specify a single network interface in the telegraf configuration, data will arrive from several interfaces and if one is not configured via serial commands (SET_NETWORK_INTERFACE_ID), they will all be mixed and the data displayed will be incorrect.
 
 ## Working screenshots / photos
 
