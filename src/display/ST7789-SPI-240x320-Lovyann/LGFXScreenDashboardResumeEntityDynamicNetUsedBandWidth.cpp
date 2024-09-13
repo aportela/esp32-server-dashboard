@@ -5,7 +5,7 @@
 
 using namespace aportela::microcontroller::utils;
 
-LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth::LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth(NetBandwidthType type, LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset) : LGFXScreenDashboardResumeEntityNetUsedBandWidth(type, display, sourceData, width, height, xOffset, yOffset)
+LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth::LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth(DASHBOARD_ITEM_TYPE type, LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset) : LGFXScreenDashboardResumeEntityNetUsedBandWidth(type, display, sourceData, width, height, xOffset, yOffset)
 {
     if (this->parentDisplay != nullptr)
     {
@@ -31,7 +31,16 @@ bool LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth::Refresh(bool force)
     this->sourceData->GetCurrentNetwork(networkData);
     if (networkData.timestamp != this->timestamp || force)
     {
-        uint64_t diffBytes = this->type == NET_BANDWIDTH_TYPE_DOWNLOAD ? (networkData.bytesRecv - this->previousBytesRecv) : (networkData.bytesSent - this->previousBytesSent);
+        uint64_t diffBytes = 0;
+        switch (this->type)
+        {
+        case DASHBOARD_ITEM_TYPE_NETWORK_INTERFACE_DOWNLOAD_DYNAMIC_BANDWIDTH:
+            diffBytes = networkData.bytesRecv - this->previousBytesRecv;
+            break;
+        case DASHBOARD_ITEM_TYPE_NETWORK_INTERFACE_UPLOAD_DYNAMIC_BANDWIDTH:
+            diffBytes = networkData.bytesSent - this->previousBytesSent;
+            break;
+        }
         float diffSeconds = (networkData.timestamp - this->timestamp) / 1000.0;
         uint64_t currentValue = diffSeconds > 0 ? diffBytes / diffSeconds : 0;
         this->previousBytesRecv = networkData.bytesRecv;

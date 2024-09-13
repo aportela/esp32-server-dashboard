@@ -41,7 +41,7 @@ private:
     Uint64TFIFO *dynamicScaleValuesFIFO = nullptr;
 
 public:
-    LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth(NetBandwidthType type, LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset);
+    LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth(DASHBOARD_ITEM_TYPE type, LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset);
     ~LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth();
     bool Refresh(bool force = false) override;
 };

@@ -71,20 +71,20 @@ LGFXScreenDashboardResume::LGFXScreenDashboardResume(LovyanGFX *display, SourceD
                 case DASHBOARD_ITEM_TYPE_NETWORK_INTERFACE_DOWNLOAD_BANDWIDTH:
                     if (this->currentSourceData->HasFixedNetworkingLimits())
                     {
-                        this->blocks[i] = new LGFXScreenDashboardResumeEntityNetUsedBandWidth(NET_BANDWIDTH_TYPE_DOWNLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * i);
+                        this->blocks[i] = new LGFXScreenDashboardResumeEntityNetUsedBandWidth(items[i], display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * i);
                     }
                     break;
                 case DASHBOARD_ITEM_TYPE_NETWORK_INTERFACE_UPLOAD_BANDWIDTH:
                     if (this->currentSourceData->HasFixedNetworkingLimits())
                     {
-                        this->blocks[i] = new LGFXScreenDashboardResumeEntityNetUsedBandWidth(NET_BANDWIDTH_TYPE_UPLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * i);
+                        this->blocks[i] = new LGFXScreenDashboardResumeEntityNetUsedBandWidth(items[i], display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * i);
                     }
                     break;
                 case DASHBOARD_ITEM_TYPE_NETWORK_INTERFACE_DOWNLOAD_DYNAMIC_BANDWIDTH:
-                    this->blocks[i] = new LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth(NET_BANDWIDTH_TYPE_DOWNLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * i);
+                    this->blocks[i] = new LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth(items[i], display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * i);
                     break;
                 case DASHBOARD_ITEM_TYPE_NETWORK_INTERFACE_UPLOAD_DYNAMIC_BANDWIDTH:
-                    this->blocks[i] = new LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth(NET_BANDWIDTH_TYPE_UPLOAD, display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * i);
+                    this->blocks[i] = new LGFXScreenDashboardResumeEntityDynamicNetUsedBandWidth(items[i], display, sourceData, METER_GRAPH_WIDTH, METER_GRAPH_HEIGHT, 0, (METER_GRAPH_HEIGHT + 11) * i);
                     break;
                 default:
                     break;
