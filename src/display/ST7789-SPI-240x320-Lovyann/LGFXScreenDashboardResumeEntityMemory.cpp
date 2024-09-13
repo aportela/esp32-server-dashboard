@@ -174,6 +174,7 @@ bool LGFXScreenDashboardResumeEntityMemory::Refresh(bool force)
             return (false);
             break;
         }
+        memUsageValue = this->sourceData->clamp(memUsageValue, 0, data.total);
         uint8_t mapped100 = this->MapUint64ValueFrom0To100(memUsageValue, 0, data.total);
         uint16_t currentGradientColor = (mapped100 != this->previousMappedValue) ? this->GetGradientColorFrom0To100(mapped100) : this->previousGradientcolor;
         this->previousMappedValue = mapped100;

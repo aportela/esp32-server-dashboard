@@ -5,6 +5,9 @@
 
 using namespace aportela::microcontroller::utils;
 
+#define MIN_CPU_TEMPERATURE 0.0f
+#define MAX_CPU_TEMPERATURE 100.0f
+
 LGFXScreenDashboardResumeEntityCPUTemperature::LGFXScreenDashboardResumeEntityCPUTemperature(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset) : LGFXScreenDashboardResumeEntity(display, sourceData, width, height, xOffset, yOffset, DASHBOARD_ITEM_TYPE_LABEL[DASHBOARD_ITEM_TYPE_CPU_TEMPERATURE])
 {
     if (this->parentDisplay != nullptr)
@@ -29,6 +32,7 @@ bool LGFXScreenDashboardResumeEntityCPUTemperature::Refresh(bool force)
     this->sourceData->GetCurrentCPUTemperature(data);
     if ((data.timestamp != 0 && data.timestamp != this->timestamp) || force)
     {
+        data.celsious = this->sourceData->clamp(data.celsious, MIN_CPU_TEMPERATURE, MAX_CPU_TEMPERATURE);
         this->timestamp = data.timestamp;
         uint8_t mapped100 = this->MapFloatValueFrom0To100(data.celsious, MIN_CPU_TEMPERATURE, MAX_CPU_TEMPERATURE);
         uint16_t currentGradientColor = (mapped100 != this->previousMappedValue) ? this->GetGradientColorFrom0To100(mapped100) : this->previousGradientcolor;

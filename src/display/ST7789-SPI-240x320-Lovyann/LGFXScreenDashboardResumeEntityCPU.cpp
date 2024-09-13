@@ -4,15 +4,18 @@
 
 using namespace aportela::microcontroller::utils;
 
+#define MIN_CPU_USAGE 0.0f
+#define MAX_CPU_USAGE 100.0f
+
 LGFXScreenDashboardResumeEntityCPU::LGFXScreenDashboardResumeEntityCPU(LovyanGFX *display, SourceData *sourceData, uint16_t width, uint16_t height, uint16_t xOffset, uint16_t yOffset, DASHBOARD_ITEM_TYPE cpuUsageType) : LGFXScreenDashboardResumeEntity(display, sourceData, width, height, xOffset, yOffset, DASHBOARD_ITEM_TYPE_LABEL[cpuUsageType])
 {
     this->cpuUsageType = cpuUsageType;
     if (this->parentDisplay != nullptr)
     {
         char minStr[5] = {'\0'};
-        std::snprintf(minStr, sizeof(minStr), "%u%%", MIN_CPU_LOAD);
+        std::snprintf(minStr, sizeof(minStr), "%u%%", 0);
         char maxStr[5] = {'\0'};
-        std::snprintf(maxStr, sizeof(maxStr), "%03u%%", MAX_CPU_LOAD);
+        std::snprintf(maxStr, sizeof(maxStr), "%03u%%", 100);
         this->PrintLimits(minStr, maxStr);
         // this is used for init default value and printing the char "%" (on refresh only print value without char "%" to speed up things)
         this->RefreshStrValue("000.00%", LGFX_SCR_DRE_FONT_COLOR, LGFX_SCR_DRE_FONT_BG_COLOR);
@@ -73,8 +76,9 @@ bool LGFXScreenDashboardResumeEntityCPU::Refresh(bool force)
             return (false);
             break;
         }
+        cpuUsageValue = this->sourceData->clamp(cpuUsageValue, MIN_CPU_USAGE, MAX_CPU_USAGE);
         this->timestamp = data.timestamp;
-        uint8_t mapped100 = this->MapFloatValueFrom0To100(cpuUsageValue, MIN_CPU_LOAD, MAX_CPU_LOAD);
+        uint8_t mapped100 = this->MapFloatValueFrom0To100(cpuUsageValue, 0, 100);
         uint16_t currentGradientColor = (mapped100 != this->previousMappedValue) ? this->GetGradientColorFrom0To100(mapped100) : this->previousGradientcolor;
         this->previousMappedValue = mapped100;
         this->previousGradientcolor = currentGradientColor;

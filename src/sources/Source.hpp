@@ -5,9 +5,6 @@
 #include "ISource.hpp"
 #include "SourceData.hpp"
 
-#define MIN_CPU_LOAD 0
-#define MAX_CPU_LOAD 100
-
 typedef void (*onFloatValueChangedCallback)(float, uint64_t);
 typedef void (*onUint64tValueChangedCallback)(uint64_t, uint64_t);
 

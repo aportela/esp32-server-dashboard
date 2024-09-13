@@ -24,15 +24,15 @@ void DummySource::Refresh(uint16_t milliSeconds)
         uint8_t rnd = random(0, 100);
         if (rnd > 90)
         {
-            cpuLoadValue = random(MIN_CPU_LOAD, MAX_CPU_LOAD * 100);
+            cpuLoadValue = random(0, 100 * 100);
         }
         else if (rnd > 50)
         {
-            cpuLoadValue = random(MIN_CPU_LOAD, (MAX_CPU_LOAD / 5) * 100);
+            cpuLoadValue = random(0, (100 / 5) * 100);
         }
         else
         {
-            cpuLoadValue = random(MIN_CPU_LOAD, (MAX_CPU_LOAD / 10) * 100);
+            cpuLoadValue = random(0, (100 / 10) * 100);
         }
         cpuData.timestamp = currentMillis;
         this->sourceData->SetCurrentCPUData(cpuData);
