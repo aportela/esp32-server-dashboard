@@ -33,6 +33,20 @@ SourceData::~SourceData()
     vQueueDelete(this->networkingLimitsQueue);
 }
 
+uint64_t SourceData::clamp(uint64_t value, uint64_t min, uint64_t max)
+{
+    return (
+        (value < min) ? min : (value > max) ? max
+                                            : value);
+}
+
+float SourceData::clamp(float value, float min, float max)
+{
+    return (
+        (value < min) ? min : (value > max) ? max
+                                            : value);
+}
+
 bool SourceData::HasFixedNetworkingLimits(void)
 {
     return (this->fixedNetworkingLimits);

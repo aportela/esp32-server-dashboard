@@ -11,12 +11,6 @@
 
 #define MAX_NETWORK_INTERFACE_ID_LENGTH 65
 
-#define MIN_CPU_LOAD 0
-#define MAX_CPU_LOAD 100
-
-#define MIN_CPU_TEMPERATURE 0.0f
-#define MAX_CPU_TEMPERATURE 100.0f
-
 // TODO: https://github.com/influxdata/telegraf/blob/master/plugins/inputs/cpu/README.md
 struct SourceDataQueueCPUValues
 {
@@ -161,6 +155,9 @@ public:
 
     SourceData(bool truncateOverflows, uint64_t totalNetworkDownloadBandwidthLimit = 0, uint64_t totalNetworkUploadBandwidthLimit = 0);
     ~SourceData();
+
+    uint64_t clamp(uint64_t value, uint64_t min, uint64_t max);
+    float clamp(float value, float min, float max);
 
     bool HasFixedNetworkingLimits(void);
 
