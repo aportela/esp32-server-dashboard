@@ -8,7 +8,7 @@ A small project to display in real time stats (cpu/memory/temperature/network ba
 
 ### Display
 
-Any **SPI** display that is supported by the driver **ST7789V** with a resolution of **240x320**
+Any **SPI** display that is supported by the driver **ST7789V** with a resolution of **240x320**.
 
 I'm using displays like these (the cost is about 3.5 euros):
 
@@ -17,7 +17,7 @@ I'm using displays like these (the cost is about 3.5 euros):
 
 ### Microcontroller
 
-In theory you should be able to use any esp32 as long as it has enough pins
+In theory you should be able to use any esp32 as long as it has enough pins.
 
 I'm using these two:
 
@@ -50,7 +50,7 @@ Any button / switch will work
 | GND             | GND     |
 | 3.3V            | VCC     |
 
-Switch/button contacts are connected to ESP32-C3 SuperMini PIN 16 and GND
+Switch/button contacts are connected to ESP32-C3 SuperMini PIN 16 and GND.
 
 ### ESP32-C3 SuperMini
 
@@ -64,7 +64,7 @@ Switch/button contacts are connected to ESP32-C3 SuperMini PIN 16 and GND
 | GND                | GND     |
 | 3.3V               | VCC     |
 
-Switch/button contacts are connected to ESP32-C3 SuperMini PIN 10 and GND
+Switch/button contacts are connected to ESP32-C3 SuperMini PIN 10 and GND.
 
 ## Install (Software)
 
@@ -145,7 +145,7 @@ interfaces = ["enp1s0"]
 
 ```
 
-Also, this is my script (/usr/local/etc/telegraf-scripts/cputemp-sensors-by-package.sh) for getting/parsing cpu temperatures on OPNSense
+Also, this is my script (/usr/local/etc/telegraf-scripts/cputemp-sensors-by-package.sh) for getting/parsing cpu temperatures on OPNSense.
 
 ```
 #!/bin/sh
@@ -154,9 +154,9 @@ sysctl hw.acpi.thermal.tz0.temperature | sed 's/hw\.acpi\.thermal\.tz0\.temperat
 
 ### Microcontroller
 
-Configuration is done via serial sending string commands. Any serial terminal software like putty or Arduino IDE serial monitor console can be used
+Configuration is done via serial sending string commands. Any serial terminal software like putty or Arduino IDE serial monitor console can be used.
 
-NOTE: "clear commands" **require whitespace** (separator without value) at end, ex: clear wifi password => "SET_WIFI_PASSWORD "
+NOTE: "clear commands" **require whitespace** (separator without value) at end, ex: clear wifi password => "SET_WIFI_PASSWORD ".
 
 | Command                         | Param               | Description                              | Example                                                  |
 | ------------------------------- | ------------------- | ---------------------------------------- | -------------------------------------------------------- |
@@ -195,8 +195,8 @@ NOTE: "clear commands" **require whitespace** (separator without value) at end, 
 
 #### NOTES:
 
-- Clear MQTT username/password configuration values if your mqtt server/broker do not require authentication
-- Clear max download/upload bytes bandwidth configuration values to using "dynamic scales" (auto grow/resize)
+- Clear MQTT username/password configuration values if your mqtt server/broker do not require authentication.
+- SET_MAX_DOWNLOAD_BITS_BANDWITH && SET_MAX_UPLOAD_BITS_BANDWITH configuration values are required to use "NET DOWN" (27) / "NET UP" (28) static, not auto-scale networking blocks (see next section).
 
 #### CUSTOMIZE DASHBOARD CLOCKS
 
@@ -204,7 +204,7 @@ Every dashboard / blocks are customized via serial commands. By default, there i
 
 If you want to add more dashboards and the current limit is not enough (currently 8, defined in src/display/DashboardItemType.hpp) you just have to modify the MAX_DASHBOARDS tag and recompile the project
 
-The list of supported block types (some are not supported on all operating systems) corresponds to these values ​​(defined in the src/display/DashboardItemType.hpp file):
+The list of supported block types corresponds to these values ​​(defined in the src/display/DashboardItemType.hpp file):
 
 | TYPE               | VALUE | NOTES                                                                                   |
 | ------------------ | ----- | --------------------------------------------------------------------------------------- |
@@ -240,7 +240,10 @@ The list of supported block types (some are not supported on all operating syste
 | NET DOWN (DYNAMIC) | 29    | Y-axis automatically auto-scales with values ​​over time                                |
 | NET UP (DYNAMIC)   | 30    | Y-axis automatically auto-scales with values ​​over time                                |
 
-NOTE: All network blocks have the limit values ​​(y-axis) set with units of bits/sec but the current value is displayed with bytes/sec. In addition, all network blocks share the same interface (support for multiple interfaces is not available at this time).
+#### NOTES:
+
+- Not all blocks are supported on all operating systems.
+- All network blocks have the limit values ​​(y-axis) set with units of bits/sec but the current value is displayed with bytes/sec. In addition, all network blocks share the same interface (support for multiple interfaces is not available at this time).
 
 ## Working screenshots / photos
 
