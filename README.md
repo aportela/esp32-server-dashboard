@@ -158,43 +158,87 @@ Configuration is done via serial sending string commands. Any serial terminal so
 
 NOTE: "clear commands" **require whitespace** (separator without value) at end, ex: clear wifi password => "SET_WIFI_PASSWORD "
 
-| Command                         | Param      | Description                              | Example                                                  |
-| ------------------------------- | ---------- | ---------------------------------------- | -------------------------------------------------------- |
-| REBOOT                          |            | Reboot device                            | **REBOOT**                                               |
-| CLEAR_SETTINGS                  |            | Remove all device settings               | **CLEAR_SETTINGS**                                       |
-| EXPORT_SETTINGS                 |            | Export all device settings               | **EXPORT_SETTINGS**                                      |
-| CONNECT_WIFI                    |            | Connect (manually) to WIFI               | **CONNECT_WIFI**                                         |
-| DISCONNECT_WIFI                 |            | Disconnect (manually) to WIFI            | **DISCONNECT_WIFI**                                      |
-| SET_WIFI_SSID                   | <ssid>     | Save WIFI SSID                           | **SET_WIFI_SSID myssid**                                 |
-|                                 |            | Clear WIFI SSID                          | **SET_WIFI_SSID**                                        |
-| SET_WIFI_PASSWORD               | <password> | Save WIFI password                       | **SET_WIFI_PASSWORD secret**                             |
-|                                 |            | Clear WIFI password                      | **SET_WIFI_PASSWORD**                                    |
-| SET_MQTT_TELEGRAF_URI           | <uri>      | Save MQTT uri                            | **SET_MQTT_TELEGRAF_URI mqtt://192.168.1.1**             |
-|                                 |            | Clear MQTT uri                           | **SET_MQTT_TELEGRAF_URI**                                |
-| SET_MQTT_USERNAME               | <username> | Save MQTT username                       | **SET_MQTT_USERNAME foobar**                             |
-|                                 |            | Clear MQTT username                      | **SET_MQTT_USERNAME**                                    |
-| SET_MQTT_PASSWORD               | <password> | Save MQTT password                       | **SET_MQTT_PASSWORD secret**                             |
-|                                 |            | Clear MQTT password                      | **SET_MQTT_PASSWORD**                                    |
-| SET_MQTT_TELEGRAF_GLOBAL_TOPIC  | <topic>    | Save MQTT topic                          | **SET_MQTT_TELEGRAF_GLOBAL_TOPIC telegraf/myhostname/#** |
-|                                 |            | Clear MQTT topic                         | **SET_MQTT_TELEGRAF_GLOBAL_TOPIC**                       |
-| TOGGLE_SCREEN                   |            | Change screen (info/dashboard)           | **TOGGLE_SCREEN**                                        |
-| SET_MAX_DOWNLOAD_BITS_BANDWITH  | <bits>     | Save net download graph fixed max scale  | **SET_MAX_DOWNLOAD_BITS_BANDWITH 1000000000**            |
-|                                 |            | Clear net download graph fixed max scale | **SET_MAX_DOWNLOAD_BITS_BANDWITH**                       |
-| SET_MAX_UPLOAD_BITS_BANDWITH    | <bits>     | Save net upload graph fixed max scale    | **SET_MAX_UPLOAD_BITS_BANDWITH 1000000000**              |
-|                                 |            | Clear net upload graph fixed max scale   | **SET_MAX_UPLOAD_BITS_BANDWITH**                         |
-| SET_NETWORK_INTERFACE_ID        | <iface>    | Save network interface id                | **SET_NETWORK_INTERFACE_ID enp1s0**                      |
-|                                 |            | Clear network interface id               | **SET_NETWORK_INTERFACE_ID**                             |
-| SET_HOSTNAME                    | <hostname> | Save hostname                            | **SET_HOSTNAME myhostname**                              |
-|                                 |            | Clear hostname                           | **SET_HOSTNAME**                                         |
-| SET_SCREEN_MIRROR_FLIP_VERTICAL | <bool>     | Save screen mirror orientation           | **SET_SCREEN_MIRROR_FLIP_VERTICAL true**                 |
-|                                 | <bool>     | Clear screen mirror orientation          | **SET_SCREEN_MIRROR_FLIP_VERTICAL false**                |
-| SET_DEFAULT_SCREEN              | <screen>   | Save "INFO" as default screen            | **SET_DEFAULT_SCREEN 1**                                 |
-|                                 | <screen>   | Save "DASHBOARD" as default screen       | **SET_DEFAULT_SCREEN 2**                                 |
+| Command                         | Param               | Description                              | Example                                                  |
+| ------------------------------- | ------------------- | ---------------------------------------- | -------------------------------------------------------- |
+| REBOOT                          |                     | Reboot device                            | **REBOOT**                                               |
+| CLEAR_SETTINGS                  |                     | Remove all device settings               | **CLEAR_SETTINGS**                                       |
+| EXPORT_SETTINGS                 |                     | Export all device settings               | **EXPORT_SETTINGS**                                      |
+| CONNECT_WIFI                    |                     | Connect (manually) to WIFI               | **CONNECT_WIFI**                                         |
+| DISCONNECT_WIFI                 |                     | Disconnect (manually) to WIFI            | **DISCONNECT_WIFI**                                      |
+| SET_WIFI_SSID                   | <ssid>              | Save WIFI SSID                           | **SET_WIFI_SSID myssid**                                 |
+|                                 |                     | Clear WIFI SSID                          | **SET_WIFI_SSID**                                        |
+| SET_WIFI_PASSWORD               | <password>          | Save WIFI password                       | **SET_WIFI_PASSWORD secret**                             |
+|                                 |                     | Clear WIFI password                      | **SET_WIFI_PASSWORD**                                    |
+| SET_MQTT_TELEGRAF_URI           | <uri>               | Save MQTT uri                            | **SET_MQTT_TELEGRAF_URI mqtt://192.168.1.1**             |
+|                                 |                     | Clear MQTT uri                           | **SET_MQTT_TELEGRAF_URI**                                |
+| SET_MQTT_USERNAME               | <username>          | Save MQTT username                       | **SET_MQTT_USERNAME foobar**                             |
+|                                 |                     | Clear MQTT username                      | **SET_MQTT_USERNAME**                                    |
+| SET_MQTT_PASSWORD               | <password>          | Save MQTT password                       | **SET_MQTT_PASSWORD secret**                             |
+|                                 |                     | Clear MQTT password                      | **SET_MQTT_PASSWORD**                                    |
+| SET_MQTT_TELEGRAF_GLOBAL_TOPIC  | <topic>             | Save MQTT topic                          | **SET_MQTT_TELEGRAF_GLOBAL_TOPIC telegraf/myhostname/#** |
+|                                 |                     | Clear MQTT topic                         | **SET_MQTT_TELEGRAF_GLOBAL_TOPIC**                       |
+| TOGGLE_SCREEN                   |                     | Change screen (info/dashboard)           | **TOGGLE_SCREEN**                                        |
+| SET_MAX_DOWNLOAD_BITS_BANDWITH  | <bits>              | Save net download graph fixed max scale  | **SET_MAX_DOWNLOAD_BITS_BANDWITH 1000000000**            |
+|                                 |                     | Clear net download graph fixed max scale | **SET_MAX_DOWNLOAD_BITS_BANDWITH**                       |
+| SET_MAX_UPLOAD_BITS_BANDWITH    | <bits>              | Save net upload graph fixed max scale    | **SET_MAX_UPLOAD_BITS_BANDWITH 1000000000**              |
+|                                 |                     | Clear net upload graph fixed max scale   | **SET_MAX_UPLOAD_BITS_BANDWITH**                         |
+| SET_NETWORK_INTERFACE_ID        | <iface>             | Save network interface id                | **SET_NETWORK_INTERFACE_ID enp1s0**                      |
+|                                 |                     | Clear network interface id               | **SET_NETWORK_INTERFACE_ID**                             |
+| SET_HOSTNAME                    | <hostname>          | Save hostname                            | **SET_HOSTNAME myhostname**                              |
+|                                 |                     | Clear hostname                           | **SET_HOSTNAME**                                         |
+| SET_SCREEN_MIRROR_FLIP_VERTICAL | <bool>              | Save screen mirror orientation           | **SET_SCREEN_MIRROR_FLIP_VERTICAL true**                 |
+|                                 | <bool>              | Clear screen mirror orientation          | **SET_SCREEN_MIRROR_FLIP_VERTICAL false**                |
+| SET_DEFAULT_SCREEN              | <screen>            | Save "INFO" as default screen            | **SET_DEFAULT_SCREEN 1**                                 |
+|                                 | <screen>            | Save "DASHBOARD" as default screen       | **SET_DEFAULT_SCREEN 2**                                 |
+| SET_DASHBOARD_BLOCKS            | <index> <items>     | Set dashboard blocks                     | **SET_DASHBOARD_BLOCKS 3 2,3,6,7,8**                     |
+| SET_DASHBOARD_BLOCKS            | <index> <0,0,0,0,0> | Clear dashboard blocks                   | **SET_DASHBOARD_BLOCKS 3 0,0,0,0,0**                     |
 
 #### NOTES:
 
 - Clear MQTT username/password configuration values if your mqtt server/broker do not require authentication
 - Clear max download/upload bytes bandwidth configuration values to using "dynamic scales" (auto grow/resize)
+
+#### CUSTOMIZE DASHBOARD CLOCKS
+
+Every dashboard / blocks are customized via serial commands. By default, there is only one dashboard (CPU LOAD, MEM USED, CPU TEMP, NET DOWN, NET UPLD) that cannot be deleted but can be modified (block exchange). Dashboard configuration must be sequential (a third one cannot be configured if the second one is not established). To delete a dashboard we only have to specify its index and values ​​0,0,0,0,0
+
+If you want to add more dashboards and the current limit is not enough (currently 8, defined in src/display/DashboardItemType.hpp) you just have to modify the MAX_DASHBOARDS tag and recompile the project
+
+The list of supported block types (some are not supported on all operating systems) corresponds to these values ​​(defined in the src/display/DashboardItemType.hpp file):
+
+| TYPE               | VALUE | NOTES                                                                                   |
+| ------------------ | ----- | --------------------------------------------------------------------------------------- |
+| NONE               | 0     |                                                                                         |
+| CPU LOAD           | 1     |                                                                                         |
+| CPU USER           | 2     |                                                                                         |
+| CPU SYSTEM         | 3     |                                                                                         |
+| CPU IDLE           | 4     |                                                                                         |
+| CPU ACTIVE         | 5     |                                                                                         |
+| CPU NICE           | 6     |                                                                                         |
+| CPU IOWAIT         | 7     |                                                                                         |
+| CPU IRQ            | 8     |                                                                                         |
+| CPU SOFT IRQ       | 9     |                                                                                         |
+| CPU STEAL          | 10    |                                                                                         |
+| CPU GUEST          | 11    |                                                                                         |
+| CPU GUEST NICE     | 12    |                                                                                         |
+| MEM ACTIVE         | 13    |                                                                                         |
+| MEM AVAILABLE      | 14    |                                                                                         |
+| MEM BUFFERED       | 15    |                                                                                         |
+| MEM CACHED         | 16    |                                                                                         |
+| MEM DIRTY          | 17    |                                                                                         |
+| MEM FREE           | 18    |                                                                                         |
+| MEM INACTIVE       | 19    |                                                                                         |
+| MEM LAUNDRY        | 20    |                                                                                         |
+| MEM MAPPED         | 21    |                                                                                         |
+| MEM SHARED         | 22    |                                                                                         |
+| MEM SWAP CACHED    | 23    |                                                                                         |
+| MEM SWAP FREE      | 24    |                                                                                         |
+| MEM USED           | 25    |                                                                                         |
+| CPU TEMP           | 26    |                                                                                         |
+| NET DOWN           | 27    | requires having a **bit limit** set with the **SET_MAX_DOWNLOAD_BITS_BANDWITH** command |
+| NET UP             | 28    | requires having a **bit limit** set with the **SET_MAX_UPLOAD_BITS_BANDWITH** command   |
+| NET DOWN (DYNAMIC) | 29    | Y-axis automatically auto-scales with values ​​over time                                |
+| NET UP (DYNAMIC)   | 30    | Y-axis automatically auto-scales with values ​​over time                                |
 
 ## Working screenshots / photos
 
