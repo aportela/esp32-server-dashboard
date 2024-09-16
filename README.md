@@ -76,10 +76,12 @@ Arduino IDE Board setup:
 
 - ESP32-WROOM-32D: **ESP32-WROOM-DA Module**
 
-- ESP32-C3 SuperMini **ESP32C3 Dev Module**
-  - Tools => **USB CDC On Boot** => "**Enabled**" (required for serial communication)
+  - requires **#define ESP32_WROOM** on esp32-server-dashboard.ino
 
-Arduino IDE required libraries:
+- ESP32-C3 SuperMini **ESP32C3 Dev Module**
+
+  - Tools => **USB CDC On Boot** => "**Enabled**" (required for serial communication)
+  - requires **#define ESP32_C3_SUPER_MINI** on esp32-server-dashboard.ino
 
 - [LovyanGFX by lovyan03](https://github.com/lovyan03/LovyanGFX) (ST7789V display driver)
 - [Bounce2 by Thomas Ouellet Fredericks](https://github.com/thomasfredericks/Bounce2) (Debouncing library for Arduino and Wiring)
