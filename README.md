@@ -32,7 +32,7 @@ ESP32-C3 SuperMini (the cost is about 2 euros):
 <img src="https://github.com/user-attachments/assets/d10aa28f-d15f-4f76-9b0d-2c3fa63a687d" width="100" alt="back" />
 <img src="https://github.com/user-attachments/assets/1b10c2a7-7288-4ec2-89c7-77f9d9c0241b" width="250" alt="pinout" />
 
-### Switch / Button
+### Switch / Button (used to switch between screens)
 
 Any button / switch will work
 
@@ -197,6 +197,52 @@ NOTE: "clear commands" **require whitespace** (separator without value) at end, 
 
 - Clear MQTT username/password configuration values if your mqtt server/broker do not require authentication.
 - SET_MAX_DOWNLOAD_BITS_BANDWITH && SET_MAX_UPLOAD_BITS_BANDWITH configuration values are required to use "NET DOWN" (27) / "NET UP" (28) static, not auto-scale networking blocks (see next section).
+
+#### EXAMPLES:
+
+Configuration for 4 custom dashboards, network interface name => pppoe0 & network interface speed = 1Gbit
+
+```
+# EXPORTED SETTINGS BEGIN
+CLEAR_SETTINGS
+SET_WIFI_SSID YOUR_WIFI_SSID
+SET_WIFI_PASSWORD YOUR_WIFI_PASSWORD
+SET_MQTT_TELEGRAF_URI mqtt://192.168.1.5
+SET_MQTT_USERNAME telegraf_client
+SET_MQTT_PASSWORD telegraf_password
+SET_MQTT_TELEGRAF_GLOBAL_TOPIC telegraf/OPNsense.localdomain/#
+SET_MAX_DOWNLOAD_BITS_BANDWITH 1000000000
+SET_MAX_UPLOAD_BITS_BANDWITH 1000000000
+SET_NETWORK_INTERFACE_ID pppoe0
+SET_HOSTNAME OPNSENSE
+SET_DEFAULT_SCREEN 2
+SET_DASHBOARD_BLOCKS 1 1,25,26,29,30
+SET_DASHBOARD_BLOCKS 2 1,2,3,6,8
+SET_DASHBOARD_BLOCKS 3 25,13,15,16,19
+SET_DASHBOARD_BLOCKS 4 26,27,28,29,30
+REBOOT
+# EXPORTED SETTINGS END
+```
+
+Configuration without custom dashboards (set by default one dashboard), network interface name => "Ethernet\ 10G\ (SFP+)" & network interface speed = 10Gbit
+
+```
+# EXPORTED SETTINGS BEGIN
+CLEAR_SETTINGS
+SET_WIFI_SSID YOUR_WIFI_SSID
+SET_WIFI_PASSWORD YOUR_WIFI_PASSWORD
+SET_MQTT_TELEGRAF_URI mqtt://192.168.1.5
+SET_MQTT_USERNAME telegraf_client
+SET_MQTT_PASSWORD telegraf_password
+SET_MQTT_TELEGRAF_GLOBAL_TOPIC telegraf/D-I7-11700/#
+SET_MAX_DOWNLOAD_BITS_BANDWITH 10000000000
+SET_MAX_UPLOAD_BITS_BANDWITH 10000000000
+SET_NETWORK_INTERFACE_ID Ethernet\ 10G\ (SFP+)
+SET_HOSTNAME WINDOWS10-I7
+SET_DEFAULT_SCREEN 2
+REBOOT
+# EXPORTED SETTINGS END
+```
 
 #### CUSTOMIZE DASHBOARD CLOCKS
 
