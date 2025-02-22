@@ -6,7 +6,7 @@ namespace aportela::microcontroller::utils
     void SerialManager::Init(uint32_t speed)
     {
         Serial.begin(speed);
-        while (!Serial)
+        while (!Serial && millis() < 500)
         {
             yield();
             delay(10);
